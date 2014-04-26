@@ -1,0 +1,173 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  
+<!-- Mirrored from llvm.org/docs/MarkedUpDisassembly.html by HTTrack Website Copier/3.x [XR&CO'2013], Sat, 26 Apr 2014 21:32:25 GMT -->
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>LLVM’s Optional Rich Disassembly Output &mdash; LLVM 3.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="LLVM 3.4 documentation" href="index-2.html" />
+    <link rel="next" title="System Library" href="SystemLibrary.html" />
+    <link rel="prev" title="The LLVM gold plugin" href="GoldPlugin.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head>
+  <body>
+<div class="logo">
+  <a href="index-2.html">
+    <img src="_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="SystemLibrary.html" title="System Library"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="GoldPlugin.html" title="The LLVM gold plugin"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="index-2.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="llvm-s-optional-rich-disassembly-output">
+<h1>LLVM&#8217;s Optional Rich Disassembly Output<a class="headerlink" href="#llvm-s-optional-rich-disassembly-output" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
+<li><a class="reference internal" href="#instruction-annotations" id="id3">Instruction Annotations</a><ul>
+<li><a class="reference internal" href="#contextual-markups" id="id4">Contextual markups</a></li>
+<li><a class="reference internal" href="#c-api-details" id="id5">C API Details</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>LLVM&#8217;s default disassembly output is raw text. To allow consumers more ability
+to introspect the instructions&#8217; textual representation or to reformat for a more
+user friendly display there is an optional rich disassembly output.</p>
+<p>This optional output is sufficient to reference into individual portions of the
+instruction text. This is intended for clients like disassemblers, list file
+generators, and pretty-printers, which need more than the raw instructions and
+the ability to print them.</p>
+<p>To provide this functionality the assembly text is marked up with annotations.
+The markup is simple enough in syntax to be robust even in the case of version
+mismatches between consumers and producers. That is, the syntax generally does
+not carry semantics beyond &#8220;this text has an annotation,&#8221; so consumers can
+simply ignore annotations they do not understand or do not care about.</p>
+<p>After calling <tt class="docutils literal"><span class="pre">LLVMCreateDisasm()</span></tt> to create a disassembler context the
+optional output is enable with this call:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">LLVMSetDisasmOptions</span><span class="p">(</span><span class="n">DC</span><span class="p">,</span> <span class="n">LLVMDisassembler_Option_UseMarkup</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Then subsequent calls to <tt class="docutils literal"><span class="pre">LLVMDisasmInstruction()</span></tt> will return output strings
+with the marked up annotations.</p>
+</div>
+<div class="section" id="instruction-annotations">
+<h2><a class="toc-backref" href="#id3">Instruction Annotations</a><a class="headerlink" href="#instruction-annotations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="contextual-markups">
+<span id="id1"></span><h3><a class="toc-backref" href="#id4">Contextual markups</a><a class="headerlink" href="#contextual-markups" title="Permalink to this headline">¶</a></h3>
+<p>Annoated assembly display will supply contextual markup to help clients more
+efficiently implement things like pretty printers. Most markup will be target
+independent, so clients can effectively provide good display without any target
+specific knowledge.</p>
+<p>Annotated assembly goes through the normal instruction printer, but optionally
+includes contextual tags on portions of the instruction string. An annotation
+is any &#8216;&lt;&#8217; &#8216;&gt;&#8217; delimited section of text(1).</p>
+<div class="highlight-bat"><div class="highlight"><pre>annotation: <span class="s1">&#39;&lt;&#39;</span> tag-name tag-modifier-list <span class="s1">&#39;:&#39;</span> annotated-text <span class="s1">&#39;&gt;&#39;</span>
+tag-name: identifier
+tag-modifier-list: comma delimited identifier list
+</pre></div>
+</div>
+<p>The tag-name is an identifier which gives the type of the annotation. For the
+first pass, this will be very simple, with memory references, registers, and
+immediates having the tag names &#8220;mem&#8221;, &#8220;reg&#8221;, and &#8220;imm&#8221;, respectively.</p>
+<p>The tag-modifier-list is typically additional target-specific context, such as
+register class.</p>
+<p>Clients should accept and ignore any tag-names or tag-modifiers they do not
+understand, allowing the annotations to grow in richness without breaking older
+clients.</p>
+<p>For example, a possible annotation of an ARM load of a stack-relative location
+might be annotated as:</p>
+<div class="highlight-nasm"><pre>ldr &lt;reg gpr:r0&gt;, &lt;mem regoffset:[&lt;reg gpr:sp&gt;, &lt;imm:#4&gt;]&gt;</pre>
+</div>
+<p>1: For assembly dialects in which &#8216;&lt;&#8217; and/or &#8216;&gt;&#8217; are legal tokens, a literal token is escaped by following immediately with a repeat of the character.  For example, a literal &#8216;&lt;&#8217; character is output as &#8216;&lt;&lt;&#8217; in an annotated assembly string.</p>
+</div>
+<div class="section" id="c-api-details">
+<h3><a class="toc-backref" href="#id5">C API Details</a><a class="headerlink" href="#c-api-details" title="Permalink to this headline">¶</a></h3>
+<p>The intended consumers of this information use the C API, therefore the new C
+API function for the disassembler will be added to provide an option to produce
+disassembled instructions with annotations, <tt class="docutils literal"><span class="pre">LLVMSetDisasmOptions()</span></tt> and the
+<tt class="docutils literal"><span class="pre">LLVMDisassembler_Option_UseMarkup</span></tt> option (see above).</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="SystemLibrary.html" title="System Library"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="GoldPlugin.html" title="The LLVM gold plugin"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="index-2.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2003-2014, LLVM Project.
+      Last updated on 2014-04-24.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+
+<!-- Mirrored from llvm.org/docs/MarkedUpDisassembly.html by HTTrack Website Copier/3.x [XR&CO'2013], Sat, 26 Apr 2014 21:32:25 GMT -->
+</html>
