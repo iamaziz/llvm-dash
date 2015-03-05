@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup as bs
 
 
 # download html documentation
-cmdcommand = """ cd . && rm -rf LLVM.docset && mkdir -p LLVM.docset/Contents/Resources/Documents && cd LLVM.docset && httrack -%v2 -T60 -R99 --sockets=7 -%c1000 -c10 -A999999999 -%N0 --disable-security-limits -F 'Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.19 (KHTML, like Gecko) Ubuntu/11.10 Chromium/18.0.1025.168' --mirror --keep-alive --robots=0 "http://llvm.org/docs/" -n -* +*.css +*css.php +*.ico +*/fonts/* +*.svg +*.ttf +fonts.googleapis.com* +*.woff +*.eot +*.png +*.jpg +*.gif +*.jpeg +*.js +http://llvm.org/docs/* -github.com* +raw.github.com* && rm -rf hts-* && mkdir -p Contents/Resources/Documents && mv -f *.* Contents/Resources/Documents/ """
+cmdcommand = """ cd . && sh download-llvm.sh """
 os.system(cmdcommand)
 
 
@@ -49,7 +49,7 @@ def add_urls():
     'Service'		: 'http://llvm.org/docs/Passes.html'
       }
   
-  base_path = 'llvm.org/docs/'
+  base_path = './'
 
   # loop through index pages:
   for p in pages:
@@ -97,7 +97,7 @@ def add_infoplist():
          "    <key>dashIndexFilePath</key>" \
          "    <string>{3}</string>" \
          "</dict>" \
-         "</plist>".format(name, name, name, 'llvm.org/docs/index.html')
+         "</plist>".format(name, name, name, 'index.html')
   open(docset_name + '/Contents/info.plist', 'wb').write(info)
 
 # create and open SQLite db
