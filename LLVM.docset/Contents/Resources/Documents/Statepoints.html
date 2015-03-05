@@ -1,0 +1,467 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Garbage Collection Safepoints in LLVM &mdash; LLVM 3.6 documentation</title>
+    
+    <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
+    <link rel="next" title="MergeFunctions pass, how it works" href="MergeFunctions.html" />
+    <link rel="prev" title="LLVM Code Coverage Mapping Format" href="CoverageMappingFormat.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head>
+  <body>
+<div class="logo">
+  <a href="index.html">
+    <img src="_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="MergeFunctions.html" title="MergeFunctions pass, how it works"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="CoverageMappingFormat.html" title="LLVM Code Coverage Mapping Format"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="garbage-collection-safepoints-in-llvm">
+<h1>Garbage Collection Safepoints in LLVM<a class="headerlink" href="#garbage-collection-safepoints-in-llvm" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#status" id="id10">Status</a></li>
+<li><a class="reference internal" href="#overview" id="id11">Overview</a></li>
+<li><a class="reference internal" href="#intrinsics" id="id12">Intrinsics</a><ul>
+<li><a class="reference internal" href="#gc-statepoint-intrinsic" id="id13">&#8216;&#8217;&#8216;gc.statepoint&#8217;&#8216;&#8217; Intrinsic</a></li>
+<li><a class="reference internal" href="#gc-result-intrinsic" id="id14">&#8216;&#8217;&#8216;gc.result&#8217;&#8216;&#8217; Intrinsic</a></li>
+<li><a class="reference internal" href="#gc-relocate-intrinsic" id="id15">&#8216;&#8217;&#8216;gc.relocate&#8217;&#8216;&#8217; Intrinsic</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stack-map-format" id="id16">Stack Map Format</a></li>
+<li><a class="reference internal" href="#safepoint-semantics-verification" id="id17">Safepoint Semantics &amp; Verification</a></li>
+<li><a class="reference internal" href="#bugs-and-enhancements" id="id18">Bugs and Enhancements</a></li>
+</ul>
+</div>
+<div class="section" id="status">
+<h2><a class="toc-backref" href="#id10">Status</a><a class="headerlink" href="#status" title="Permalink to this headline">¶</a></h2>
+<p>This document describes a set of experimental extensions to LLVM. Use
+with caution.  Because the intrinsics have experimental status,
+compatibility across LLVM releases is not guaranteed.</p>
+<p>LLVM currently supports an alternate mechanism for conservative
+garbage collection support using the gc_root intrinsic.  The mechanism
+described here shares little in common with the alternate
+implementation and it is hoped that this mechanism will eventually
+replace the gc_root mechanism.</p>
+</div>
+<div class="section" id="overview">
+<h2><a class="toc-backref" href="#id11">Overview</a><a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>To collect dead objects, garbage collectors must be able to identify
+any references to objects contained within executing code, and,
+depending on the collector, potentially update them.  The collector
+does not need this information at all points in code - that would make
+the problem much harder - but only at well-defined points in the
+execution known as &#8216;safepoints&#8217; For most collectors, it is sufficient
+to track at least one copy of each unique pointer value.  However, for
+a collector which wishes to relocate objects directly reachable from
+running code, a higher standard is required.</p>
+<p>One additional challenge is that the compiler may compute intermediate
+results (&#8220;derived pointers&#8221;) which point outside of the allocation or
+even into the middle of another allocation.  The eventual use of this
+intermediate value must yield an address within the bounds of the
+allocation, but such &#8220;exterior derived pointers&#8221; may be visible to the
+collector.  Given this, a garbage collector can not safely rely on the
+runtime value of an address to indicate the object it is associated
+with.  If the garbage collector wishes to move any object, the
+compiler must provide a mapping, for each pointer, to an indication of
+its allocation.</p>
+<p>To simplify the interaction between a collector and the compiled code,
+most garbage collectors are organized in terms of three abstractions:
+load barriers, store barriers, and safepoints.</p>
+<ol class="arabic simple">
+<li>A load barrier is a bit of code executed immediately after the
+machine load instruction, but before any use of the value loaded.
+Depending on the collector, such a barrier may be needed for all
+loads, merely loads of a particular type (in the original source
+language), or none at all.</li>
+<li>Analogously, a store barrier is a code fragement that runs
+immediately before the machine store instruction, but after the
+computation of the value stored.  The most common use of a store
+barrier is to update a &#8216;card table&#8217; in a generational garbage
+collector.</li>
+<li>A safepoint is a location at which pointers visible to the compiled
+code (i.e. currently in registers or on the stack) are allowed to
+change.  After the safepoint completes, the actual pointer value
+may differ, but the &#8216;object&#8217; (as seen by the source language)
+pointed to will not.</li>
+</ol>
+<blockquote>
+<div>Note that the term &#8216;safepoint&#8217; is somewhat overloaded.  It refers to
+both the location at which the machine state is parsable and the
+coordination protocol involved in bring application threads to a
+point at which the collector can safely use that information.  The
+term &#8220;statepoint&#8221; as used in this document refers exclusively to the
+former.</div></blockquote>
+<p>This document focuses on the last item - compiler support for
+safepoints in generated code.  We will assume that an outside
+mechanism has decided where to place safepoints.  From our
+perspective, all safepoints will be function calls.  To support
+relocation of objects directly reachable from values in compiled code,
+the collector must be able to:</p>
+<ol class="arabic simple">
+<li>identify every copy of a pointer (including copies introduced by
+the compiler itself) at the safepoint,</li>
+<li>identify which object each pointer relates to, and</li>
+<li>potentially update each of those copies.</li>
+</ol>
+<p>This document describes the mechanism by which an LLVM based compiler
+can provide this information to a language runtime/collector, and
+ensure that all pointers can be read and updated if desired.  The
+heart of the approach is to construct (or rewrite) the IR in a manner
+where the possible updates performed by the garbage collector are
+explicitly visible in the IR.  Doing so requires that we:</p>
+<ol class="arabic simple">
+<li>create a new SSA value for each potentially relocated pointer, and
+ensure that no uses of the original (non relocated) value is
+reachable after the safepoint,</li>
+<li>specify the relocation in a way which is opaque to the compiler to
+ensure that the optimizer can not introduce new uses of an
+unrelocated value after a statepoint. This prevents the optimizer
+from performing unsound optimizations.</li>
+<li>recording a mapping of live pointers (and the allocation they&#8217;re
+associated with) for each statepoint.</li>
+</ol>
+<p>At the most abstract level, inserting a safepoint can be thought of as
+replacing a call instruction with a call to a multiple return value
+function which both calls the original target of the call, returns
+it&#8217;s result, and returns updated values for any live pointers to
+garbage collected objects.</p>
+<blockquote>
+<div>Note that the task of identifying all live pointers to garbage
+collected values, transforming the IR to expose a pointer giving the
+base object for every such live pointer, and inserting all the
+intrinsics correctly is explicitly out of scope for this document.
+The recommended approach is described in the section of Late
+Safepoint Placement below.</div></blockquote>
+<p>This abstract function call is concretely represented by a sequence of
+intrinsic calls known as a &#8216;statepoint sequence&#8217;.</p>
+<dl class="docutils">
+<dt>Let&#8217;s consider a simple call in LLVM IR:</dt>
+<dd>todo</dd>
+</dl>
+<p>Depending on our language we may need to allow a safepoint during the
+execution of the function called from this site.  If so, we need to
+let the collector update local values in the current frame.</p>
+<p>Let&#8217;s say we need to relocate SSA values &#8216;a&#8217;, &#8216;b&#8217;, and &#8216;c&#8217; at this
+safepoint.  To represent this, we would generate the statepoint
+sequence:</p>
+<blockquote>
+<div>todo</div></blockquote>
+<p>Ideally, this sequence would have been represented as a M argument, N
+return value function (where M is the number of values being
+relocated + the original call arguments and N is the original return
+value + each relocated value), but LLVM does not easily support such a
+representation.</p>
+<p>Instead, the statepoint intrinsic marks the actual site of the
+safepoint or statepoint.  The statepoint returns a token value (which
+exists only at compile time).  To get back the original return value
+of the call, we use the &#8216;gc.result&#8217; intrinsic.  To get the relocation
+of each pointer in turn, we use the &#8216;gc.relocate&#8217; intrinsic with the
+appropriate index.  Note that both the gc.relocate and gc.result are
+tied to the statepoint.  The combination forms a &#8220;statepoint sequence&#8221;
+and represents the entitety of a parseable call or &#8216;statepoint&#8217;.</p>
+<dl class="docutils">
+<dt>When lowered, this example would generate the following x86 assembly::</dt>
+<dd>put assembly here</dd>
+</dl>
+<p>Each of the potentially relocated values has been spilled to the
+stack, and a record of that location has been recorded to the
+<a class="reference internal" href="StackMaps.html#stackmap-section"><em>Stack Map section</em></a>.  If the garbage collector
+needs to update any of these pointers during the call, it knows
+exactly what to change.</p>
+</div>
+<div class="section" id="intrinsics">
+<h2><a class="toc-backref" href="#id12">Intrinsics</a><a class="headerlink" href="#intrinsics" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="gc-statepoint-intrinsic">
+<h3><a class="toc-backref" href="#id13">&#8216;&#8217;&#8216;gc.statepoint&#8217;&#8216;&#8217; Intrinsic</a><a class="headerlink" href="#gc-statepoint-intrinsic" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="syntax">
+<h4>Syntax:<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python"><div class="highlight"><pre>declare i32
+  @gc.statepoint(func_type &lt;target&gt;, i64 &lt;#call args&gt;.
+                 i64 &lt;unused&gt;, ... (call parameters),
+                 i64 &lt;# deopt args&gt;, ... (deopt parameters),
+                 ... (gc parameters))
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h4>Overview:<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>The statepoint intrinsic represents a call which is parse-able by the
+runtime.</p>
+</div>
+<div class="section" id="operands">
+<h4>Operands:<a class="headerlink" href="#operands" title="Permalink to this headline">¶</a></h4>
+<p>The &#8216;target&#8217; operand is the function actually being called.  The
+target can be specified as either a symbolic LLVM function, or as an
+arbitrary Value of appropriate function type.  Note that the function
+type must match the signature of the callee and the types of the &#8216;call
+parameters&#8217; arguments.</p>
+<p>The &#8216;#call args&#8217; operand is the number of arguments to the actual
+call.  It must exactly match the number of arguments passed in the
+&#8216;call parameters&#8217; variable length section.</p>
+<p>The &#8216;unused&#8217; operand is unused and likely to be removed.  Please do
+not use.</p>
+<p>The &#8216;call parameters&#8217; arguments are simply the arguments which need to
+be passed to the call target.  They will be lowered according to the
+specified calling convention and otherwise handled like a normal call
+instruction.  The number of arguments must exactly match what is
+specified in &#8216;# call args&#8217;.  The types must match the signature of
+&#8216;target&#8217;.</p>
+<p>The &#8216;deopt parameters&#8217; arguments contain an arbitrary list of Values
+which is meaningful to the runtime.  The runtime may read any of these
+values, but is assumed not to modify them.  If the garbage collector
+might need to modify one of these values, it must also be listed in
+the &#8216;gc pointer&#8217; argument list.  The &#8216;# deopt args&#8217; field indicates
+how many operands are to be interpreted as &#8216;deopt parameters&#8217;.</p>
+<p>The &#8216;gc parameters&#8217; arguments contain every pointer to a garbage
+collector object which potentially needs to be updated by the garbage
+collector.  Note that the argument list must explicitly contain a base
+pointer for every derived pointer listed.  The order of arguments is
+unimportant.  Unlike the other variable length parameter sets, this
+list is not length prefixed.</p>
+</div>
+<div class="section" id="semantics">
+<h4>Semantics:<a class="headerlink" href="#semantics" title="Permalink to this headline">¶</a></h4>
+<p>A statepoint is assumed to read and write all memory.  As a result,
+memory operations can not be reordered past a statepoint.  It is
+illegal to mark a statepoint as being either &#8216;readonly&#8217; or &#8216;readnone&#8217;.</p>
+<p>Note that legal IR can not perform any memory operation on a &#8216;gc
+pointer&#8217; argument of the statepoint in a location statically reachable
+from the statepoint.  Instead, the explicitly relocated value (from a
+&#8216;&#8217;gc.relocate&#8217;&#8216;) must be used.</p>
+</div>
+</div>
+<div class="section" id="gc-result-intrinsic">
+<h3><a class="toc-backref" href="#id14">&#8216;&#8217;&#8216;gc.result&#8217;&#8216;&#8217; Intrinsic</a><a class="headerlink" href="#gc-result-intrinsic" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h4>Syntax:<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python"><div class="highlight"><pre>declare type*
+  @gc.result_ptr(i32 %statepoint_token)
+
+declare fX
+  @gc.result_float(i32 %statepoint_token)
+
+declare iX
+  @gc.result_int(i32 %statepoint_token)
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h4>Overview:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p>&#8216;&#8217;&#8216;gc.result&#8217;&#8216;&#8217; extracts the result of the original call instruction
+which was replaced by the &#8216;&#8217;&#8216;gc.statepoint&#8217;&#8216;&#8217;.  The &#8216;&#8217;&#8216;gc.result&#8217;&#8216;&#8217;
+intrinsic is actually a family of three intrinsics due to an
+implementation limitation.  Other than the type of the return value,
+the semantics are the same.</p>
+</div>
+<div class="section" id="id4">
+<h4>Operands:<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>The first and only argument is the &#8216;&#8217;&#8216;gc.statepoint&#8217;&#8216;&#8217; which starts
+the safepoint sequence of which this &#8216;&#8217;&#8216;gc.result&#8217;&#8217; is a part.
+Despite the typing of this as a generic i32, <em>only</em> the value defined
+by a &#8216;&#8217;&#8216;gc.statepoint&#8217;&#8216;&#8217; is legal here.</p>
+</div>
+<div class="section" id="id5">
+<h4>Semantics:<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<p>The &#8216;&#8217;gc.result&#8217;&#8217; represents the return value of the call target of
+the &#8216;&#8217;statepoint&#8217;&#8216;.  The type of the &#8216;&#8217;gc.result&#8217;&#8217; must exactly match
+the type of the target.  If the call target returns void, there will
+be no &#8216;&#8217;gc.result&#8217;&#8216;.</p>
+<p>A &#8216;&#8217;gc.result&#8217;&#8217; is modeled as a &#8216;readnone&#8217; pure function.  It has no
+side effects since it is just a projection of the return value of the
+previous call represented by the &#8216;&#8217;gc.statepoint&#8217;&#8216;.</p>
+</div>
+</div>
+<div class="section" id="gc-relocate-intrinsic">
+<h3><a class="toc-backref" href="#id15">&#8216;&#8217;&#8216;gc.relocate&#8217;&#8216;&#8217; Intrinsic</a><a class="headerlink" href="#gc-relocate-intrinsic" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h4>Syntax:<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-python"><div class="highlight"><pre>declare &lt;type&gt; addrspace(1)*
+  @gc.relocate(i32 %statepoint_token, i32 %base_offset, i32 %pointer_offset)
+</pre></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h4>Overview:<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p>A &#8216;&#8217;gc.relocate&#8217;&#8217; returns the potentially relocated value of a pointer
+at the safepoint.</p>
+</div>
+<div class="section" id="id8">
+<h4>Operands:<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<p>The first argument is the &#8216;&#8217;&#8216;gc.statepoint&#8217;&#8216;&#8217; which starts the
+safepoint sequence of which this &#8216;&#8217;&#8216;gc.relocation&#8217;&#8217; is a part.
+Despite the typing of this as a generic i32, <em>only</em> the value defined
+by a &#8216;&#8217;&#8216;gc.statepoint&#8217;&#8216;&#8217; is legal here.</p>
+<p>The second argument is an index into the statepoints list of arguments
+which specifies the base pointer for the pointer being relocated.
+This index must land within the &#8216;gc parameter&#8217; section of the
+statepoint&#8217;s argument list.</p>
+<p>The third argument is an index into the statepoint&#8217;s list of arguments
+which specify the (potentially) derived pointer being relocated.  It
+is legal for this index to be the same as the second argument
+if-and-only-if a base pointer is being relocated. This index must land
+within the &#8216;gc parameter&#8217; section of the statepoint&#8217;s argument list.</p>
+</div>
+<div class="section" id="id9">
+<h4>Semantics:<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<p>The return value of &#8216;&#8217;gc.relocate&#8217;&#8217; is the potentially relocated value
+of the pointer specified by it&#8217;s arguments.  It is unspecified how the
+value of the returned pointer relates to the argument to the
+&#8216;&#8217;gc.statepoint&#8217;&#8217; other than that a) it points to the same source
+language object with the same offset, and b) the &#8216;based-on&#8217;
+relationship of the newly relocated pointers is a projection of the
+unrelocated pointers.  In particular, the integer value of the pointer
+returned is unspecified.</p>
+<p>A &#8216;&#8217;gc.relocate&#8217;&#8217; is modeled as a &#8216;readnone&#8217; pure function.  It has no
+side effects since it is just a way to extract information about work
+done during the actual call modeled by the &#8216;&#8217;gc.statepoint&#8217;&#8216;.</p>
+</div>
+</div>
+</div>
+<div class="section" id="stack-map-format">
+<h2><a class="toc-backref" href="#id16">Stack Map Format</a><a class="headerlink" href="#stack-map-format" title="Permalink to this headline">¶</a></h2>
+<p>Locations for each pointer value which may need read and/or updated by
+the runtime or collector are provided via the <a class="reference internal" href="StackMaps.html#stackmap-format"><em>Stack Map format</em></a> specified in the PatchPoint documentation.</p>
+<p>Each statepoint generates the following Locations:</p>
+<ul class="simple">
+<li>Constant which describes number of following deopt <em>Locations</em> (not
+operands)</li>
+<li>Variable number of Locations, one for each deopt parameter listed in
+the IR statepoint (same number as described by previous Constant)</li>
+<li>Variable number of Locations pairs, one pair for each unique pointer
+which needs relocated.  The first Location in each pair describes
+the base pointer for the object.  The second is the derived pointer
+actually being relocated.  It is guaranteed that the base pointer
+must also appear explicitly as a relocation pair if used after the
+statepoint. There may be fewer pairs then gc parameters in the IR
+statepoint. Each <em>unique</em> pair will occur at least once; duplicates
+are possible.</li>
+</ul>
+<p>Note that the Locations used in each section may describe the same
+physical location.  e.g. A stack slot may appear as a deopt location,
+a gc base pointer, and a gc derived pointer.</p>
+<p>The ID field of the &#8216;StkMapRecord&#8217; for a statepoint is meaningless and
+it&#8217;s value is explicitly unspecified.</p>
+<p>The LiveOut section of the StkMapRecord will be empty for a statepoint
+record.</p>
+</div>
+<div class="section" id="safepoint-semantics-verification">
+<h2><a class="toc-backref" href="#id17">Safepoint Semantics &amp; Verification</a><a class="headerlink" href="#safepoint-semantics-verification" title="Permalink to this headline">¶</a></h2>
+<p>The fundamental correctness property for the compiled code&#8217;s
+correctness w.r.t. the garbage collector is a dynamic one.  It must be
+the case that there is no dynamic trace such that a operation
+involving a potentially relocated pointer is observably-after a
+safepoint which could relocate it.  &#8216;observably-after&#8217; is this usage
+means that an outside observer could observe this sequence of events
+in a way which precludes the operation being performed before the
+safepoint.</p>
+<p>To understand why this &#8216;observable-after&#8217; property is required,
+consider a null comparison performed on the original copy of a
+relocated pointer.  Assuming that control flow follows the safepoint,
+there is no way to observe externally whether the null comparison is
+performed before or after the safepoint.  (Remember, the original
+Value is unmodified by the safepoint.)  The compiler is free to make
+either scheduling choice.</p>
+<p>The actual correctness property implemented is slightly stronger than
+this.  We require that there be no <em>static path</em> on which a
+potentially relocated pointer is &#8216;observably-after&#8217; it may have been
+relocated.  This is slightly stronger than is strictly necessary (and
+thus may disallow some otherwise valid programs), but greatly
+simplifies reasoning about correctness of the compiled code.</p>
+<p>By construction, this property will be upheld by the optimizer if
+correctly established in the source IR.  This is a key invariant of
+the design.</p>
+<p>The existing IR Verifier pass has been extended to check most of the
+local restrictions on the intrinsics mentioned in their respective
+documentation.  The current implementation in LLVM does not check the
+key relocation invariant, but this is ongoing work on developing such
+a verifier.  Please ask on llvmdev if you&#8217;re interested in
+experimenting with the current version.</p>
+</div>
+<div class="section" id="bugs-and-enhancements">
+<h2><a class="toc-backref" href="#id18">Bugs and Enhancements</a><a class="headerlink" href="#bugs-and-enhancements" title="Permalink to this headline">¶</a></h2>
+<p>Currently known bugs and enhancements under consideration can be
+tracked by performing a <a class="reference external" href="http://llvm.org/bugs/buglist.cgi?cmdtype=runnamed&amp;namedcmd=Statepoint%20Bugs&amp;list_id=64342">bugzilla search</a>
+for [Statepoint] in the summary field. When filing new bugs, please
+use this tag so that interested parties see the newly filed bug.  As
+with most LLVM features, design discussions take place on <a class="reference external" href="http://lists.cs.uiuc.edu/mailman/listinfo/llvmdev">llvmdev</a>, and patches
+should be sent to <a class="reference external" href="http://lists.cs.uiuc.edu/mailman/listinfo/llvm-commits">llvm-commits</a> for review.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="MergeFunctions.html" title="MergeFunctions pass, how it works"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="CoverageMappingFormat.html" title="LLVM Code Coverage Mapping Format"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2003-2014, LLVM Project.
+      Last updated on 2015-03-05.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
