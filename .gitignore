@@ -53,5 +53,5 @@ coverage.xml
 docs/_build/
 
 #
-llvm-3.6.0.src.tar.xz
-llvm-3.6.0.src
+llvm-*.src.tar.xz
+llvm-*.src
