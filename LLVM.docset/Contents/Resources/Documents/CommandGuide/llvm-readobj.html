@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-readobj-llvm-object-reader">
 <h1>llvm-readobj - LLVM Object Reader<a class="headerlink" href="#llvm-readobj-llvm-object-reader" title="Permalink to this headline">¶</a></h1>
@@ -79,96 +79,96 @@ for use in FileCheck-based tests.</p>
 </div>
 <div class="section" id="options">
 <h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
-<p>If <tt class="docutils literal"><span class="pre">input</span></tt> is &#8220;<tt class="docutils literal"><span class="pre">-</span></tt>&#8221; or omitted, <strong class="program">llvm-readobj</strong> reads from standard
-input. Otherwise, it will read from the specified <tt class="docutils literal"><span class="pre">filenames</span></tt>.</p>
+<p>If <code class="docutils literal"><span class="pre">input</span></code> is &#8220;<code class="docutils literal"><span class="pre">-</span></code>&#8221; or omitted, <strong class="program">llvm-readobj</strong> reads from standard
+input. Otherwise, it will read from the specified <code class="docutils literal"><span class="pre">filenames</span></code>.</p>
 <dl class="option">
 <dt id="cmdoption-help">
-<tt class="descname">-help</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-help" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-help" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a summary of command line options.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-version">
-<tt class="descname">-version</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-version" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-version</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display the version of this program</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-file-headers">
-<span id="cmdoption-h"></span><tt class="descname">-file-headers</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-h</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-file-headers" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-h"></span><code class="descname">-file-headers</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-h</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-file-headers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display file headers.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-sections">
-<span id="cmdoption-s"></span><tt class="descname">-sections</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-s</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-sections" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-s"></span><code class="descname">-sections</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-s</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-sections" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display all sections.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-section-data">
-<span id="cmdoption-sd"></span><tt class="descname">-section-data</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-sd</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-section-data" title="Permalink to this definition">¶</a></dt>
-<dd><p>When used with <tt class="docutils literal"><span class="pre">-sections</span></tt>, display section data for each section shown.</p>
+<span id="cmdoption-sd"></span><code class="descname">-section-data</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-sd</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-section-data" title="Permalink to this definition">¶</a></dt>
+<dd><p>When used with <code class="docutils literal"><span class="pre">-sections</span></code>, display section data for each section shown.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-section-relocations">
-<span id="cmdoption-sr"></span><tt class="descname">-section-relocations</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-sr</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-section-relocations" title="Permalink to this definition">¶</a></dt>
-<dd><p>When used with <tt class="docutils literal"><span class="pre">-sections</span></tt>, display relocations for each section shown.</p>
+<span id="cmdoption-sr"></span><code class="descname">-section-relocations</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-sr</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-section-relocations" title="Permalink to this definition">¶</a></dt>
+<dd><p>When used with <code class="docutils literal"><span class="pre">-sections</span></code>, display relocations for each section shown.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-section-symbols">
-<span id="cmdoption-st"></span><tt class="descname">-section-symbols</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-st</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-section-symbols" title="Permalink to this definition">¶</a></dt>
-<dd><p>When used with <tt class="docutils literal"><span class="pre">-sections</span></tt>, display symbols for each section shown.</p>
+<span id="cmdoption-st"></span><code class="descname">-section-symbols</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-st</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-section-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>When used with <code class="docutils literal"><span class="pre">-sections</span></code>, display symbols for each section shown.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-relocations">
-<span id="cmdoption-r"></span><tt class="descname">-relocations</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-r</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-relocations" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-r"></span><code class="descname">-relocations</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-r</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-relocations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display the relocation entries in the file.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-symbols">
-<span id="cmdoption-t"></span><tt class="descname">-symbols</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-t</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-symbols" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-t"></span><code class="descname">-symbols</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-t</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-symbols" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display the symbol table.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-dyn-symbols">
-<tt class="descname">-dyn-symbols</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-dyn-symbols" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-dyn-symbols</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-dyn-symbols" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display the dynamic symbol table (only for ELF object files).</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-unwind">
-<span id="cmdoption-u"></span><tt class="descname">-unwind</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-u</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-unwind" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-u"></span><code class="descname">-unwind</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-u</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-unwind" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display unwind information.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-expand-relocs">
-<tt class="descname">-expand-relocs</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-expand-relocs" title="Permalink to this definition">¶</a></dt>
-<dd><p>When used with <tt class="docutils literal"><span class="pre">-relocations</span></tt>, display each relocation in an expanded
+<code class="descname">-expand-relocs</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-expand-relocs" title="Permalink to this definition">¶</a></dt>
+<dd><p>When used with <code class="docutils literal"><span class="pre">-relocations</span></code>, display each relocation in an expanded
 multi-line format.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-dynamic-table">
-<tt class="descname">-dynamic-table</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-dynamic-table" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-dynamic-table</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-dynamic-table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display the ELF .dynamic section table (only for ELF object files).</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-needed-libs">
-<tt class="descname">-needed-libs</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-needed-libs" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-needed-libs</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-needed-libs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display the needed libraries (only for ELF object files).</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-program-headers">
-<tt class="descname">-program-headers</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-program-headers" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-program-headers</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-program-headers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display the ELF program headers (only for ELF object files).</p>
 </dd></dl>
 
@@ -184,7 +184,7 @@ multi-line format.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -199,13 +199,13 @@ multi-line format.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

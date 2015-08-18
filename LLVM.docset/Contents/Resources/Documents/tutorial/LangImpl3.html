@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-code-generation-to-llvm-ir">
 <h1>3. Kaleidoscope: Code generation to LLVM IR<a class="headerlink" href="#kaleidoscope-code-generation-to-llvm-ir" title="Permalink to this headline">¶</a></h1>
@@ -141,23 +141,23 @@ parser, which will be used to report errors found during code generation
 <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">Value</span><span class="o">*&gt;</span> <span class="n">NamedValues</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>The static variables will be used during code generation. <tt class="docutils literal"><span class="pre">TheModule</span></tt>
+<p>The static variables will be used during code generation. <code class="docutils literal"><span class="pre">TheModule</span></code>
 is the LLVM construct that contains all of the functions and global
 variables in a chunk of code. In many ways, it is the top-level
 structure that the LLVM IR uses to contain code.</p>
-<p>The <tt class="docutils literal"><span class="pre">Builder</span></tt> object is a helper object that makes it easy to generate
+<p>The <code class="docutils literal"><span class="pre">Builder</span></code> object is a helper object that makes it easy to generate
 LLVM instructions. Instances of the
-<tt class="docutils literal"><span class="pre">`IRBuilder</span></tt> &lt;<a class="reference external" href="http://llvm.org/doxygen/IRBuilder_8h-source.html">http://llvm.org/doxygen/IRBuilder_8h-source.html</a>&gt;`_
+<code class="docutils literal"><span class="pre">`IRBuilder</span></code> &lt;<a class="reference external" href="http://llvm.org/doxygen/IRBuilder_8h-source.html">http://llvm.org/doxygen/IRBuilder_8h-source.html</a>&gt;`_
 class template keep track of the current place to insert instructions
 and has methods to create new instructions.</p>
-<p>The <tt class="docutils literal"><span class="pre">NamedValues</span></tt> map keeps track of which values are defined in the
+<p>The <code class="docutils literal"><span class="pre">NamedValues</span></code> map keeps track of which values are defined in the
 current scope and what their LLVM representation is. (In other words, it
 is a symbol table for the code). In this form of Kaleidoscope, the only
 things that can be referenced are function parameters. As such, function
 parameters will be in this map when generating code for their function
 body.</p>
 <p>With these basics in place, we can start talking about how to generate
-code for each expression. Note that this assumes that the <tt class="docutils literal"><span class="pre">Builder</span></tt>
+code for each expression. Note that this assumes that the <code class="docutils literal"><span class="pre">Builder</span></code>
 has been set up to generate code <em>into</em> something. For now, we&#8217;ll assume
 that this has already been done, and we&#8217;ll just use it to emit code.</p>
 </div>
@@ -172,10 +172,10 @@ First we&#8217;ll do numeric literals:</p>
 </pre></div>
 </div>
 <p>In the LLVM IR, numeric constants are represented with the
-<tt class="docutils literal"><span class="pre">ConstantFP</span></tt> class, which holds the numeric value in an <tt class="docutils literal"><span class="pre">APFloat</span></tt>
-internally (<tt class="docutils literal"><span class="pre">APFloat</span></tt> has the capability of holding floating point
+<code class="docutils literal"><span class="pre">ConstantFP</span></code> class, which holds the numeric value in an <code class="docutils literal"><span class="pre">APFloat</span></code>
+internally (<code class="docutils literal"><span class="pre">APFloat</span></code> has the capability of holding floating point
 constants of Arbitrary Precision). This code basically just creates
-and returns a <tt class="docutils literal"><span class="pre">ConstantFP</span></tt>. Note that in the LLVM IR that constants
+and returns a <code class="docutils literal"><span class="pre">ConstantFP</span></code>. Note that in the LLVM IR that constants
 are all uniqued together and shared. For this reason, the API uses the
 &#8220;foo::get(...)&#8221; idiom instead of &#8220;new foo(..)&#8221; or &#8220;foo::Create(..)&#8221;.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">Value</span> <span class="o">*</span><span class="n">VariableExprAST</span><span class="o">::</span><span class="n">Codegen</span><span class="p">()</span> <span class="p">{</span>
@@ -188,7 +188,7 @@ are all uniqued together and shared. For this reason, the API uses the
 <p>References to variables are also quite simple using LLVM. In the simple
 version of Kaleidoscope, we assume that the variable has already been
 emitted somewhere and its value is available. In practice, the only
-values that can be in the <tt class="docutils literal"><span class="pre">NamedValues</span></tt> map are function arguments.
+values that can be in the <code class="docutils literal"><span class="pre">NamedValues</span></code> map are function arguments.
 This code simply checks to see that the specified name is in the map (if
 not, an unknown variable is being referenced) and returns the value for
 it. In future chapters, we&#8217;ll add support for <a class="reference external" href="LangImpl5.html#for">loop induction
@@ -221,7 +221,7 @@ the right LLVM instruction.</p>
 <p>In the example above, the LLVM builder class is starting to show its
 value. IRBuilder knows where to insert the newly created instruction,
 all you have to do is specify what instruction to create (e.g. with
-<tt class="docutils literal"><span class="pre">CreateFAdd</span></tt>), which operands to use (<tt class="docutils literal"><span class="pre">L</span></tt> and <tt class="docutils literal"><span class="pre">R</span></tt> here) and
+<code class="docutils literal"><span class="pre">CreateFAdd</span></code>), which operands to use (<code class="docutils literal"><span class="pre">L</span></code> and <code class="docutils literal"><span class="pre">R</span></code> here) and
 optionally provide a name for the generated instruction.</p>
 <p>One nice thing about LLVM is that the name is just a hint. For instance,
 if the code above emits multiple &#8220;addtmp&#8221; variables, LLVM will
@@ -305,10 +305,10 @@ function returns a &#8220;Function*&#8221; instead of a &#8220;Value*&#8221;. Be
 &#8220;prototype&#8221; really talks about the external interface for a function
 (not the value computed by an expression), it makes sense for it to
 return the LLVM Function it corresponds to when codegen&#8217;d.</p>
-<p>The call to <tt class="docutils literal"><span class="pre">FunctionType::get</span></tt> creates the <tt class="docutils literal"><span class="pre">FunctionType</span></tt> that
+<p>The call to <code class="docutils literal"><span class="pre">FunctionType::get</span></code> creates the <code class="docutils literal"><span class="pre">FunctionType</span></code> that
 should be used for a given Prototype. Since all function arguments in
 Kaleidoscope are of type double, the first line creates a vector of &#8220;N&#8221;
-LLVM double types. It then uses the <tt class="docutils literal"><span class="pre">Functiontype::get</span></tt> method to
+LLVM double types. It then uses the <code class="docutils literal"><span class="pre">Functiontype::get</span></code> method to
 create a function type that takes &#8220;N&#8221; doubles as arguments, returns one
 double as a result, and that is not vararg (the false parameter
 indicates this). Note that Types in LLVM are uniqued just like Constants
@@ -319,8 +319,8 @@ well as which module to insert into. &#8220;<a class="reference external" href="
 linkage</a>&#8221; means that the function may be
 defined outside the current module and/or that it is callable by
 functions outside the module. The Name passed in is the name the user
-specified: since &#8220;<tt class="docutils literal"><span class="pre">TheModule</span></tt>&#8221; is specified, this name is registered
-in &#8220;<tt class="docutils literal"><span class="pre">TheModule</span></tt>&#8220;s symbol table, which is used by the function call
+specified: since &#8220;<code class="docutils literal"><span class="pre">TheModule</span></code>&#8221; is specified, this name is registered
+in &#8220;<code class="docutils literal"><span class="pre">TheModule</span></code>&#8220;s symbol table, which is used by the function call
 code above.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="c1">// If F conflicted, there was already something named &#39;Name&#39;.  If it has a</span>
 <span class="c1">// body, don&#39;t allow redefinition or reextern.</span>
@@ -345,8 +345,8 @@ defining a body for it. This is useful when defining mutually recursive
 functions.</p>
 <p>In order to implement this, the code above first checks to see if there
 is a collision on the name of the function. If so, it deletes the
-function we just created (by calling <tt class="docutils literal"><span class="pre">eraseFromParent</span></tt>) and then
-calling <tt class="docutils literal"><span class="pre">getFunction</span></tt> to get the existing function with the specified
+function we just created (by calling <code class="docutils literal"><span class="pre">eraseFromParent</span></code>) and then
+calling <code class="docutils literal"><span class="pre">getFunction</span></code> to get the existing function with the specified
 name. Note that many APIs in LLVM have &#8220;erase&#8221; forms and &#8220;remove&#8221; forms.
 The &#8220;remove&#8221; form unlinks the object from its parent (e.g. a Function
 from a Module) and returns it. The &#8220;erase&#8221; form unlinks the object and
@@ -388,8 +388,8 @@ we emit an error.</p>
 </div>
 <p>The last bit of code for prototypes loops over all of the arguments in
 the function, setting the name of the LLVM Argument objects to match,
-and registering the arguments in the <tt class="docutils literal"><span class="pre">NamedValues</span></tt> map for future use
-by the <tt class="docutils literal"><span class="pre">VariableExprAST</span></tt> AST node. Once this is set up, it returns the
+and registering the arguments in the <code class="docutils literal"><span class="pre">NamedValues</span></code> map for future use
+by the <code class="docutils literal"><span class="pre">VariableExprAST</span></code> AST node. Once this is set up, it returns the
 Function object to the caller. Note that we don&#8217;t check for conflicting
 argument names here (e.g. &#8220;extern foo(a b a)&#8221;). Doing so would be very
 straight-forward with the mechanics we have already used above.</p>
@@ -403,7 +403,7 @@ straight-forward with the mechanics we have already used above.</p>
 </div>
 <p>Code generation for function definitions starts out simply enough: we
 just codegen the prototype (Proto) and verify that it is ok. We then
-clear out the <tt class="docutils literal"><span class="pre">NamedValues</span></tt> map to make sure that there isn&#8217;t anything
+clear out the <code class="docutils literal"><span class="pre">NamedValues</span></code> map to make sure that there isn&#8217;t anything
 in it from the last function we compiled. Code generation of the
 prototype ensures that there is an LLVM Function object that is ready to
 go for us.</p>
@@ -414,9 +414,9 @@ go for us.</p>
 <span class="k">if</span> <span class="p">(</span><span class="n">Value</span> <span class="o">*</span><span class="n">RetVal</span> <span class="o">=</span> <span class="n">Body</span><span class="o">-&gt;</span><span class="n">Codegen</span><span class="p">())</span> <span class="p">{</span>
 </pre></div>
 </div>
-<p>Now we get to the point where the <tt class="docutils literal"><span class="pre">Builder</span></tt> is set up. The first line
+<p>Now we get to the point where the <code class="docutils literal"><span class="pre">Builder</span></code> is set up. The first line
 creates a new <a class="reference external" href="http://en.wikipedia.org/wiki/Basic_block">basic block</a>
-(named &#8220;entry&#8221;), which is inserted into <tt class="docutils literal"><span class="pre">TheFunction</span></tt>. The second line
+(named &#8220;entry&#8221;), which is inserted into <code class="docutils literal"><span class="pre">TheFunction</span></code>. The second line
 then tells the builder that new instructions should be inserted into the
 end of the new basic block. Basic blocks in LLVM are an important part
 of functions that define the <a class="reference external" href="http://en.wikipedia.org/wiki/Control_flow_graph">Control Flow
@@ -434,12 +434,12 @@ at this point. We&#8217;ll fix this in <a class="reference external" href="LangI
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Once the insertion point is set up, we call the <tt class="docutils literal"><span class="pre">CodeGen()</span></tt> method for
+<p>Once the insertion point is set up, we call the <code class="docutils literal"><span class="pre">CodeGen()</span></code> method for
 the root expression of the function. If no error happens, this emits
 code to compute the expression into the entry block and returns the
 value that was computed. Assuming no error, we then create an LLVM <a class="reference external" href="../LangRef.html#i_ret">ret
 instruction</a>, which completes the function.
-Once the function is built, we call <tt class="docutils literal"><span class="pre">verifyFunction</span></tt>, which is
+Once the function is built, we call <code class="docutils literal"><span class="pre">verifyFunction</span></code>, which is
 provided by LLVM. This function does a variety of consistency checks on
 the generated code, to determine if our compiler is doing everything
 right. Using this is important: it can catch a lot of bugs. Once the
@@ -452,10 +452,10 @@ function is finished and validated, we return it.</p>
 </div>
 <p>The only piece left here is handling of the error case. For simplicity,
 we handle this by merely deleting the function we produced with the
-<tt class="docutils literal"><span class="pre">eraseFromParent</span></tt> method. This allows the user to redefine a function
+<code class="docutils literal"><span class="pre">eraseFromParent</span></code> method. This allows the user to redefine a function
 that they incorrectly typed in before: if we didn&#8217;t delete it, it would
 live in the symbol table, with a body, preventing future redefinition.</p>
-<p>This code does have a bug, though. Since the <tt class="docutils literal"><span class="pre">PrototypeAST::Codegen</span></tt>
+<p>This code does have a bug, though. Since the <code class="docutils literal"><span class="pre">PrototypeAST::Codegen</span></code>
 can return a previously defined forward declaration, our code can
 actually delete a forward declaration. There are a number of ways to fix
 this bug, see what you can come up with! Here is a testcase:</p>
@@ -469,7 +469,7 @@ def bar() foo(1, 2); # error, unknown function &quot;foo&quot;
 <h2><a class="toc-backref" href="#id5">3.5. Driver Changes and Closing Thoughts</a><a class="headerlink" href="#driver-changes-and-closing-thoughts" title="Permalink to this headline">¶</a></h2>
 <p>For now, code generation to LLVM doesn&#8217;t really get us much, except that
 we can look at the pretty IR calls. The sample code inserts calls to
-Codegen into the &#8220;<tt class="docutils literal"><span class="pre">HandleDefinition</span></tt>&#8221;, &#8220;<tt class="docutils literal"><span class="pre">HandleExtern</span></tt>&#8221; etc
+Codegen into the &#8220;<code class="docutils literal"><span class="pre">HandleDefinition</span></code>&#8221;, &#8220;<code class="docutils literal"><span class="pre">HandleExtern</span></code>&#8221; etc
 functions, and then dumps out the LLVM IR. This gives a nice way to look
 at the LLVM IR for simple functions. For example:</p>
 <div class="highlight-python"><div class="highlight"><pre>ready&gt; 4+5;
@@ -1166,7 +1166,7 @@ clang++ -g -O3 toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1181,13 +1181,13 @@ clang++ -g -O3 toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="segmented-stacks-in-llvm">
 <h1>Segmented Stacks in LLVM<a class="headerlink" href="#segmented-stacks-in-llvm" title="Permalink to this headline">¶</a></h1>
@@ -83,7 +83,7 @@ done by allocating stack blocks (henceforth called <em>stacklets</em>) and linki
 into a doubly linked list. The function prologue is responsible for checking if
 the current stacklet has enough space for the function to execute; and if not,
 call into the libgcc runtime to allocate more stack space. Segmented stacks are
-enabled with the <tt class="docutils literal"><span class="pre">&quot;split-stack&quot;</span></tt> attribute on LLVM functions.</p>
+enabled with the <code class="docutils literal"><span class="pre">&quot;split-stack&quot;</span></code> attribute on LLVM functions.</p>
 <p>The runtime functionality is <a class="reference external" href="http://gcc.gnu.org/wiki/SplitStacks">already there in libgcc</a>.</p>
 </div>
 <div class="section" id="implementation-details">
@@ -93,7 +93,7 @@ enabled with the <tt class="docutils literal"><span class="pre">&quot;split-stac
 <p>As mentioned above, the function prologue checks if the current stacklet has
 enough space. The current approach is to use a slot in the TCB to store the
 current stack limit (minus the amount of space needed to allocate a new block) -
-this slot&#8217;s offset is again dictated by <tt class="docutils literal"><span class="pre">libgcc</span></tt>. The generated
+this slot&#8217;s offset is again dictated by <code class="docutils literal"><span class="pre">libgcc</span></code>. The generated
 assembly looks like this on x86-64:</p>
 <div class="highlight-nasm"><div class="highlight"><pre>  leaq     -8(%rsp), %r10
   cmpq     %fs:112,  %r10
@@ -109,27 +109,27 @@ assembly looks like this on x86-64:</p>
 </pre></div>
 </div>
 <p>The size of function arguments on the stack needs to be passed to
-<tt class="docutils literal"><span class="pre">__morestack</span></tt> (this function is implemented in <tt class="docutils literal"><span class="pre">libgcc</span></tt>) since that number
+<code class="docutils literal"><span class="pre">__morestack</span></code> (this function is implemented in <code class="docutils literal"><span class="pre">libgcc</span></code>) since that number
 of bytes has to be copied from the previous stacklet to the current one. This is
 so that SP (and FP) relative addressing of function arguments work as expected.</p>
-<p>The unusual <tt class="docutils literal"><span class="pre">ret</span></tt> is needed to have the function which made a call to
-<tt class="docutils literal"><span class="pre">__morestack</span></tt> return correctly. <tt class="docutils literal"><span class="pre">__morestack</span></tt>, instead of returning, calls
-into <tt class="docutils literal"><span class="pre">.LBB0_2</span></tt>. This is possible since both, the size of the <tt class="docutils literal"><span class="pre">ret</span></tt>
-instruction and the PC of call to <tt class="docutils literal"><span class="pre">__morestack</span></tt> are known. When the function
-body returns, control is transferred back to <tt class="docutils literal"><span class="pre">__morestack</span></tt>. <tt class="docutils literal"><span class="pre">__morestack</span></tt>
+<p>The unusual <code class="docutils literal"><span class="pre">ret</span></code> is needed to have the function which made a call to
+<code class="docutils literal"><span class="pre">__morestack</span></code> return correctly. <code class="docutils literal"><span class="pre">__morestack</span></code>, instead of returning, calls
+into <code class="docutils literal"><span class="pre">.LBB0_2</span></code>. This is possible since both, the size of the <code class="docutils literal"><span class="pre">ret</span></code>
+instruction and the PC of call to <code class="docutils literal"><span class="pre">__morestack</span></code> are known. When the function
+body returns, control is transferred back to <code class="docutils literal"><span class="pre">__morestack</span></code>. <code class="docutils literal"><span class="pre">__morestack</span></code>
 then de-allocates the new stacklet, restores the correct SP value, and does a
 second return, which returns control to the correct caller.</p>
 </div>
 <div class="section" id="variable-sized-allocas">
 <h3><a class="toc-backref" href="#id5">Variable Sized Allocas</a><a class="headerlink" href="#variable-sized-allocas" title="Permalink to this headline">¶</a></h3>
 <p>The section on <a class="reference internal" href="#allocating-stacklets">allocating stacklets</a> automatically assumes that every stack
-frame will be of fixed size. However, LLVM allows the use of the <tt class="docutils literal"><span class="pre">llvm.alloca</span></tt>
+frame will be of fixed size. However, LLVM allows the use of the <code class="docutils literal"><span class="pre">llvm.alloca</span></code>
 intrinsic to allocate dynamically sized blocks of memory on the stack. When
 faced with such a variable-sized alloca, code is generated to:</p>
 <ul class="simple">
 <li>Check if the current stacklet has enough space. If yes, just bump the SP, like
 in the normal case.</li>
-<li>If not, generate a call to <tt class="docutils literal"><span class="pre">libgcc</span></tt>, which allocates the memory from the
+<li>If not, generate a call to <code class="docutils literal"><span class="pre">libgcc</span></code>, which allocates the memory from the
 heap.</li>
 </ul>
 <p>The memory allocated from the heap is linked into a list in the current
@@ -143,7 +143,7 @@ stacklet, and freed along with the same. This prevents a memory leak.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -160,10 +160,10 @@ stacklet, and freed along with the same. This prevents a memory leak.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

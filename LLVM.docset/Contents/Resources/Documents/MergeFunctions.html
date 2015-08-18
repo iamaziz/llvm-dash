@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="mergefunctions-pass-how-it-works">
 <h1>MergeFunctions pass, how it works<a class="headerlink" href="#mergefunctions-pass-how-it-works" title="Permalink to this headline">¶</a></h1>
@@ -203,7 +203,7 @@ themselves.</p>
 (let&#8217;s assume we have only one address space),  one function stores 64-bit
 integer, while another one stores a pointer. So if the target is a machine
 mentioned above, and if functions are identical, except the parameter type (we
-could consider it as a part of function type), then we can treat <tt class="docutils literal"><span class="pre">uint64_t</span></tt>
+could consider it as a part of function type), then we can treat <code class="docutils literal"><span class="pre">uint64_t</span></code>
 and``void*`` as equal.</p>
 <p>It was just an example; possible details are described a bit below.</p>
 <p>As another example reader may imagine two more functions. First function
@@ -267,16 +267,16 @@ once again, <em>total-ordering</em> could be considered as a milestone for even 
 <div class="section" id="mergefunctions-main-fields-and-runonmodule">
 <h4><a class="toc-backref" href="#id12">MergeFunctions, main fields and runOnModule</a><a class="headerlink" href="#mergefunctions-main-fields-and-runonmodule" title="Permalink to this headline">¶</a></h4>
 <p>There are two most important fields in class:</p>
-<p><tt class="docutils literal"><span class="pre">FnTree</span></tt>  – the set of all unique functions. It keeps items that couldn&#8217;t be
+<p><code class="docutils literal"><span class="pre">FnTree</span></code>  – the set of all unique functions. It keeps items that couldn&#8217;t be
 merged with each other. It is defined as:</p>
-<p><tt class="docutils literal"><span class="pre">std::set&lt;FunctionNode&gt;</span> <span class="pre">FnTree;</span></tt></p>
-<p>Here <tt class="docutils literal"><span class="pre">FunctionNode</span></tt> is a wrapper for <tt class="docutils literal"><span class="pre">llvm::Function</span></tt> class, with
+<p><code class="docutils literal"><span class="pre">std::set&lt;FunctionNode&gt;</span> <span class="pre">FnTree;</span></code></p>
+<p>Here <code class="docutils literal"><span class="pre">FunctionNode</span></code> is a wrapper for <code class="docutils literal"><span class="pre">llvm::Function</span></code> class, with
 implemented “&lt;” operator among the functions set (below we explain how it works
 exactly; this is a key point in fast functions comparison).</p>
-<p><tt class="docutils literal"><span class="pre">Deferred</span></tt> – merging process can affect bodies of functions that are in
-<tt class="docutils literal"><span class="pre">FnTree</span></tt> already. Obviously such functions should be rechecked again. In this
-case we remove them from <tt class="docutils literal"><span class="pre">FnTree</span></tt>, and mark them as to be rescanned, namely
-put them into <tt class="docutils literal"><span class="pre">Deferred</span></tt> list.</p>
+<p><code class="docutils literal"><span class="pre">Deferred</span></code> – merging process can affect bodies of functions that are in
+<code class="docutils literal"><span class="pre">FnTree</span></code> already. Obviously such functions should be rechecked again. In this
+case we remove them from <code class="docutils literal"><span class="pre">FnTree</span></code>, and mark them as to be rescanned, namely
+put them into <code class="docutils literal"><span class="pre">Deferred</span></code> list.</p>
 <div class="section" id="runonmodule">
 <h5><a class="toc-backref" href="#id13">runOnModule</a><a class="headerlink" href="#runonmodule" title="Permalink to this headline">¶</a></h5>
 <p>The algorithm is pretty simple:</p>
@@ -312,10 +312,10 @@ possible values:</p>
 <p>Of course it means, that we have to maintain
 <em>strict and non-strict order relation properties</em>:</p>
 <ul class="simple">
-<li>reflexivity (<tt class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">a</span></tt>, <tt class="docutils literal"><span class="pre">a</span> <span class="pre">==</span> <span class="pre">a</span></tt>, <tt class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;=</span> <span class="pre">a</span></tt>),</li>
-<li>antisymmetry (if <tt class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">b</span></tt> and <tt class="docutils literal"><span class="pre">b</span> <span class="pre">&lt;=</span> <span class="pre">a</span></tt> then <tt class="docutils literal"><span class="pre">a</span> <span class="pre">==</span> <span class="pre">b</span></tt>),</li>
-<li>transitivity (<tt class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">b</span></tt> and <tt class="docutils literal"><span class="pre">b</span> <span class="pre">&lt;=</span> <span class="pre">c</span></tt>, then <tt class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">c</span></tt>)</li>
-<li>asymmetry (if <tt class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span></tt>, then <tt class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">b</span></tt> or <tt class="docutils literal"><span class="pre">a</span> <span class="pre">==</span> <span class="pre">b</span></tt>).</li>
+<li>reflexivity (<code class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">a</span></code>, <code class="docutils literal"><span class="pre">a</span> <span class="pre">==</span> <span class="pre">a</span></code>, <code class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;=</span> <span class="pre">a</span></code>),</li>
+<li>antisymmetry (if <code class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">b</span></code> and <code class="docutils literal"><span class="pre">b</span> <span class="pre">&lt;=</span> <span class="pre">a</span></code> then <code class="docutils literal"><span class="pre">a</span> <span class="pre">==</span> <span class="pre">b</span></code>),</li>
+<li>transitivity (<code class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">b</span></code> and <code class="docutils literal"><span class="pre">b</span> <span class="pre">&lt;=</span> <span class="pre">c</span></code>, then <code class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">c</span></code>)</li>
+<li>asymmetry (if <code class="docutils literal"><span class="pre">a</span> <span class="pre">&lt;</span> <span class="pre">b</span></code>, then <code class="docutils literal"><span class="pre">a</span> <span class="pre">&gt;</span> <span class="pre">b</span></code> or <code class="docutils literal"><span class="pre">a</span> <span class="pre">==</span> <span class="pre">b</span></code>).</li>
 </ul>
 <p>As it was mentioned before, comparison routine consists of
 &#8220;sub-comparison-routines&#8221;, each of them also consists
@@ -323,11 +323,11 @@ possible values:</p>
 comparison.</p>
 <p>Below, we will use the next operations:</p>
 <ol class="arabic simple">
-<li><tt class="docutils literal"><span class="pre">cmpNumbers(number1,</span> <span class="pre">number2)</span></tt> is method that returns -1 if left is less
+<li><code class="docutils literal"><span class="pre">cmpNumbers(number1,</span> <span class="pre">number2)</span></code> is method that returns -1 if left is less
 than right; 0, if left and right are equal; and 1 otherwise.</li>
-<li><tt class="docutils literal"><span class="pre">cmpFlags(flag1,</span> <span class="pre">flag2)</span></tt> is hypothetical method that compares two flags.
-The logic is the same as in <tt class="docutils literal"><span class="pre">cmpNumbers</span></tt>, where <tt class="docutils literal"><span class="pre">true</span></tt> is 1, and
-<tt class="docutils literal"><span class="pre">false</span></tt> is 0.</li>
+<li><code class="docutils literal"><span class="pre">cmpFlags(flag1,</span> <span class="pre">flag2)</span></code> is hypothetical method that compares two flags.
+The logic is the same as in <code class="docutils literal"><span class="pre">cmpNumbers</span></code>, where <code class="docutils literal"><span class="pre">true</span></code> is 1, and
+<code class="docutils literal"><span class="pre">false</span></code> is 0.</li>
 </ol>
 <p>The rest of article is based on <em>MergeFunctions.cpp</em> source code
 (<em>&lt;llvm_dir&gt;/lib/Transforms/IPO/MergeFunctions.cpp</em>). We would like to ask
@@ -354,16 +354,16 @@ result of <em>T1</em> and <em>T2</em> comparison itself.</li>
 <div class="section" id="functioncomparator-compare-void">
 <h3><a class="toc-backref" href="#id16">FunctionComparator::compare(void)</a><a class="headerlink" href="#functioncomparator-compare-void" title="Permalink to this headline">¶</a></h3>
 <p>Brief look at the source code tells us, that comparison starts in
-“<tt class="docutils literal"><span class="pre">int</span> <span class="pre">FunctionComparator::compare(void)</span></tt>” method.</p>
+“<code class="docutils literal"><span class="pre">int</span> <span class="pre">FunctionComparator::compare(void)</span></code>” method.</p>
 <p>1. First parts to be compared are function&#8217;s attributes and some properties that
 outsides “attributes” term, but still could make function different without
 changing its body. This part of comparison is usually done within simple
 <em>cmpNumbers</em> or <em>cmpFlags</em> operations (e.g.
-<tt class="docutils literal"><span class="pre">cmpFlags(F1-&gt;hasGC(),</span> <span class="pre">F2-&gt;hasGC())</span></tt>). Below is full list of function&#8217;s
+<code class="docutils literal"><span class="pre">cmpFlags(F1-&gt;hasGC(),</span> <span class="pre">F2-&gt;hasGC())</span></code>). Below is full list of function&#8217;s
 properties to be compared on this stage:</p>
 <blockquote>
 <div><ul class="simple">
-<li><em>Attributes</em> (those are returned by <tt class="docutils literal"><span class="pre">Function::getAttributes()</span></tt>
+<li><em>Attributes</em> (those are returned by <code class="docutils literal"><span class="pre">Function::getAttributes()</span></code>
 method).</li>
 <li><em>GC</em>, for equivalence, <em>RHS</em> and <em>LHS</em> should be both either without
 <em>GC</em> or with the same one.</li>
@@ -374,7 +374,7 @@ without <em>var-args</em>.</li>
 <li><em>Calling convention</em> should be the same.</li>
 </ul>
 </div></blockquote>
-<p>2. Function type. Checked by <tt class="docutils literal"><span class="pre">FunctionComparator::cmpType(Type*,</span> <span class="pre">Type*)</span></tt>
+<p>2. Function type. Checked by <code class="docutils literal"><span class="pre">FunctionComparator::cmpType(Type*,</span> <span class="pre">Type*)</span></code>
 method. It checks return type and parameters type; the method itself will be
 described later.</p>
 <p>3. Associate function formal parameters with each other. Then comparing function
@@ -382,7 +382,7 @@ bodies, if we see the usage of <em>LHS</em>&#8216;s <em>i</em>-th argument in <e
 we want to see usage of <em>RHS</em>&#8216;s <em>i</em>-th argument at the same place in <em>RHS</em>&#8216;s
 body, otherwise functions are different. On this stage we grant the preference
 to those we met later in function body (value we met first would be <em>less</em>).
-This is done by “<tt class="docutils literal"><span class="pre">FunctionComparator::cmpValues(const</span> <span class="pre">Value*,</span> <span class="pre">const</span> <span class="pre">Value*)</span></tt>”
+This is done by “<code class="docutils literal"><span class="pre">FunctionComparator::cmpValues(const</span> <span class="pre">Value*,</span> <span class="pre">const</span> <span class="pre">Value*)</span></code>”
 method (will be described a bit later).</p>
 <ol class="arabic simple" start="4">
 <li>Function body comparison. As it written in method comments:</li>
@@ -392,10 +392,10 @@ list is immaterial. Our walk starts at the entry block for both functions, then
 takes each block from each terminator in order. As an artifact, this also means
 that unreachable blocks are ignored.”</p>
 <p>So, using this walk we get BBs from <em>left</em> and <em>right</em> in the same order, and
-compare them by “<tt class="docutils literal"><span class="pre">FunctionComparator::compare(const</span> <span class="pre">BasicBlock*,</span> <span class="pre">const</span>
-<span class="pre">BasicBlock*)</span></tt>” method.</p>
+compare them by “<code class="docutils literal"><span class="pre">FunctionComparator::compare(const</span> <span class="pre">BasicBlock*,</span> <span class="pre">const</span>
+<span class="pre">BasicBlock*)</span></code>” method.</p>
 <p>We also associate BBs with each other, like we did it with function formal
-arguments (see <tt class="docutils literal"><span class="pre">cmpValues</span></tt> method below).</p>
+arguments (see <code class="docutils literal"><span class="pre">cmpValues</span></code> method below).</p>
 </div>
 <div class="section" id="functioncomparator-cmptype">
 <h3><a class="toc-backref" href="#id17">FunctionComparator::cmpType</a><a class="headerlink" href="#functioncomparator-cmptype" title="Permalink to this headline">¶</a></h3>
@@ -406,7 +406,7 @@ are ignored at all. Do the same thing for the right type.</p>
 <p>2. If left and right types are equal, return 0. Otherwise we need to give
 preference to one of them. So proceed to the next step.</p>
 <p>3. If types are of different kind (different type IDs). Return result of type
-IDs comparison, treating them as a numbers (use <tt class="docutils literal"><span class="pre">cmpNumbers</span></tt> operation).</p>
+IDs comparison, treating them as a numbers (use <code class="docutils literal"><span class="pre">cmpNumbers</span></code> operation).</p>
 <p>4. If types are vectors or integers, return result of their pointers comparison,
 comparing them as numbers.</p>
 <ol class="arabic" start="5">
@@ -422,7 +422,7 @@ comparing them as numbers.</p>
 <li>Metadata.</li>
 </ul>
 <p>If ID belongs to group above, return 0. Since it&#8217;s enough to see that
-types has the same <tt class="docutils literal"><span class="pre">TypeID</span></tt>. No additional information is required.</p>
+types has the same <code class="docutils literal"><span class="pre">TypeID</span></code>. No additional information is required.</p>
 </li>
 </ol>
 <p>6. Left and right are pointers. Return result of address space comparison
@@ -432,7 +432,7 @@ technique (see the very first paragraph of this chapter). Both <em>left</em> and
 <em>right</em> are to be expanded and their element types will be checked the same
 way. If we get -1 or 1 on some stage, return it. Otherwise return 0.</p>
 <p>8. Steps 1-6 describe all the possible cases, if we passed steps 1-6 and didn&#8217;t
-get any conclusions, then invoke <tt class="docutils literal"><span class="pre">llvm_unreachable</span></tt>, since it&#8217;s quite
+get any conclusions, then invoke <code class="docutils literal"><span class="pre">llvm_unreachable</span></code>, since it&#8217;s quite
 unexpectable case.</p>
 </div>
 <div class="section" id="cmpvalues-const-value-const-value">
@@ -502,16 +502,16 @@ time), then treat values as <em>associated</em>. Otherwise – it depends on who
 first.</p>
 <p>Every time we run top-level compare method, we initialize two identical maps
 (one for the left side, another one for the right side):</p>
-<p><tt class="docutils literal"><span class="pre">map&lt;Value,</span> <span class="pre">int&gt;</span> <span class="pre">sn_mapL,</span> <span class="pre">sn_mapR;</span></tt></p>
+<p><code class="docutils literal"><span class="pre">map&lt;Value,</span> <span class="pre">int&gt;</span> <span class="pre">sn_mapL,</span> <span class="pre">sn_mapR;</span></code></p>
 <p>The key of the map is the <em>Value</em> itself, the <em>value</em> – is its order (call it
 <em>serial number</em>).</p>
 <p>To add value <em>V</em> we need to perform the next procedure:</p>
-<p><tt class="docutils literal"><span class="pre">sn_map.insert(std::make_pair(V,</span> <span class="pre">sn_map.size()));</span></tt></p>
+<p><code class="docutils literal"><span class="pre">sn_map.insert(std::make_pair(V,</span> <span class="pre">sn_map.size()));</span></code></p>
 <p>For the first <em>Value</em>, map will return <em>0</em>, for second <em>Value</em> map will return
 <em>1</em>, and so on.</p>
 <p>Then we can check whether left and right values met at the same time with simple
 comparison:</p>
-<p><tt class="docutils literal"><span class="pre">cmpNumbers(sn_mapL[Left],</span> <span class="pre">sn_mapR[Right]);</span></tt></p>
+<p><code class="docutils literal"><span class="pre">cmpNumbers(sn_mapL[Left],</span> <span class="pre">sn_mapR[Right]);</span></code></p>
 <p>Of course, we can combine insertion and comparison:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">iterator</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span>
   <span class="n">LeftRes</span> <span class="o">=</span> <span class="n">sn_mapL</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_pair</span><span class="p">(</span><span class="n">Left</span><span class="p">,</span> <span class="n">sn_mapL</span><span class="p">.</span><span class="n">size</span><span class="p">())),</span> <span class="n">RightRes</span>
@@ -537,7 +537,7 @@ we can&#8217;t convert to less-equal-greater comparison. It is a seldom case, 4-
 functions of 10000 (checked on test-suite), and, we hope, reader would
 forgive us for such a sacrifice in order to get the O(log(N)) pass time.</div></blockquote>
 <p>2. If left/right <em>Value</em> is a constant, we have to compare them. Return 0 if it
-is the same constant, or use <tt class="docutils literal"><span class="pre">cmpConstants</span></tt> method otherwise.</p>
+is the same constant, or use <code class="docutils literal"><span class="pre">cmpConstants</span></code> method otherwise.</p>
 <p>3. If left/right is <em>InlineAsm</em> instance. Return result of <em>Value</em> pointers
 comparison.</p>
 <p>4. Explicit association of <em>L</em> (left value) and <em>R</em>  (right value). We need to
@@ -560,16 +560,16 @@ comparison procedure.</p>
 <div class="section" id="cmpconstants">
 <h3><a class="toc-backref" href="#id21">cmpConstants</a><a class="headerlink" href="#cmpconstants" title="Permalink to this headline">¶</a></h3>
 <p>Performs constants comparison as follows:</p>
-<p>1. Compare constant types using <tt class="docutils literal"><span class="pre">cmpType</span></tt> method. If result is -1 or 1, goto
+<p>1. Compare constant types using <code class="docutils literal"><span class="pre">cmpType</span></code> method. If result is -1 or 1, goto
 step 2, otherwise proceed to step 3.</p>
 <p>2. If types are different, we still can check whether constants could be
 losslessly bitcasted to each other. The further explanation is modification of
-<tt class="docutils literal"><span class="pre">canLosslesslyBitCastTo</span></tt> method.</p>
+<code class="docutils literal"><span class="pre">canLosslesslyBitCastTo</span></code> method.</p>
 <blockquote>
 <div><p>2.1 Check whether constants are of the first class types
-(<tt class="docutils literal"><span class="pre">isFirstClassType</span></tt> check):</p>
+(<code class="docutils literal"><span class="pre">isFirstClassType</span></code> check):</p>
 <p>2.1.1. If both constants are <em>not</em> of the first class type: return result
-of <tt class="docutils literal"><span class="pre">cmpType</span></tt>.</p>
+of <code class="docutils literal"><span class="pre">cmpType</span></code>.</p>
 <p>2.1.2. Otherwise, if left type is not of the first class, return -1. If
 right type is not of the first class, return 1.</p>
 <p>2.1.3. If both types are of the first class type, proceed to the next step
@@ -588,7 +588,7 @@ result of types comparison (-1 or 1).</li>
 <p>Steps below are for the case when types are equal, or case when constants are
 bitcastable:</p>
 <p>3. One of constants is a &#8220;<em>null</em>&#8221; value. Return the result of
-<tt class="docutils literal"><span class="pre">cmpFlags(L-&gt;isNullValue,</span> <span class="pre">R-&gt;isNullValue)</span></tt> comparison.</p>
+<code class="docutils literal"><span class="pre">cmpFlags(L-&gt;isNullValue,</span> <span class="pre">R-&gt;isNullValue)</span></code> comparison.</p>
 <ol class="arabic simple" start="4">
 <li>Compare value IDs, and return result if it is not 0:</li>
 </ol>
@@ -608,18 +608,18 @@ sequence and right code sequence.</p>
 <p>Compares two <em>BasicBlock</em> instances.</p>
 <p>It enumerates instructions from left <em>BB</em> and right <em>BB</em>.</p>
 <p>1. It assigns serial numbers to the left and right instructions, using
-<tt class="docutils literal"><span class="pre">cmpValues</span></tt> method.</p>
-<p>2. If one of left or right is <em>GEP</em> (<tt class="docutils literal"><span class="pre">GetElementPtr</span></tt>), then treat <em>GEP</em> as
-greater than other instructions, if both instructions are <em>GEPs</em> use <tt class="docutils literal"><span class="pre">cmpGEP</span></tt>
+<code class="docutils literal"><span class="pre">cmpValues</span></code> method.</p>
+<p>2. If one of left or right is <em>GEP</em> (<code class="docutils literal"><span class="pre">GetElementPtr</span></code>), then treat <em>GEP</em> as
+greater than other instructions, if both instructions are <em>GEPs</em> use <code class="docutils literal"><span class="pre">cmpGEP</span></code>
 method for comparison. If result is -1 or 1, pass it to the top-level
 comparison (return it).</p>
 <blockquote>
-<div><p>3.1. Compare operations. Call <tt class="docutils literal"><span class="pre">cmpOperation</span></tt> method. If result is -1 or
+<div><p>3.1. Compare operations. Call <code class="docutils literal"><span class="pre">cmpOperation</span></code> method. If result is -1 or
 1, return it.</p>
 <p>3.2. Compare number of operands, if result is -1 or 1, return it.</p>
-<p>3.3. Compare operands themselves, use <tt class="docutils literal"><span class="pre">cmpValues</span></tt> method. Return result
+<p>3.3. Compare operands themselves, use <code class="docutils literal"><span class="pre">cmpValues</span></code> method. Return result
 if it is -1 or 1.</p>
-<p>3.4. Compare type of operands, using <tt class="docutils literal"><span class="pre">cmpType</span></tt> method. Return result if
+<p>3.4. Compare type of operands, using <code class="docutils literal"><span class="pre">cmpType</span></code> method. Return result if
 it is -1 or 1.</p>
 <p>3.5. Proceed to the next instruction.</p>
 </div></blockquote>
@@ -634,9 +634,9 @@ exit on steps 1-3, so contents is equal, return 0.</p>
 </div>
 <div class="section" id="cmpgep">
 <h3><a class="toc-backref" href="#id23">cmpGEP</a><a class="headerlink" href="#cmpgep" title="Permalink to this headline">¶</a></h3>
-<p>Compares two GEPs (<tt class="docutils literal"><span class="pre">getelementptr</span></tt> instructions).</p>
+<p>Compares two GEPs (<code class="docutils literal"><span class="pre">getelementptr</span></code> instructions).</p>
 <p>It differs from regular operations comparison with the only thing: possibility
-to use <tt class="docutils literal"><span class="pre">accumulateConstantOffset</span></tt> method.</p>
+to use <code class="docutils literal"><span class="pre">accumulateConstantOffset</span></code> method.</p>
 <p>So, if we get constant offset for both left and right <em>GEPs</em>, then compare it as
 numbers, and return comparison result.</p>
 <p>Otherwise treat it like a regular operation (see previous paragraph).</p>
@@ -650,14 +650,14 @@ numbers, and return comparison result.</p>
 </ol>
 <p>3. Compare operation types, use <em>cmpType</em>. All the same – if types are
 different, return result.</p>
-<p>4. Compare <em>subclassOptionalData</em>, get it with <tt class="docutils literal"><span class="pre">getRawSubclassOptionalData</span></tt>
+<p>4. Compare <em>subclassOptionalData</em>, get it with <code class="docutils literal"><span class="pre">getRawSubclassOptionalData</span></code>
 method, and compare it like a numbers.</p>
 <ol class="arabic simple" start="5">
 <li>Compare operand types.</li>
 </ol>
 <p>6. For some particular instructions check equivalence (relation in our case) of
 some significant attributes. For example we have to compare alignment for
-<tt class="docutils literal"><span class="pre">load</span></tt> instructions.</p>
+<code class="docutils literal"><span class="pre">load</span></code> instructions.</p>
 </div>
 <div class="section" id="o-log-n">
 <h3><a class="toc-backref" href="#id25">O(log(N))</a><a class="headerlink" href="#o-log-n" title="Permalink to this headline">¶</a></h3>
@@ -670,30 +670,30 @@ O(N*N) to O(log(N)).</p>
 <div class="section" id="merging-process-mergetwofunctions">
 <h2><a class="toc-backref" href="#id26">Merging process, mergeTwoFunctions</a><a class="headerlink" href="#merging-process-mergetwofunctions" title="Permalink to this headline">¶</a></h2>
 <p>Once <em>MergeFunctions</em> detected that current function (<em>G</em>) is equal to one that
-were analyzed before (function <em>F</em>) it calls <tt class="docutils literal"><span class="pre">mergeTwoFunctions(Function*,</span>
-<span class="pre">Function*)</span></tt>.</p>
-<p>Operation affects <tt class="docutils literal"><span class="pre">FnTree</span></tt> contents with next way: <em>F</em> will stay in
-<tt class="docutils literal"><span class="pre">FnTree</span></tt>. <em>G</em> being equal to <em>F</em> will not be added to <tt class="docutils literal"><span class="pre">FnTree</span></tt>. Calls of
+were analyzed before (function <em>F</em>) it calls <code class="docutils literal"><span class="pre">mergeTwoFunctions(Function*,</span>
+<span class="pre">Function*)</span></code>.</p>
+<p>Operation affects <code class="docutils literal"><span class="pre">FnTree</span></code> contents with next way: <em>F</em> will stay in
+<code class="docutils literal"><span class="pre">FnTree</span></code>. <em>G</em> being equal to <em>F</em> will not be added to <code class="docutils literal"><span class="pre">FnTree</span></code>. Calls of
 <em>G</em> would be replaced with something else. It changes bodies of callers. So,
-functions that calls <em>G</em> would be put into <tt class="docutils literal"><span class="pre">Deferred</span></tt> set and removed from
-<tt class="docutils literal"><span class="pre">FnTree</span></tt>, and analyzed again.</p>
+functions that calls <em>G</em> would be put into <code class="docutils literal"><span class="pre">Deferred</span></code> set and removed from
+<code class="docutils literal"><span class="pre">FnTree</span></code>, and analyzed again.</p>
 <p>The approach is next:</p>
 <p>1. Most wished case: when we can use alias and both of <em>F</em> and <em>G</em> are weak. We
 make both of them with aliases to the third strong function <em>H</em>. Actually <em>H</em>
 is <em>F</em>. See below how it&#8217;s made (but it&#8217;s better to look straight into the
 source code). Well, this is a case when we can just replace <em>G</em> with <em>F</em>
-everywhere, we use <tt class="docutils literal"><span class="pre">replaceAllUsesWith</span></tt> operation here (<em>RAUW</em>).</p>
+everywhere, we use <code class="docutils literal"><span class="pre">replaceAllUsesWith</span></code> operation here (<em>RAUW</em>).</p>
 <p>2. <em>F</em> could not be overridden, while <em>G</em> could. It would be good to do the
 next: after merging the places where overridable function were used, still use
 overridable stub. So try to make <em>G</em> alias to <em>F</em>, or create overridable tail
 call wrapper around <em>F</em> and replace <em>G</em> with that call.</p>
 <p>3. Neither <em>F</em> nor <em>G</em> could be overridden. We can&#8217;t use <em>RAUW</em>. We can just
 change the callers: call <em>F</em> instead of <em>G</em>.  That&#8217;s what
-<tt class="docutils literal"><span class="pre">replaceDirectCallers</span></tt> does.</p>
+<code class="docutils literal"><span class="pre">replaceDirectCallers</span></code> does.</p>
 <p>Below is detailed body description.</p>
 <div class="section" id="if-f-may-be-overridden">
 <h3><a class="toc-backref" href="#id27">If “F” may be overridden</a><a class="headerlink" href="#if-f-may-be-overridden" title="Permalink to this headline">¶</a></h3>
-<p>As follows from <tt class="docutils literal"><span class="pre">mayBeOverridden</span></tt> comments: “whether the definition of this
+<p>As follows from <code class="docutils literal"><span class="pre">mayBeOverridden</span></code> comments: “whether the definition of this
 global may be replaced by something non-equivalent at link time”. If so, thats
 ok: we can use alias to <em>F</em> instead of <em>G</em> or change call instructions itself.</p>
 <div class="section" id="hasglobalaliases-removeusers">
@@ -701,7 +701,7 @@ ok: we can use alias to <em>F</em> instead of <em>G</em> or change call instruct
 <p>First consider the case when we have global aliases of one function name to
 another. Our purpose is  make both of them with aliases to the third strong
 function. Though if we keep <em>F</em> alive and without major changes we can leave it
-in <tt class="docutils literal"><span class="pre">FnTree</span></tt>. Try to combine these two goals.</p>
+in <code class="docutils literal"><span class="pre">FnTree</span></code>. Try to combine these two goals.</p>
 <p>Do stub replacement of <em>F</em> itself with an alias to <em>F</em>.</p>
 <p>1. Create stub function <em>H</em>, with the same name and attributes like function
 <em>F</em>. It takes maximum alignment of <em>F</em> and <em>G</em>.</p>
@@ -709,15 +709,15 @@ in <tt class="docutils literal"><span class="pre">FnTree</span></tt>. Try to com
 steps procedure instead. First of all, we must take into account, all functions
 from whom <em>F</em> is called would be changed: since we change the call argument
 (from <em>F</em> to <em>H</em>). If so we must to review these caller functions again after
-this procedure. We remove callers from <tt class="docutils literal"><span class="pre">FnTree</span></tt>, method with name
-<tt class="docutils literal"><span class="pre">removeUsers(F)</span></tt> does that (don&#8217;t confuse with <tt class="docutils literal"><span class="pre">replaceAllUsesWith</span></tt>):</p>
+this procedure. We remove callers from <code class="docutils literal"><span class="pre">FnTree</span></code>, method with name
+<code class="docutils literal"><span class="pre">removeUsers(F)</span></code> does that (don&#8217;t confuse with <code class="docutils literal"><span class="pre">replaceAllUsesWith</span></code>):</p>
 <blockquote>
-<div><p>2.1. <tt class="docutils literal"><span class="pre">Inside</span> <span class="pre">removeUsers(Value*</span>
-<span class="pre">V)</span></tt> we go through the all values that use value <em>V</em> (or <em>F</em> in our context).
+<div><p>2.1. <code class="docutils literal"><span class="pre">Inside</span> <span class="pre">removeUsers(Value*</span>
+<span class="pre">V)</span></code> we go through the all values that use value <em>V</em> (or <em>F</em> in our context).
 If value is instruction, we go to function that holds this instruction and
-mark it as to-be-analyzed-again (put to <tt class="docutils literal"><span class="pre">Deferred</span></tt> set), we also remove
-caller from <tt class="docutils literal"><span class="pre">FnTree</span></tt>.</p>
-<p>2.2. Now we can do the replacement: call <tt class="docutils literal"><span class="pre">F-&gt;replaceAllUsesWith(H)</span></tt>.</p>
+mark it as to-be-analyzed-again (put to <code class="docutils literal"><span class="pre">Deferred</span></code> set), we also remove
+caller from <code class="docutils literal"><span class="pre">FnTree</span></code>.</p>
+<p>2.2. Now we can do the replacement: call <code class="docutils literal"><span class="pre">F-&gt;replaceAllUsesWith(H)</span></code>.</p>
 </div></blockquote>
 <p>3. <em>H</em> (that now &#8220;officially&#8221; plays <em>F</em>&#8216;s role) is replaced with alias to <em>F</em>.
 Do the same with <em>G</em>: replace it with alias to <em>F</em>. So finally everywhere <em>F</em>
@@ -729,14 +729,14 @@ also have alias to <em>F</em>.</p>
 </div>
 <div class="section" id="no-global-aliases-replacedirectcallers">
 <h4><a class="toc-backref" href="#id29">No global aliases, replaceDirectCallers</a><a class="headerlink" href="#no-global-aliases-replacedirectcallers" title="Permalink to this headline">¶</a></h4>
-<p>If global aliases are not supported. We call <tt class="docutils literal"><span class="pre">replaceDirectCallers</span></tt> then. Just
+<p>If global aliases are not supported. We call <code class="docutils literal"><span class="pre">replaceDirectCallers</span></code> then. Just
 go through all calls of <em>G</em> and replace it with calls of <em>F</em>. If you look into
 method you will see that it scans all uses of <em>G</em> too, and if use is callee (if
 user is call instruction and <em>G</em> is used as what to be called), we replace it
 with use of <em>F</em>.</p>
 <div class="section" id="if-f-could-not-be-overridden-fix-it">
 <h5><a class="toc-backref" href="#id30">If “F” could not be overridden, fix it!</a><a class="headerlink" href="#if-f-could-not-be-overridden-fix-it" title="Permalink to this headline">¶</a></h5>
-<p>We call <tt class="docutils literal"><span class="pre">writeThunkOrAlias(Function</span> <span class="pre">*F,</span> <span class="pre">Function</span> <span class="pre">*G)</span></tt>. Here we try to replace
+<p>We call <code class="docutils literal"><span class="pre">writeThunkOrAlias(Function</span> <span class="pre">*F,</span> <span class="pre">Function</span> <span class="pre">*G)</span></code>. Here we try to replace
 <em>G</em> with alias to <em>F</em> first. Next conditions are essential:</p>
 <ul class="simple">
 <li>target should support global aliases,</li>
@@ -757,8 +757,8 @@ second name for <em>F</em> and use it instead of <em>G</em>:</p>
 </li>
 <li><p class="first">replace uses of <em>G</em>:</p>
 <p>3.1. first mark all callers of <em>G</em> as to-be-analyzed-again, using
-<tt class="docutils literal"><span class="pre">removeUsers</span></tt> method (see chapter above),</p>
-<p>3.2. call <tt class="docutils literal"><span class="pre">G-&gt;replaceAllUsesWith(GA)</span></tt>.</p>
+<code class="docutils literal"><span class="pre">removeUsers</span></code> method (see chapter above),</p>
+<p>3.2. call <code class="docutils literal"><span class="pre">G-&gt;replaceAllUsesWith(GA)</span></code>.</p>
 </li>
 <li><p class="first">Get rid of <em>G</em>.</p>
 </li>
@@ -772,7 +772,7 @@ first point:</p>
 <p>1. We generate tail call wrapper around <em>F</em>, but with interface that allows use
 it instead of <em>G</em>.</p>
 <ol class="arabic simple" start="2">
-<li>“As-usual”: <tt class="docutils literal"><span class="pre">removeUsers</span></tt> and <tt class="docutils literal"><span class="pre">replaceAllUsesWith</span></tt> then.</li>
+<li>“As-usual”: <code class="docutils literal"><span class="pre">removeUsers</span></code> and <code class="docutils literal"><span class="pre">replaceAllUsesWith</span></code> then.</li>
 <li>Get rid of <em>G</em>.</li>
 </ol>
 </div>
@@ -793,7 +793,7 @@ have some picture from now, and it helps him improve and debug ­this pass.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -810,10 +810,10 @@ have some picture from now, and it helps him improve and debug ­this pass.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

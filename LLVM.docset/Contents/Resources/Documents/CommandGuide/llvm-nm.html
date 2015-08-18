@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-nm-list-llvm-bitcode-and-object-file-s-symbol-table">
 <h1>llvm-nm - list LLVM bitcode and object file&#8217;s symbol table<a class="headerlink" href="#llvm-nm-list-llvm-bitcode-and-object-file-s-symbol-table" title="Permalink to this headline">¶</a></h1>
@@ -118,25 +118,25 @@ file.</p>
 <h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <dl class="option">
 <dt id="cmdoption-llvm-nm-B">
-<tt class="descname">-B</tt><tt class="descclassname">    (default)</tt><a class="headerlink" href="#cmdoption-llvm-nm-B" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use BSD output format.  Alias for <em class="xref std std-option">--format=bsd</em>.</p>
+<code class="descname">-B</code><code class="descclassname">    (default)</code><a class="headerlink" href="#cmdoption-llvm-nm-B" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use BSD output format.  Alias for <code class="xref std std-option docutils literal"><span class="pre">--format=bsd</span></code>.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm-P">
-<tt class="descname">-P</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm-P" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use POSIX.2 output format.  Alias for <em class="xref std std-option">--format=posix</em>.</p>
+<code class="descname">-P</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-P" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use POSIX.2 output format.  Alias for <code class="xref std std-option docutils literal"><span class="pre">--format=posix</span></code>.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--debug-syms">
-<span id="cmdoption-llvm-nm-a"></span><tt class="descname">--debug-syms</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-a</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm--debug-syms" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-llvm-nm-a"></span><code class="descname">--debug-syms</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-a</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--debug-syms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show all symbols, even debugger only.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--defined-only">
-<tt class="descname">--defined-only</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm--defined-only" title="Permalink to this definition">¶</a></dt>
+<code class="descname">--defined-only</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--defined-only" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print only symbols defined in this file (as opposed to
 symbols which may be referenced by objects in this file, but not
 defined in this file.)</p>
@@ -144,63 +144,63 @@ defined in this file.)</p>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--dynamic">
-<span id="cmdoption-llvm-nm-D"></span><tt class="descname">--dynamic</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-D</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm--dynamic" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-llvm-nm-D"></span><code class="descname">--dynamic</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--dynamic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display dynamic symbols instead of normal symbols.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--extern-only">
-<span id="cmdoption-llvm-nm-g"></span><tt class="descname">--extern-only</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-g</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm--extern-only" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-llvm-nm-g"></span><code class="descname">--extern-only</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-g</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--extern-only" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print only symbols whose definitions are external; that is, accessible
 from other files.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--format">
-<span id="cmdoption-llvm-nm-f"></span><tt class="descname">--format</tt><tt class="descclassname">=format</tt><tt class="descclassname">, </tt><tt class="descname">-f</tt><tt class="descclassname"> format</tt><a class="headerlink" href="#cmdoption-llvm-nm--format" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-llvm-nm-f"></span><code class="descname">--format</code><code class="descclassname">=format</code><code class="descclassname">, </code><code class="descname">-f</code><code class="descclassname"> format</code><a class="headerlink" href="#cmdoption-llvm-nm--format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select an output format; <em>format</em> may be <em>sysv</em>, <em>posix</em>, or <em>bsd</em>.  The default
 is <em>bsd</em>.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm-help">
-<tt class="descname">-help</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm-help" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-help" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a summary of command-line options and their meanings.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--no-sort">
-<span id="cmdoption-llvm-nm-p"></span><tt class="descname">--no-sort</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-p</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm--no-sort" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-llvm-nm-p"></span><code class="descname">--no-sort</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-p</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--no-sort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shows symbols in order encountered.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--numeric-sort">
-<span id="cmdoption-llvm-nm-n"></span><span id="cmdoption-llvm-nm-v"></span><tt class="descname">--numeric-sort</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-n</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-v</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm--numeric-sort" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-llvm-nm-n"></span><span id="cmdoption-llvm-nm-v"></span><code class="descname">--numeric-sort</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-n</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-v</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--numeric-sort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sort symbols by address.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--print-file-name">
-<span id="cmdoption-llvm-nm-A"></span><span id="cmdoption-llvm-nm-o"></span><tt class="descname">--print-file-name</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-A</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-o</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm--print-file-name" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-llvm-nm-A"></span><span id="cmdoption-llvm-nm-o"></span><code class="descname">--print-file-name</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-A</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-o</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--print-file-name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Precede each symbol with the file it came from.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--print-size">
-<span id="cmdoption-llvm-nm-S"></span><tt class="descname">--print-size</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-S</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm--print-size" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-llvm-nm-S"></span><code class="descname">--print-size</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-S</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--print-size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show symbol size instead of address.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--size-sort">
-<tt class="descname">--size-sort</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm--size-sort" title="Permalink to this definition">¶</a></dt>
+<code class="descname">--size-sort</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--size-sort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sort symbols by size.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm--undefined-only">
-<span id="cmdoption-llvm-nm-u"></span><tt class="descname">--undefined-only</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">-u</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-nm--undefined-only" title="Permalink to this definition">¶</a></dt>
+<span id="cmdoption-llvm-nm-u"></span><code class="descname">--undefined-only</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-u</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--undefined-only" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print only symbols referenced but not defined in this file.</p>
 </dd></dl>
 
@@ -231,7 +231,7 @@ can.</li>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -246,13 +246,13 @@ can.</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-extending-the-language-mutable-variables">
 <h1>7. Kaleidoscope: Extending the Language: Mutable Variables<a class="headerlink" href="#kaleidoscope-extending-the-language-mutable-variables" title="Permalink to this headline">¶</a></h1>
@@ -356,10 +356,10 @@ operator, then extend Kaleidoscope to support new variable definitions.</p>
 <div class="section" id="adjusting-existing-variables-for-mutation">
 <h2><a class="toc-backref" href="#id6">7.5. Adjusting Existing Variables for Mutation</a><a class="headerlink" href="#adjusting-existing-variables-for-mutation" title="Permalink to this headline">¶</a></h2>
 <p>The symbol table in Kaleidoscope is managed at code generation time by
-the &#8216;<tt class="docutils literal"><span class="pre">NamedValues</span></tt>&#8216; map. This map currently keeps track of the LLVM
+the &#8216;<code class="docutils literal"><span class="pre">NamedValues</span></code>&#8216; map. This map currently keeps track of the LLVM
 &#8220;Value*&#8221; that holds the double value for the named variable. In order
 to support mutation, we need to change this slightly, so that it
-<tt class="docutils literal"><span class="pre">NamedValues</span></tt> holds the <em>memory location</em> of the variable in question.
+<code class="docutils literal"><span class="pre">NamedValues</span></code> holds the <em>memory location</em> of the variable in question.
 Note that this change is a refactoring: it changes the structure of the
 code, but does not (by itself) change the behavior of the compiler. All
 of these changes are isolated in the Kaleidoscope code generator.</p>
@@ -409,7 +409,7 @@ from the stack slot:</p>
 </div>
 <p>As you can see, this is pretty straightforward. Now we need to update
 the things that define the variables to set up the alloca. We&#8217;ll start
-with <tt class="docutils literal"><span class="pre">ForExprAST::Codegen</span></tt> (see the <a class="reference external" href="#code">full code listing</a> for
+with <code class="docutils literal"><span class="pre">ForExprAST::Codegen</span></code> (see the <a class="reference external" href="#code">full code listing</a> for
 the unabridged code):</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">Function</span> <span class="o">*</span><span class="n">TheFunction</span> <span class="o">=</span> <span class="n">Builder</span><span class="p">.</span><span class="n">GetInsertBlock</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">getParent</span><span class="p">();</span>
 
@@ -461,7 +461,7 @@ them. The code for this is also pretty simple:</p>
 </div>
 <p>For each argument, we make an alloca, store the input value to the
 function into the alloca, and register the alloca as the memory location
-for the argument. This method gets invoked by <tt class="docutils literal"><span class="pre">FunctionAST::Codegen</span></tt>
+for the argument. This method gets invoked by <code class="docutils literal"><span class="pre">FunctionAST::Codegen</span></code>
 right after it sets up the entry block for the function.</p>
 <p>The final missing piece is adding the mem2reg pass, which allows us to
 get good codegen once again:</p>
@@ -724,7 +724,7 @@ do is add it as a primary expression:</p>
 </pre></div>
 </div>
 <p>The first part of this code parses the list of identifier/expr pairs
-into the local <tt class="docutils literal"><span class="pre">VarNames</span></tt> vector.</p>
+into the local <code class="docutils literal"><span class="pre">VarNames</span></code> vector.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Name</span> <span class="o">=</span> <span class="n">IdentifierStr</span><span class="p">;</span>
   <span class="n">getNextToken</span><span class="p">();</span>  <span class="c1">// eat identifier.</span>
@@ -2092,7 +2092,7 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -2107,13 +2107,13 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

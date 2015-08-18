@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-s-analysis-and-transform-passes">
 <h1>LLVM&#8217;s Analysis and Transform Passes<a class="headerlink" href="#llvm-s-analysis-and-transform-passes" title="Permalink to this headline">¶</a></h1>
@@ -69,120 +69,120 @@
 <ul class="simple">
 <li><a class="reference internal" href="#introduction" id="id1">Introduction</a></li>
 <li><a class="reference internal" href="#analysis-passes" id="id2">Analysis Passes</a><ul>
-<li><a class="reference internal" href="#aa-eval-exhaustive-alias-analysis-precision-evaluator" id="id3"><tt class="docutils literal"><span class="pre">-aa-eval</span></tt>: Exhaustive Alias Analysis Precision Evaluator</a></li>
-<li><a class="reference internal" href="#basicaa-basic-alias-analysis-stateless-aa-impl" id="id4"><tt class="docutils literal"><span class="pre">-basicaa</span></tt>: Basic Alias Analysis (stateless AA impl)</a></li>
-<li><a class="reference internal" href="#basiccg-basic-callgraph-construction" id="id5"><tt class="docutils literal"><span class="pre">-basiccg</span></tt>: Basic CallGraph Construction</a></li>
-<li><a class="reference internal" href="#count-aa-count-alias-analysis-query-responses" id="id6"><tt class="docutils literal"><span class="pre">-count-aa</span></tt>: Count Alias Analysis Query Responses</a></li>
-<li><a class="reference internal" href="#da-dependence-analysis" id="id7"><tt class="docutils literal"><span class="pre">-da</span></tt>: Dependence Analysis</a></li>
-<li><a class="reference internal" href="#debug-aa-aa-use-debugger" id="id8"><tt class="docutils literal"><span class="pre">-debug-aa</span></tt>: AA use debugger</a></li>
-<li><a class="reference internal" href="#domfrontier-dominance-frontier-construction" id="id9"><tt class="docutils literal"><span class="pre">-domfrontier</span></tt>: Dominance Frontier Construction</a></li>
-<li><a class="reference internal" href="#domtree-dominator-tree-construction" id="id10"><tt class="docutils literal"><span class="pre">-domtree</span></tt>: Dominator Tree Construction</a></li>
-<li><a class="reference internal" href="#dot-callgraph-print-call-graph-to-dot-file" id="id11"><tt class="docutils literal"><span class="pre">-dot-callgraph</span></tt>: Print Call Graph to &#8220;dot&#8221; file</a></li>
-<li><a class="reference internal" href="#dot-cfg-print-cfg-of-function-to-dot-file" id="id12"><tt class="docutils literal"><span class="pre">-dot-cfg</span></tt>: Print CFG of function to &#8220;dot&#8221; file</a></li>
-<li><a class="reference internal" href="#dot-cfg-only-print-cfg-of-function-to-dot-file-with-no-function-bodies" id="id13"><tt class="docutils literal"><span class="pre">-dot-cfg-only</span></tt>: Print CFG of function to &#8220;dot&#8221; file (with no function bodies)</a></li>
-<li><a class="reference internal" href="#dot-dom-print-dominance-tree-of-function-to-dot-file" id="id14"><tt class="docutils literal"><span class="pre">-dot-dom</span></tt>: Print dominance tree of function to &#8220;dot&#8221; file</a></li>
-<li><a class="reference internal" href="#dot-dom-only-print-dominance-tree-of-function-to-dot-file-with-no-function-bodies" id="id15"><tt class="docutils literal"><span class="pre">-dot-dom-only</span></tt>: Print dominance tree of function to &#8220;dot&#8221; file (with no function bodies)</a></li>
-<li><a class="reference internal" href="#dot-postdom-print-postdominance-tree-of-function-to-dot-file" id="id16"><tt class="docutils literal"><span class="pre">-dot-postdom</span></tt>: Print postdominance tree of function to &#8220;dot&#8221; file</a></li>
-<li><a class="reference internal" href="#dot-postdom-only-print-postdominance-tree-of-function-to-dot-file-with-no-function-bodies" id="id17"><tt class="docutils literal"><span class="pre">-dot-postdom-only</span></tt>: Print postdominance tree of function to &#8220;dot&#8221; file (with no function bodies)</a></li>
-<li><a class="reference internal" href="#globalsmodref-aa-simple-mod-ref-analysis-for-globals" id="id18"><tt class="docutils literal"><span class="pre">-globalsmodref-aa</span></tt>: Simple mod/ref analysis for globals</a></li>
-<li><a class="reference internal" href="#instcount-counts-the-various-types-of-instructions" id="id19"><tt class="docutils literal"><span class="pre">-instcount</span></tt>: Counts the various types of <tt class="docutils literal"><span class="pre">Instruction</span></tt>s</a></li>
-<li><a class="reference internal" href="#intervals-interval-partition-construction" id="id20"><tt class="docutils literal"><span class="pre">-intervals</span></tt>: Interval Partition Construction</a></li>
-<li><a class="reference internal" href="#iv-users-induction-variable-users" id="id21"><tt class="docutils literal"><span class="pre">-iv-users</span></tt>: Induction Variable Users</a></li>
-<li><a class="reference internal" href="#lazy-value-info-lazy-value-information-analysis" id="id22"><tt class="docutils literal"><span class="pre">-lazy-value-info</span></tt>: Lazy Value Information Analysis</a></li>
-<li><a class="reference internal" href="#libcall-aa-libcall-alias-analysis" id="id23"><tt class="docutils literal"><span class="pre">-libcall-aa</span></tt>: LibCall Alias Analysis</a></li>
-<li><a class="reference internal" href="#lint-statically-lint-checks-llvm-ir" id="id24"><tt class="docutils literal"><span class="pre">-lint</span></tt>: Statically lint-checks LLVM IR</a></li>
-<li><a class="reference internal" href="#loops-natural-loop-information" id="id25"><tt class="docutils literal"><span class="pre">-loops</span></tt>: Natural Loop Information</a></li>
-<li><a class="reference internal" href="#memdep-memory-dependence-analysis" id="id26"><tt class="docutils literal"><span class="pre">-memdep</span></tt>: Memory Dependence Analysis</a></li>
-<li><a class="reference internal" href="#module-debuginfo-decodes-module-level-debug-info" id="id27"><tt class="docutils literal"><span class="pre">-module-debuginfo</span></tt>: Decodes module-level debug info</a></li>
-<li><a class="reference internal" href="#no-aa-no-alias-analysis-always-returns-may-alias" id="id28"><tt class="docutils literal"><span class="pre">-no-aa</span></tt>: No Alias Analysis (always returns &#8216;may&#8217; alias)</a></li>
-<li><a class="reference internal" href="#postdomfrontier-post-dominance-frontier-construction" id="id29"><tt class="docutils literal"><span class="pre">-postdomfrontier</span></tt>: Post-Dominance Frontier Construction</a></li>
-<li><a class="reference internal" href="#postdomtree-post-dominator-tree-construction" id="id30"><tt class="docutils literal"><span class="pre">-postdomtree</span></tt>: Post-Dominator Tree Construction</a></li>
-<li><a class="reference internal" href="#print-alias-sets-alias-set-printer" id="id31"><tt class="docutils literal"><span class="pre">-print-alias-sets</span></tt>: Alias Set Printer</a></li>
-<li><a class="reference internal" href="#print-callgraph-print-a-call-graph" id="id32"><tt class="docutils literal"><span class="pre">-print-callgraph</span></tt>: Print a call graph</a></li>
-<li><a class="reference internal" href="#print-callgraph-sccs-print-sccs-of-the-call-graph" id="id33"><tt class="docutils literal"><span class="pre">-print-callgraph-sccs</span></tt>: Print SCCs of the Call Graph</a></li>
-<li><a class="reference internal" href="#print-cfg-sccs-print-sccs-of-each-function-cfg" id="id34"><tt class="docutils literal"><span class="pre">-print-cfg-sccs</span></tt>: Print SCCs of each function CFG</a></li>
-<li><a class="reference internal" href="#print-dom-info-dominator-info-printer" id="id35"><tt class="docutils literal"><span class="pre">-print-dom-info</span></tt>: Dominator Info Printer</a></li>
-<li><a class="reference internal" href="#print-externalfnconstants-print-external-fn-callsites-passed-constants" id="id36"><tt class="docutils literal"><span class="pre">-print-externalfnconstants</span></tt>: Print external fn callsites passed constants</a></li>
-<li><a class="reference internal" href="#print-function-print-function-to-stderr" id="id37"><tt class="docutils literal"><span class="pre">-print-function</span></tt>: Print function to stderr</a></li>
-<li><a class="reference internal" href="#print-module-print-module-to-stderr" id="id38"><tt class="docutils literal"><span class="pre">-print-module</span></tt>: Print module to stderr</a></li>
-<li><a class="reference internal" href="#print-used-types-find-used-types" id="id39"><tt class="docutils literal"><span class="pre">-print-used-types</span></tt>: Find Used Types</a></li>
-<li><a class="reference internal" href="#regions-detect-single-entry-single-exit-regions" id="id40"><tt class="docutils literal"><span class="pre">-regions</span></tt>: Detect single entry single exit regions</a></li>
-<li><a class="reference internal" href="#scalar-evolution-scalar-evolution-analysis" id="id41"><tt class="docutils literal"><span class="pre">-scalar-evolution</span></tt>: Scalar Evolution Analysis</a></li>
-<li><a class="reference internal" href="#scev-aa-scalarevolution-based-alias-analysis" id="id42"><tt class="docutils literal"><span class="pre">-scev-aa</span></tt>: ScalarEvolution-based Alias Analysis</a></li>
-<li><a class="reference internal" href="#targetdata-target-data-layout" id="id43"><tt class="docutils literal"><span class="pre">-targetdata</span></tt>: Target Data Layout</a></li>
+<li><a class="reference internal" href="#aa-eval-exhaustive-alias-analysis-precision-evaluator" id="id3"><code class="docutils literal"><span class="pre">-aa-eval</span></code>: Exhaustive Alias Analysis Precision Evaluator</a></li>
+<li><a class="reference internal" href="#basicaa-basic-alias-analysis-stateless-aa-impl" id="id4"><code class="docutils literal"><span class="pre">-basicaa</span></code>: Basic Alias Analysis (stateless AA impl)</a></li>
+<li><a class="reference internal" href="#basiccg-basic-callgraph-construction" id="id5"><code class="docutils literal"><span class="pre">-basiccg</span></code>: Basic CallGraph Construction</a></li>
+<li><a class="reference internal" href="#count-aa-count-alias-analysis-query-responses" id="id6"><code class="docutils literal"><span class="pre">-count-aa</span></code>: Count Alias Analysis Query Responses</a></li>
+<li><a class="reference internal" href="#da-dependence-analysis" id="id7"><code class="docutils literal"><span class="pre">-da</span></code>: Dependence Analysis</a></li>
+<li><a class="reference internal" href="#debug-aa-aa-use-debugger" id="id8"><code class="docutils literal"><span class="pre">-debug-aa</span></code>: AA use debugger</a></li>
+<li><a class="reference internal" href="#domfrontier-dominance-frontier-construction" id="id9"><code class="docutils literal"><span class="pre">-domfrontier</span></code>: Dominance Frontier Construction</a></li>
+<li><a class="reference internal" href="#domtree-dominator-tree-construction" id="id10"><code class="docutils literal"><span class="pre">-domtree</span></code>: Dominator Tree Construction</a></li>
+<li><a class="reference internal" href="#dot-callgraph-print-call-graph-to-dot-file" id="id11"><code class="docutils literal"><span class="pre">-dot-callgraph</span></code>: Print Call Graph to &#8220;dot&#8221; file</a></li>
+<li><a class="reference internal" href="#dot-cfg-print-cfg-of-function-to-dot-file" id="id12"><code class="docutils literal"><span class="pre">-dot-cfg</span></code>: Print CFG of function to &#8220;dot&#8221; file</a></li>
+<li><a class="reference internal" href="#dot-cfg-only-print-cfg-of-function-to-dot-file-with-no-function-bodies" id="id13"><code class="docutils literal"><span class="pre">-dot-cfg-only</span></code>: Print CFG of function to &#8220;dot&#8221; file (with no function bodies)</a></li>
+<li><a class="reference internal" href="#dot-dom-print-dominance-tree-of-function-to-dot-file" id="id14"><code class="docutils literal"><span class="pre">-dot-dom</span></code>: Print dominance tree of function to &#8220;dot&#8221; file</a></li>
+<li><a class="reference internal" href="#dot-dom-only-print-dominance-tree-of-function-to-dot-file-with-no-function-bodies" id="id15"><code class="docutils literal"><span class="pre">-dot-dom-only</span></code>: Print dominance tree of function to &#8220;dot&#8221; file (with no function bodies)</a></li>
+<li><a class="reference internal" href="#dot-postdom-print-postdominance-tree-of-function-to-dot-file" id="id16"><code class="docutils literal"><span class="pre">-dot-postdom</span></code>: Print postdominance tree of function to &#8220;dot&#8221; file</a></li>
+<li><a class="reference internal" href="#dot-postdom-only-print-postdominance-tree-of-function-to-dot-file-with-no-function-bodies" id="id17"><code class="docutils literal"><span class="pre">-dot-postdom-only</span></code>: Print postdominance tree of function to &#8220;dot&#8221; file (with no function bodies)</a></li>
+<li><a class="reference internal" href="#globalsmodref-aa-simple-mod-ref-analysis-for-globals" id="id18"><code class="docutils literal"><span class="pre">-globalsmodref-aa</span></code>: Simple mod/ref analysis for globals</a></li>
+<li><a class="reference internal" href="#instcount-counts-the-various-types-of-instructions" id="id19"><code class="docutils literal"><span class="pre">-instcount</span></code>: Counts the various types of <code class="docutils literal"><span class="pre">Instruction</span></code>s</a></li>
+<li><a class="reference internal" href="#intervals-interval-partition-construction" id="id20"><code class="docutils literal"><span class="pre">-intervals</span></code>: Interval Partition Construction</a></li>
+<li><a class="reference internal" href="#iv-users-induction-variable-users" id="id21"><code class="docutils literal"><span class="pre">-iv-users</span></code>: Induction Variable Users</a></li>
+<li><a class="reference internal" href="#lazy-value-info-lazy-value-information-analysis" id="id22"><code class="docutils literal"><span class="pre">-lazy-value-info</span></code>: Lazy Value Information Analysis</a></li>
+<li><a class="reference internal" href="#libcall-aa-libcall-alias-analysis" id="id23"><code class="docutils literal"><span class="pre">-libcall-aa</span></code>: LibCall Alias Analysis</a></li>
+<li><a class="reference internal" href="#lint-statically-lint-checks-llvm-ir" id="id24"><code class="docutils literal"><span class="pre">-lint</span></code>: Statically lint-checks LLVM IR</a></li>
+<li><a class="reference internal" href="#loops-natural-loop-information" id="id25"><code class="docutils literal"><span class="pre">-loops</span></code>: Natural Loop Information</a></li>
+<li><a class="reference internal" href="#memdep-memory-dependence-analysis" id="id26"><code class="docutils literal"><span class="pre">-memdep</span></code>: Memory Dependence Analysis</a></li>
+<li><a class="reference internal" href="#module-debuginfo-decodes-module-level-debug-info" id="id27"><code class="docutils literal"><span class="pre">-module-debuginfo</span></code>: Decodes module-level debug info</a></li>
+<li><a class="reference internal" href="#no-aa-no-alias-analysis-always-returns-may-alias" id="id28"><code class="docutils literal"><span class="pre">-no-aa</span></code>: No Alias Analysis (always returns &#8216;may&#8217; alias)</a></li>
+<li><a class="reference internal" href="#postdomfrontier-post-dominance-frontier-construction" id="id29"><code class="docutils literal"><span class="pre">-postdomfrontier</span></code>: Post-Dominance Frontier Construction</a></li>
+<li><a class="reference internal" href="#postdomtree-post-dominator-tree-construction" id="id30"><code class="docutils literal"><span class="pre">-postdomtree</span></code>: Post-Dominator Tree Construction</a></li>
+<li><a class="reference internal" href="#print-alias-sets-alias-set-printer" id="id31"><code class="docutils literal"><span class="pre">-print-alias-sets</span></code>: Alias Set Printer</a></li>
+<li><a class="reference internal" href="#print-callgraph-print-a-call-graph" id="id32"><code class="docutils literal"><span class="pre">-print-callgraph</span></code>: Print a call graph</a></li>
+<li><a class="reference internal" href="#print-callgraph-sccs-print-sccs-of-the-call-graph" id="id33"><code class="docutils literal"><span class="pre">-print-callgraph-sccs</span></code>: Print SCCs of the Call Graph</a></li>
+<li><a class="reference internal" href="#print-cfg-sccs-print-sccs-of-each-function-cfg" id="id34"><code class="docutils literal"><span class="pre">-print-cfg-sccs</span></code>: Print SCCs of each function CFG</a></li>
+<li><a class="reference internal" href="#print-dom-info-dominator-info-printer" id="id35"><code class="docutils literal"><span class="pre">-print-dom-info</span></code>: Dominator Info Printer</a></li>
+<li><a class="reference internal" href="#print-externalfnconstants-print-external-fn-callsites-passed-constants" id="id36"><code class="docutils literal"><span class="pre">-print-externalfnconstants</span></code>: Print external fn callsites passed constants</a></li>
+<li><a class="reference internal" href="#print-function-print-function-to-stderr" id="id37"><code class="docutils literal"><span class="pre">-print-function</span></code>: Print function to stderr</a></li>
+<li><a class="reference internal" href="#print-module-print-module-to-stderr" id="id38"><code class="docutils literal"><span class="pre">-print-module</span></code>: Print module to stderr</a></li>
+<li><a class="reference internal" href="#print-used-types-find-used-types" id="id39"><code class="docutils literal"><span class="pre">-print-used-types</span></code>: Find Used Types</a></li>
+<li><a class="reference internal" href="#regions-detect-single-entry-single-exit-regions" id="id40"><code class="docutils literal"><span class="pre">-regions</span></code>: Detect single entry single exit regions</a></li>
+<li><a class="reference internal" href="#scalar-evolution-scalar-evolution-analysis" id="id41"><code class="docutils literal"><span class="pre">-scalar-evolution</span></code>: Scalar Evolution Analysis</a></li>
+<li><a class="reference internal" href="#scev-aa-scalarevolution-based-alias-analysis" id="id42"><code class="docutils literal"><span class="pre">-scev-aa</span></code>: ScalarEvolution-based Alias Analysis</a></li>
+<li><a class="reference internal" href="#targetdata-target-data-layout" id="id43"><code class="docutils literal"><span class="pre">-targetdata</span></code>: Target Data Layout</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#transform-passes" id="id44">Transform Passes</a><ul>
-<li><a class="reference internal" href="#adce-aggressive-dead-code-elimination" id="id45"><tt class="docutils literal"><span class="pre">-adce</span></tt>: Aggressive Dead Code Elimination</a></li>
-<li><a class="reference internal" href="#always-inline-inliner-for-always-inline-functions" id="id46"><tt class="docutils literal"><span class="pre">-always-inline</span></tt>: Inliner for <tt class="docutils literal"><span class="pre">always_inline</span></tt> functions</a></li>
-<li><a class="reference internal" href="#argpromotion-promote-by-reference-arguments-to-scalars" id="id47"><tt class="docutils literal"><span class="pre">-argpromotion</span></tt>: Promote &#8216;by reference&#8217; arguments to scalars</a></li>
-<li><a class="reference internal" href="#bb-vectorize-basic-block-vectorization" id="id48"><tt class="docutils literal"><span class="pre">-bb-vectorize</span></tt>: Basic-Block Vectorization</a></li>
-<li><a class="reference internal" href="#block-placement-profile-guided-basic-block-placement" id="id49"><tt class="docutils literal"><span class="pre">-block-placement</span></tt>: Profile Guided Basic Block Placement</a></li>
-<li><a class="reference internal" href="#break-crit-edges-break-critical-edges-in-cfg" id="id50"><tt class="docutils literal"><span class="pre">-break-crit-edges</span></tt>: Break critical edges in CFG</a></li>
-<li><a class="reference internal" href="#codegenprepare-optimize-for-code-generation" id="id51"><tt class="docutils literal"><span class="pre">-codegenprepare</span></tt>: Optimize for code generation</a></li>
-<li><a class="reference internal" href="#constmerge-merge-duplicate-global-constants" id="id52"><tt class="docutils literal"><span class="pre">-constmerge</span></tt>: Merge Duplicate Global Constants</a></li>
-<li><a class="reference internal" href="#constprop-simple-constant-propagation" id="id53"><tt class="docutils literal"><span class="pre">-constprop</span></tt>: Simple constant propagation</a></li>
-<li><a class="reference internal" href="#dce-dead-code-elimination" id="id54"><tt class="docutils literal"><span class="pre">-dce</span></tt>: Dead Code Elimination</a></li>
-<li><a class="reference internal" href="#deadargelim-dead-argument-elimination" id="id55"><tt class="docutils literal"><span class="pre">-deadargelim</span></tt>: Dead Argument Elimination</a></li>
-<li><a class="reference internal" href="#deadtypeelim-dead-type-elimination" id="id56"><tt class="docutils literal"><span class="pre">-deadtypeelim</span></tt>: Dead Type Elimination</a></li>
-<li><a class="reference internal" href="#die-dead-instruction-elimination" id="id57"><tt class="docutils literal"><span class="pre">-die</span></tt>: Dead Instruction Elimination</a></li>
-<li><a class="reference internal" href="#dse-dead-store-elimination" id="id58"><tt class="docutils literal"><span class="pre">-dse</span></tt>: Dead Store Elimination</a></li>
-<li><a class="reference internal" href="#functionattrs-deduce-function-attributes" id="id59"><tt class="docutils literal"><span class="pre">-functionattrs</span></tt>: Deduce function attributes</a></li>
-<li><a class="reference internal" href="#globaldce-dead-global-elimination" id="id60"><tt class="docutils literal"><span class="pre">-globaldce</span></tt>: Dead Global Elimination</a></li>
-<li><a class="reference internal" href="#globalopt-global-variable-optimizer" id="id61"><tt class="docutils literal"><span class="pre">-globalopt</span></tt>: Global Variable Optimizer</a></li>
-<li><a class="reference internal" href="#gvn-global-value-numbering" id="id62"><tt class="docutils literal"><span class="pre">-gvn</span></tt>: Global Value Numbering</a></li>
-<li><a class="reference internal" href="#indvars-canonicalize-induction-variables" id="id63"><tt class="docutils literal"><span class="pre">-indvars</span></tt>: Canonicalize Induction Variables</a></li>
-<li><a class="reference internal" href="#inline-function-integration-inlining" id="id64"><tt class="docutils literal"><span class="pre">-inline</span></tt>: Function Integration/Inlining</a></li>
-<li><a class="reference internal" href="#instcombine-combine-redundant-instructions" id="id65"><tt class="docutils literal"><span class="pre">-instcombine</span></tt>: Combine redundant instructions</a></li>
-<li><a class="reference internal" href="#internalize-internalize-global-symbols" id="id66"><tt class="docutils literal"><span class="pre">-internalize</span></tt>: Internalize Global Symbols</a></li>
-<li><a class="reference internal" href="#ipconstprop-interprocedural-constant-propagation" id="id67"><tt class="docutils literal"><span class="pre">-ipconstprop</span></tt>: Interprocedural constant propagation</a></li>
-<li><a class="reference internal" href="#ipsccp-interprocedural-sparse-conditional-constant-propagation" id="id68"><tt class="docutils literal"><span class="pre">-ipsccp</span></tt>: Interprocedural Sparse Conditional Constant Propagation</a></li>
-<li><a class="reference internal" href="#jump-threading-jump-threading" id="id69"><tt class="docutils literal"><span class="pre">-jump-threading</span></tt>: Jump Threading</a></li>
-<li><a class="reference internal" href="#lcssa-loop-closed-ssa-form-pass" id="id70"><tt class="docutils literal"><span class="pre">-lcssa</span></tt>: Loop-Closed SSA Form Pass</a></li>
-<li><a class="reference internal" href="#licm-loop-invariant-code-motion" id="id71"><tt class="docutils literal"><span class="pre">-licm</span></tt>: Loop Invariant Code Motion</a></li>
-<li><a class="reference internal" href="#loop-deletion-delete-dead-loops" id="id72"><tt class="docutils literal"><span class="pre">-loop-deletion</span></tt>: Delete dead loops</a></li>
-<li><a class="reference internal" href="#loop-extract-extract-loops-into-new-functions" id="id73"><tt class="docutils literal"><span class="pre">-loop-extract</span></tt>: Extract loops into new functions</a></li>
-<li><a class="reference internal" href="#loop-extract-single-extract-at-most-one-loop-into-a-new-function" id="id74"><tt class="docutils literal"><span class="pre">-loop-extract-single</span></tt>: Extract at most one loop into a new function</a></li>
-<li><a class="reference internal" href="#loop-reduce-loop-strength-reduction" id="id75"><tt class="docutils literal"><span class="pre">-loop-reduce</span></tt>: Loop Strength Reduction</a></li>
-<li><a class="reference internal" href="#loop-rotate-rotate-loops" id="id76"><tt class="docutils literal"><span class="pre">-loop-rotate</span></tt>: Rotate Loops</a></li>
-<li><a class="reference internal" href="#loop-simplify-canonicalize-natural-loops" id="id77"><tt class="docutils literal"><span class="pre">-loop-simplify</span></tt>: Canonicalize natural loops</a></li>
-<li><a class="reference internal" href="#loop-unroll-unroll-loops" id="id78"><tt class="docutils literal"><span class="pre">-loop-unroll</span></tt>: Unroll loops</a></li>
-<li><a class="reference internal" href="#loop-unswitch-unswitch-loops" id="id79"><tt class="docutils literal"><span class="pre">-loop-unswitch</span></tt>: Unswitch loops</a></li>
-<li><a class="reference internal" href="#loweratomic-lower-atomic-intrinsics-to-non-atomic-form" id="id80"><tt class="docutils literal"><span class="pre">-loweratomic</span></tt>: Lower atomic intrinsics to non-atomic form</a></li>
-<li><a class="reference internal" href="#lowerinvoke-lower-invokes-to-calls-for-unwindless-code-generators" id="id81"><tt class="docutils literal"><span class="pre">-lowerinvoke</span></tt>: Lower invokes to calls, for unwindless code generators</a></li>
-<li><a class="reference internal" href="#lowerswitch-lower-switchinsts-to-branches" id="id82"><tt class="docutils literal"><span class="pre">-lowerswitch</span></tt>: Lower <tt class="docutils literal"><span class="pre">SwitchInst</span></tt>s to branches</a></li>
-<li><a class="reference internal" href="#mem2reg-promote-memory-to-register" id="id83"><tt class="docutils literal"><span class="pre">-mem2reg</span></tt>: Promote Memory to Register</a></li>
-<li><a class="reference internal" href="#memcpyopt-memcpy-optimization" id="id84"><tt class="docutils literal"><span class="pre">-memcpyopt</span></tt>: MemCpy Optimization</a></li>
-<li><a class="reference internal" href="#mergefunc-merge-functions" id="id85"><tt class="docutils literal"><span class="pre">-mergefunc</span></tt>: Merge Functions</a></li>
-<li><a class="reference internal" href="#mergereturn-unify-function-exit-nodes" id="id86"><tt class="docutils literal"><span class="pre">-mergereturn</span></tt>: Unify function exit nodes</a></li>
-<li><a class="reference internal" href="#partial-inliner-partial-inliner" id="id87"><tt class="docutils literal"><span class="pre">-partial-inliner</span></tt>: Partial Inliner</a></li>
-<li><a class="reference internal" href="#prune-eh-remove-unused-exception-handling-info" id="id88"><tt class="docutils literal"><span class="pre">-prune-eh</span></tt>: Remove unused exception handling info</a></li>
-<li><a class="reference internal" href="#reassociate-reassociate-expressions" id="id89"><tt class="docutils literal"><span class="pre">-reassociate</span></tt>: Reassociate expressions</a></li>
-<li><a class="reference internal" href="#reg2mem-demote-all-values-to-stack-slots" id="id90"><tt class="docutils literal"><span class="pre">-reg2mem</span></tt>: Demote all values to stack slots</a></li>
-<li><a class="reference internal" href="#scalarrepl-scalar-replacement-of-aggregates-dt" id="id91"><tt class="docutils literal"><span class="pre">-scalarrepl</span></tt>: Scalar Replacement of Aggregates (DT)</a></li>
-<li><a class="reference internal" href="#sccp-sparse-conditional-constant-propagation" id="id92"><tt class="docutils literal"><span class="pre">-sccp</span></tt>: Sparse Conditional Constant Propagation</a></li>
-<li><a class="reference internal" href="#simplifycfg-simplify-the-cfg" id="id93"><tt class="docutils literal"><span class="pre">-simplifycfg</span></tt>: Simplify the CFG</a></li>
-<li><a class="reference internal" href="#sink-code-sinking" id="id94"><tt class="docutils literal"><span class="pre">-sink</span></tt>: Code sinking</a></li>
-<li><a class="reference internal" href="#strip-strip-all-symbols-from-a-module" id="id95"><tt class="docutils literal"><span class="pre">-strip</span></tt>: Strip all symbols from a module</a></li>
-<li><a class="reference internal" href="#strip-dead-debug-info-strip-debug-info-for-unused-symbols" id="id96"><tt class="docutils literal"><span class="pre">-strip-dead-debug-info</span></tt>: Strip debug info for unused symbols</a></li>
-<li><a class="reference internal" href="#strip-dead-prototypes-strip-unused-function-prototypes" id="id97"><tt class="docutils literal"><span class="pre">-strip-dead-prototypes</span></tt>: Strip Unused Function Prototypes</a></li>
-<li><a class="reference internal" href="#strip-debug-declare-strip-all-llvm-dbg-declare-intrinsics" id="id98"><tt class="docutils literal"><span class="pre">-strip-debug-declare</span></tt>: Strip all <tt class="docutils literal"><span class="pre">llvm.dbg.declare</span></tt> intrinsics</a></li>
-<li><a class="reference internal" href="#strip-nondebug-strip-all-symbols-except-dbg-symbols-from-a-module" id="id99"><tt class="docutils literal"><span class="pre">-strip-nondebug</span></tt>: Strip all symbols, except dbg symbols, from a module</a></li>
-<li><a class="reference internal" href="#tailcallelim-tail-call-elimination" id="id100"><tt class="docutils literal"><span class="pre">-tailcallelim</span></tt>: Tail Call Elimination</a></li>
+<li><a class="reference internal" href="#adce-aggressive-dead-code-elimination" id="id45"><code class="docutils literal"><span class="pre">-adce</span></code>: Aggressive Dead Code Elimination</a></li>
+<li><a class="reference internal" href="#always-inline-inliner-for-always-inline-functions" id="id46"><code class="docutils literal"><span class="pre">-always-inline</span></code>: Inliner for <code class="docutils literal"><span class="pre">always_inline</span></code> functions</a></li>
+<li><a class="reference internal" href="#argpromotion-promote-by-reference-arguments-to-scalars" id="id47"><code class="docutils literal"><span class="pre">-argpromotion</span></code>: Promote &#8216;by reference&#8217; arguments to scalars</a></li>
+<li><a class="reference internal" href="#bb-vectorize-basic-block-vectorization" id="id48"><code class="docutils literal"><span class="pre">-bb-vectorize</span></code>: Basic-Block Vectorization</a></li>
+<li><a class="reference internal" href="#block-placement-profile-guided-basic-block-placement" id="id49"><code class="docutils literal"><span class="pre">-block-placement</span></code>: Profile Guided Basic Block Placement</a></li>
+<li><a class="reference internal" href="#break-crit-edges-break-critical-edges-in-cfg" id="id50"><code class="docutils literal"><span class="pre">-break-crit-edges</span></code>: Break critical edges in CFG</a></li>
+<li><a class="reference internal" href="#codegenprepare-optimize-for-code-generation" id="id51"><code class="docutils literal"><span class="pre">-codegenprepare</span></code>: Optimize for code generation</a></li>
+<li><a class="reference internal" href="#constmerge-merge-duplicate-global-constants" id="id52"><code class="docutils literal"><span class="pre">-constmerge</span></code>: Merge Duplicate Global Constants</a></li>
+<li><a class="reference internal" href="#constprop-simple-constant-propagation" id="id53"><code class="docutils literal"><span class="pre">-constprop</span></code>: Simple constant propagation</a></li>
+<li><a class="reference internal" href="#dce-dead-code-elimination" id="id54"><code class="docutils literal"><span class="pre">-dce</span></code>: Dead Code Elimination</a></li>
+<li><a class="reference internal" href="#deadargelim-dead-argument-elimination" id="id55"><code class="docutils literal"><span class="pre">-deadargelim</span></code>: Dead Argument Elimination</a></li>
+<li><a class="reference internal" href="#deadtypeelim-dead-type-elimination" id="id56"><code class="docutils literal"><span class="pre">-deadtypeelim</span></code>: Dead Type Elimination</a></li>
+<li><a class="reference internal" href="#die-dead-instruction-elimination" id="id57"><code class="docutils literal"><span class="pre">-die</span></code>: Dead Instruction Elimination</a></li>
+<li><a class="reference internal" href="#dse-dead-store-elimination" id="id58"><code class="docutils literal"><span class="pre">-dse</span></code>: Dead Store Elimination</a></li>
+<li><a class="reference internal" href="#functionattrs-deduce-function-attributes" id="id59"><code class="docutils literal"><span class="pre">-functionattrs</span></code>: Deduce function attributes</a></li>
+<li><a class="reference internal" href="#globaldce-dead-global-elimination" id="id60"><code class="docutils literal"><span class="pre">-globaldce</span></code>: Dead Global Elimination</a></li>
+<li><a class="reference internal" href="#globalopt-global-variable-optimizer" id="id61"><code class="docutils literal"><span class="pre">-globalopt</span></code>: Global Variable Optimizer</a></li>
+<li><a class="reference internal" href="#gvn-global-value-numbering" id="id62"><code class="docutils literal"><span class="pre">-gvn</span></code>: Global Value Numbering</a></li>
+<li><a class="reference internal" href="#indvars-canonicalize-induction-variables" id="id63"><code class="docutils literal"><span class="pre">-indvars</span></code>: Canonicalize Induction Variables</a></li>
+<li><a class="reference internal" href="#inline-function-integration-inlining" id="id64"><code class="docutils literal"><span class="pre">-inline</span></code>: Function Integration/Inlining</a></li>
+<li><a class="reference internal" href="#instcombine-combine-redundant-instructions" id="id65"><code class="docutils literal"><span class="pre">-instcombine</span></code>: Combine redundant instructions</a></li>
+<li><a class="reference internal" href="#internalize-internalize-global-symbols" id="id66"><code class="docutils literal"><span class="pre">-internalize</span></code>: Internalize Global Symbols</a></li>
+<li><a class="reference internal" href="#ipconstprop-interprocedural-constant-propagation" id="id67"><code class="docutils literal"><span class="pre">-ipconstprop</span></code>: Interprocedural constant propagation</a></li>
+<li><a class="reference internal" href="#ipsccp-interprocedural-sparse-conditional-constant-propagation" id="id68"><code class="docutils literal"><span class="pre">-ipsccp</span></code>: Interprocedural Sparse Conditional Constant Propagation</a></li>
+<li><a class="reference internal" href="#jump-threading-jump-threading" id="id69"><code class="docutils literal"><span class="pre">-jump-threading</span></code>: Jump Threading</a></li>
+<li><a class="reference internal" href="#lcssa-loop-closed-ssa-form-pass" id="id70"><code class="docutils literal"><span class="pre">-lcssa</span></code>: Loop-Closed SSA Form Pass</a></li>
+<li><a class="reference internal" href="#licm-loop-invariant-code-motion" id="id71"><code class="docutils literal"><span class="pre">-licm</span></code>: Loop Invariant Code Motion</a></li>
+<li><a class="reference internal" href="#loop-deletion-delete-dead-loops" id="id72"><code class="docutils literal"><span class="pre">-loop-deletion</span></code>: Delete dead loops</a></li>
+<li><a class="reference internal" href="#loop-extract-extract-loops-into-new-functions" id="id73"><code class="docutils literal"><span class="pre">-loop-extract</span></code>: Extract loops into new functions</a></li>
+<li><a class="reference internal" href="#loop-extract-single-extract-at-most-one-loop-into-a-new-function" id="id74"><code class="docutils literal"><span class="pre">-loop-extract-single</span></code>: Extract at most one loop into a new function</a></li>
+<li><a class="reference internal" href="#loop-reduce-loop-strength-reduction" id="id75"><code class="docutils literal"><span class="pre">-loop-reduce</span></code>: Loop Strength Reduction</a></li>
+<li><a class="reference internal" href="#loop-rotate-rotate-loops" id="id76"><code class="docutils literal"><span class="pre">-loop-rotate</span></code>: Rotate Loops</a></li>
+<li><a class="reference internal" href="#loop-simplify-canonicalize-natural-loops" id="id77"><code class="docutils literal"><span class="pre">-loop-simplify</span></code>: Canonicalize natural loops</a></li>
+<li><a class="reference internal" href="#loop-unroll-unroll-loops" id="id78"><code class="docutils literal"><span class="pre">-loop-unroll</span></code>: Unroll loops</a></li>
+<li><a class="reference internal" href="#loop-unswitch-unswitch-loops" id="id79"><code class="docutils literal"><span class="pre">-loop-unswitch</span></code>: Unswitch loops</a></li>
+<li><a class="reference internal" href="#loweratomic-lower-atomic-intrinsics-to-non-atomic-form" id="id80"><code class="docutils literal"><span class="pre">-loweratomic</span></code>: Lower atomic intrinsics to non-atomic form</a></li>
+<li><a class="reference internal" href="#lowerinvoke-lower-invokes-to-calls-for-unwindless-code-generators" id="id81"><code class="docutils literal"><span class="pre">-lowerinvoke</span></code>: Lower invokes to calls, for unwindless code generators</a></li>
+<li><a class="reference internal" href="#lowerswitch-lower-switchinsts-to-branches" id="id82"><code class="docutils literal"><span class="pre">-lowerswitch</span></code>: Lower <code class="docutils literal"><span class="pre">SwitchInst</span></code>s to branches</a></li>
+<li><a class="reference internal" href="#mem2reg-promote-memory-to-register" id="id83"><code class="docutils literal"><span class="pre">-mem2reg</span></code>: Promote Memory to Register</a></li>
+<li><a class="reference internal" href="#memcpyopt-memcpy-optimization" id="id84"><code class="docutils literal"><span class="pre">-memcpyopt</span></code>: MemCpy Optimization</a></li>
+<li><a class="reference internal" href="#mergefunc-merge-functions" id="id85"><code class="docutils literal"><span class="pre">-mergefunc</span></code>: Merge Functions</a></li>
+<li><a class="reference internal" href="#mergereturn-unify-function-exit-nodes" id="id86"><code class="docutils literal"><span class="pre">-mergereturn</span></code>: Unify function exit nodes</a></li>
+<li><a class="reference internal" href="#partial-inliner-partial-inliner" id="id87"><code class="docutils literal"><span class="pre">-partial-inliner</span></code>: Partial Inliner</a></li>
+<li><a class="reference internal" href="#prune-eh-remove-unused-exception-handling-info" id="id88"><code class="docutils literal"><span class="pre">-prune-eh</span></code>: Remove unused exception handling info</a></li>
+<li><a class="reference internal" href="#reassociate-reassociate-expressions" id="id89"><code class="docutils literal"><span class="pre">-reassociate</span></code>: Reassociate expressions</a></li>
+<li><a class="reference internal" href="#reg2mem-demote-all-values-to-stack-slots" id="id90"><code class="docutils literal"><span class="pre">-reg2mem</span></code>: Demote all values to stack slots</a></li>
+<li><a class="reference internal" href="#scalarrepl-scalar-replacement-of-aggregates-dt" id="id91"><code class="docutils literal"><span class="pre">-scalarrepl</span></code>: Scalar Replacement of Aggregates (DT)</a></li>
+<li><a class="reference internal" href="#sccp-sparse-conditional-constant-propagation" id="id92"><code class="docutils literal"><span class="pre">-sccp</span></code>: Sparse Conditional Constant Propagation</a></li>
+<li><a class="reference internal" href="#simplifycfg-simplify-the-cfg" id="id93"><code class="docutils literal"><span class="pre">-simplifycfg</span></code>: Simplify the CFG</a></li>
+<li><a class="reference internal" href="#sink-code-sinking" id="id94"><code class="docutils literal"><span class="pre">-sink</span></code>: Code sinking</a></li>
+<li><a class="reference internal" href="#strip-strip-all-symbols-from-a-module" id="id95"><code class="docutils literal"><span class="pre">-strip</span></code>: Strip all symbols from a module</a></li>
+<li><a class="reference internal" href="#strip-dead-debug-info-strip-debug-info-for-unused-symbols" id="id96"><code class="docutils literal"><span class="pre">-strip-dead-debug-info</span></code>: Strip debug info for unused symbols</a></li>
+<li><a class="reference internal" href="#strip-dead-prototypes-strip-unused-function-prototypes" id="id97"><code class="docutils literal"><span class="pre">-strip-dead-prototypes</span></code>: Strip Unused Function Prototypes</a></li>
+<li><a class="reference internal" href="#strip-debug-declare-strip-all-llvm-dbg-declare-intrinsics" id="id98"><code class="docutils literal"><span class="pre">-strip-debug-declare</span></code>: Strip all <code class="docutils literal"><span class="pre">llvm.dbg.declare</span></code> intrinsics</a></li>
+<li><a class="reference internal" href="#strip-nondebug-strip-all-symbols-except-dbg-symbols-from-a-module" id="id99"><code class="docutils literal"><span class="pre">-strip-nondebug</span></code>: Strip all symbols, except dbg symbols, from a module</a></li>
+<li><a class="reference internal" href="#tailcallelim-tail-call-elimination" id="id100"><code class="docutils literal"><span class="pre">-tailcallelim</span></code>: Tail Call Elimination</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#utility-passes" id="id101">Utility Passes</a><ul>
-<li><a class="reference internal" href="#deadarghax0r-dead-argument-hacking-bugpoint-use-only-do-not-use" id="id102"><tt class="docutils literal"><span class="pre">-deadarghaX0r</span></tt>: Dead Argument Hacking (BUGPOINT USE ONLY; DO NOT USE)</a></li>
-<li><a class="reference internal" href="#extract-blocks-extract-basic-blocks-from-module-for-bugpoint-use" id="id103"><tt class="docutils literal"><span class="pre">-extract-blocks</span></tt>: Extract Basic Blocks From Module (for bugpoint use)</a></li>
-<li><a class="reference internal" href="#instnamer-assign-names-to-anonymous-instructions" id="id104"><tt class="docutils literal"><span class="pre">-instnamer</span></tt>: Assign names to anonymous instructions</a></li>
-<li><a class="reference internal" href="#preverify-preliminary-module-verification" id="id105"><tt class="docutils literal"><span class="pre">-preverify</span></tt>: Preliminary module verification</a></li>
-<li><a class="reference internal" href="#verify-module-verifier" id="id106"><tt class="docutils literal"><span class="pre">-verify</span></tt>: Module Verifier</a></li>
-<li><a class="reference internal" href="#view-cfg-view-cfg-of-function" id="id107"><tt class="docutils literal"><span class="pre">-view-cfg</span></tt>: View CFG of function</a></li>
-<li><a class="reference internal" href="#view-cfg-only-view-cfg-of-function-with-no-function-bodies" id="id108"><tt class="docutils literal"><span class="pre">-view-cfg-only</span></tt>: View CFG of function (with no function bodies)</a></li>
-<li><a class="reference internal" href="#view-dom-view-dominance-tree-of-function" id="id109"><tt class="docutils literal"><span class="pre">-view-dom</span></tt>: View dominance tree of function</a></li>
-<li><a class="reference internal" href="#view-dom-only-view-dominance-tree-of-function-with-no-function-bodies" id="id110"><tt class="docutils literal"><span class="pre">-view-dom-only</span></tt>: View dominance tree of function (with no function bodies)</a></li>
-<li><a class="reference internal" href="#view-postdom-view-postdominance-tree-of-function" id="id111"><tt class="docutils literal"><span class="pre">-view-postdom</span></tt>: View postdominance tree of function</a></li>
-<li><a class="reference internal" href="#view-postdom-only-view-postdominance-tree-of-function-with-no-function-bodies" id="id112"><tt class="docutils literal"><span class="pre">-view-postdom-only</span></tt>: View postdominance tree of function (with no function bodies)</a></li>
+<li><a class="reference internal" href="#deadarghax0r-dead-argument-hacking-bugpoint-use-only-do-not-use" id="id102"><code class="docutils literal"><span class="pre">-deadarghaX0r</span></code>: Dead Argument Hacking (BUGPOINT USE ONLY; DO NOT USE)</a></li>
+<li><a class="reference internal" href="#extract-blocks-extract-basic-blocks-from-module-for-bugpoint-use" id="id103"><code class="docutils literal"><span class="pre">-extract-blocks</span></code>: Extract Basic Blocks From Module (for bugpoint use)</a></li>
+<li><a class="reference internal" href="#instnamer-assign-names-to-anonymous-instructions" id="id104"><code class="docutils literal"><span class="pre">-instnamer</span></code>: Assign names to anonymous instructions</a></li>
+<li><a class="reference internal" href="#preverify-preliminary-module-verification" id="id105"><code class="docutils literal"><span class="pre">-preverify</span></code>: Preliminary module verification</a></li>
+<li><a class="reference internal" href="#verify-module-verifier" id="id106"><code class="docutils literal"><span class="pre">-verify</span></code>: Module Verifier</a></li>
+<li><a class="reference internal" href="#view-cfg-view-cfg-of-function" id="id107"><code class="docutils literal"><span class="pre">-view-cfg</span></code>: View CFG of function</a></li>
+<li><a class="reference internal" href="#view-cfg-only-view-cfg-of-function-with-no-function-bodies" id="id108"><code class="docutils literal"><span class="pre">-view-cfg-only</span></code>: View CFG of function (with no function bodies)</a></li>
+<li><a class="reference internal" href="#view-dom-view-dominance-tree-of-function" id="id109"><code class="docutils literal"><span class="pre">-view-dom</span></code>: View dominance tree of function</a></li>
+<li><a class="reference internal" href="#view-dom-only-view-dominance-tree-of-function-with-no-function-bodies" id="id110"><code class="docutils literal"><span class="pre">-view-dom-only</span></code>: View dominance tree of function (with no function bodies)</a></li>
+<li><a class="reference internal" href="#view-postdom-view-postdominance-tree-of-function" id="id111"><code class="docutils literal"><span class="pre">-view-postdom</span></code>: View postdominance tree of function</a></li>
+<li><a class="reference internal" href="#view-postdom-only-view-postdominance-tree-of-function-with-no-function-bodies" id="id112"><code class="docutils literal"><span class="pre">-view-postdom-only</span></code>: View postdominance tree of function (with no function bodies)</a></li>
 </ul>
 </li>
 </ul>
@@ -206,7 +206,7 @@ description later in the document.</p>
 <h2><a class="toc-backref" href="#id2">Analysis Passes</a><a class="headerlink" href="#analysis-passes" title="Permalink to this headline">¶</a></h2>
 <p>This section describes the LLVM Analysis Passes.</p>
 <div class="section" id="aa-eval-exhaustive-alias-analysis-precision-evaluator">
-<h3><a class="toc-backref" href="#id3"><tt class="docutils literal"><span class="pre">-aa-eval</span></tt>: Exhaustive Alias Analysis Precision Evaluator</a><a class="headerlink" href="#aa-eval-exhaustive-alias-analysis-precision-evaluator" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id3"><code class="docutils literal"><span class="pre">-aa-eval</span></code>: Exhaustive Alias Analysis Precision Evaluator</a><a class="headerlink" href="#aa-eval-exhaustive-alias-analysis-precision-evaluator" title="Permalink to this headline">¶</a></h3>
 <p>This is a simple N^2 alias analysis accuracy evaluator.  Basically, for each
 function in the program, it simply queries to see how the alias analysis
 implementation answers alias queries between each pair of pointers in the
@@ -215,26 +215,26 @@ function.</p>
 Spadini, and Wojciech Stryjewski.</p>
 </div>
 <div class="section" id="basicaa-basic-alias-analysis-stateless-aa-impl">
-<h3><a class="toc-backref" href="#id4"><tt class="docutils literal"><span class="pre">-basicaa</span></tt>: Basic Alias Analysis (stateless AA impl)</a><a class="headerlink" href="#basicaa-basic-alias-analysis-stateless-aa-impl" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id4"><code class="docutils literal"><span class="pre">-basicaa</span></code>: Basic Alias Analysis (stateless AA impl)</a><a class="headerlink" href="#basicaa-basic-alias-analysis-stateless-aa-impl" title="Permalink to this headline">¶</a></h3>
 <p>A basic alias analysis pass that implements identities (two different globals
 cannot alias, etc), but does no stateful analysis.</p>
 </div>
 <div class="section" id="basiccg-basic-callgraph-construction">
-<h3><a class="toc-backref" href="#id5"><tt class="docutils literal"><span class="pre">-basiccg</span></tt>: Basic CallGraph Construction</a><a class="headerlink" href="#basiccg-basic-callgraph-construction" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id5"><code class="docutils literal"><span class="pre">-basiccg</span></code>: Basic CallGraph Construction</a><a class="headerlink" href="#basiccg-basic-callgraph-construction" title="Permalink to this headline">¶</a></h3>
 <p>Yet to be written.</p>
 </div>
 <div class="section" id="count-aa-count-alias-analysis-query-responses">
-<h3><a class="toc-backref" href="#id6"><tt class="docutils literal"><span class="pre">-count-aa</span></tt>: Count Alias Analysis Query Responses</a><a class="headerlink" href="#count-aa-count-alias-analysis-query-responses" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id6"><code class="docutils literal"><span class="pre">-count-aa</span></code>: Count Alias Analysis Query Responses</a><a class="headerlink" href="#count-aa-count-alias-analysis-query-responses" title="Permalink to this headline">¶</a></h3>
 <p>A pass which can be used to count how many alias queries are being made and how
 the alias analysis implementation being used responds.</p>
 </div>
 <div class="section" id="da-dependence-analysis">
-<h3><a class="toc-backref" href="#id7"><tt class="docutils literal"><span class="pre">-da</span></tt>: Dependence Analysis</a><a class="headerlink" href="#da-dependence-analysis" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id7"><code class="docutils literal"><span class="pre">-da</span></code>: Dependence Analysis</a><a class="headerlink" href="#da-dependence-analysis" title="Permalink to this headline">¶</a></h3>
 <p>Dependence analysis framework, which is used to detect dependences in memory
 accesses.</p>
 </div>
 <div class="section" id="debug-aa-aa-use-debugger">
-<h3><a class="toc-backref" href="#id8"><tt class="docutils literal"><span class="pre">-debug-aa</span></tt>: AA use debugger</a><a class="headerlink" href="#debug-aa-aa-use-debugger" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id8"><code class="docutils literal"><span class="pre">-debug-aa</span></code>: AA use debugger</a><a class="headerlink" href="#debug-aa-aa-use-debugger" title="Permalink to this headline">¶</a></h3>
 <p>This simple pass checks alias analysis users to ensure that if they create a
 new value, they do not query AA without informing it of the value.  It acts as
 a shim over any other AA pass you want.</p>
@@ -242,92 +242,92 @@ a shim over any other AA pass you want.</p>
 debugging pass.</p>
 </div>
 <div class="section" id="domfrontier-dominance-frontier-construction">
-<h3><a class="toc-backref" href="#id9"><tt class="docutils literal"><span class="pre">-domfrontier</span></tt>: Dominance Frontier Construction</a><a class="headerlink" href="#domfrontier-dominance-frontier-construction" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id9"><code class="docutils literal"><span class="pre">-domfrontier</span></code>: Dominance Frontier Construction</a><a class="headerlink" href="#domfrontier-dominance-frontier-construction" title="Permalink to this headline">¶</a></h3>
 <p>This pass is a simple dominator construction algorithm for finding forward
 dominator frontiers.</p>
 </div>
 <div class="section" id="domtree-dominator-tree-construction">
-<h3><a class="toc-backref" href="#id10"><tt class="docutils literal"><span class="pre">-domtree</span></tt>: Dominator Tree Construction</a><a class="headerlink" href="#domtree-dominator-tree-construction" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id10"><code class="docutils literal"><span class="pre">-domtree</span></code>: Dominator Tree Construction</a><a class="headerlink" href="#domtree-dominator-tree-construction" title="Permalink to this headline">¶</a></h3>
 <p>This pass is a simple dominator construction algorithm for finding forward
 dominators.</p>
 </div>
 <div class="section" id="dot-callgraph-print-call-graph-to-dot-file">
-<h3><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">-dot-callgraph</span></tt>: Print Call Graph to &#8220;dot&#8221; file</a><a class="headerlink" href="#dot-callgraph-print-call-graph-to-dot-file" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, prints the call graph into a <tt class="docutils literal"><span class="pre">.dot</span></tt>
+<h3><a class="toc-backref" href="#id11"><code class="docutils literal"><span class="pre">-dot-callgraph</span></code>: Print Call Graph to &#8220;dot&#8221; file</a><a class="headerlink" href="#dot-callgraph-print-call-graph-to-dot-file" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, prints the call graph into a <code class="docutils literal"><span class="pre">.dot</span></code>
 graph.  This graph can then be processed with the &#8220;dot&#8221; tool to convert it to
 postscript or some other suitable format.</p>
 </div>
 <div class="section" id="dot-cfg-print-cfg-of-function-to-dot-file">
-<h3><a class="toc-backref" href="#id12"><tt class="docutils literal"><span class="pre">-dot-cfg</span></tt>: Print CFG of function to &#8220;dot&#8221; file</a><a class="headerlink" href="#dot-cfg-print-cfg-of-function-to-dot-file" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, prints the control flow graph into a
-<tt class="docutils literal"><span class="pre">.dot</span></tt> graph.  This graph can then be processed with the <strong class="program">dot</strong> tool
+<h3><a class="toc-backref" href="#id12"><code class="docutils literal"><span class="pre">-dot-cfg</span></code>: Print CFG of function to &#8220;dot&#8221; file</a><a class="headerlink" href="#dot-cfg-print-cfg-of-function-to-dot-file" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, prints the control flow graph into a
+<code class="docutils literal"><span class="pre">.dot</span></code> graph.  This graph can then be processed with the <strong class="program">dot</strong> tool
 to convert it to postscript or some other suitable format.</p>
 </div>
 <div class="section" id="dot-cfg-only-print-cfg-of-function-to-dot-file-with-no-function-bodies">
-<h3><a class="toc-backref" href="#id13"><tt class="docutils literal"><span class="pre">-dot-cfg-only</span></tt>: Print CFG of function to &#8220;dot&#8221; file (with no function bodies)</a><a class="headerlink" href="#dot-cfg-only-print-cfg-of-function-to-dot-file-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, prints the control flow graph into a
-<tt class="docutils literal"><span class="pre">.dot</span></tt> graph, omitting the function bodies.  This graph can then be processed
+<h3><a class="toc-backref" href="#id13"><code class="docutils literal"><span class="pre">-dot-cfg-only</span></code>: Print CFG of function to &#8220;dot&#8221; file (with no function bodies)</a><a class="headerlink" href="#dot-cfg-only-print-cfg-of-function-to-dot-file-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, prints the control flow graph into a
+<code class="docutils literal"><span class="pre">.dot</span></code> graph, omitting the function bodies.  This graph can then be processed
 with the <strong class="program">dot</strong> tool to convert it to postscript or some other suitable
 format.</p>
 </div>
 <div class="section" id="dot-dom-print-dominance-tree-of-function-to-dot-file">
-<h3><a class="toc-backref" href="#id14"><tt class="docutils literal"><span class="pre">-dot-dom</span></tt>: Print dominance tree of function to &#8220;dot&#8221; file</a><a class="headerlink" href="#dot-dom-print-dominance-tree-of-function-to-dot-file" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, prints the dominator tree into a <tt class="docutils literal"><span class="pre">.dot</span></tt>
+<h3><a class="toc-backref" href="#id14"><code class="docutils literal"><span class="pre">-dot-dom</span></code>: Print dominance tree of function to &#8220;dot&#8221; file</a><a class="headerlink" href="#dot-dom-print-dominance-tree-of-function-to-dot-file" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, prints the dominator tree into a <code class="docutils literal"><span class="pre">.dot</span></code>
 graph.  This graph can then be processed with the <strong class="program">dot</strong> tool to
 convert it to postscript or some other suitable format.</p>
 </div>
 <div class="section" id="dot-dom-only-print-dominance-tree-of-function-to-dot-file-with-no-function-bodies">
-<h3><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">-dot-dom-only</span></tt>: Print dominance tree of function to &#8220;dot&#8221; file (with no function bodies)</a><a class="headerlink" href="#dot-dom-only-print-dominance-tree-of-function-to-dot-file-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, prints the dominator tree into a <tt class="docutils literal"><span class="pre">.dot</span></tt>
+<h3><a class="toc-backref" href="#id15"><code class="docutils literal"><span class="pre">-dot-dom-only</span></code>: Print dominance tree of function to &#8220;dot&#8221; file (with no function bodies)</a><a class="headerlink" href="#dot-dom-only-print-dominance-tree-of-function-to-dot-file-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, prints the dominator tree into a <code class="docutils literal"><span class="pre">.dot</span></code>
 graph, omitting the function bodies.  This graph can then be processed with the
 <strong class="program">dot</strong> tool to convert it to postscript or some other suitable format.</p>
 </div>
 <div class="section" id="dot-postdom-print-postdominance-tree-of-function-to-dot-file">
-<h3><a class="toc-backref" href="#id16"><tt class="docutils literal"><span class="pre">-dot-postdom</span></tt>: Print postdominance tree of function to &#8220;dot&#8221; file</a><a class="headerlink" href="#dot-postdom-print-postdominance-tree-of-function-to-dot-file" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, prints the post dominator tree into a
-<tt class="docutils literal"><span class="pre">.dot</span></tt> graph.  This graph can then be processed with the <strong class="program">dot</strong> tool
+<h3><a class="toc-backref" href="#id16"><code class="docutils literal"><span class="pre">-dot-postdom</span></code>: Print postdominance tree of function to &#8220;dot&#8221; file</a><a class="headerlink" href="#dot-postdom-print-postdominance-tree-of-function-to-dot-file" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, prints the post dominator tree into a
+<code class="docutils literal"><span class="pre">.dot</span></code> graph.  This graph can then be processed with the <strong class="program">dot</strong> tool
 to convert it to postscript or some other suitable format.</p>
 </div>
 <div class="section" id="dot-postdom-only-print-postdominance-tree-of-function-to-dot-file-with-no-function-bodies">
-<h3><a class="toc-backref" href="#id17"><tt class="docutils literal"><span class="pre">-dot-postdom-only</span></tt>: Print postdominance tree of function to &#8220;dot&#8221; file (with no function bodies)</a><a class="headerlink" href="#dot-postdom-only-print-postdominance-tree-of-function-to-dot-file-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, prints the post dominator tree into a
-<tt class="docutils literal"><span class="pre">.dot</span></tt> graph, omitting the function bodies.  This graph can then be processed
+<h3><a class="toc-backref" href="#id17"><code class="docutils literal"><span class="pre">-dot-postdom-only</span></code>: Print postdominance tree of function to &#8220;dot&#8221; file (with no function bodies)</a><a class="headerlink" href="#dot-postdom-only-print-postdominance-tree-of-function-to-dot-file-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, prints the post dominator tree into a
+<code class="docutils literal"><span class="pre">.dot</span></code> graph, omitting the function bodies.  This graph can then be processed
 with the <strong class="program">dot</strong> tool to convert it to postscript or some other suitable
 format.</p>
 </div>
 <div class="section" id="globalsmodref-aa-simple-mod-ref-analysis-for-globals">
-<h3><a class="toc-backref" href="#id18"><tt class="docutils literal"><span class="pre">-globalsmodref-aa</span></tt>: Simple mod/ref analysis for globals</a><a class="headerlink" href="#globalsmodref-aa-simple-mod-ref-analysis-for-globals" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id18"><code class="docutils literal"><span class="pre">-globalsmodref-aa</span></code>: Simple mod/ref analysis for globals</a><a class="headerlink" href="#globalsmodref-aa-simple-mod-ref-analysis-for-globals" title="Permalink to this headline">¶</a></h3>
 <p>This simple pass provides alias and mod/ref information for global values that
 do not have their address taken, and keeps track of whether functions read or
 write memory (are &#8220;pure&#8221;).  For this simple (but very common) case, we can
 provide pretty accurate and useful information.</p>
 </div>
 <div class="section" id="instcount-counts-the-various-types-of-instructions">
-<h3><a class="toc-backref" href="#id19"><tt class="docutils literal"><span class="pre">-instcount</span></tt>: Counts the various types of <tt class="docutils literal"><span class="pre">Instruction</span></tt>s</a><a class="headerlink" href="#instcount-counts-the-various-types-of-instructions" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id19"><code class="docutils literal"><span class="pre">-instcount</span></code>: Counts the various types of <code class="docutils literal"><span class="pre">Instruction</span></code>s</a><a class="headerlink" href="#instcount-counts-the-various-types-of-instructions" title="Permalink to this headline">¶</a></h3>
 <p>This pass collects the count of all instructions and reports them.</p>
 </div>
 <div class="section" id="intervals-interval-partition-construction">
-<h3><a class="toc-backref" href="#id20"><tt class="docutils literal"><span class="pre">-intervals</span></tt>: Interval Partition Construction</a><a class="headerlink" href="#intervals-interval-partition-construction" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id20"><code class="docutils literal"><span class="pre">-intervals</span></code>: Interval Partition Construction</a><a class="headerlink" href="#intervals-interval-partition-construction" title="Permalink to this headline">¶</a></h3>
 <p>This analysis calculates and represents the interval partition of a function,
 or a preexisting interval partition.</p>
 <p>In this way, the interval partition may be used to reduce a flow graph down to
 its degenerate single node interval partition (unless it is irreducible).</p>
 </div>
 <div class="section" id="iv-users-induction-variable-users">
-<h3><a class="toc-backref" href="#id21"><tt class="docutils literal"><span class="pre">-iv-users</span></tt>: Induction Variable Users</a><a class="headerlink" href="#iv-users-induction-variable-users" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id21"><code class="docutils literal"><span class="pre">-iv-users</span></code>: Induction Variable Users</a><a class="headerlink" href="#iv-users-induction-variable-users" title="Permalink to this headline">¶</a></h3>
 <p>Bookkeeping for &#8220;interesting&#8221; users of expressions computed from induction
 variables.</p>
 </div>
 <div class="section" id="lazy-value-info-lazy-value-information-analysis">
-<h3><a class="toc-backref" href="#id22"><tt class="docutils literal"><span class="pre">-lazy-value-info</span></tt>: Lazy Value Information Analysis</a><a class="headerlink" href="#lazy-value-info-lazy-value-information-analysis" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id22"><code class="docutils literal"><span class="pre">-lazy-value-info</span></code>: Lazy Value Information Analysis</a><a class="headerlink" href="#lazy-value-info-lazy-value-information-analysis" title="Permalink to this headline">¶</a></h3>
 <p>Interface for lazy computation of value constraint information.</p>
 </div>
 <div class="section" id="libcall-aa-libcall-alias-analysis">
-<h3><a class="toc-backref" href="#id23"><tt class="docutils literal"><span class="pre">-libcall-aa</span></tt>: LibCall Alias Analysis</a><a class="headerlink" href="#libcall-aa-libcall-alias-analysis" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id23"><code class="docutils literal"><span class="pre">-libcall-aa</span></code>: LibCall Alias Analysis</a><a class="headerlink" href="#libcall-aa-libcall-alias-analysis" title="Permalink to this headline">¶</a></h3>
 <p>LibCall Alias Analysis.</p>
 </div>
 <div class="section" id="lint-statically-lint-checks-llvm-ir">
-<h3><a class="toc-backref" href="#id24"><tt class="docutils literal"><span class="pre">-lint</span></tt>: Statically lint-checks LLVM IR</a><a class="headerlink" href="#lint-statically-lint-checks-llvm-ir" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id24"><code class="docutils literal"><span class="pre">-lint</span></code>: Statically lint-checks LLVM IR</a><a class="headerlink" href="#lint-statically-lint-checks-llvm-ir" title="Permalink to this headline">¶</a></h3>
 <p>This pass statically checks for common and easily-identified constructs which
 produce undefined or likely unintended behavior in LLVM IR.</p>
 <p>It is not a guarantee of correctness, in two ways.  First, it isn&#8217;t
@@ -343,122 +343,122 @@ this pass will warn about it anyway.</p>
 obvious.  If an optimization pass appears to be introducing a warning, it may
 be that the optimization pass is merely exposing an existing condition in the
 code.</p>
-<p>This code may be run before <a class="reference internal" href="#passes-instcombine"><em>instcombine</em></a>.  In many
+<p>This code may be run before <a class="reference internal" href="#passes-instcombine"><span>instcombine</span></a>.  In many
 cases, instcombine checks for the same kinds of things and turns instructions
 with undefined behavior into unreachable (or equivalent).  Because of this,
 this pass makes some effort to look through bitcasts and so on.</p>
 </div>
 <div class="section" id="loops-natural-loop-information">
-<h3><a class="toc-backref" href="#id25"><tt class="docutils literal"><span class="pre">-loops</span></tt>: Natural Loop Information</a><a class="headerlink" href="#loops-natural-loop-information" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id25"><code class="docutils literal"><span class="pre">-loops</span></code>: Natural Loop Information</a><a class="headerlink" href="#loops-natural-loop-information" title="Permalink to this headline">¶</a></h3>
 <p>This analysis is used to identify natural loops and determine the loop depth of
 various nodes of the CFG.  Note that the loops identified may actually be
 several natural loops that share the same header node... not just a single
 natural loop.</p>
 </div>
 <div class="section" id="memdep-memory-dependence-analysis">
-<h3><a class="toc-backref" href="#id26"><tt class="docutils literal"><span class="pre">-memdep</span></tt>: Memory Dependence Analysis</a><a class="headerlink" href="#memdep-memory-dependence-analysis" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id26"><code class="docutils literal"><span class="pre">-memdep</span></code>: Memory Dependence Analysis</a><a class="headerlink" href="#memdep-memory-dependence-analysis" title="Permalink to this headline">¶</a></h3>
 <p>An analysis that determines, for a given memory operation, what preceding
 memory operations it depends on.  It builds on alias analysis information, and
 tries to provide a lazy, caching interface to a common kind of alias
 information query.</p>
 </div>
 <div class="section" id="module-debuginfo-decodes-module-level-debug-info">
-<h3><a class="toc-backref" href="#id27"><tt class="docutils literal"><span class="pre">-module-debuginfo</span></tt>: Decodes module-level debug info</a><a class="headerlink" href="#module-debuginfo-decodes-module-level-debug-info" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id27"><code class="docutils literal"><span class="pre">-module-debuginfo</span></code>: Decodes module-level debug info</a><a class="headerlink" href="#module-debuginfo-decodes-module-level-debug-info" title="Permalink to this headline">¶</a></h3>
 <p>This pass decodes the debug info metadata in a module and prints in a
 (sufficiently-prepared-) human-readable form.</p>
-<p>For example, run this pass from <tt class="docutils literal"><span class="pre">opt</span></tt> along with the <tt class="docutils literal"><span class="pre">-analyze</span></tt> option, and
+<p>For example, run this pass from <code class="docutils literal"><span class="pre">opt</span></code> along with the <code class="docutils literal"><span class="pre">-analyze</span></code> option, and
 it&#8217;ll print to standard output.</p>
 </div>
 <div class="section" id="no-aa-no-alias-analysis-always-returns-may-alias">
-<h3><a class="toc-backref" href="#id28"><tt class="docutils literal"><span class="pre">-no-aa</span></tt>: No Alias Analysis (always returns &#8216;may&#8217; alias)</a><a class="headerlink" href="#no-aa-no-alias-analysis-always-returns-may-alias" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id28"><code class="docutils literal"><span class="pre">-no-aa</span></code>: No Alias Analysis (always returns &#8216;may&#8217; alias)</a><a class="headerlink" href="#no-aa-no-alias-analysis-always-returns-may-alias" title="Permalink to this headline">¶</a></h3>
 <p>This is the default implementation of the Alias Analysis interface.  It always
 returns &#8220;I don&#8217;t know&#8221; for alias queries.  NoAA is unlike other alias analysis
 implementations, in that it does not chain to a previous analysis.  As such it
 doesn&#8217;t follow many of the rules that other alias analyses must.</p>
 </div>
 <div class="section" id="postdomfrontier-post-dominance-frontier-construction">
-<h3><a class="toc-backref" href="#id29"><tt class="docutils literal"><span class="pre">-postdomfrontier</span></tt>: Post-Dominance Frontier Construction</a><a class="headerlink" href="#postdomfrontier-post-dominance-frontier-construction" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id29"><code class="docutils literal"><span class="pre">-postdomfrontier</span></code>: Post-Dominance Frontier Construction</a><a class="headerlink" href="#postdomfrontier-post-dominance-frontier-construction" title="Permalink to this headline">¶</a></h3>
 <p>This pass is a simple post-dominator construction algorithm for finding
 post-dominator frontiers.</p>
 </div>
 <div class="section" id="postdomtree-post-dominator-tree-construction">
-<h3><a class="toc-backref" href="#id30"><tt class="docutils literal"><span class="pre">-postdomtree</span></tt>: Post-Dominator Tree Construction</a><a class="headerlink" href="#postdomtree-post-dominator-tree-construction" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id30"><code class="docutils literal"><span class="pre">-postdomtree</span></code>: Post-Dominator Tree Construction</a><a class="headerlink" href="#postdomtree-post-dominator-tree-construction" title="Permalink to this headline">¶</a></h3>
 <p>This pass is a simple post-dominator construction algorithm for finding
 post-dominators.</p>
 </div>
 <div class="section" id="print-alias-sets-alias-set-printer">
-<h3><a class="toc-backref" href="#id31"><tt class="docutils literal"><span class="pre">-print-alias-sets</span></tt>: Alias Set Printer</a><a class="headerlink" href="#print-alias-sets-alias-set-printer" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id31"><code class="docutils literal"><span class="pre">-print-alias-sets</span></code>: Alias Set Printer</a><a class="headerlink" href="#print-alias-sets-alias-set-printer" title="Permalink to this headline">¶</a></h3>
 <p>Yet to be written.</p>
 </div>
 <div class="section" id="print-callgraph-print-a-call-graph">
-<h3><a class="toc-backref" href="#id32"><tt class="docutils literal"><span class="pre">-print-callgraph</span></tt>: Print a call graph</a><a class="headerlink" href="#print-callgraph-print-a-call-graph" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, prints the call graph to standard error
+<h3><a class="toc-backref" href="#id32"><code class="docutils literal"><span class="pre">-print-callgraph</span></code>: Print a call graph</a><a class="headerlink" href="#print-callgraph-print-a-call-graph" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, prints the call graph to standard error
 in a human-readable form.</p>
 </div>
 <div class="section" id="print-callgraph-sccs-print-sccs-of-the-call-graph">
-<h3><a class="toc-backref" href="#id33"><tt class="docutils literal"><span class="pre">-print-callgraph-sccs</span></tt>: Print SCCs of the Call Graph</a><a class="headerlink" href="#print-callgraph-sccs-print-sccs-of-the-call-graph" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, prints the SCCs of the call graph to
+<h3><a class="toc-backref" href="#id33"><code class="docutils literal"><span class="pre">-print-callgraph-sccs</span></code>: Print SCCs of the Call Graph</a><a class="headerlink" href="#print-callgraph-sccs-print-sccs-of-the-call-graph" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, prints the SCCs of the call graph to
 standard error in a human-readable form.</p>
 </div>
 <div class="section" id="print-cfg-sccs-print-sccs-of-each-function-cfg">
-<h3><a class="toc-backref" href="#id34"><tt class="docutils literal"><span class="pre">-print-cfg-sccs</span></tt>: Print SCCs of each function CFG</a><a class="headerlink" href="#print-cfg-sccs-print-sccs-of-each-function-cfg" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, printsthe SCCs of each function CFG to
+<h3><a class="toc-backref" href="#id34"><code class="docutils literal"><span class="pre">-print-cfg-sccs</span></code>: Print SCCs of each function CFG</a><a class="headerlink" href="#print-cfg-sccs-print-sccs-of-each-function-cfg" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, printsthe SCCs of each function CFG to
 standard error in a human-readable fom.</p>
 </div>
 <div class="section" id="print-dom-info-dominator-info-printer">
-<h3><a class="toc-backref" href="#id35"><tt class="docutils literal"><span class="pre">-print-dom-info</span></tt>: Dominator Info Printer</a><a class="headerlink" href="#print-dom-info-dominator-info-printer" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id35"><code class="docutils literal"><span class="pre">-print-dom-info</span></code>: Dominator Info Printer</a><a class="headerlink" href="#print-dom-info-dominator-info-printer" title="Permalink to this headline">¶</a></h3>
 <p>Dominator Info Printer.</p>
 </div>
 <div class="section" id="print-externalfnconstants-print-external-fn-callsites-passed-constants">
-<h3><a class="toc-backref" href="#id36"><tt class="docutils literal"><span class="pre">-print-externalfnconstants</span></tt>: Print external fn callsites passed constants</a><a class="headerlink" href="#print-externalfnconstants-print-external-fn-callsites-passed-constants" title="Permalink to this headline">¶</a></h3>
-<p>This pass, only available in <tt class="docutils literal"><span class="pre">opt</span></tt>, prints out call sites to external
+<h3><a class="toc-backref" href="#id36"><code class="docutils literal"><span class="pre">-print-externalfnconstants</span></code>: Print external fn callsites passed constants</a><a class="headerlink" href="#print-externalfnconstants-print-external-fn-callsites-passed-constants" title="Permalink to this headline">¶</a></h3>
+<p>This pass, only available in <code class="docutils literal"><span class="pre">opt</span></code>, prints out call sites to external
 functions that are called with constant arguments.  This can be useful when
 looking for standard library functions we should constant fold or handle in
 alias analyses.</p>
 </div>
 <div class="section" id="print-function-print-function-to-stderr">
-<h3><a class="toc-backref" href="#id37"><tt class="docutils literal"><span class="pre">-print-function</span></tt>: Print function to stderr</a><a class="headerlink" href="#print-function-print-function-to-stderr" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">PrintFunctionPass</span></tt> class is designed to be pipelined with other
-<tt class="docutils literal"><span class="pre">FunctionPasses</span></tt>, and prints out the functions of the module as they are
+<h3><a class="toc-backref" href="#id37"><code class="docutils literal"><span class="pre">-print-function</span></code>: Print function to stderr</a><a class="headerlink" href="#print-function-print-function-to-stderr" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">PrintFunctionPass</span></code> class is designed to be pipelined with other
+<code class="docutils literal"><span class="pre">FunctionPasses</span></code>, and prints out the functions of the module as they are
 processed.</p>
 </div>
 <div class="section" id="print-module-print-module-to-stderr">
-<h3><a class="toc-backref" href="#id38"><tt class="docutils literal"><span class="pre">-print-module</span></tt>: Print module to stderr</a><a class="headerlink" href="#print-module-print-module-to-stderr" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id38"><code class="docutils literal"><span class="pre">-print-module</span></code>: Print module to stderr</a><a class="headerlink" href="#print-module-print-module-to-stderr" title="Permalink to this headline">¶</a></h3>
 <p>This pass simply prints out the entire module when it is executed.</p>
 </div>
 <div class="section" id="print-used-types-find-used-types">
-<span id="passes-print-used-types"></span><h3><a class="toc-backref" href="#id39"><tt class="docutils literal"><span class="pre">-print-used-types</span></tt>: Find Used Types</a><a class="headerlink" href="#print-used-types-find-used-types" title="Permalink to this headline">¶</a></h3>
+<span id="passes-print-used-types"></span><h3><a class="toc-backref" href="#id39"><code class="docutils literal"><span class="pre">-print-used-types</span></code>: Find Used Types</a><a class="headerlink" href="#print-used-types-find-used-types" title="Permalink to this headline">¶</a></h3>
 <p>This pass is used to seek out all of the types in use by the program.  Note
 that this analysis explicitly does not include types only used by the symbol
 table.</p>
 </div>
 <div class="section" id="regions-detect-single-entry-single-exit-regions">
-<h3><a class="toc-backref" href="#id40"><tt class="docutils literal"><span class="pre">-regions</span></tt>: Detect single entry single exit regions</a><a class="headerlink" href="#regions-detect-single-entry-single-exit-regions" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">RegionInfo</span></tt> pass detects single entry single exit regions in a function,
+<h3><a class="toc-backref" href="#id40"><code class="docutils literal"><span class="pre">-regions</span></code>: Detect single entry single exit regions</a><a class="headerlink" href="#regions-detect-single-entry-single-exit-regions" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">RegionInfo</span></code> pass detects single entry single exit regions in a function,
 where a region is defined as any subgraph that is connected to the remaining
 graph at only two spots.  Furthermore, an hierarchical region tree is built.</p>
 </div>
 <div class="section" id="scalar-evolution-scalar-evolution-analysis">
-<h3><a class="toc-backref" href="#id41"><tt class="docutils literal"><span class="pre">-scalar-evolution</span></tt>: Scalar Evolution Analysis</a><a class="headerlink" href="#scalar-evolution-scalar-evolution-analysis" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">ScalarEvolution</span></tt> analysis can be used to analyze and catagorize scalar
+<h3><a class="toc-backref" href="#id41"><code class="docutils literal"><span class="pre">-scalar-evolution</span></code>: Scalar Evolution Analysis</a><a class="headerlink" href="#scalar-evolution-scalar-evolution-analysis" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">ScalarEvolution</span></code> analysis can be used to analyze and catagorize scalar
 expressions in loops.  It specializes in recognizing general induction
-variables, representing them with the abstract and opaque <tt class="docutils literal"><span class="pre">SCEV</span></tt> class.
+variables, representing them with the abstract and opaque <code class="docutils literal"><span class="pre">SCEV</span></code> class.
 Given this analysis, trip counts of loops and other important properties can be
 obtained.</p>
 <p>This analysis is primarily useful for induction variable substitution and
 strength reduction.</p>
 </div>
 <div class="section" id="scev-aa-scalarevolution-based-alias-analysis">
-<h3><a class="toc-backref" href="#id42"><tt class="docutils literal"><span class="pre">-scev-aa</span></tt>: ScalarEvolution-based Alias Analysis</a><a class="headerlink" href="#scev-aa-scalarevolution-based-alias-analysis" title="Permalink to this headline">¶</a></h3>
-<p>Simple alias analysis implemented in terms of <tt class="docutils literal"><span class="pre">ScalarEvolution</span></tt> queries.</p>
+<h3><a class="toc-backref" href="#id42"><code class="docutils literal"><span class="pre">-scev-aa</span></code>: ScalarEvolution-based Alias Analysis</a><a class="headerlink" href="#scev-aa-scalarevolution-based-alias-analysis" title="Permalink to this headline">¶</a></h3>
+<p>Simple alias analysis implemented in terms of <code class="docutils literal"><span class="pre">ScalarEvolution</span></code> queries.</p>
 <p>This differs from traditional loop dependence analysis in that it tests for
 dependencies within a single iteration of a loop, rather than dependencies
 between different iterations.</p>
-<p><tt class="docutils literal"><span class="pre">ScalarEvolution</span></tt> has a more complete understanding of pointer arithmetic
-than <tt class="docutils literal"><span class="pre">BasicAliasAnalysis</span></tt>&#8216; collection of ad-hoc analyses.</p>
+<p><code class="docutils literal"><span class="pre">ScalarEvolution</span></code> has a more complete understanding of pointer arithmetic
+than <code class="docutils literal"><span class="pre">BasicAliasAnalysis</span></code>&#8216; collection of ad-hoc analyses.</p>
 </div>
 <div class="section" id="targetdata-target-data-layout">
-<h3><a class="toc-backref" href="#id43"><tt class="docutils literal"><span class="pre">-targetdata</span></tt>: Target Data Layout</a><a class="headerlink" href="#targetdata-target-data-layout" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id43"><code class="docutils literal"><span class="pre">-targetdata</span></code>: Target Data Layout</a><a class="headerlink" href="#targetdata-target-data-layout" title="Permalink to this headline">¶</a></h3>
 <p>Provides other passes access to information on how the size and alignment
 required by the target ABI for various data types.</p>
 </div>
@@ -467,18 +467,18 @@ required by the target ABI for various data types.</p>
 <h2><a class="toc-backref" href="#id44">Transform Passes</a><a class="headerlink" href="#transform-passes" title="Permalink to this headline">¶</a></h2>
 <p>This section describes the LLVM Transform Passes.</p>
 <div class="section" id="adce-aggressive-dead-code-elimination">
-<h3><a class="toc-backref" href="#id45"><tt class="docutils literal"><span class="pre">-adce</span></tt>: Aggressive Dead Code Elimination</a><a class="headerlink" href="#adce-aggressive-dead-code-elimination" title="Permalink to this headline">¶</a></h3>
-<p>ADCE aggressively tries to eliminate code.  This pass is similar to <a class="reference internal" href="#passes-dce"><em>DCE</em></a> but it assumes that values are dead until proven otherwise.  This
-is similar to <a class="reference internal" href="#passes-sccp"><em>SCCP</em></a>, except applied to the liveness of
+<h3><a class="toc-backref" href="#id45"><code class="docutils literal"><span class="pre">-adce</span></code>: Aggressive Dead Code Elimination</a><a class="headerlink" href="#adce-aggressive-dead-code-elimination" title="Permalink to this headline">¶</a></h3>
+<p>ADCE aggressively tries to eliminate code.  This pass is similar to <a class="reference internal" href="#passes-dce"><span>DCE</span></a> but it assumes that values are dead until proven otherwise.  This
+is similar to <a class="reference internal" href="#passes-sccp"><span>SCCP</span></a>, except applied to the liveness of
 values.</p>
 </div>
 <div class="section" id="always-inline-inliner-for-always-inline-functions">
-<h3><a class="toc-backref" href="#id46"><tt class="docutils literal"><span class="pre">-always-inline</span></tt>: Inliner for <tt class="docutils literal"><span class="pre">always_inline</span></tt> functions</a><a class="headerlink" href="#always-inline-inliner-for-always-inline-functions" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id46"><code class="docutils literal"><span class="pre">-always-inline</span></code>: Inliner for <code class="docutils literal"><span class="pre">always_inline</span></code> functions</a><a class="headerlink" href="#always-inline-inliner-for-always-inline-functions" title="Permalink to this headline">¶</a></h3>
 <p>A custom inliner that handles only functions that are marked as &#8220;always
 inline&#8221;.</p>
 </div>
 <div class="section" id="argpromotion-promote-by-reference-arguments-to-scalars">
-<h3><a class="toc-backref" href="#id47"><tt class="docutils literal"><span class="pre">-argpromotion</span></tt>: Promote &#8216;by reference&#8217; arguments to scalars</a><a class="headerlink" href="#argpromotion-promote-by-reference-arguments-to-scalars" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id47"><code class="docutils literal"><span class="pre">-argpromotion</span></code>: Promote &#8216;by reference&#8217; arguments to scalars</a><a class="headerlink" href="#argpromotion-promote-by-reference-arguments-to-scalars" title="Permalink to this headline">¶</a></h3>
 <p>This pass promotes &#8220;by reference&#8221; arguments to be &#8220;by value&#8221; arguments.  In
 practice, this means looking for internal functions that have pointer
 arguments.  If it can prove, through the use of alias analysis, that an
@@ -497,7 +497,7 @@ would be best handled when and if LLVM starts supporting multiple return values
 from functions.</p>
 </div>
 <div class="section" id="bb-vectorize-basic-block-vectorization">
-<h3><a class="toc-backref" href="#id48"><tt class="docutils literal"><span class="pre">-bb-vectorize</span></tt>: Basic-Block Vectorization</a><a class="headerlink" href="#bb-vectorize-basic-block-vectorization" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id48"><code class="docutils literal"><span class="pre">-bb-vectorize</span></code>: Basic-Block Vectorization</a><a class="headerlink" href="#bb-vectorize-basic-block-vectorization" title="Permalink to this headline">¶</a></h3>
 <p>This pass combines instructions inside basic blocks to form vector
 instructions.  It iterates over each basic block, attempting to pair compatible
 instructions, repeating this process until no additional pairs are selected for
@@ -511,7 +511,7 @@ vectorization in cases where it would not yield a performance increase of the
 resulting code.</p>
 </div>
 <div class="section" id="block-placement-profile-guided-basic-block-placement">
-<h3><a class="toc-backref" href="#id49"><tt class="docutils literal"><span class="pre">-block-placement</span></tt>: Profile Guided Basic Block Placement</a><a class="headerlink" href="#block-placement-profile-guided-basic-block-placement" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id49"><code class="docutils literal"><span class="pre">-block-placement</span></code>: Profile Guided Basic Block Placement</a><a class="headerlink" href="#block-placement-profile-guided-basic-block-placement" title="Permalink to this headline">¶</a></h3>
 <p>This pass is a very simple profile guided basic block placement algorithm.  The
 idea is to put frequently executed blocks together at the start of the function
 and hopefully increase the number of fall-through conditional branches.  If
@@ -519,27 +519,27 @@ there is no profile information for a particular function, this pass basically
 orders blocks in depth-first order.</p>
 </div>
 <div class="section" id="break-crit-edges-break-critical-edges-in-cfg">
-<h3><a class="toc-backref" href="#id50"><tt class="docutils literal"><span class="pre">-break-crit-edges</span></tt>: Break critical edges in CFG</a><a class="headerlink" href="#break-crit-edges-break-critical-edges-in-cfg" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id50"><code class="docutils literal"><span class="pre">-break-crit-edges</span></code>: Break critical edges in CFG</a><a class="headerlink" href="#break-crit-edges-break-critical-edges-in-cfg" title="Permalink to this headline">¶</a></h3>
 <p>Break all of the critical edges in the CFG by inserting a dummy basic block.
 It may be &#8220;required&#8221; by passes that cannot deal with critical edges.  This
 transformation obviously invalidates the CFG, but can update forward dominator
 (set, immediate dominators, tree, and frontier) information.</p>
 </div>
 <div class="section" id="codegenprepare-optimize-for-code-generation">
-<h3><a class="toc-backref" href="#id51"><tt class="docutils literal"><span class="pre">-codegenprepare</span></tt>: Optimize for code generation</a><a class="headerlink" href="#codegenprepare-optimize-for-code-generation" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id51"><code class="docutils literal"><span class="pre">-codegenprepare</span></code>: Optimize for code generation</a><a class="headerlink" href="#codegenprepare-optimize-for-code-generation" title="Permalink to this headline">¶</a></h3>
 <p>This pass munges the code in the input function to better prepare it for
 SelectionDAG-based code generation.  This works around limitations in its
 basic-block-at-a-time approach.  It should eventually be removed.</p>
 </div>
 <div class="section" id="constmerge-merge-duplicate-global-constants">
-<h3><a class="toc-backref" href="#id52"><tt class="docutils literal"><span class="pre">-constmerge</span></tt>: Merge Duplicate Global Constants</a><a class="headerlink" href="#constmerge-merge-duplicate-global-constants" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id52"><code class="docutils literal"><span class="pre">-constmerge</span></code>: Merge Duplicate Global Constants</a><a class="headerlink" href="#constmerge-merge-duplicate-global-constants" title="Permalink to this headline">¶</a></h3>
 <p>Merges duplicate global constants together into a single constant that is
 shared.  This is useful because some passes (i.e., TraceValues) insert a lot of
 string constants into the program, regardless of whether or not an existing
 string is available.</p>
 </div>
 <div class="section" id="constprop-simple-constant-propagation">
-<h3><a class="toc-backref" href="#id53"><tt class="docutils literal"><span class="pre">-constprop</span></tt>: Simple constant propagation</a><a class="headerlink" href="#constprop-simple-constant-propagation" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id53"><code class="docutils literal"><span class="pre">-constprop</span></code>: Simple constant propagation</a><a class="headerlink" href="#constprop-simple-constant-propagation" title="Permalink to this headline">¶</a></h3>
 <p>This pass implements constant propagation and merging.  It looks for
 instructions involving only constant operands and replaces them with a constant
 value instead of an instruction.  For example:</p>
@@ -551,16 +551,16 @@ value instead of an instruction.  For example:</p>
 </pre></div>
 </div>
 <p>NOTE: this pass has a habit of making definitions be dead.  It is a good idea
-to run a <a class="reference internal" href="#passes-die"><em>Dead Instruction Elimination</em></a> pass sometime after
+to run a <a class="reference internal" href="#passes-die"><span>Dead Instruction Elimination</span></a> pass sometime after
 running this pass.</p>
 </div>
 <div class="section" id="dce-dead-code-elimination">
-<span id="passes-dce"></span><h3><a class="toc-backref" href="#id54"><tt class="docutils literal"><span class="pre">-dce</span></tt>: Dead Code Elimination</a><a class="headerlink" href="#dce-dead-code-elimination" title="Permalink to this headline">¶</a></h3>
-<p>Dead code elimination is similar to <a class="reference internal" href="#passes-die"><em>dead instruction elimination</em></a>, but it rechecks instructions that were used by removed
+<span id="passes-dce"></span><h3><a class="toc-backref" href="#id54"><code class="docutils literal"><span class="pre">-dce</span></code>: Dead Code Elimination</a><a class="headerlink" href="#dce-dead-code-elimination" title="Permalink to this headline">¶</a></h3>
+<p>Dead code elimination is similar to <a class="reference internal" href="#passes-die"><span>dead instruction elimination</span></a>, but it rechecks instructions that were used by removed
 instructions to see if they are newly dead.</p>
 </div>
 <div class="section" id="deadargelim-dead-argument-elimination">
-<h3><a class="toc-backref" href="#id55"><tt class="docutils literal"><span class="pre">-deadargelim</span></tt>: Dead Argument Elimination</a><a class="headerlink" href="#deadargelim-dead-argument-elimination" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id55"><code class="docutils literal"><span class="pre">-deadargelim</span></code>: Dead Argument Elimination</a><a class="headerlink" href="#deadargelim-dead-argument-elimination" title="Permalink to this headline">¶</a></h3>
 <p>This pass deletes dead arguments from internal functions.  Dead argument
 elimination removes arguments which are directly dead, as well as arguments
 only passed into function calls as dead arguments of other functions.  This
@@ -569,33 +569,33 @@ pass also deletes dead arguments in a similar way.</p>
 interprocedural passes, which add possibly-dead arguments.</p>
 </div>
 <div class="section" id="deadtypeelim-dead-type-elimination">
-<h3><a class="toc-backref" href="#id56"><tt class="docutils literal"><span class="pre">-deadtypeelim</span></tt>: Dead Type Elimination</a><a class="headerlink" href="#deadtypeelim-dead-type-elimination" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id56"><code class="docutils literal"><span class="pre">-deadtypeelim</span></code>: Dead Type Elimination</a><a class="headerlink" href="#deadtypeelim-dead-type-elimination" title="Permalink to this headline">¶</a></h3>
 <p>This pass is used to cleanup the output of GCC.  It eliminate names for types
-that are unused in the entire translation unit, using the <a class="reference internal" href="#passes-print-used-types"><em>find used types</em></a> pass.</p>
+that are unused in the entire translation unit, using the <a class="reference internal" href="#passes-print-used-types"><span>find used types</span></a> pass.</p>
 </div>
 <div class="section" id="die-dead-instruction-elimination">
-<span id="passes-die"></span><h3><a class="toc-backref" href="#id57"><tt class="docutils literal"><span class="pre">-die</span></tt>: Dead Instruction Elimination</a><a class="headerlink" href="#die-dead-instruction-elimination" title="Permalink to this headline">¶</a></h3>
+<span id="passes-die"></span><h3><a class="toc-backref" href="#id57"><code class="docutils literal"><span class="pre">-die</span></code>: Dead Instruction Elimination</a><a class="headerlink" href="#die-dead-instruction-elimination" title="Permalink to this headline">¶</a></h3>
 <p>Dead instruction elimination performs a single pass over the function, removing
 instructions that are obviously dead.</p>
 </div>
 <div class="section" id="dse-dead-store-elimination">
-<h3><a class="toc-backref" href="#id58"><tt class="docutils literal"><span class="pre">-dse</span></tt>: Dead Store Elimination</a><a class="headerlink" href="#dse-dead-store-elimination" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id58"><code class="docutils literal"><span class="pre">-dse</span></code>: Dead Store Elimination</a><a class="headerlink" href="#dse-dead-store-elimination" title="Permalink to this headline">¶</a></h3>
 <p>A trivial dead store elimination that only considers basic-block local
 redundant stores.</p>
 </div>
 <div class="section" id="functionattrs-deduce-function-attributes">
-<span id="passes-functionattrs"></span><h3><a class="toc-backref" href="#id59"><tt class="docutils literal"><span class="pre">-functionattrs</span></tt>: Deduce function attributes</a><a class="headerlink" href="#functionattrs-deduce-function-attributes" title="Permalink to this headline">¶</a></h3>
+<span id="passes-functionattrs"></span><h3><a class="toc-backref" href="#id59"><code class="docutils literal"><span class="pre">-functionattrs</span></code>: Deduce function attributes</a><a class="headerlink" href="#functionattrs-deduce-function-attributes" title="Permalink to this headline">¶</a></h3>
 <p>A simple interprocedural pass which walks the call-graph, looking for functions
 which do not access or only read non-local memory, and marking them
-<tt class="docutils literal"><span class="pre">readnone</span></tt>/<tt class="docutils literal"><span class="pre">readonly</span></tt>.  In addition, it marks function arguments (of
-pointer type) &#8220;<tt class="docutils literal"><span class="pre">nocapture</span></tt>&#8221; if a call to the function does not create any
+<code class="docutils literal"><span class="pre">readnone</span></code>/<code class="docutils literal"><span class="pre">readonly</span></code>.  In addition, it marks function arguments (of
+pointer type) &#8220;<code class="docutils literal"><span class="pre">nocapture</span></code>&#8221; if a call to the function does not create any
 copies of the pointer value that outlive the call.  This more or less means
 that the pointer is only dereferenced, and not returned from the function or
 stored in a global.  This pass is implemented as a bottom-up traversal of the
 call-graph.</p>
 </div>
 <div class="section" id="globaldce-dead-global-elimination">
-<h3><a class="toc-backref" href="#id60"><tt class="docutils literal"><span class="pre">-globaldce</span></tt>: Dead Global Elimination</a><a class="headerlink" href="#globaldce-dead-global-elimination" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id60"><code class="docutils literal"><span class="pre">-globaldce</span></code>: Dead Global Elimination</a><a class="headerlink" href="#globaldce-dead-global-elimination" title="Permalink to this headline">¶</a></h3>
 <p>This transform is designed to eliminate unreachable internal globals from the
 program.  It uses an aggressive algorithm, searching out globals that are known
 to be alive.  After it finds all of the globals which are needed, it deletes
@@ -603,18 +603,18 @@ whatever is left over.  This allows it to delete recursive chunks of the
 program which are unreachable.</p>
 </div>
 <div class="section" id="globalopt-global-variable-optimizer">
-<h3><a class="toc-backref" href="#id61"><tt class="docutils literal"><span class="pre">-globalopt</span></tt>: Global Variable Optimizer</a><a class="headerlink" href="#globalopt-global-variable-optimizer" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id61"><code class="docutils literal"><span class="pre">-globalopt</span></code>: Global Variable Optimizer</a><a class="headerlink" href="#globalopt-global-variable-optimizer" title="Permalink to this headline">¶</a></h3>
 <p>This pass transforms simple global variables that never have their address
 taken.  If obviously true, it marks read/write globals as constant, deletes
 variables only stored to, etc.</p>
 </div>
 <div class="section" id="gvn-global-value-numbering">
-<h3><a class="toc-backref" href="#id62"><tt class="docutils literal"><span class="pre">-gvn</span></tt>: Global Value Numbering</a><a class="headerlink" href="#gvn-global-value-numbering" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id62"><code class="docutils literal"><span class="pre">-gvn</span></code>: Global Value Numbering</a><a class="headerlink" href="#gvn-global-value-numbering" title="Permalink to this headline">¶</a></h3>
 <p>This pass performs global value numbering to eliminate fully and partially
 redundant instructions.  It also performs redundant load elimination.</p>
 </div>
 <div class="section" id="indvars-canonicalize-induction-variables">
-<span id="passes-indvars"></span><h3><a class="toc-backref" href="#id63"><tt class="docutils literal"><span class="pre">-indvars</span></tt>: Canonicalize Induction Variables</a><a class="headerlink" href="#indvars-canonicalize-induction-variables" title="Permalink to this headline">¶</a></h3>
+<span id="passes-indvars"></span><h3><a class="toc-backref" href="#id63"><code class="docutils literal"><span class="pre">-indvars</span></code>: Canonicalize Induction Variables</a><a class="headerlink" href="#indvars-canonicalize-induction-variables" title="Permalink to this headline">¶</a></h3>
 <p>This transformation analyzes and transforms the induction variables (and
 computations derived from them) into simpler forms suitable for subsequent
 analysis and transformation.</p>
@@ -654,11 +654,11 @@ where it is profitable, the loop could be transformed to count down to zero
 (the &#8220;do loop&#8221; optimization).</p>
 </div>
 <div class="section" id="inline-function-integration-inlining">
-<h3><a class="toc-backref" href="#id64"><tt class="docutils literal"><span class="pre">-inline</span></tt>: Function Integration/Inlining</a><a class="headerlink" href="#inline-function-integration-inlining" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id64"><code class="docutils literal"><span class="pre">-inline</span></code>: Function Integration/Inlining</a><a class="headerlink" href="#inline-function-integration-inlining" title="Permalink to this headline">¶</a></h3>
 <p>Bottom-up inlining of functions into callees.</p>
 </div>
 <div class="section" id="instcombine-combine-redundant-instructions">
-<span id="passes-instcombine"></span><h3><a class="toc-backref" href="#id65"><tt class="docutils literal"><span class="pre">-instcombine</span></tt>: Combine redundant instructions</a><a class="headerlink" href="#instcombine-combine-redundant-instructions" title="Permalink to this headline">¶</a></h3>
+<span id="passes-instcombine"></span><h3><a class="toc-backref" href="#id65"><code class="docutils literal"><span class="pre">-instcombine</span></code>: Combine redundant instructions</a><a class="headerlink" href="#instcombine-combine-redundant-instructions" title="Permalink to this headline">¶</a></h3>
 <p>Combine instructions to form fewer, simple instructions.  This pass does not
 modify the CFG. This pass is where algebraic simplification happens.</p>
 <p>This pass combines things like:</p>
@@ -677,31 +677,31 @@ program:</p>
 <li>If a binary operator has a constant operand, it is moved to the right-hand
 side.</li>
 <li>Bitwise operators with constant operands are always grouped so that shifts
-are performed first, then <tt class="docutils literal"><span class="pre">or</span></tt>s, then <tt class="docutils literal"><span class="pre">and</span></tt>s, then <tt class="docutils literal"><span class="pre">xor</span></tt>s.</li>
-<li>Compare instructions are converted from <tt class="docutils literal"><span class="pre">&lt;</span></tt>, <tt class="docutils literal"><span class="pre">&gt;</span></tt>, <tt class="docutils literal"><span class="pre">≤</span></tt>, or <tt class="docutils literal"><span class="pre">≥</span></tt> to
-<tt class="docutils literal"><span class="pre">=</span></tt> or <tt class="docutils literal"><span class="pre">≠</span></tt> if possible.</li>
-<li>All <tt class="docutils literal"><span class="pre">cmp</span></tt> instructions on boolean values are replaced with logical
+are performed first, then <code class="docutils literal"><span class="pre">or</span></code>s, then <code class="docutils literal"><span class="pre">and</span></code>s, then <code class="docutils literal"><span class="pre">xor</span></code>s.</li>
+<li>Compare instructions are converted from <code class="docutils literal"><span class="pre">&lt;</span></code>, <code class="docutils literal"><span class="pre">&gt;</span></code>, <code class="docutils literal"><span class="pre">≤</span></code>, or <code class="docutils literal"><span class="pre">≥</span></code> to
+<code class="docutils literal"><span class="pre">=</span></code> or <code class="docutils literal"><span class="pre">≠</span></code> if possible.</li>
+<li>All <code class="docutils literal"><span class="pre">cmp</span></code> instructions on boolean values are replaced with logical
 operations.</li>
-<li><tt class="docutils literal"><span class="pre">add</span> <span class="pre">X,</span> <span class="pre">X</span></tt> is represented as <tt class="docutils literal"><span class="pre">mul</span> <span class="pre">X,</span> <span class="pre">2</span></tt> ⇒ <tt class="docutils literal"><span class="pre">shl</span> <span class="pre">X,</span> <span class="pre">1</span></tt></li>
+<li><code class="docutils literal"><span class="pre">add</span> <span class="pre">X,</span> <span class="pre">X</span></code> is represented as <code class="docutils literal"><span class="pre">mul</span> <span class="pre">X,</span> <span class="pre">2</span></code> ⇒ <code class="docutils literal"><span class="pre">shl</span> <span class="pre">X,</span> <span class="pre">1</span></code></li>
 <li>Multiplies with a constant power-of-two argument are transformed into
 shifts.</li>
 <li>… etc.</li>
 </ol>
 <p>This pass can also simplify calls to specific well-known function calls (e.g.
-runtime library functions).  For example, a call <tt class="docutils literal"><span class="pre">exit(3)</span></tt> that occurs within
-the <tt class="docutils literal"><span class="pre">main()</span></tt> function can be transformed into simply <tt class="docutils literal"><span class="pre">return</span> <span class="pre">3</span></tt>. Whether or
+runtime library functions).  For example, a call <code class="docutils literal"><span class="pre">exit(3)</span></code> that occurs within
+the <code class="docutils literal"><span class="pre">main()</span></code> function can be transformed into simply <code class="docutils literal"><span class="pre">return</span> <span class="pre">3</span></code>. Whether or
 not library calls are simplified is controlled by the
-<a class="reference internal" href="#passes-functionattrs"><em>-functionattrs</em></a> pass and LLVM&#8217;s knowledge of
+<a class="reference internal" href="#passes-functionattrs"><span>-functionattrs</span></a> pass and LLVM&#8217;s knowledge of
 library calls on different targets.</p>
 </div>
 <div class="section" id="internalize-internalize-global-symbols">
-<h3><a class="toc-backref" href="#id66"><tt class="docutils literal"><span class="pre">-internalize</span></tt>: Internalize Global Symbols</a><a class="headerlink" href="#internalize-internalize-global-symbols" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id66"><code class="docutils literal"><span class="pre">-internalize</span></code>: Internalize Global Symbols</a><a class="headerlink" href="#internalize-internalize-global-symbols" title="Permalink to this headline">¶</a></h3>
 <p>This pass loops over all of the functions in the input module, looking for a
 main function.  If a main function is found, all other functions and all global
 variables with initializers are marked as internal.</p>
 </div>
 <div class="section" id="ipconstprop-interprocedural-constant-propagation">
-<h3><a class="toc-backref" href="#id67"><tt class="docutils literal"><span class="pre">-ipconstprop</span></tt>: Interprocedural constant propagation</a><a class="headerlink" href="#ipconstprop-interprocedural-constant-propagation" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id67"><code class="docutils literal"><span class="pre">-ipconstprop</span></code>: Interprocedural constant propagation</a><a class="headerlink" href="#ipconstprop-interprocedural-constant-propagation" title="Permalink to this headline">¶</a></h3>
 <p>This pass implements an <em>extremely</em> simple interprocedural constant propagation
 pass.  It could certainly be improved in many different ways, like using a
 worklist.  This pass makes arguments dead, but does not remove them.  The
@@ -709,11 +709,11 @@ existing dead argument elimination pass should be run after this to clean up
 the mess.</p>
 </div>
 <div class="section" id="ipsccp-interprocedural-sparse-conditional-constant-propagation">
-<h3><a class="toc-backref" href="#id68"><tt class="docutils literal"><span class="pre">-ipsccp</span></tt>: Interprocedural Sparse Conditional Constant Propagation</a><a class="headerlink" href="#ipsccp-interprocedural-sparse-conditional-constant-propagation" title="Permalink to this headline">¶</a></h3>
-<p>An interprocedural variant of <a class="reference internal" href="#passes-sccp"><em>Sparse Conditional Constant Propagation</em></a>.</p>
+<h3><a class="toc-backref" href="#id68"><code class="docutils literal"><span class="pre">-ipsccp</span></code>: Interprocedural Sparse Conditional Constant Propagation</a><a class="headerlink" href="#ipsccp-interprocedural-sparse-conditional-constant-propagation" title="Permalink to this headline">¶</a></h3>
+<p>An interprocedural variant of <a class="reference internal" href="#passes-sccp"><span>Sparse Conditional Constant Propagation</span></a>.</p>
 </div>
 <div class="section" id="jump-threading-jump-threading">
-<h3><a class="toc-backref" href="#id69"><tt class="docutils literal"><span class="pre">-jump-threading</span></tt>: Jump Threading</a><a class="headerlink" href="#jump-threading-jump-threading" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id69"><code class="docutils literal"><span class="pre">-jump-threading</span></code>: Jump Threading</a><a class="headerlink" href="#jump-threading-jump-threading" title="Permalink to this headline">¶</a></h3>
 <p>Jump threading tries to find distinct threads of control flow running through a
 basic block.  This pass looks at blocks that have multiple predecessors and
 multiple successors.  If one or more of the predecessors of the block can be
@@ -731,7 +731,7 @@ block.</p>
 revectored to the false side of the second if.</p>
 </div>
 <div class="section" id="lcssa-loop-closed-ssa-form-pass">
-<h3><a class="toc-backref" href="#id70"><tt class="docutils literal"><span class="pre">-lcssa</span></tt>: Loop-Closed SSA Form Pass</a><a class="headerlink" href="#lcssa-loop-closed-ssa-form-pass" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id70"><code class="docutils literal"><span class="pre">-lcssa</span></code>: Loop-Closed SSA Form Pass</a><a class="headerlink" href="#lcssa-loop-closed-ssa-form-pass" title="Permalink to this headline">¶</a></h3>
 <p>This pass transforms loops by placing phi nodes at the end of the loops for all
 values that are live across the loop boundary.  For example, it turns the left
 into the right code:</p>
@@ -746,12 +746,12 @@ into the right code:</p>
 </pre></div>
 </div>
 <p>This is still valid LLVM; the extra phi nodes are purely redundant, and will be
-trivially eliminated by <tt class="docutils literal"><span class="pre">InstCombine</span></tt>.  The major benefit of this
+trivially eliminated by <code class="docutils literal"><span class="pre">InstCombine</span></code>.  The major benefit of this
 transformation is that it makes many other loop optimizations, such as
-<tt class="docutils literal"><span class="pre">LoopUnswitch</span></tt>ing, simpler.</p>
+<code class="docutils literal"><span class="pre">LoopUnswitch</span></code>ing, simpler.</p>
 </div>
 <div class="section" id="licm-loop-invariant-code-motion">
-<span id="passes-licm"></span><h3><a class="toc-backref" href="#id71"><tt class="docutils literal"><span class="pre">-licm</span></tt>: Loop Invariant Code Motion</a><a class="headerlink" href="#licm-loop-invariant-code-motion" title="Permalink to this headline">¶</a></h3>
+<span id="passes-licm"></span><h3><a class="toc-backref" href="#id71"><code class="docutils literal"><span class="pre">-licm</span></code>: Loop Invariant Code Motion</a><a class="headerlink" href="#licm-loop-invariant-code-motion" title="Permalink to this headline">¶</a></h3>
 <p>This pass performs loop invariant code motion, attempting to remove as much
 code from the body of a loop as possible.  It does this by either hoisting code
 into the preheader block, or by sinking code to the exit blocks if it is safe.
@@ -773,33 +773,33 @@ There are no calls in the loop which mod/ref the pointer.</li>
 </ol>
 <p>If these conditions are true, we can promote the loads and stores in the
 loop of the pointer to use a temporary alloca&#8217;d variable.  We then use the
-<a class="reference internal" href="#passes-mem2reg"><em>mem2reg</em></a> functionality to construct the appropriate
+<a class="reference internal" href="#passes-mem2reg"><span>mem2reg</span></a> functionality to construct the appropriate
 SSA form for the variable.</p>
 </li>
 </ol>
 </div>
 <div class="section" id="loop-deletion-delete-dead-loops">
-<h3><a class="toc-backref" href="#id72"><tt class="docutils literal"><span class="pre">-loop-deletion</span></tt>: Delete dead loops</a><a class="headerlink" href="#loop-deletion-delete-dead-loops" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id72"><code class="docutils literal"><span class="pre">-loop-deletion</span></code>: Delete dead loops</a><a class="headerlink" href="#loop-deletion-delete-dead-loops" title="Permalink to this headline">¶</a></h3>
 <p>This file implements the Dead Loop Deletion Pass.  This pass is responsible for
 eliminating loops with non-infinite computable trip counts that have no side
 effects or volatile instructions, and do not contribute to the computation of
 the function&#8217;s return value.</p>
 </div>
 <div class="section" id="loop-extract-extract-loops-into-new-functions">
-<span id="passes-loop-extract"></span><h3><a class="toc-backref" href="#id73"><tt class="docutils literal"><span class="pre">-loop-extract</span></tt>: Extract loops into new functions</a><a class="headerlink" href="#loop-extract-extract-loops-into-new-functions" title="Permalink to this headline">¶</a></h3>
-<p>A pass wrapper around the <tt class="docutils literal"><span class="pre">ExtractLoop()</span></tt> scalar transformation to extract
+<span id="passes-loop-extract"></span><h3><a class="toc-backref" href="#id73"><code class="docutils literal"><span class="pre">-loop-extract</span></code>: Extract loops into new functions</a><a class="headerlink" href="#loop-extract-extract-loops-into-new-functions" title="Permalink to this headline">¶</a></h3>
+<p>A pass wrapper around the <code class="docutils literal"><span class="pre">ExtractLoop()</span></code> scalar transformation to extract
 each top-level loop into its own new function.  If the loop is the <em>only</em> loop
 in a given function, it is not touched.  This is a pass most useful for
 debugging via bugpoint.</p>
 </div>
 <div class="section" id="loop-extract-single-extract-at-most-one-loop-into-a-new-function">
-<h3><a class="toc-backref" href="#id74"><tt class="docutils literal"><span class="pre">-loop-extract-single</span></tt>: Extract at most one loop into a new function</a><a class="headerlink" href="#loop-extract-single-extract-at-most-one-loop-into-a-new-function" title="Permalink to this headline">¶</a></h3>
-<p>Similar to <a class="reference internal" href="#passes-loop-extract"><em>Extract loops into new functions</em></a>, this
+<h3><a class="toc-backref" href="#id74"><code class="docutils literal"><span class="pre">-loop-extract-single</span></code>: Extract at most one loop into a new function</a><a class="headerlink" href="#loop-extract-single-extract-at-most-one-loop-into-a-new-function" title="Permalink to this headline">¶</a></h3>
+<p>Similar to <a class="reference internal" href="#passes-loop-extract"><span>Extract loops into new functions</span></a>, this
 pass extracts one natural loop from the program into a function if it can.
 This is used by <strong class="program">bugpoint</strong>.</p>
 </div>
 <div class="section" id="loop-reduce-loop-strength-reduction">
-<h3><a class="toc-backref" href="#id75"><tt class="docutils literal"><span class="pre">-loop-reduce</span></tt>: Loop Strength Reduction</a><a class="headerlink" href="#loop-reduce-loop-strength-reduction" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id75"><code class="docutils literal"><span class="pre">-loop-reduce</span></code>: Loop Strength Reduction</a><a class="headerlink" href="#loop-reduce-loop-strength-reduction" title="Permalink to this headline">¶</a></h3>
 <p>This pass performs a strength reduction on array references inside loops that
 have as one or more of their components the loop induction variable.  This is
 accomplished by creating a new value to hold the initial value of the array
@@ -807,37 +807,37 @@ access for the first iteration, and then creating a new GEP instruction in the
 loop to increment the value by the appropriate amount.</p>
 </div>
 <div class="section" id="loop-rotate-rotate-loops">
-<h3><a class="toc-backref" href="#id76"><tt class="docutils literal"><span class="pre">-loop-rotate</span></tt>: Rotate Loops</a><a class="headerlink" href="#loop-rotate-rotate-loops" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id76"><code class="docutils literal"><span class="pre">-loop-rotate</span></code>: Rotate Loops</a><a class="headerlink" href="#loop-rotate-rotate-loops" title="Permalink to this headline">¶</a></h3>
 <p>A simple loop rotation transformation.</p>
 </div>
 <div class="section" id="loop-simplify-canonicalize-natural-loops">
-<h3><a class="toc-backref" href="#id77"><tt class="docutils literal"><span class="pre">-loop-simplify</span></tt>: Canonicalize natural loops</a><a class="headerlink" href="#loop-simplify-canonicalize-natural-loops" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id77"><code class="docutils literal"><span class="pre">-loop-simplify</span></code>: Canonicalize natural loops</a><a class="headerlink" href="#loop-simplify-canonicalize-natural-loops" title="Permalink to this headline">¶</a></h3>
 <p>This pass performs several transformations to transform natural loops into a
 simpler form, which makes subsequent analyses and transformations simpler and
 more effective.</p>
 <p>Loop pre-header insertion guarantees that there is a single, non-critical entry
 edge from outside of the loop to the loop header.  This simplifies a number of
-analyses and transformations, such as <a class="reference internal" href="#passes-licm"><em>LICM</em></a>.</p>
+analyses and transformations, such as <a class="reference internal" href="#passes-licm"><span>LICM</span></a>.</p>
 <p>Loop exit-block insertion guarantees that all exit blocks from the loop (blocks
 which are outside of the loop that have predecessors inside of the loop) only
 have predecessors from inside of the loop (and are thus dominated by the loop
 header).  This simplifies transformations such as store-sinking that are built
 into LICM.</p>
 <p>This pass also guarantees that loops will have exactly one backedge.</p>
-<p>Note that the <a class="reference internal" href="#passes-simplifycfg"><em>simplifycfg</em></a> pass will clean up blocks
+<p>Note that the <a class="reference internal" href="#passes-simplifycfg"><span>simplifycfg</span></a> pass will clean up blocks
 which are split out but end up being unnecessary, so usage of this pass should
 not pessimize generated code.</p>
 <p>This pass obviously modifies the CFG, but updates loop information and
 dominator information.</p>
 </div>
 <div class="section" id="loop-unroll-unroll-loops">
-<h3><a class="toc-backref" href="#id78"><tt class="docutils literal"><span class="pre">-loop-unroll</span></tt>: Unroll loops</a><a class="headerlink" href="#loop-unroll-unroll-loops" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id78"><code class="docutils literal"><span class="pre">-loop-unroll</span></code>: Unroll loops</a><a class="headerlink" href="#loop-unroll-unroll-loops" title="Permalink to this headline">¶</a></h3>
 <p>This pass implements a simple loop unroller.  It works best when loops have
-been canonicalized by the <a class="reference internal" href="#passes-indvars"><em>indvars</em></a> pass, allowing it to
+been canonicalized by the <a class="reference internal" href="#passes-indvars"><span>indvars</span></a> pass, allowing it to
 determine the trip counts of loops easily.</p>
 </div>
 <div class="section" id="loop-unswitch-unswitch-loops">
-<h3><a class="toc-backref" href="#id79"><tt class="docutils literal"><span class="pre">-loop-unswitch</span></tt>: Unswitch loops</a><a class="headerlink" href="#loop-unswitch-unswitch-loops" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id79"><code class="docutils literal"><span class="pre">-loop-unswitch</span></code>: Unswitch loops</a><a class="headerlink" href="#loop-unswitch-unswitch-loops" title="Permalink to this headline">¶</a></h3>
 <p>This pass transforms loops that contain branches on loop-invariant conditions
 to have multiple loops.  For example, it turns the left into the right code:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">for</span> <span class="p">(...)</span>                  <span class="k">if</span> <span class="p">(</span><span class="n">lic</span><span class="p">)</span>
@@ -851,12 +851,12 @@ to have multiple loops.  For example, it turns the left into the right code:</p>
 <p>This can increase the size of the code exponentially (doubling it every time a
 loop is unswitched) so we only unswitch if the resultant code will be smaller
 than a threshold.</p>
-<p>This pass expects <a class="reference internal" href="#passes-licm"><em>LICM</em></a> to be run before it to hoist
+<p>This pass expects <a class="reference internal" href="#passes-licm"><span>LICM</span></a> to be run before it to hoist
 invariant conditions out of the loop, to make the unswitching opportunity
 obvious.</p>
 </div>
 <div class="section" id="loweratomic-lower-atomic-intrinsics-to-non-atomic-form">
-<h3><a class="toc-backref" href="#id80"><tt class="docutils literal"><span class="pre">-loweratomic</span></tt>: Lower atomic intrinsics to non-atomic form</a><a class="headerlink" href="#loweratomic-lower-atomic-intrinsics-to-non-atomic-form" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id80"><code class="docutils literal"><span class="pre">-loweratomic</span></code>: Lower atomic intrinsics to non-atomic form</a><a class="headerlink" href="#loweratomic-lower-atomic-intrinsics-to-non-atomic-form" title="Permalink to this headline">¶</a></h3>
 <p>This pass lowers atomic intrinsics to non-atomic form for use in a known
 non-preemptible environment.</p>
 <p>The pass does not verify that the environment is non-preemptible (in general
@@ -865,35 +865,35 @@ any libraries which may not be available in bitcode form); it simply lowers
 every atomic intrinsic.</p>
 </div>
 <div class="section" id="lowerinvoke-lower-invokes-to-calls-for-unwindless-code-generators">
-<h3><a class="toc-backref" href="#id81"><tt class="docutils literal"><span class="pre">-lowerinvoke</span></tt>: Lower invokes to calls, for unwindless code generators</a><a class="headerlink" href="#lowerinvoke-lower-invokes-to-calls-for-unwindless-code-generators" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id81"><code class="docutils literal"><span class="pre">-lowerinvoke</span></code>: Lower invokes to calls, for unwindless code generators</a><a class="headerlink" href="#lowerinvoke-lower-invokes-to-calls-for-unwindless-code-generators" title="Permalink to this headline">¶</a></h3>
 <p>This transformation is designed for use by code generators which do not yet
-support stack unwinding.  This pass converts <tt class="docutils literal"><span class="pre">invoke</span></tt> instructions to
-<tt class="docutils literal"><span class="pre">call</span></tt> instructions, so that any exception-handling <tt class="docutils literal"><span class="pre">landingpad</span></tt> blocks
-become dead code (which can be removed by running the <tt class="docutils literal"><span class="pre">-simplifycfg</span></tt> pass
+support stack unwinding.  This pass converts <code class="docutils literal"><span class="pre">invoke</span></code> instructions to
+<code class="docutils literal"><span class="pre">call</span></code> instructions, so that any exception-handling <code class="docutils literal"><span class="pre">landingpad</span></code> blocks
+become dead code (which can be removed by running the <code class="docutils literal"><span class="pre">-simplifycfg</span></code> pass
 afterwards).</p>
 </div>
 <div class="section" id="lowerswitch-lower-switchinsts-to-branches">
-<h3><a class="toc-backref" href="#id82"><tt class="docutils literal"><span class="pre">-lowerswitch</span></tt>: Lower <tt class="docutils literal"><span class="pre">SwitchInst</span></tt>s to branches</a><a class="headerlink" href="#lowerswitch-lower-switchinsts-to-branches" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id82"><code class="docutils literal"><span class="pre">-lowerswitch</span></code>: Lower <code class="docutils literal"><span class="pre">SwitchInst</span></code>s to branches</a><a class="headerlink" href="#lowerswitch-lower-switchinsts-to-branches" title="Permalink to this headline">¶</a></h3>
 <p>Rewrites switch instructions with a sequence of branches, which allows targets
 to get away with not implementing the switch instruction until it is
 convenient.</p>
 </div>
 <div class="section" id="mem2reg-promote-memory-to-register">
-<span id="passes-mem2reg"></span><h3><a class="toc-backref" href="#id83"><tt class="docutils literal"><span class="pre">-mem2reg</span></tt>: Promote Memory to Register</a><a class="headerlink" href="#mem2reg-promote-memory-to-register" title="Permalink to this headline">¶</a></h3>
+<span id="passes-mem2reg"></span><h3><a class="toc-backref" href="#id83"><code class="docutils literal"><span class="pre">-mem2reg</span></code>: Promote Memory to Register</a><a class="headerlink" href="#mem2reg-promote-memory-to-register" title="Permalink to this headline">¶</a></h3>
 <p>This file promotes memory references to be register references.  It promotes
-alloca instructions which only have loads and stores as uses.  An <tt class="docutils literal"><span class="pre">alloca</span></tt> is
+alloca instructions which only have loads and stores as uses.  An <code class="docutils literal"><span class="pre">alloca</span></code> is
 transformed by using dominator frontiers to place phi nodes, then traversing
 the function in depth-first order to rewrite loads and stores as appropriate.
 This is just the standard SSA construction algorithm to construct &#8220;pruned&#8221; SSA
 form.</p>
 </div>
 <div class="section" id="memcpyopt-memcpy-optimization">
-<h3><a class="toc-backref" href="#id84"><tt class="docutils literal"><span class="pre">-memcpyopt</span></tt>: MemCpy Optimization</a><a class="headerlink" href="#memcpyopt-memcpy-optimization" title="Permalink to this headline">¶</a></h3>
-<p>This pass performs various transformations related to eliminating <tt class="docutils literal"><span class="pre">memcpy</span></tt>
-calls, or transforming sets of stores into <tt class="docutils literal"><span class="pre">memset</span></tt>s.</p>
+<h3><a class="toc-backref" href="#id84"><code class="docutils literal"><span class="pre">-memcpyopt</span></code>: MemCpy Optimization</a><a class="headerlink" href="#memcpyopt-memcpy-optimization" title="Permalink to this headline">¶</a></h3>
+<p>This pass performs various transformations related to eliminating <code class="docutils literal"><span class="pre">memcpy</span></code>
+calls, or transforming sets of stores into <code class="docutils literal"><span class="pre">memset</span></code>s.</p>
 </div>
 <div class="section" id="mergefunc-merge-functions">
-<h3><a class="toc-backref" href="#id85"><tt class="docutils literal"><span class="pre">-mergefunc</span></tt>: Merge Functions</a><a class="headerlink" href="#mergefunc-merge-functions" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id85"><code class="docutils literal"><span class="pre">-mergefunc</span></code>: Merge Functions</a><a class="headerlink" href="#mergefunc-merge-functions" title="Permalink to this headline">¶</a></h3>
 <p>This pass looks for equivalent functions that are mergable and folds them.</p>
 <p>Total-ordering is introduced among the functions set: we define comparison
 that answers for every two functions which of them is greater. It allows to
@@ -910,26 +910,26 @@ complexity of O(n*log(n)).</p>
 article for more details.</p>
 </div>
 <div class="section" id="mergereturn-unify-function-exit-nodes">
-<h3><a class="toc-backref" href="#id86"><tt class="docutils literal"><span class="pre">-mergereturn</span></tt>: Unify function exit nodes</a><a class="headerlink" href="#mergereturn-unify-function-exit-nodes" title="Permalink to this headline">¶</a></h3>
-<p>Ensure that functions have at most one <tt class="docutils literal"><span class="pre">ret</span></tt> instruction in them.
+<h3><a class="toc-backref" href="#id86"><code class="docutils literal"><span class="pre">-mergereturn</span></code>: Unify function exit nodes</a><a class="headerlink" href="#mergereturn-unify-function-exit-nodes" title="Permalink to this headline">¶</a></h3>
+<p>Ensure that functions have at most one <code class="docutils literal"><span class="pre">ret</span></code> instruction in them.
 Additionally, it keeps track of which node is the new exit node of the CFG.</p>
 </div>
 <div class="section" id="partial-inliner-partial-inliner">
-<h3><a class="toc-backref" href="#id87"><tt class="docutils literal"><span class="pre">-partial-inliner</span></tt>: Partial Inliner</a><a class="headerlink" href="#partial-inliner-partial-inliner" title="Permalink to this headline">¶</a></h3>
-<p>This pass performs partial inlining, typically by inlining an <tt class="docutils literal"><span class="pre">if</span></tt> statement
+<h3><a class="toc-backref" href="#id87"><code class="docutils literal"><span class="pre">-partial-inliner</span></code>: Partial Inliner</a><a class="headerlink" href="#partial-inliner-partial-inliner" title="Permalink to this headline">¶</a></h3>
+<p>This pass performs partial inlining, typically by inlining an <code class="docutils literal"><span class="pre">if</span></code> statement
 that surrounds the body of the function.</p>
 </div>
 <div class="section" id="prune-eh-remove-unused-exception-handling-info">
-<h3><a class="toc-backref" href="#id88"><tt class="docutils literal"><span class="pre">-prune-eh</span></tt>: Remove unused exception handling info</a><a class="headerlink" href="#prune-eh-remove-unused-exception-handling-info" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id88"><code class="docutils literal"><span class="pre">-prune-eh</span></code>: Remove unused exception handling info</a><a class="headerlink" href="#prune-eh-remove-unused-exception-handling-info" title="Permalink to this headline">¶</a></h3>
 <p>This file implements a simple interprocedural pass which walks the call-graph,
 turning invoke instructions into call instructions if and only if the callee
 cannot throw an exception.  It implements this as a bottom-up traversal of the
 call-graph.</p>
 </div>
 <div class="section" id="reassociate-reassociate-expressions">
-<h3><a class="toc-backref" href="#id89"><tt class="docutils literal"><span class="pre">-reassociate</span></tt>: Reassociate expressions</a><a class="headerlink" href="#reassociate-reassociate-expressions" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id89"><code class="docutils literal"><span class="pre">-reassociate</span></code>: Reassociate expressions</a><a class="headerlink" href="#reassociate-reassociate-expressions" title="Permalink to this headline">¶</a></h3>
 <p>This pass reassociates commutative expressions in an order that is designed to
-promote better constant propagation, GCSE, <a class="reference internal" href="#passes-licm"><em>LICM</em></a>, PRE, etc.</p>
+promote better constant propagation, GCSE, <a class="reference internal" href="#passes-licm"><span>LICM</span></a>, PRE, etc.</p>
 <p>For example: 4 + (x + 5) ⇒ x + (4 + 5)</p>
 <p>In the implementation of this algorithm, constants are assigned rank = 0,
 function arguments are rank = 1, and other values are assigned ranks
@@ -938,30 +938,30 @@ at 2), which effectively gives values in deep loops higher rank than values not
 in loops.</p>
 </div>
 <div class="section" id="reg2mem-demote-all-values-to-stack-slots">
-<h3><a class="toc-backref" href="#id90"><tt class="docutils literal"><span class="pre">-reg2mem</span></tt>: Demote all values to stack slots</a><a class="headerlink" href="#reg2mem-demote-all-values-to-stack-slots" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id90"><code class="docutils literal"><span class="pre">-reg2mem</span></code>: Demote all values to stack slots</a><a class="headerlink" href="#reg2mem-demote-all-values-to-stack-slots" title="Permalink to this headline">¶</a></h3>
 <p>This file demotes all registers to memory references.  It is intended to be the
-inverse of <a class="reference internal" href="#passes-mem2reg"><em>mem2reg</em></a>.  By converting to <tt class="docutils literal"><span class="pre">load</span></tt>
-instructions, the only values live across basic blocks are <tt class="docutils literal"><span class="pre">alloca</span></tt>
-instructions and <tt class="docutils literal"><span class="pre">load</span></tt> instructions before <tt class="docutils literal"><span class="pre">phi</span></tt> nodes.  It is intended
+inverse of <a class="reference internal" href="#passes-mem2reg"><span>mem2reg</span></a>.  By converting to <code class="docutils literal"><span class="pre">load</span></code>
+instructions, the only values live across basic blocks are <code class="docutils literal"><span class="pre">alloca</span></code>
+instructions and <code class="docutils literal"><span class="pre">load</span></code> instructions before <code class="docutils literal"><span class="pre">phi</span></code> nodes.  It is intended
 that this should make CFG hacking much easier.  To make later hacking easier,
-the entry block is split into two, such that all introduced <tt class="docutils literal"><span class="pre">alloca</span></tt>
+the entry block is split into two, such that all introduced <code class="docutils literal"><span class="pre">alloca</span></code>
 instructions (and nothing else) are in the entry block.</p>
 </div>
 <div class="section" id="scalarrepl-scalar-replacement-of-aggregates-dt">
-<h3><a class="toc-backref" href="#id91"><tt class="docutils literal"><span class="pre">-scalarrepl</span></tt>: Scalar Replacement of Aggregates (DT)</a><a class="headerlink" href="#scalarrepl-scalar-replacement-of-aggregates-dt" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id91"><code class="docutils literal"><span class="pre">-scalarrepl</span></code>: Scalar Replacement of Aggregates (DT)</a><a class="headerlink" href="#scalarrepl-scalar-replacement-of-aggregates-dt" title="Permalink to this headline">¶</a></h3>
 <p>The well-known scalar replacement of aggregates transformation.  This transform
-breaks up <tt class="docutils literal"><span class="pre">alloca</span></tt> instructions of aggregate type (structure or array) into
-individual <tt class="docutils literal"><span class="pre">alloca</span></tt> instructions for each member if possible.  Then, if
-possible, it transforms the individual <tt class="docutils literal"><span class="pre">alloca</span></tt> instructions into nice clean
+breaks up <code class="docutils literal"><span class="pre">alloca</span></code> instructions of aggregate type (structure or array) into
+individual <code class="docutils literal"><span class="pre">alloca</span></code> instructions for each member if possible.  Then, if
+possible, it transforms the individual <code class="docutils literal"><span class="pre">alloca</span></code> instructions into nice clean
 scalar SSA form.</p>
 <p>This combines a simple scalar replacement of aggregates algorithm with the
-<a class="reference internal" href="#passes-mem2reg"><em>mem2reg</em></a> algorithm because they often interact,
-especially for C++ programs.  As such, iterating between <tt class="docutils literal"><span class="pre">scalarrepl</span></tt>, then
-<a class="reference internal" href="#passes-mem2reg"><em>mem2reg</em></a> until we run out of things to promote works
+<a class="reference internal" href="#passes-mem2reg"><span>mem2reg</span></a> algorithm because they often interact,
+especially for C++ programs.  As such, iterating between <code class="docutils literal"><span class="pre">scalarrepl</span></code>, then
+<a class="reference internal" href="#passes-mem2reg"><span>mem2reg</span></a> until we run out of things to promote works
 well.</p>
 </div>
 <div class="section" id="sccp-sparse-conditional-constant-propagation">
-<span id="passes-sccp"></span><h3><a class="toc-backref" href="#id92"><tt class="docutils literal"><span class="pre">-sccp</span></tt>: Sparse Conditional Constant Propagation</a><a class="headerlink" href="#sccp-sparse-conditional-constant-propagation" title="Permalink to this headline">¶</a></h3>
+<span id="passes-sccp"></span><h3><a class="toc-backref" href="#id92"><code class="docutils literal"><span class="pre">-sccp</span></code>: Sparse Conditional Constant Propagation</a><a class="headerlink" href="#sccp-sparse-conditional-constant-propagation" title="Permalink to this headline">¶</a></h3>
 <p>Sparse conditional constant propagation and merging, which can be summarized
 as:</p>
 <ul class="simple">
@@ -971,10 +971,10 @@ as:</p>
 <li>Proves conditional branches to be unconditional</li>
 </ul>
 <p>Note that this pass has a habit of making definitions be dead.  It is a good
-idea to run a <a class="reference internal" href="#passes-dce"><em>DCE</em></a> pass sometime after running this pass.</p>
+idea to run a <a class="reference internal" href="#passes-dce"><span>DCE</span></a> pass sometime after running this pass.</p>
 </div>
 <div class="section" id="simplifycfg-simplify-the-cfg">
-<span id="passes-simplifycfg"></span><h3><a class="toc-backref" href="#id93"><tt class="docutils literal"><span class="pre">-simplifycfg</span></tt>: Simplify the CFG</a><a class="headerlink" href="#simplifycfg-simplify-the-cfg" title="Permalink to this headline">¶</a></h3>
+<span id="passes-simplifycfg"></span><h3><a class="toc-backref" href="#id93"><code class="docutils literal"><span class="pre">-simplifycfg</span></code>: Simplify the CFG</a><a class="headerlink" href="#simplifycfg-simplify-the-cfg" title="Permalink to this headline">¶</a></h3>
 <p>Performs dead code elimination and basic block merging.  Specifically:</p>
 <ul class="simple">
 <li>Removes basic blocks with no predecessors.</li>
@@ -985,12 +985,12 @@ predecessor only has one successor.</li>
 </ul>
 </div>
 <div class="section" id="sink-code-sinking">
-<h3><a class="toc-backref" href="#id94"><tt class="docutils literal"><span class="pre">-sink</span></tt>: Code sinking</a><a class="headerlink" href="#sink-code-sinking" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id94"><code class="docutils literal"><span class="pre">-sink</span></code>: Code sinking</a><a class="headerlink" href="#sink-code-sinking" title="Permalink to this headline">¶</a></h3>
 <p>This pass moves instructions into successor blocks, when possible, so that they
 aren&#8217;t executed on paths where their results aren&#8217;t needed.</p>
 </div>
 <div class="section" id="strip-strip-all-symbols-from-a-module">
-<h3><a class="toc-backref" href="#id95"><tt class="docutils literal"><span class="pre">-strip</span></tt>: Strip all symbols from a module</a><a class="headerlink" href="#strip-strip-all-symbols-from-a-module" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id95"><code class="docutils literal"><span class="pre">-strip</span></code>: Strip all symbols from a module</a><a class="headerlink" href="#strip-strip-all-symbols-from-a-module" title="Permalink to this headline">¶</a></h3>
 <p>Performs code stripping.  This transformation can delete:</p>
 <ul class="simple">
 <li>names for virtual registers</li>
@@ -1002,7 +1002,7 @@ be used in situations where the strip utility would be used, such as reducing
 code size or making it harder to reverse engineer code.</p>
 </div>
 <div class="section" id="strip-dead-debug-info-strip-debug-info-for-unused-symbols">
-<h3><a class="toc-backref" href="#id96"><tt class="docutils literal"><span class="pre">-strip-dead-debug-info</span></tt>: Strip debug info for unused symbols</a><a class="headerlink" href="#strip-dead-debug-info-strip-debug-info-for-unused-symbols" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id96"><code class="docutils literal"><span class="pre">-strip-dead-debug-info</span></code>: Strip debug info for unused symbols</a><a class="headerlink" href="#strip-dead-debug-info-strip-debug-info-for-unused-symbols" title="Permalink to this headline">¶</a></h3>
 <p>performs code stripping. this transformation can delete:</p>
 <ul class="simple">
 <li>names for virtual registers</li>
@@ -1014,14 +1014,14 @@ be used in situations where the strip utility would be used, such as reducing
 code size or making it harder to reverse engineer code.</p>
 </div>
 <div class="section" id="strip-dead-prototypes-strip-unused-function-prototypes">
-<h3><a class="toc-backref" href="#id97"><tt class="docutils literal"><span class="pre">-strip-dead-prototypes</span></tt>: Strip Unused Function Prototypes</a><a class="headerlink" href="#strip-dead-prototypes-strip-unused-function-prototypes" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id97"><code class="docutils literal"><span class="pre">-strip-dead-prototypes</span></code>: Strip Unused Function Prototypes</a><a class="headerlink" href="#strip-dead-prototypes-strip-unused-function-prototypes" title="Permalink to this headline">¶</a></h3>
 <p>This pass loops over all of the functions in the input module, looking for dead
 declarations and removes them.  Dead declarations are declarations of functions
 for which no implementation is available (i.e., declarations for unused library
 functions).</p>
 </div>
 <div class="section" id="strip-debug-declare-strip-all-llvm-dbg-declare-intrinsics">
-<h3><a class="toc-backref" href="#id98"><tt class="docutils literal"><span class="pre">-strip-debug-declare</span></tt>: Strip all <tt class="docutils literal"><span class="pre">llvm.dbg.declare</span></tt> intrinsics</a><a class="headerlink" href="#strip-debug-declare-strip-all-llvm-dbg-declare-intrinsics" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id98"><code class="docutils literal"><span class="pre">-strip-debug-declare</span></code>: Strip all <code class="docutils literal"><span class="pre">llvm.dbg.declare</span></code> intrinsics</a><a class="headerlink" href="#strip-debug-declare-strip-all-llvm-dbg-declare-intrinsics" title="Permalink to this headline">¶</a></h3>
 <p>This pass implements code stripping.  Specifically, it can delete:</p>
 <ol class="arabic simple">
 <li>names for virtual registers</li>
@@ -1033,7 +1033,7 @@ be used in situations where the &#8216;strip&#8217; utility would be used, such 
 code size or making it harder to reverse engineer code.</p>
 </div>
 <div class="section" id="strip-nondebug-strip-all-symbols-except-dbg-symbols-from-a-module">
-<h3><a class="toc-backref" href="#id99"><tt class="docutils literal"><span class="pre">-strip-nondebug</span></tt>: Strip all symbols, except dbg symbols, from a module</a><a class="headerlink" href="#strip-nondebug-strip-all-symbols-except-dbg-symbols-from-a-module" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id99"><code class="docutils literal"><span class="pre">-strip-nondebug</span></code>: Strip all symbols, except dbg symbols, from a module</a><a class="headerlink" href="#strip-nondebug-strip-all-symbols-except-dbg-symbols-from-a-module" title="Permalink to this headline">¶</a></h3>
 <p>This pass implements code stripping.  Specifically, it can delete:</p>
 <ol class="arabic simple">
 <li>names for virtual registers</li>
@@ -1045,7 +1045,7 @@ be used in situations where the &#8216;strip&#8217; utility would be used, such 
 code size or making it harder to reverse engineer code.</p>
 </div>
 <div class="section" id="tailcallelim-tail-call-elimination">
-<h3><a class="toc-backref" href="#id100"><tt class="docutils literal"><span class="pre">-tailcallelim</span></tt>: Tail Call Elimination</a><a class="headerlink" href="#tailcallelim-tail-call-elimination" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id100"><code class="docutils literal"><span class="pre">-tailcallelim</span></code>: Tail Call Elimination</a><a class="headerlink" href="#tailcallelim-tail-call-elimination" title="Permalink to this headline">¶</a></h3>
 <p>This file transforms calls of the current function (self recursion) followed by
 a return instruction with a branch to the entry of the function, creating a
 loop.  This pass also implements the following extensions to the basic
@@ -1072,29 +1072,29 @@ are marked as eligible for tail call elimination (by the code generator).</li>
 <h2><a class="toc-backref" href="#id101">Utility Passes</a><a class="headerlink" href="#utility-passes" title="Permalink to this headline">¶</a></h2>
 <p>This section describes the LLVM Utility Passes.</p>
 <div class="section" id="deadarghax0r-dead-argument-hacking-bugpoint-use-only-do-not-use">
-<h3><a class="toc-backref" href="#id102"><tt class="docutils literal"><span class="pre">-deadarghaX0r</span></tt>: Dead Argument Hacking (BUGPOINT USE ONLY; DO NOT USE)</a><a class="headerlink" href="#deadarghax0r-dead-argument-hacking-bugpoint-use-only-do-not-use" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id102"><code class="docutils literal"><span class="pre">-deadarghaX0r</span></code>: Dead Argument Hacking (BUGPOINT USE ONLY; DO NOT USE)</a><a class="headerlink" href="#deadarghax0r-dead-argument-hacking-bugpoint-use-only-do-not-use" title="Permalink to this headline">¶</a></h3>
 <p>Same as dead argument elimination, but deletes arguments to functions which are
 external.  This is only for use by <a class="reference internal" href="Bugpoint.html"><em>bugpoint</em></a>.</p>
 </div>
 <div class="section" id="extract-blocks-extract-basic-blocks-from-module-for-bugpoint-use">
-<h3><a class="toc-backref" href="#id103"><tt class="docutils literal"><span class="pre">-extract-blocks</span></tt>: Extract Basic Blocks From Module (for bugpoint use)</a><a class="headerlink" href="#extract-blocks-extract-basic-blocks-from-module-for-bugpoint-use" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id103"><code class="docutils literal"><span class="pre">-extract-blocks</span></code>: Extract Basic Blocks From Module (for bugpoint use)</a><a class="headerlink" href="#extract-blocks-extract-basic-blocks-from-module-for-bugpoint-use" title="Permalink to this headline">¶</a></h3>
 <p>This pass is used by bugpoint to extract all blocks from the module into their
 own functions.</p>
 </div>
 <div class="section" id="instnamer-assign-names-to-anonymous-instructions">
-<h3><a class="toc-backref" href="#id104"><tt class="docutils literal"><span class="pre">-instnamer</span></tt>: Assign names to anonymous instructions</a><a class="headerlink" href="#instnamer-assign-names-to-anonymous-instructions" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id104"><code class="docutils literal"><span class="pre">-instnamer</span></code>: Assign names to anonymous instructions</a><a class="headerlink" href="#instnamer-assign-names-to-anonymous-instructions" title="Permalink to this headline">¶</a></h3>
 <p>This is a little utility pass that gives instructions names, this is mostly
 useful when diffing the effect of an optimization because deleting an unnamed
 instruction can change all other instruction numbering, making the diff very
 noisy.</p>
 </div>
 <div class="section" id="preverify-preliminary-module-verification">
-<h3><a class="toc-backref" href="#id105"><tt class="docutils literal"><span class="pre">-preverify</span></tt>: Preliminary module verification</a><a class="headerlink" href="#preverify-preliminary-module-verification" title="Permalink to this headline">¶</a></h3>
-<p>Ensures that the module is in the form required by the <a class="reference internal" href="#passes-verify"><em>Module Verifier</em></a> pass.  Running the verifier runs this pass automatically, so
+<h3><a class="toc-backref" href="#id105"><code class="docutils literal"><span class="pre">-preverify</span></code>: Preliminary module verification</a><a class="headerlink" href="#preverify-preliminary-module-verification" title="Permalink to this headline">¶</a></h3>
+<p>Ensures that the module is in the form required by the <a class="reference internal" href="#passes-verify"><span>Module Verifier</span></a> pass.  Running the verifier runs this pass automatically, so
 there should be no need to use it directly.</p>
 </div>
 <div class="section" id="verify-module-verifier">
-<span id="passes-verify"></span><h3><a class="toc-backref" href="#id106"><tt class="docutils literal"><span class="pre">-verify</span></tt>: Module Verifier</a><a class="headerlink" href="#verify-module-verifier" title="Permalink to this headline">¶</a></h3>
+<span id="passes-verify"></span><h3><a class="toc-backref" href="#id106"><code class="docutils literal"><span class="pre">-verify</span></code>: Module Verifier</a><a class="headerlink" href="#verify-module-verifier" title="Permalink to this headline">¶</a></h3>
 <p>Verifies an LLVM IR code.  This is useful to run after an optimization which is
 undergoing testing.  Note that llvm-as verifies its input before emitting
 bitcode, and also that malformed bitcode is likely to make LLVM crash.  All
@@ -1109,7 +1109,7 @@ types.  Verify that shifts and logicals only happen on integrals f.e.</li>
 <li>The code is in valid SSA form.</li>
 <li>It is illegal to put a label into any other type (like a structure) or to
 return one.</li>
-<li>Only phi nodes can be self referential: <tt class="docutils literal"><span class="pre">%x</span> <span class="pre">=</span> <span class="pre">add</span> <span class="pre">i32</span> <span class="pre">%x</span></tt>, <tt class="docutils literal"><span class="pre">%x</span></tt> is
+<li>Only phi nodes can be self referential: <code class="docutils literal"><span class="pre">%x</span> <span class="pre">=</span> <span class="pre">add</span> <span class="pre">i32</span> <span class="pre">%x</span></code>, <code class="docutils literal"><span class="pre">%x</span></code> is
 invalid.</li>
 <li>PHI nodes must have an entry for each predecessor, with no extras.</li>
 <li>PHI nodes must be the first thing in a basic block, all grouped together.</li>
@@ -1121,7 +1121,7 @@ invalid.</li>
 <li>Verify that a function&#8217;s argument list agrees with its declared type.</li>
 <li>It is illegal to specify a name for a void value.</li>
 <li>It is illegal to have an internal global value with no initializer.</li>
-<li>It is illegal to have a <tt class="docutils literal"><span class="pre">ret</span></tt> instruction that returns a value that does
+<li>It is illegal to have a <code class="docutils literal"><span class="pre">ret</span></code> instruction that returns a value that does
 not agree with the function return value type.</li>
 <li>Function call argument types match the function prototype.</li>
 <li>All other things that are tested by asserts spread about the code.</li>
@@ -1130,29 +1130,29 @@ not agree with the function return value type.</li>
 instead just tries to ensure that code is well-formed.</p>
 </div>
 <div class="section" id="view-cfg-view-cfg-of-function">
-<h3><a class="toc-backref" href="#id107"><tt class="docutils literal"><span class="pre">-view-cfg</span></tt>: View CFG of function</a><a class="headerlink" href="#view-cfg-view-cfg-of-function" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id107"><code class="docutils literal"><span class="pre">-view-cfg</span></code>: View CFG of function</a><a class="headerlink" href="#view-cfg-view-cfg-of-function" title="Permalink to this headline">¶</a></h3>
 <p>Displays the control flow graph using the GraphViz tool.</p>
 </div>
 <div class="section" id="view-cfg-only-view-cfg-of-function-with-no-function-bodies">
-<h3><a class="toc-backref" href="#id108"><tt class="docutils literal"><span class="pre">-view-cfg-only</span></tt>: View CFG of function (with no function bodies)</a><a class="headerlink" href="#view-cfg-only-view-cfg-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id108"><code class="docutils literal"><span class="pre">-view-cfg-only</span></code>: View CFG of function (with no function bodies)</a><a class="headerlink" href="#view-cfg-only-view-cfg-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
 <p>Displays the control flow graph using the GraphViz tool, but omitting function
 bodies.</p>
 </div>
 <div class="section" id="view-dom-view-dominance-tree-of-function">
-<h3><a class="toc-backref" href="#id109"><tt class="docutils literal"><span class="pre">-view-dom</span></tt>: View dominance tree of function</a><a class="headerlink" href="#view-dom-view-dominance-tree-of-function" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id109"><code class="docutils literal"><span class="pre">-view-dom</span></code>: View dominance tree of function</a><a class="headerlink" href="#view-dom-view-dominance-tree-of-function" title="Permalink to this headline">¶</a></h3>
 <p>Displays the dominator tree using the GraphViz tool.</p>
 </div>
 <div class="section" id="view-dom-only-view-dominance-tree-of-function-with-no-function-bodies">
-<h3><a class="toc-backref" href="#id110"><tt class="docutils literal"><span class="pre">-view-dom-only</span></tt>: View dominance tree of function (with no function bodies)</a><a class="headerlink" href="#view-dom-only-view-dominance-tree-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id110"><code class="docutils literal"><span class="pre">-view-dom-only</span></code>: View dominance tree of function (with no function bodies)</a><a class="headerlink" href="#view-dom-only-view-dominance-tree-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
 <p>Displays the dominator tree using the GraphViz tool, but omitting function
 bodies.</p>
 </div>
 <div class="section" id="view-postdom-view-postdominance-tree-of-function">
-<h3><a class="toc-backref" href="#id111"><tt class="docutils literal"><span class="pre">-view-postdom</span></tt>: View postdominance tree of function</a><a class="headerlink" href="#view-postdom-view-postdominance-tree-of-function" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id111"><code class="docutils literal"><span class="pre">-view-postdom</span></code>: View postdominance tree of function</a><a class="headerlink" href="#view-postdom-view-postdominance-tree-of-function" title="Permalink to this headline">¶</a></h3>
 <p>Displays the post dominator tree using the GraphViz tool.</p>
 </div>
 <div class="section" id="view-postdom-only-view-postdominance-tree-of-function-with-no-function-bodies">
-<h3><a class="toc-backref" href="#id112"><tt class="docutils literal"><span class="pre">-view-postdom-only</span></tt>: View postdominance tree of function (with no function bodies)</a><a class="headerlink" href="#view-postdom-only-view-postdominance-tree-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id112"><code class="docutils literal"><span class="pre">-view-postdom-only</span></code>: View postdominance tree of function (with no function bodies)</a><a class="headerlink" href="#view-postdom-only-view-postdominance-tree-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
 <p>Displays the post dominator tree using the GraphViz tool, but omitting function
 bodies.</p>
 </div>
@@ -1164,7 +1164,7 @@ bodies.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1181,10 +1181,10 @@ bodies.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

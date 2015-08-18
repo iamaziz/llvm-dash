@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="how-to-submit-an-llvm-bug-report">
 <h1>How to submit an LLVM bug report<a class="headerlink" href="#how-to-submit-an-llvm-bug-report" title="Permalink to this headline">¶</a></h1>
@@ -97,13 +97,13 @@ is to figure out if it is crashing in the GCC front-end or if it is one of
 the LLVM libraries (e.g. the optimizer or code generator) that has
 problems.</p>
 <p>To figure out which component is crashing (the front-end, optimizer or code
-generator), run the <tt class="docutils literal"><span class="pre">clang</span></tt> command line as you were when the crash
+generator), run the <code class="docutils literal"><span class="pre">clang</span></code> command line as you were when the crash
 occurred, but with the following extra command line options:</p>
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">-O0</span> <span class="pre">-emit-llvm</span></tt>: If <tt class="docutils literal"><span class="pre">clang</span></tt> still crashes when passed these
+<li><code class="docutils literal"><span class="pre">-O0</span> <span class="pre">-emit-llvm</span></code>: If <code class="docutils literal"><span class="pre">clang</span></code> still crashes when passed these
 options (which disable the optimizer and code generator), then the crash
-is in the front-end.  Jump ahead to the section on <a class="reference internal" href="#front-end"><em>front-end bugs</em></a>.</li>
-<li><tt class="docutils literal"><span class="pre">-emit-llvm</span></tt>: If <tt class="docutils literal"><span class="pre">clang</span></tt> crashes with this option (which disables
+is in the front-end.  Jump ahead to the section on <a class="reference internal" href="#front-end"><span>front-end bugs</span></a>.</li>
+<li><code class="docutils literal"><span class="pre">-emit-llvm</span></code>: If <code class="docutils literal"><span class="pre">clang</span></code> crashes with this option (which disables
 the code generator), you found an optimizer bug.  Jump ahead to
 <a class="reference internal" href="#compile-time-optimization-bugs">compile-time optimization bugs</a>.</li>
 <li>Otherwise, you have a code generator crash. Jump ahead to <a class="reference internal" href="#code-generator-bugs">code
@@ -111,12 +111,12 @@ generator bugs</a>.</li>
 </ul>
 <div class="section" id="front-end-bugs">
 <span id="front-end"></span><span id="front-end-bug"></span><h3>Front-end bugs<a class="headerlink" href="#front-end-bugs" title="Permalink to this headline">¶</a></h3>
-<p>If the problem is in the front-end, you should re-run the same <tt class="docutils literal"><span class="pre">clang</span></tt>
-command that resulted in the crash, but add the <tt class="docutils literal"><span class="pre">-save-temps</span></tt> option.
-The compiler will crash again, but it will leave behind a <tt class="docutils literal"><span class="pre">foo.i</span></tt> file
-(containing preprocessed C source code) and possibly <tt class="docutils literal"><span class="pre">foo.s</span></tt> for each
-compiled <tt class="docutils literal"><span class="pre">foo.c</span></tt> file. Send us the <tt class="docutils literal"><span class="pre">foo.i</span></tt> file, along with the options
-you passed to <tt class="docutils literal"><span class="pre">clang</span></tt>, and a brief description of the error it caused.</p>
+<p>If the problem is in the front-end, you should re-run the same <code class="docutils literal"><span class="pre">clang</span></code>
+command that resulted in the crash, but add the <code class="docutils literal"><span class="pre">-save-temps</span></code> option.
+The compiler will crash again, but it will leave behind a <code class="docutils literal"><span class="pre">foo.i</span></code> file
+(containing preprocessed C source code) and possibly <code class="docutils literal"><span class="pre">foo.s</span></code> for each
+compiled <code class="docutils literal"><span class="pre">foo.c</span></code> file. Send us the <code class="docutils literal"><span class="pre">foo.i</span></code> file, along with the options
+you passed to <code class="docutils literal"><span class="pre">clang</span></code>, and a brief description of the error it caused.</p>
 <p>The <a class="reference external" href="http://delta.tigris.org/">delta</a> tool helps to reduce the
 preprocessed file down to the smallest amount of code that still replicates
 the problem. You&#8217;re encouraged to use delta to reduce the code to make the
@@ -126,7 +126,7 @@ on the best way to use delta.</p>
 <div class="section" id="compile-time-optimization-bugs">
 <span id="id1"></span><h3>Compile-time optimization bugs<a class="headerlink" href="#compile-time-optimization-bugs" title="Permalink to this headline">¶</a></h3>
 <p>If you find that a bug crashes in the optimizer, compile your test-case to a
-<tt class="docutils literal"><span class="pre">.bc</span></tt> file by passing &#8220;<tt class="docutils literal"><span class="pre">-emit-llvm</span> <span class="pre">-O0</span> <span class="pre">-c</span> <span class="pre">-o</span> <span class="pre">foo.bc</span></tt>&#8221;.
+<code class="docutils literal"><span class="pre">.bc</span></code> file by passing &#8220;<code class="docutils literal"><span class="pre">-emit-llvm</span> <span class="pre">-O0</span> <span class="pre">-c</span> <span class="pre">-o</span> <span class="pre">foo.bc</span></code>&#8221;.
 Then run:</p>
 <div class="highlight-bash"><div class="highlight"><pre>opt -O3 -debug-pass<span class="o">=</span>Arguments foo.bc -disable-output
 </pre></div>
@@ -141,27 +141,27 @@ bugpoint command:</p>
 </div>
 <p>Please run this, then file a bug with the instructions and reduced .bc
 files that bugpoint emits.  If something goes wrong with bugpoint, please
-submit the &#8220;foo.bc&#8221; file and the list of passes printed by <tt class="docutils literal"><span class="pre">opt</span></tt>.</p>
+submit the &#8220;foo.bc&#8221; file and the list of passes printed by <code class="docutils literal"><span class="pre">opt</span></code>.</p>
 </div>
 <div class="section" id="code-generator-bugs">
 <span id="id2"></span><h3>Code generator bugs<a class="headerlink" href="#code-generator-bugs" title="Permalink to this headline">¶</a></h3>
 <p>If you find a bug that crashes clang in the code generator, compile your
-source file to a .bc file by passing &#8220;<tt class="docutils literal"><span class="pre">-emit-llvm</span> <span class="pre">-c</span> <span class="pre">-o</span> <span class="pre">foo.bc</span></tt>&#8221; to
+source file to a .bc file by passing &#8220;<code class="docutils literal"><span class="pre">-emit-llvm</span> <span class="pre">-c</span> <span class="pre">-o</span> <span class="pre">foo.bc</span></code>&#8221; to
 clang (in addition to the options you already pass).  Once your have
 foo.bc, one of the following commands should fail:</p>
 <ol class="arabic simple">
-<li><tt class="docutils literal"><span class="pre">llc</span> <span class="pre">foo.bc</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">llc</span> <span class="pre">foo.bc</span> <span class="pre">-relocation-model=pic</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">llc</span> <span class="pre">foo.bc</span> <span class="pre">-relocation-model=static</span></tt></li>
+<li><code class="docutils literal"><span class="pre">llc</span> <span class="pre">foo.bc</span></code></li>
+<li><code class="docutils literal"><span class="pre">llc</span> <span class="pre">foo.bc</span> <span class="pre">-relocation-model=pic</span></code></li>
+<li><code class="docutils literal"><span class="pre">llc</span> <span class="pre">foo.bc</span> <span class="pre">-relocation-model=static</span></code></li>
 </ol>
 <p>If none of these crash, please follow the instructions for a <a class="reference internal" href="#front-end-bug">front-end
 bug</a>.  If one of these do crash, you should be able to reduce this with
 one of the following bugpoint command lines (use the one corresponding to
 the command above that failed):</p>
 <ol class="arabic simple">
-<li><tt class="docutils literal"><span class="pre">bugpoint</span> <span class="pre">-run-llc</span> <span class="pre">foo.bc</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">bugpoint</span> <span class="pre">-run-llc</span> <span class="pre">foo.bc</span> <span class="pre">--tool-args</span> <span class="pre">-relocation-model=pic</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">bugpoint</span> <span class="pre">-run-llc</span> <span class="pre">foo.bc</span> <span class="pre">--tool-args</span> <span class="pre">-relocation-model=static</span></tt></li>
+<li><code class="docutils literal"><span class="pre">bugpoint</span> <span class="pre">-run-llc</span> <span class="pre">foo.bc</span></code></li>
+<li><code class="docutils literal"><span class="pre">bugpoint</span> <span class="pre">-run-llc</span> <span class="pre">foo.bc</span> <span class="pre">--tool-args</span> <span class="pre">-relocation-model=pic</span></code></li>
+<li><code class="docutils literal"><span class="pre">bugpoint</span> <span class="pre">-run-llc</span> <span class="pre">foo.bc</span> <span class="pre">--tool-args</span> <span class="pre">-relocation-model=static</span></code></li>
 </ol>
 <p>Please run this, then file a bug with the instructions and reduced .bc file
 that bugpoint emits.  If something goes wrong with bugpoint, please submit
@@ -192,10 +192,10 @@ resulting error.</p>
 <h2>Incorrect code generation<a class="headerlink" href="#incorrect-code-generation" title="Permalink to this headline">¶</a></h2>
 <p>Similarly to debugging incorrect compilation by mis-behaving passes, you
 can debug incorrect code generation by either LLC or the JIT, using
-<tt class="docutils literal"><span class="pre">bugpoint</span></tt>. The process <tt class="docutils literal"><span class="pre">bugpoint</span></tt> follows in this case is to try to
+<code class="docutils literal"><span class="pre">bugpoint</span></code>. The process <code class="docutils literal"><span class="pre">bugpoint</span></code> follows in this case is to try to
 narrow the code down to a function that is miscompiled by one or the other
 method, but since for correctness, the entire program must be run,
-<tt class="docutils literal"><span class="pre">bugpoint</span></tt> will compile the code it deems to not be affected with the C
+<code class="docutils literal"><span class="pre">bugpoint</span></code> will compile the code it deems to not be affected with the C
 Backend, and then link in the shared object it generates.</p>
 <p>To debug the JIT:</p>
 <div class="highlight-bash"><div class="highlight"><pre>bugpoint -run-jit -output<span class="o">=[</span>correct output file<span class="o">]</span> <span class="o">[</span>bitcode file<span class="o">]</span>  <span class="se">\</span>
@@ -210,18 +210,18 @@ Backend, and then link in the shared object it generates.</p>
 </pre></div>
 </div>
 <p><strong>Special note:</strong> if you are debugging MultiSource or SPEC tests that
-already exist in the <tt class="docutils literal"><span class="pre">llvm/test</span></tt> hierarchy, there is an easier way to
+already exist in the <code class="docutils literal"><span class="pre">llvm/test</span></code> hierarchy, there is an easier way to
 debug the JIT, LLC, and CBE, using the pre-written Makefile targets, which
 will pass the program options specified in the Makefiles:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nb">cd </span>llvm/test/../../program
 make bugpoint-jit
 </pre></div>
 </div>
-<p>At the end of a successful <tt class="docutils literal"><span class="pre">bugpoint</span></tt> run, you will be presented
+<p>At the end of a successful <code class="docutils literal"><span class="pre">bugpoint</span></code> run, you will be presented
 with two bitcode files: a <em>safe</em> file which can be compiled with the C
 backend and the <em>test</em> file which either LLC or the JIT
 mis-codegenerates, and thus causes the error.</p>
-<p>To reproduce the error that <tt class="docutils literal"><span class="pre">bugpoint</span></tt> found, it is sufficient to do
+<p>To reproduce the error that <code class="docutils literal"><span class="pre">bugpoint</span></code> found, it is sufficient to do
 the following:</p>
 <ol class="arabic">
 <li><p class="first">Regenerate the shared object from the safe bitcode file:</p>
@@ -253,7 +253,7 @@ bitcode:</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -270,10 +270,10 @@ bitcode:</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

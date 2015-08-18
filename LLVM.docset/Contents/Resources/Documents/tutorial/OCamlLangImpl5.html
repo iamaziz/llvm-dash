@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,41 +56,41 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-extending-the-language-control-flow">
 <h1>5. Kaleidoscope: Extending the Language: Control Flow<a class="headerlink" href="#kaleidoscope-extending-the-language-control-flow" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#chapter-5-introduction" id="id1">Chapter 5 Introduction</a></li>
-<li><a class="reference internal" href="#if-then-else" id="id2">If/Then/Else</a><ul>
-<li><a class="reference internal" href="#lexer-extensions-for-if-then-else" id="id3">Lexer Extensions for If/Then/Else</a></li>
-<li><a class="reference internal" href="#ast-extensions-for-if-then-else" id="id4">AST Extensions for If/Then/Else</a></li>
-<li><a class="reference internal" href="#parser-extensions-for-if-then-else" id="id5">Parser Extensions for If/Then/Else</a></li>
-<li><a class="reference internal" href="#llvm-ir-for-if-then-else" id="id6">LLVM IR for If/Then/Else</a></li>
-<li><a class="reference internal" href="#code-generation-for-if-then-else" id="id7">Code Generation for If/Then/Else</a></li>
+<li><a class="reference internal" href="#chapter-5-introduction" id="id2">Chapter 5 Introduction</a></li>
+<li><a class="reference internal" href="#if-then-else" id="id3">If/Then/Else</a><ul>
+<li><a class="reference internal" href="#lexer-extensions-for-if-then-else" id="id4">Lexer Extensions for If/Then/Else</a></li>
+<li><a class="reference internal" href="#ast-extensions-for-if-then-else" id="id5">AST Extensions for If/Then/Else</a></li>
+<li><a class="reference internal" href="#parser-extensions-for-if-then-else" id="id6">Parser Extensions for If/Then/Else</a></li>
+<li><a class="reference internal" href="#llvm-ir-for-if-then-else" id="id7">LLVM IR for If/Then/Else</a></li>
+<li><a class="reference internal" href="#code-generation-for-if-then-else" id="id8">Code Generation for If/Then/Else</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#for-loop-expression" id="id8">&#8216;for&#8217; Loop Expression</a><ul>
-<li><a class="reference internal" href="#lexer-extensions-for-the-for-loop" id="id9">Lexer Extensions for the &#8216;for&#8217; Loop</a></li>
-<li><a class="reference internal" href="#ast-extensions-for-the-for-loop" id="id10">AST Extensions for the &#8216;for&#8217; Loop</a></li>
-<li><a class="reference internal" href="#parser-extensions-for-the-for-loop" id="id11">Parser Extensions for the &#8216;for&#8217; Loop</a></li>
-<li><a class="reference internal" href="#llvm-ir-for-the-for-loop" id="id12">LLVM IR for the &#8216;for&#8217; Loop</a></li>
-<li><a class="reference internal" href="#code-generation-for-the-for-loop" id="id13">Code Generation for the &#8216;for&#8217; Loop</a></li>
+<li><a class="reference internal" href="#for-loop-expression" id="id9">&#8216;for&#8217; Loop Expression</a><ul>
+<li><a class="reference internal" href="#lexer-extensions-for-the-for-loop" id="id10">Lexer Extensions for the &#8216;for&#8217; Loop</a></li>
+<li><a class="reference internal" href="#ast-extensions-for-the-for-loop" id="id11">AST Extensions for the &#8216;for&#8217; Loop</a></li>
+<li><a class="reference internal" href="#parser-extensions-for-the-for-loop" id="id12">Parser Extensions for the &#8216;for&#8217; Loop</a></li>
+<li><a class="reference internal" href="#llvm-ir-for-the-for-loop" id="id13">LLVM IR for the &#8216;for&#8217; Loop</a></li>
+<li><a class="reference internal" href="#code-generation-for-the-for-loop" id="id14">Code Generation for the &#8216;for&#8217; Loop</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#full-code-listing" id="id14">Full Code Listing</a></li>
+<li><a class="reference internal" href="#full-code-listing" id="id15">Full Code Listing</a></li>
 </ul>
 </div>
 <div class="section" id="chapter-5-introduction">
-<h2><a class="toc-backref" href="#id1">5.1. Chapter 5 Introduction</a><a class="headerlink" href="#chapter-5-introduction" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">5.1. Chapter 5 Introduction</a><a class="headerlink" href="#chapter-5-introduction" title="Permalink to this headline">¶</a></h2>
 <p>Welcome to Chapter 5 of the &#8220;<a class="reference external" href="index.html">Implementing a language with
 LLVM</a>&#8221; tutorial. Parts 1-4 described the implementation of
 the simple Kaleidoscope language and included support for generating
@@ -102,7 +102,7 @@ of &#8220;build that compiler&#8221;, we&#8217;ll extend Kaleidoscope to have an
 if/then/else expression plus a simple &#8216;for&#8217; loop.</p>
 </div>
 <div class="section" id="if-then-else">
-<h2><a class="toc-backref" href="#id2">5.2. If/Then/Else</a><a class="headerlink" href="#if-then-else" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">5.2. If/Then/Else</a><a class="headerlink" href="#if-then-else" title="Permalink to this headline">¶</a></h2>
 <p>Extending Kaleidoscope to support if/then/else is quite straightforward.
 It basically requires adding lexer support for this &#8220;new&#8221; concept to the
 lexer, parser, AST, and LLVM code emitter. This example is nice, because
@@ -134,7 +134,7 @@ down.</p>
 <p>Now that we know what we &#8220;want&#8221;, lets break this down into its
 constituent pieces.</p>
 <div class="section" id="lexer-extensions-for-if-then-else">
-<h3><a class="toc-backref" href="#id3">5.2.1. Lexer Extensions for If/Then/Else</a><a class="headerlink" href="#lexer-extensions-for-if-then-else" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id4">5.2.1. Lexer Extensions for If/Then/Else</a><a class="headerlink" href="#lexer-extensions-for-if-then-else" title="Permalink to this headline">¶</a></h3>
 <p>The lexer extensions are straightforward. First we add new variants for
 the relevant tokens:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* control *)</span>
@@ -157,7 +157,7 @@ pretty simple stuff:</p>
 </div>
 </div>
 <div class="section" id="ast-extensions-for-if-then-else">
-<h3><a class="toc-backref" href="#id4">5.2.2. AST Extensions for If/Then/Else</a><a class="headerlink" href="#ast-extensions-for-if-then-else" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">5.2.2. AST Extensions for If/Then/Else</a><a class="headerlink" href="#ast-extensions-for-if-then-else" title="Permalink to this headline">¶</a></h3>
 <p>To represent the new expression we add a new AST variant for it:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span class="k">type</span> <span class="n">expr</span> <span class="o">=</span>
   <span class="o">...</span>
@@ -168,7 +168,7 @@ pretty simple stuff:</p>
 <p>The AST variant just has pointers to the various subexpressions.</p>
 </div>
 <div class="section" id="parser-extensions-for-if-then-else">
-<h3><a class="toc-backref" href="#id5">5.2.3. Parser Extensions for If/Then/Else</a><a class="headerlink" href="#parser-extensions-for-if-then-else" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">5.2.3. Parser Extensions for If/Then/Else</a><a class="headerlink" href="#parser-extensions-for-if-then-else" title="Permalink to this headline">¶</a></h3>
 <p>Now that we have the relevant tokens coming from the lexer and we have
 the AST node to build, our parsing logic is relatively straightforward.
 First we define a new parsing function:</p>
@@ -193,7 +193,7 @@ First we define a new parsing function:</p>
 </div>
 </div>
 <div class="section" id="llvm-ir-for-if-then-else">
-<h3><a class="toc-backref" href="#id6">5.2.4. LLVM IR for If/Then/Else</a><a class="headerlink" href="#llvm-ir-for-if-then-else" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">5.2.4. LLVM IR for If/Then/Else</a><a class="headerlink" href="#llvm-ir-for-if-then-else" title="Permalink to this headline">¶</a></h3>
 <p>Now that we have it parsing and building the AST, the final piece is
 adding LLVM code generation support. This is the most interesting part
 of the if/then/else example, because this is where it starts to
@@ -233,22 +233,22 @@ Kaleidoscope looks like this:</p>
 </div>
 <p>To visualize the control flow graph, you can use a nifty feature of the
 LLVM &#8216;<a class="reference external" href="http://llvm.org/cmds/opt.html">opt</a>&#8216; tool. If you put this LLVM
-IR into &#8220;t.ll&#8221; and run &#8220;<tt class="docutils literal"><span class="pre">llvm-as</span> <span class="pre">&lt;</span> <span class="pre">t.ll</span> <span class="pre">|</span> <span class="pre">opt</span> <span class="pre">-analyze</span> <span class="pre">-view-cfg</span></tt>&#8221;, <a class="reference external" href="../ProgrammersManual.html#ViewGraph">a
+IR into &#8220;t.ll&#8221; and run &#8220;<code class="docutils literal"><span class="pre">llvm-as</span> <span class="pre">&lt;</span> <span class="pre">t.ll</span> <span class="pre">|</span> <span class="pre">opt</span> <span class="pre">-analyze</span> <span class="pre">-view-cfg</span></code>&#8221;, <a class="reference external" href="../ProgrammersManual.html#ViewGraph">a
 window will pop up</a> and you&#8217;ll
 see this graph:</p>
-<div class="figure align-center">
+<div class="figure align-center" id="id1">
 <img alt="Example CFG" src="../_images/LangImpl5-cfg.png" />
-<p class="caption">Example CFG</p>
+<p class="caption"><span class="caption-text">Example CFG</span></p>
 </div>
 <p>Another way to get this is to call
-&#8220;<tt class="docutils literal"><span class="pre">Llvm_analysis.view_function_cfg</span> <span class="pre">f</span></tt>&#8221; or
-&#8220;<tt class="docutils literal"><span class="pre">Llvm_analysis.view_function_cfg_only</span> <span class="pre">f</span></tt>&#8221; (where <tt class="docutils literal"><span class="pre">f</span></tt> is a
-&#8220;<tt class="docutils literal"><span class="pre">Function</span></tt>&#8221;) either by inserting actual calls into the code and
+&#8220;<code class="docutils literal"><span class="pre">Llvm_analysis.view_function_cfg</span> <span class="pre">f</span></code>&#8221; or
+&#8220;<code class="docutils literal"><span class="pre">Llvm_analysis.view_function_cfg_only</span> <span class="pre">f</span></code>&#8221; (where <code class="docutils literal"><span class="pre">f</span></code> is a
+&#8220;<code class="docutils literal"><span class="pre">Function</span></code>&#8221;) either by inserting actual calls into the code and
 recompiling or by calling these in the debugger. LLVM has many nice
 features for visualizing various graphs.</p>
 <p>Getting back to the generated code, it is fairly simple: the entry block
 evaluates the conditional expression (&#8220;x&#8221; in our case here) and compares
-the result to 0.0 with the &#8220;<tt class="docutils literal"><span class="pre">fcmp</span> <span class="pre">one</span></tt>&#8221; instruction (&#8216;one&#8217; is &#8220;Ordered
+the result to 0.0 with the &#8220;<code class="docutils literal"><span class="pre">fcmp</span> <span class="pre">one</span></code>&#8221; instruction (&#8216;one&#8217; is &#8220;Ordered
 and Not Equal&#8221;). Based on the result of this expression, the code jumps
 to either the &#8220;then&#8221; or &#8220;else&#8221; blocks, which contain the expressions for
 the true/false cases.</p>
@@ -278,7 +278,7 @@ practice, there are two sorts of values that float around in code
 written for your average imperative programming language that might need
 Phi nodes:</p>
 <ol class="arabic simple">
-<li>Code that involves user variables: <tt class="docutils literal"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">1;</span> <span class="pre">x</span> <span class="pre">=</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">1;</span></tt></li>
+<li>Code that involves user variables: <code class="docutils literal"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">1;</span> <span class="pre">x</span> <span class="pre">=</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">1;</span></code></li>
 <li>Values that are implicit in the structure of your AST, such as the
 Phi node in this case.</li>
 </ol>
@@ -291,9 +291,9 @@ really easy to generate the Phi node, so we choose to do it directly.</p>
 <p>Okay, enough of the motivation and overview, lets generate code!</p>
 </div>
 <div class="section" id="code-generation-for-if-then-else">
-<h3><a class="toc-backref" href="#id7">5.2.5. Code Generation for If/Then/Else</a><a class="headerlink" href="#code-generation-for-if-then-else" title="Permalink to this headline">¶</a></h3>
-<p>In order to generate code for this, we implement the <tt class="docutils literal"><span class="pre">Codegen</span></tt> method
-for <tt class="docutils literal"><span class="pre">IfExprAST</span></tt>:</p>
+<h3><a class="toc-backref" href="#id8">5.2.5. Code Generation for If/Then/Else</a><a class="headerlink" href="#code-generation-for-if-then-else" title="Permalink to this headline">¶</a></h3>
+<p>In order to generate code for this, we implement the <code class="docutils literal"><span class="pre">Codegen</span></code> method
+for <code class="docutils literal"><span class="pre">IfExprAST</span></code>:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
   <span class="o">...</span>
   <span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">If</span> <span class="o">(</span><span class="n">cond</span><span class="o">,</span> <span class="n">then_</span><span class="o">,</span> <span class="n">else_</span><span class="o">)</span> <span class="o">-&gt;</span>
@@ -320,9 +320,9 @@ a truth value as a 1-bit (bool) value.</p>
 basic blocks bottom up since we can&#8217;t have dangling BasicBlocks. We
 start off by saving a pointer to the first block (which might not be the
 entry block), which we&#8217;ll need to build a conditional branch later. We
-do this by asking the <tt class="docutils literal"><span class="pre">builder</span></tt> for the current BasicBlock. The fourth
+do this by asking the <code class="docutils literal"><span class="pre">builder</span></code> for the current BasicBlock. The fourth
 line gets the current Function object that is being built. It gets this
-by the <tt class="docutils literal"><span class="pre">start_bb</span></tt> for its &#8220;parent&#8221; (the function it is currently
+by the <code class="docutils literal"><span class="pre">start_bb</span></code> for its &#8220;parent&#8221; (the function it is currently
 embedded into).</p>
 <p>Once it has that, it creates one block. It is automatically appended
 into the function&#8217;s list of blocks.</p>
@@ -417,7 +417,7 @@ languages...</p>
 </div>
 </div>
 <div class="section" id="for-loop-expression">
-<h2><a class="toc-backref" href="#id8">5.3. &#8216;for&#8217; Loop Expression</a><a class="headerlink" href="#for-loop-expression" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">5.3. &#8216;for&#8217; Loop Expression</a><a class="headerlink" href="#for-loop-expression" title="Permalink to this headline">¶</a></h2>
 <p>Now that we know how to add basic control flow constructs to the
 language, we have the tools to add more powerful things. Lets add
 something more aggressive, a &#8216;for&#8217; expression:</p>
@@ -440,7 +440,7 @@ future when we have mutable variables, it will get more useful.</p>
 <p>As before, lets talk about the changes that we need to Kaleidoscope to
 support this.</p>
 <div class="section" id="lexer-extensions-for-the-for-loop">
-<h3><a class="toc-backref" href="#id9">5.3.1. Lexer Extensions for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#lexer-extensions-for-the-for-loop" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">5.3.1. Lexer Extensions for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#lexer-extensions-for-the-for-loop" title="Permalink to this headline">¶</a></h3>
 <p>The lexer extensions are the same sort of thing as for if/then/else:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span class="o">...</span> <span class="k">in</span> <span class="nn">Token</span><span class="p">.</span><span class="n">token</span> <span class="o">...</span>
 <span class="c">(* control *)</span>
@@ -461,7 +461,7 @@ support this.</p>
 </div>
 </div>
 <div class="section" id="ast-extensions-for-the-for-loop">
-<h3><a class="toc-backref" href="#id10">5.3.2. AST Extensions for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#ast-extensions-for-the-for-loop" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id11">5.3.2. AST Extensions for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#ast-extensions-for-the-for-loop" title="Permalink to this headline">¶</a></h3>
 <p>The AST variant is just as simple. It basically boils down to capturing
 the variable name and the constituent expressions in the node.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span class="k">type</span> <span class="n">expr</span> <span class="o">=</span>
@@ -472,7 +472,7 @@ the variable name and the constituent expressions in the node.</p>
 </div>
 </div>
 <div class="section" id="parser-extensions-for-the-for-loop">
-<h3><a class="toc-backref" href="#id11">5.3.3. Parser Extensions for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#parser-extensions-for-the-for-loop" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id12">5.3.3. Parser Extensions for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#parser-extensions-for-the-for-loop" title="Permalink to this headline">¶</a></h3>
 <p>The parser code is also fairly standard. The only interesting thing here
 is handling of the optional step value. The parser code handles it by
 checking to see if the second comma is present. If not, it sets the step
@@ -510,7 +510,7 @@ value to null in the AST node:</p>
 </div>
 </div>
 <div class="section" id="llvm-ir-for-the-for-loop">
-<h3><a class="toc-backref" href="#id12">5.3.4. LLVM IR for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#llvm-ir-for-the-for-loop" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id13">5.3.4. LLVM IR for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#llvm-ir-for-the-for-loop" title="Permalink to this headline">¶</a></h3>
 <p>Now we get to the good part: the LLVM IR we want to generate for this
 thing. With the simple example above, we get this LLVM IR (note that
 this dump is generated with optimizations disabled for clarity):</p>
@@ -545,7 +545,7 @@ several expressions, and some basic blocks. Lets see how this fits
 together.</p>
 </div>
 <div class="section" id="code-generation-for-the-for-loop">
-<h3><a class="toc-backref" href="#id13">5.3.5. Code Generation for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#code-generation-for-the-for-loop" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">5.3.5. Code Generation for the &#8216;for&#8217; Loop</a><a class="headerlink" href="#code-generation-for-the-for-loop" title="Permalink to this headline">¶</a></h3>
 <p>The first part of Codegen is very simple: we just output the start
 expression for the loop value:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
@@ -612,7 +612,7 @@ variable of the same name in the outer scope. It would be easy to make
 this an error (emit an error and return null if there is already an
 entry for VarName) but we choose to allow shadowing of variables. In
 order to handle this correctly, we remember the Value that we are
-potentially shadowing in <tt class="docutils literal"><span class="pre">old_val</span></tt> (which will be None if there is no
+potentially shadowing in <code class="docutils literal"><span class="pre">old_val</span></code> (which will be None if there is no
 shadowed variable).</p>
 <p>Once the loop variable is set into the symbol table, the code
 recursively codegen&#8217;s the body. This allows the body to use the loop
@@ -631,7 +631,7 @@ table.</p>
 </div>
 <p>Now that the body is emitted, we compute the next value of the iteration
 variable by adding the step value, or 1.0 if it isn&#8217;t present.
-&#8216;<tt class="docutils literal"><span class="pre">next_var</span></tt>&#8216; will be the value of the loop variable on the next
+&#8216;<code class="docutils literal"><span class="pre">next_var</span></code>&#8216; will be the value of the loop variable on the next
 iteration of the loop.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* Compute the end condition. *)</span>
 <span class="k">let</span> <span class="n">end_cond</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">end_</span> <span class="k">in</span>
@@ -676,11 +676,11 @@ insertion position to it.</p>
 </pre></div>
 </div>
 <p>The final code handles various cleanups: now that we have the
-&#8220;<tt class="docutils literal"><span class="pre">next_var</span></tt>&#8221; value, we can add the incoming value to the loop PHI
+&#8220;<code class="docutils literal"><span class="pre">next_var</span></code>&#8221; value, we can add the incoming value to the loop PHI
 node. After that, we remove the loop variable from the symbol table, so
 that it isn&#8217;t in scope after the for loop. Finally, code generation of
 the for loop always returns 0.0, so that is what we return from
-<tt class="docutils literal"><span class="pre">Codegen.codegen_expr</span></tt>.</p>
+<code class="docutils literal"><span class="pre">Codegen.codegen_expr</span></code>.</p>
 <p>With this, we conclude the &#8220;adding control flow to Kaleidoscope&#8221; chapter
 of the tutorial. In this chapter we added two control flow constructs,
 and used them to motivate a couple of aspects of the LLVM IR that are
@@ -690,7 +690,7 @@ operators</a> to our poor innocent language.</p>
 </div>
 </div>
 <div class="section" id="full-code-listing">
-<h2><a class="toc-backref" href="#id14">5.4. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id15">5.4. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
 <p>Here is the complete code listing for our running example, enhanced with
 the if/then/else and for expressions.. To build this example, use:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="c"># Compile</span>
@@ -1365,7 +1365,7 @@ operators</a></p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1380,13 +1380,13 @@ operators</a></p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

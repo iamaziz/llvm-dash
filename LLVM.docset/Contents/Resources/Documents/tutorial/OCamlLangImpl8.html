@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-conclusion-and-other-useful-llvm-tidbits">
 <h1>8. Kaleidoscope: Conclusion and other useful LLVM tidbits<a class="headerlink" href="#kaleidoscope-conclusion-and-other-useful-llvm-tidbits" title="Permalink to this headline">¶</a></h1>
@@ -110,7 +110,7 @@ Fortunately, our current setup makes it very easy to add global
 variables: just have value lookup check to see if an unresolved
 variable is in the global variable symbol table before rejecting it.
 To create a new global variable, make an instance of the LLVM
-<tt class="docutils literal"><span class="pre">GlobalVariable</span></tt> class.</li>
+<code class="docutils literal"><span class="pre">GlobalVariable</span></code> class.</li>
 <li><strong>typed variables</strong> - Kaleidoscope currently only supports variables
 of type double. This gives the language a very nice elegance, because
 only supporting one type means that you never have to specify types.
@@ -146,7 +146,7 @@ move objects and need to scan/update the stack.</li>
 info</a> which is understood by common
 debuggers like GDB. Adding support for debug info is fairly
 straightforward. The best way to understand it is to compile some
-C/C++ code with &#8220;<tt class="docutils literal"><span class="pre">clang</span> <span class="pre">-g</span> <span class="pre">-O0</span></tt>&#8221; and taking a look at what it
+C/C++ code with &#8220;<code class="docutils literal"><span class="pre">clang</span> <span class="pre">-g</span> <span class="pre">-O0</span></code>&#8221; and taking a look at what it
 produces.</li>
 <li><strong>exception handling support</strong> - LLVM supports generation of <a class="reference external" href="../ExceptionHandling.html">zero
 cost exceptions</a> which interoperate with
@@ -325,7 +325,7 @@ the use of tail calls (which LLVM also supports).</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -340,13 +340,13 @@ the use of tail calls (which LLVM also supports).</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

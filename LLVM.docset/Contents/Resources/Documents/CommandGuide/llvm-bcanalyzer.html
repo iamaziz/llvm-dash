@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-bcanalyzer-llvm-bitcode-analyzer">
 <h1>llvm-bcanalyzer - LLVM bitcode analyzer<a class="headerlink" href="#llvm-bcanalyzer-llvm-bitcode-analyzer" title="Permalink to this headline">¶</a></h1>
@@ -80,7 +80,7 @@ the bitcode file.  The tool can also dump a low level but human readable
 version of the bitcode file.  This tool is probably not of much interest or
 utility except for those working directly with the bitcode file format.  Most
 LLVM users can just ignore this tool.</p>
-<p>If <em>filename</em> is omitted or is <tt class="docutils literal"><span class="pre">-</span></tt>, then <strong class="program">llvm-bcanalyzer</strong> reads its
+<p>If <em>filename</em> is omitted or is <code class="docutils literal"><span class="pre">-</span></code>, then <strong class="program">llvm-bcanalyzer</strong> reads its
 input from standard input.  This is useful for combining the tool into a
 pipeline.  Output is written to the standard output.</p>
 </div>
@@ -88,7 +88,7 @@ pipeline.  Output is written to the standard output.</p>
 <h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <dl class="option">
 <dt id="cmdoption-llvm-bcanalyzer-nodetails">
-<tt class="descname">-nodetails</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-bcanalyzer-nodetails" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-nodetails</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-bcanalyzer-nodetails" title="Permalink to this definition">¶</a></dt>
 <dd><p>Causes <strong class="program">llvm-bcanalyzer</strong> to abbreviate its output by writing out only
 a module level summary.  The details for individual functions are not
 displayed.</p>
@@ -96,7 +96,7 @@ displayed.</p>
 
 <dl class="option">
 <dt id="cmdoption-llvm-bcanalyzer-dump">
-<tt class="descname">-dump</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-bcanalyzer-dump" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-dump</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-bcanalyzer-dump" title="Permalink to this definition">¶</a></dt>
 <dd><p>Causes <strong class="program">llvm-bcanalyzer</strong> to dump the bitcode in a human readable
 format.  This format is significantly different from LLVM assembly and
 provides details about the encoding of the bitcode file.</p>
@@ -104,7 +104,7 @@ provides details about the encoding of the bitcode file.</p>
 
 <dl class="option">
 <dt id="cmdoption-llvm-bcanalyzer-verify">
-<tt class="descname">-verify</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-bcanalyzer-verify" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-verify</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-bcanalyzer-verify" title="Permalink to this definition">¶</a></dt>
 <dd><p>Causes <strong class="program">llvm-bcanalyzer</strong> to verify the module produced by reading the
 bitcode.  This ensures that the statistics generated are based on a consistent
 module.</p>
@@ -112,7 +112,7 @@ module.</p>
 
 <dl class="option">
 <dt id="cmdoption-llvm-bcanalyzer-help">
-<tt class="descname">-help</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-llvm-bcanalyzer-help" title="Permalink to this definition">¶</a></dt>
+<code class="descname">-help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-bcanalyzer-help" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a summary of command line options.</p>
 </dd></dl>
 
@@ -326,7 +326,7 @@ Rate encoding scheme.  The percentage is relative to # of VBR Expanded Bytes.</d
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -341,13 +341,13 @@ Rate encoding scheme.  The percentage is relative to # of VBR Expanded Bytes.</d
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

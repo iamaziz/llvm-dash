@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="how-to-build-on-arm">
 <h1>How To Build On ARM<a class="headerlink" href="#how-to-build-on-arm" title="Permalink to this headline">¶</a></h1>
@@ -80,13 +80,13 @@ ARM encompasses a wide variety of CPUs; this advice is primarily based
 on the ARMv6 and ARMv7 architectures and may be inapplicable to older chips.</p>
 <ol class="arabic">
 <li><p class="first">If you are building LLVM/Clang on an ARM board with 1G of memory or less,
-please use <tt class="docutils literal"><span class="pre">gold</span></tt> rather then GNU <tt class="docutils literal"><span class="pre">ld</span></tt>.
-Building LLVM/Clang with <tt class="docutils literal"><span class="pre">--enable-optimized</span></tt>
+please use <code class="docutils literal"><span class="pre">gold</span></code> rather then GNU <code class="docutils literal"><span class="pre">ld</span></code>.
+Building LLVM/Clang with <code class="docutils literal"><span class="pre">--enable-optimized</span></code>
 is preferred since it consumes less memory. Otherwise, the building
 process will very likely fail due to insufficient memory. In any
 case it is probably a good idea to set up a swap partition.</p>
 </li>
-<li><p class="first">If you want to run <tt class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></tt> after building LLVM/Clang, to avoid
+<li><p class="first">If you want to run <code class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></code> after building LLVM/Clang, to avoid
 false alarms (e.g., ARCMT failure) please use at least the following
 configuration:</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>../<span class="nv">$LLVM_SRC_DIR</span>/configure --with-abi<span class="o">=</span>aapcs-vfp
@@ -135,7 +135,7 @@ devices with your board.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -152,10 +152,10 @@ devices with your board.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

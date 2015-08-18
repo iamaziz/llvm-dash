@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="how-to-set-up-llvm-style-rtti-for-your-class-hierarchy">
 <h1><a class="toc-backref" href="#id1">How to set up LLVM-style RTTI for your class hierarchy</a><a class="headerlink" href="#how-to-set-up-llvm-style-rtti-for-your-class-hierarchy" title="Permalink to this headline">¶</a></h1>
@@ -73,7 +73,7 @@
 <li><a class="reference internal" href="#basic-setup" id="id3">Basic Setup</a></li>
 <li><a class="reference internal" href="#concrete-bases-and-deeper-hierarchies" id="id4">Concrete Bases and Deeper Hierarchies</a><ul>
 <li><a class="reference internal" href="#a-bug-to-be-aware-of" id="id5">A Bug to be Aware Of</a></li>
-<li><a class="reference internal" href="#the-contract-of-classof" id="id6">The Contract of <tt class="docutils literal"><span class="pre">classof</span></tt></a></li>
+<li><a class="reference internal" href="#the-contract-of-classof" id="id6">The Contract of <code class="docutils literal"><span class="pre">classof</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#rules-of-thumb" id="id7">Rules of Thumb</a></li>
@@ -122,8 +122,8 @@ RTTI for this class hierarchy:</p>
 <p>The most basic working setup for LLVM-style RTTI requires the following
 steps:</p>
 <ol class="arabic">
-<li><p class="first">In the header where you declare <tt class="docutils literal"><span class="pre">Shape</span></tt>, you will want to <tt class="docutils literal"><span class="pre">#include</span>
-<span class="pre">&quot;llvm/Support/Casting.h&quot;</span></tt>, which declares LLVM&#8217;s RTTI templates. That
+<li><p class="first">In the header where you declare <code class="docutils literal"><span class="pre">Shape</span></code>, you will want to <code class="docutils literal"><span class="pre">#include</span>
+<span class="pre">&quot;llvm/Support/Casting.h&quot;</span></code>, which declares LLVM&#8217;s RTTI templates. That
 way your clients don&#8217;t even have to think about it.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;llvm/Support/Casting.h&quot;</span>
 </pre></div>
@@ -150,27 +150,27 @@ somewhere in the base class.</p>
  <span class="p">};</span>
 </pre></div>
 </div>
-<p>You will usually want to keep the <tt class="docutils literal"><span class="pre">Kind</span></tt> member encapsulated and
-private, but let the enum <tt class="docutils literal"><span class="pre">ShapeKind</span></tt> be public along with providing a
-<tt class="docutils literal"><span class="pre">getKind()</span></tt> method. This is convenient for clients so that they can do
-a <tt class="docutils literal"><span class="pre">switch</span></tt> over the enum.</p>
+<p>You will usually want to keep the <code class="docutils literal"><span class="pre">Kind</span></code> member encapsulated and
+private, but let the enum <code class="docutils literal"><span class="pre">ShapeKind</span></code> be public along with providing a
+<code class="docutils literal"><span class="pre">getKind()</span></code> method. This is convenient for clients so that they can do
+a <code class="docutils literal"><span class="pre">switch</span></code> over the enum.</p>
 <p>A common naming convention is that these enums are &#8220;kind&#8221;s, to avoid
 ambiguity with the words &#8220;type&#8221; or &#8220;class&#8221; which have overloaded meanings
 in many contexts within LLVM. Sometimes there will be a natural name for
-it, like &#8220;opcode&#8221;. Don&#8217;t bikeshed over this; when in doubt use <tt class="docutils literal"><span class="pre">Kind</span></tt>.</p>
-<p>You might wonder why the <tt class="docutils literal"><span class="pre">Kind</span></tt> enum doesn&#8217;t have an entry for
-<tt class="docutils literal"><span class="pre">Shape</span></tt>. The reason for this is that since <tt class="docutils literal"><span class="pre">Shape</span></tt> is abstract
-(<tt class="docutils literal"><span class="pre">computeArea()</span> <span class="pre">=</span> <span class="pre">0;</span></tt>), you will never actually have non-derived
+it, like &#8220;opcode&#8221;. Don&#8217;t bikeshed over this; when in doubt use <code class="docutils literal"><span class="pre">Kind</span></code>.</p>
+<p>You might wonder why the <code class="docutils literal"><span class="pre">Kind</span></code> enum doesn&#8217;t have an entry for
+<code class="docutils literal"><span class="pre">Shape</span></code>. The reason for this is that since <code class="docutils literal"><span class="pre">Shape</span></code> is abstract
+(<code class="docutils literal"><span class="pre">computeArea()</span> <span class="pre">=</span> <span class="pre">0;</span></code>), you will never actually have non-derived
 instances of exactly that class (only subclasses). See <a class="reference internal" href="#concrete-bases-and-deeper-hierarchies">Concrete Bases
 and Deeper Hierarchies</a> for information on how to deal with
 non-abstract bases. It&#8217;s worth mentioning here that unlike
-<tt class="docutils literal"><span class="pre">dynamic_cast&lt;&gt;</span></tt>, LLVM-style RTTI can be used (and is often used) for
+<code class="docutils literal"><span class="pre">dynamic_cast&lt;&gt;</span></code>, LLVM-style RTTI can be used (and is often used) for
 classes that don&#8217;t have v-tables.</p>
 </li>
-<li><p class="first">Next, you need to make sure that the <tt class="docutils literal"><span class="pre">Kind</span></tt> gets initialized to the
+<li><p class="first">Next, you need to make sure that the <code class="docutils literal"><span class="pre">Kind</span></code> gets initialized to the
 value corresponding to the dynamic type of the class. Typically, you will
 want to have it be an argument to the constructor of the base class, and
-then pass in the respective <tt class="docutils literal"><span class="pre">XXXKind</span></tt> from subclass constructors.</p>
+then pass in the respective <code class="docutils literal"><span class="pre">XXXKind</span></code> from subclass constructors.</p>
 <p>Here is the code after that change:</p>
 <div class="highlight-c++"><div class="highlight"><pre> <span class="k">class</span> <span class="nc">Shape</span> <span class="p">{</span>
  <span class="k">public</span><span class="o">:</span>
@@ -208,9 +208,9 @@ then pass in the respective <tt class="docutils literal"><span class="pre">XXXKi
 </div>
 </li>
 <li><p class="first">Finally, you need to inform LLVM&#8217;s RTTI templates how to dynamically
-determine the type of a class (i.e. whether the <tt class="docutils literal"><span class="pre">isa&lt;&gt;</span></tt>/<tt class="docutils literal"><span class="pre">dyn_cast&lt;&gt;</span></tt>
+determine the type of a class (i.e. whether the <code class="docutils literal"><span class="pre">isa&lt;&gt;</span></code>/<code class="docutils literal"><span class="pre">dyn_cast&lt;&gt;</span></code>
 should succeed). The default &#8220;99.9% of use cases&#8221; way to accomplish this
-is through a small static member function <tt class="docutils literal"><span class="pre">classof</span></tt>. In order to have
+is through a small static member function <code class="docutils literal"><span class="pre">classof</span></code>. In order to have
 proper context for an explanation, we will display this code first, and
 then below describe each part:</p>
 <div class="highlight-c++"><div class="highlight"><pre> <span class="k">class</span> <span class="nc">Shape</span> <span class="p">{</span>
@@ -252,10 +252,10 @@ then below describe each part:</p>
  <span class="p">};</span>
 </pre></div>
 </div>
-<p>The job of <tt class="docutils literal"><span class="pre">classof</span></tt> is to dynamically determine whether an object of
+<p>The job of <code class="docutils literal"><span class="pre">classof</span></code> is to dynamically determine whether an object of
 a base class is in fact of a particular derived class.  In order to
-downcast a type <tt class="docutils literal"><span class="pre">Base</span></tt> to a type <tt class="docutils literal"><span class="pre">Derived</span></tt>, there needs to be a
-<tt class="docutils literal"><span class="pre">classof</span></tt> in <tt class="docutils literal"><span class="pre">Derived</span></tt> which will accept an object of type <tt class="docutils literal"><span class="pre">Base</span></tt>.</p>
+downcast a type <code class="docutils literal"><span class="pre">Base</span></code> to a type <code class="docutils literal"><span class="pre">Derived</span></code>, there needs to be a
+<code class="docutils literal"><span class="pre">classof</span></code> in <code class="docutils literal"><span class="pre">Derived</span></code> which will accept an object of type <code class="docutils literal"><span class="pre">Base</span></code>.</p>
 <p>To be concrete, consider the following code:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">Shape</span> <span class="o">*</span><span class="n">S</span> <span class="o">=</span> <span class="p">...;</span>
 <span class="k">if</span> <span class="p">(</span><span class="n">isa</span><span class="o">&lt;</span><span class="n">Circle</span><span class="o">&gt;</span><span class="p">(</span><span class="n">S</span><span class="p">))</span> <span class="p">{</span>
@@ -263,14 +263,14 @@ downcast a type <tt class="docutils literal"><span class="pre">Base</span></tt> 
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The code of the <tt class="docutils literal"><span class="pre">isa&lt;&gt;</span></tt> test in this code will eventually boil
+<p>The code of the <code class="docutils literal"><span class="pre">isa&lt;&gt;</span></code> test in this code will eventually boil
 down&#8212;after template instantiation and some other machinery&#8212;to a
-check roughly like <tt class="docutils literal"><span class="pre">Circle::classof(S)</span></tt>. For more information, see
-<a class="reference internal" href="#classof-contract"><em>The Contract of classof</em></a>.</p>
-<p>The argument to <tt class="docutils literal"><span class="pre">classof</span></tt> should always be an <em>ancestor</em> class because
+check roughly like <code class="docutils literal"><span class="pre">Circle::classof(S)</span></code>. For more information, see
+<a class="reference internal" href="#classof-contract"><span>The Contract of classof</span></a>.</p>
+<p>The argument to <code class="docutils literal"><span class="pre">classof</span></code> should always be an <em>ancestor</em> class because
 the implementation has logic to allow and optimize away
-upcasts/up-<tt class="docutils literal"><span class="pre">isa&lt;&gt;</span></tt>&#8216;s automatically. It is as though every class
-<tt class="docutils literal"><span class="pre">Foo</span></tt> automatically has a <tt class="docutils literal"><span class="pre">classof</span></tt> like:</p>
+upcasts/up-<code class="docutils literal"><span class="pre">isa&lt;&gt;</span></code>&#8216;s automatically. It is as though every class
+<code class="docutils literal"><span class="pre">Foo</span></code> automatically has a <code class="docutils literal"><span class="pre">classof</span></code> like:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Foo</span> <span class="p">{</span>
   <span class="p">[...]</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
@@ -283,9 +283,9 @@ upcasts/up-<tt class="docutils literal"><span class="pre">isa&lt;&gt;</span></tt
 </pre></div>
 </div>
 <p>Note that this is the reason that we did not need to introduce a
-<tt class="docutils literal"><span class="pre">classof</span></tt> into <tt class="docutils literal"><span class="pre">Shape</span></tt>: all relevant classes derive from <tt class="docutils literal"><span class="pre">Shape</span></tt>,
-and <tt class="docutils literal"><span class="pre">Shape</span></tt> itself is abstract (has no entry in the <tt class="docutils literal"><span class="pre">Kind</span></tt> enum),
-so this notional inferred <tt class="docutils literal"><span class="pre">classof</span></tt> is all we need. See <a class="reference internal" href="#concrete-bases-and-deeper-hierarchies">Concrete
+<code class="docutils literal"><span class="pre">classof</span></code> into <code class="docutils literal"><span class="pre">Shape</span></code>: all relevant classes derive from <code class="docutils literal"><span class="pre">Shape</span></code>,
+and <code class="docutils literal"><span class="pre">Shape</span></code> itself is abstract (has no entry in the <code class="docutils literal"><span class="pre">Kind</span></code> enum),
+so this notional inferred <code class="docutils literal"><span class="pre">classof</span></code> is all we need. See <a class="reference internal" href="#concrete-bases-and-deeper-hierarchies">Concrete
 Bases and Deeper Hierarchies</a> for more information about how to extend
 this example to more general hierarchies.</p>
 </li>
@@ -297,17 +297,17 @@ will end up being a tiny fraction of the code.</p>
 <div class="section" id="concrete-bases-and-deeper-hierarchies">
 <h2><a class="toc-backref" href="#id4">Concrete Bases and Deeper Hierarchies</a><a class="headerlink" href="#concrete-bases-and-deeper-hierarchies" title="Permalink to this headline">¶</a></h2>
 <p>For concrete bases (i.e. non-abstract interior nodes of the inheritance
-tree), the <tt class="docutils literal"><span class="pre">Kind</span></tt> check inside <tt class="docutils literal"><span class="pre">classof</span></tt> needs to be a bit more
+tree), the <code class="docutils literal"><span class="pre">Kind</span></code> check inside <code class="docutils literal"><span class="pre">classof</span></code> needs to be a bit more
 complicated. The situation differs from the example above in that</p>
 <ul class="simple">
-<li>Since the class is concrete, it must itself have an entry in the <tt class="docutils literal"><span class="pre">Kind</span></tt>
+<li>Since the class is concrete, it must itself have an entry in the <code class="docutils literal"><span class="pre">Kind</span></code>
 enum because it is possible to have objects with this class as a dynamic
 type.</li>
-<li>Since the class has children, the check inside <tt class="docutils literal"><span class="pre">classof</span></tt> must take them
+<li>Since the class has children, the check inside <code class="docutils literal"><span class="pre">classof</span></code> must take them
 into account.</li>
 </ul>
-<p>Say that <tt class="docutils literal"><span class="pre">SpecialSquare</span></tt> and <tt class="docutils literal"><span class="pre">OtherSpecialSquare</span></tt> derive
-from <tt class="docutils literal"><span class="pre">Square</span></tt>, and so <tt class="docutils literal"><span class="pre">ShapeKind</span></tt> becomes:</p>
+<p>Say that <code class="docutils literal"><span class="pre">SpecialSquare</span></code> and <code class="docutils literal"><span class="pre">OtherSpecialSquare</span></code> derive
+from <code class="docutils literal"><span class="pre">Square</span></code>, and so <code class="docutils literal"><span class="pre">ShapeKind</span></code> becomes:</p>
 <div class="highlight-c++"><div class="highlight"><pre> <span class="k">enum</span> <span class="n">ShapeKind</span> <span class="p">{</span>
    <span class="n">SK_Square</span><span class="p">,</span>
 <span class="o">+</span>  <span class="n">SK_SpecialSquare</span><span class="p">,</span>
@@ -316,7 +316,7 @@ from <tt class="docutils literal"><span class="pre">Square</span></tt>, and so <
  <span class="p">}</span>
 </pre></div>
 </div>
-<p>Then in <tt class="docutils literal"><span class="pre">Square</span></tt>, we would need to modify the <tt class="docutils literal"><span class="pre">classof</span></tt> like so:</p>
+<p>Then in <code class="docutils literal"><span class="pre">Square</span></code>, we would need to modify the <code class="docutils literal"><span class="pre">classof</span></code> like so:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="o">-</span>  <span class="k">static</span> <span class="kt">bool</span> <span class="n">classof</span><span class="p">(</span><span class="k">const</span> <span class="n">Shape</span> <span class="o">*</span><span class="n">S</span><span class="p">)</span> <span class="p">{</span>
 <span class="o">-</span>    <span class="k">return</span> <span class="n">S</span><span class="o">-&gt;</span><span class="n">getKind</span><span class="p">()</span> <span class="o">==</span> <span class="n">SK_Square</span><span class="p">;</span>
 <span class="o">-</span>  <span class="p">}</span>
@@ -327,8 +327,8 @@ from <tt class="docutils literal"><span class="pre">Square</span></tt>, and so <
 </pre></div>
 </div>
 <p>The reason that we need to test a range like this instead of just equality
-is that both <tt class="docutils literal"><span class="pre">SpecialSquare</span></tt> and <tt class="docutils literal"><span class="pre">OtherSpecialSquare</span></tt> &#8220;is-a&#8221;
-<tt class="docutils literal"><span class="pre">Square</span></tt>, and so <tt class="docutils literal"><span class="pre">classof</span></tt> needs to return <tt class="docutils literal"><span class="pre">true</span></tt> for them.</p>
+is that both <code class="docutils literal"><span class="pre">SpecialSquare</span></code> and <code class="docutils literal"><span class="pre">OtherSpecialSquare</span></code> &#8220;is-a&#8221;
+<code class="docutils literal"><span class="pre">Square</span></code>, and so <code class="docutils literal"><span class="pre">classof</span></code> needs to return <code class="docutils literal"><span class="pre">true</span></code> for them.</p>
 <p>This approach can be made to scale to arbitrarily deep hierarchies. The
 trick is that you arrange the enum values so that they correspond to a
 preorder traversal of the class hierarchy tree. With that arrangement, all
@@ -344,11 +344,11 @@ ordering right:</p>
 </div>
 <div class="section" id="a-bug-to-be-aware-of">
 <h3><a class="toc-backref" href="#id5">A Bug to be Aware Of</a><a class="headerlink" href="#a-bug-to-be-aware-of" title="Permalink to this headline">¶</a></h3>
-<p>The example just given opens the door to bugs where the <tt class="docutils literal"><span class="pre">classof</span></tt>s are
-not updated to match the <tt class="docutils literal"><span class="pre">Kind</span></tt> enum when adding (or removing) classes to
+<p>The example just given opens the door to bugs where the <code class="docutils literal"><span class="pre">classof</span></code>s are
+not updated to match the <code class="docutils literal"><span class="pre">Kind</span></code> enum when adding (or removing) classes to
 (from) the hierarchy.</p>
-<p>Continuing the example above, suppose we add a <tt class="docutils literal"><span class="pre">SomewhatSpecialSquare</span></tt> as
-a subclass of <tt class="docutils literal"><span class="pre">Square</span></tt>, and update the <tt class="docutils literal"><span class="pre">ShapeKind</span></tt> enum like so:</p>
+<p>Continuing the example above, suppose we add a <code class="docutils literal"><span class="pre">SomewhatSpecialSquare</span></code> as
+a subclass of <code class="docutils literal"><span class="pre">Square</span></code>, and update the <code class="docutils literal"><span class="pre">ShapeKind</span></code> enum like so:</p>
 <div class="highlight-c++"><div class="highlight"><pre> <span class="k">enum</span> <span class="n">ShapeKind</span> <span class="p">{</span>
    <span class="n">SK_Square</span><span class="p">,</span>
    <span class="n">SK_SpecialSquare</span><span class="p">,</span>
@@ -358,7 +358,7 @@ a subclass of <tt class="docutils literal"><span class="pre">Square</span></tt>,
  <span class="p">}</span>
 </pre></div>
 </div>
-<p>Now, suppose that we forget to update <tt class="docutils literal"><span class="pre">Square::classof()</span></tt>, so it still
+<p>Now, suppose that we forget to update <code class="docutils literal"><span class="pre">Square::classof()</span></code>, so it still
 looks like:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">static</span> <span class="kt">bool</span> <span class="nf">classof</span><span class="p">(</span><span class="k">const</span> <span class="n">Shape</span> <span class="o">*</span><span class="n">S</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// BUG: Returns false when S-&gt;getKind() == SK_SomewhatSpecialSquare,</span>
@@ -369,7 +369,7 @@ looks like:</p>
 </pre></div>
 </div>
 <p>As the comment indicates, this code contains a bug. A straightforward and
-non-clever way to avoid this is to introduce an explicit <tt class="docutils literal"><span class="pre">SK_LastSquare</span></tt>
+non-clever way to avoid this is to introduce an explicit <code class="docutils literal"><span class="pre">SK_LastSquare</span></code>
 entry in the enum when adding the first subclass(es). For example, we could
 rewrite the example at the beginning of <a class="reference internal" href="#concrete-bases-and-deeper-hierarchies">Concrete Bases and Deeper
 Hierarchies</a> as:</p>
@@ -402,30 +402,30 @@ Hierarchies</a> as:</p>
  <span class="p">}</span>
 </pre></div>
 </div>
-<p>Notice that <tt class="docutils literal"><span class="pre">Square::classof</span></tt> does not need to be changed.</p>
+<p>Notice that <code class="docutils literal"><span class="pre">Square::classof</span></code> does not need to be changed.</p>
 </div>
 <div class="section" id="the-contract-of-classof">
-<span id="classof-contract"></span><h3><a class="toc-backref" href="#id6">The Contract of <tt class="docutils literal"><span class="pre">classof</span></tt></a><a class="headerlink" href="#the-contract-of-classof" title="Permalink to this headline">¶</a></h3>
-<p>To be more precise, let <tt class="docutils literal"><span class="pre">classof</span></tt> be inside a class <tt class="docutils literal"><span class="pre">C</span></tt>.  Then the
-contract for <tt class="docutils literal"><span class="pre">classof</span></tt> is &#8220;return <tt class="docutils literal"><span class="pre">true</span></tt> if the dynamic type of the
-argument is-a <tt class="docutils literal"><span class="pre">C</span></tt>&#8221;.  As long as your implementation fulfills this
+<span id="classof-contract"></span><h3><a class="toc-backref" href="#id6">The Contract of <code class="docutils literal"><span class="pre">classof</span></code></a><a class="headerlink" href="#the-contract-of-classof" title="Permalink to this headline">¶</a></h3>
+<p>To be more precise, let <code class="docutils literal"><span class="pre">classof</span></code> be inside a class <code class="docutils literal"><span class="pre">C</span></code>.  Then the
+contract for <code class="docutils literal"><span class="pre">classof</span></code> is &#8220;return <code class="docutils literal"><span class="pre">true</span></code> if the dynamic type of the
+argument is-a <code class="docutils literal"><span class="pre">C</span></code>&#8221;.  As long as your implementation fulfills this
 contract, you can tweak and optimize it as much as you want.</p>
 </div>
 </div>
 <div class="section" id="rules-of-thumb">
 <h2><a class="toc-backref" href="#id7">Rules of Thumb</a><a class="headerlink" href="#rules-of-thumb" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
-<li>The <tt class="docutils literal"><span class="pre">Kind</span></tt> enum should have one entry per concrete class, ordered
+<li>The <code class="docutils literal"><span class="pre">Kind</span></code> enum should have one entry per concrete class, ordered
 according to a preorder traversal of the inheritance tree.</li>
-<li>The argument to <tt class="docutils literal"><span class="pre">classof</span></tt> should be a <tt class="docutils literal"><span class="pre">const</span> <span class="pre">Base</span> <span class="pre">*</span></tt>, where <tt class="docutils literal"><span class="pre">Base</span></tt>
+<li>The argument to <code class="docutils literal"><span class="pre">classof</span></code> should be a <code class="docutils literal"><span class="pre">const</span> <span class="pre">Base</span> <span class="pre">*</span></code>, where <code class="docutils literal"><span class="pre">Base</span></code>
 is some ancestor in the inheritance hierarchy. The argument should
 <em>never</em> be a derived class or the class itself: the template machinery
-for <tt class="docutils literal"><span class="pre">isa&lt;&gt;</span></tt> already handles this case and optimizes it.</li>
+for <code class="docutils literal"><span class="pre">isa&lt;&gt;</span></code> already handles this case and optimizes it.</li>
 <li>For each class in the hierarchy that has no children, implement a
-<tt class="docutils literal"><span class="pre">classof</span></tt> that checks only against its <tt class="docutils literal"><span class="pre">Kind</span></tt>.</li>
+<code class="docutils literal"><span class="pre">classof</span></code> that checks only against its <code class="docutils literal"><span class="pre">Kind</span></code>.</li>
 <li>For each class in the hierarchy that has children, implement a
-<tt class="docutils literal"><span class="pre">classof</span></tt> that checks a range of the first child&#8217;s <tt class="docutils literal"><span class="pre">Kind</span></tt> and the
-last child&#8217;s <tt class="docutils literal"><span class="pre">Kind</span></tt>.</li>
+<code class="docutils literal"><span class="pre">classof</span></code> that checks a range of the first child&#8217;s <code class="docutils literal"><span class="pre">Kind</span></code> and the
+last child&#8217;s <code class="docutils literal"><span class="pre">Kind</span></code>.</li>
 </ol>
 </div>
 </div>
@@ -435,7 +435,7 @@ last child&#8217;s <tt class="docutils literal"><span class="pre">Kind</span></t
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -452,10 +452,10 @@ last child&#8217;s <tt class="docutils literal"><span class="pre">Kind</span></t
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

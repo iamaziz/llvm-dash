@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-extending-the-language-user-defined-operators">
 <h1>6. Kaleidoscope: Extending the Language: User-defined Operators<a class="headerlink" href="#kaleidoscope-extending-the-language-user-defined-operators" title="Permalink to this headline">¶</a></h1>
@@ -177,8 +177,8 @@ any new AST or parser support.</p>
 these new operators, in the &#8220;def binary| 5&#8221; part of the function
 definition. In our grammar so far, the &#8220;name&#8221; for the function
 definition is parsed as the &#8220;prototype&#8221; production and into the
-<tt class="docutils literal"><span class="pre">Ast.Prototype</span></tt> AST node. To represent our new user-defined operators
-as prototypes, we have to extend the <tt class="docutils literal"><span class="pre">Ast.Prototype</span></tt> AST node like
+<code class="docutils literal"><span class="pre">Ast.Prototype</span></code> AST node. To represent our new user-defined operators
+as prototypes, we have to extend the <code class="docutils literal"><span class="pre">Ast.Prototype</span></code> AST node like
 this:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* proto - This type represents the &quot;prototype&quot; for a function, which captures</span>
 <span class="c"> * its name, and its argument names (thus implicitly the number of arguments the</span>
@@ -242,7 +242,7 @@ user-defined operator, we need to parse it:</p>
 </div>
 <p>This is all fairly straightforward parsing code, and we have already
 seen a lot of similar code in the past. One interesting part about the
-code above is the couple lines that set up <tt class="docutils literal"><span class="pre">name</span></tt> for binary
+code above is the couple lines that set up <code class="docutils literal"><span class="pre">name</span></code> for binary
 operators. This builds names like &#8220;binary&#64;&#8221; for a newly defined &#8220;&#64;&#8221;
 operator. This then takes advantage of the fact that symbol names in the
 LLVM symbol table are allowed to have any character in them, including
@@ -349,7 +349,7 @@ unary operators can&#8217;t have ambiguous parses like binary operators can,
 so there is no need for precedence information.</p>
 <p>The problem with this function, is that we need to call ParseUnary from
 somewhere. To do this, we change previous callers of ParsePrimary to
-call <tt class="docutils literal"><span class="pre">parse_unary</span></tt> instead:</p>
+call <code class="docutils literal"><span class="pre">parse_unary</span></code> instead:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* binoprhs</span>
 <span class="c"> *   ::= (&#39;+&#39; primary)* *)</span>
 <span class="ow">and</span> <span class="n">parse_bin_rhs</span> <span class="n">expr_prec</span> <span class="n">lhs</span> <span class="n">stream</span> <span class="o">=</span>
@@ -538,7 +538,7 @@ def mandleconverge(real imag)
 <p>This &#8220;z = z<sup>2</sup> + c&#8221; function is a beautiful little creature
 that is the basis for computation of the <a class="reference external" href="http://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot
 Set</a>. Our
-<tt class="docutils literal"><span class="pre">mandelconverge</span></tt> function returns the number of iterations that it
+<code class="docutils literal"><span class="pre">mandelconverge</span></code> function returns the number of iterations that it
 takes for a complex orbit to escape, saturating to 255. This is not a
 very useful function by itself, but if you plot its value over a
 two-dimensional plane, you can see the Mandelbrot set. Given that we are
@@ -1465,7 +1465,7 @@ construction</a></p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1480,13 +1480,13 @@ construction</a></p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

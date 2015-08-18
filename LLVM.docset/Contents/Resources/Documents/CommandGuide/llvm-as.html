@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-as-llvm-assembler">
 <h1>llvm-as - LLVM assembler<a class="headerlink" href="#llvm-as-llvm-assembler" title="Permalink to this headline">¶</a></h1>
@@ -76,17 +76,17 @@
 <p><strong>llvm-as</strong> is the LLVM assembler.  It reads a file containing human-readable
 LLVM assembly language, translates it to LLVM bitcode, and writes the result
 into a file or to standard output.</p>
-<p>If <em>filename</em> is omitted or is <tt class="docutils literal"><span class="pre">-</span></tt>, then <strong>llvm-as</strong> reads its input from
+<p>If <em>filename</em> is omitted or is <code class="docutils literal"><span class="pre">-</span></code>, then <strong>llvm-as</strong> reads its input from
 standard input.</p>
 <p>If an output file is not specified with the <strong>-o</strong> option, then
 <strong>llvm-as</strong> sends its output to a file or standard output by following
 these rules:</p>
 <ul class="simple">
 <li>If the input is standard input, then the output is standard output.</li>
-<li>If the input is a file that ends with <tt class="docutils literal"><span class="pre">.ll</span></tt>, then the output file is of the
-same name, except that the suffix is changed to <tt class="docutils literal"><span class="pre">.bc</span></tt>.</li>
-<li>If the input is a file that does not end with the <tt class="docutils literal"><span class="pre">.ll</span></tt> suffix, then the
-output file has the same name as the input file, except that the <tt class="docutils literal"><span class="pre">.bc</span></tt>
+<li>If the input is a file that ends with <code class="docutils literal"><span class="pre">.ll</span></code>, then the output file is of the
+same name, except that the suffix is changed to <code class="docutils literal"><span class="pre">.bc</span></code>.</li>
+<li>If the input is a file that does not end with the <code class="docutils literal"><span class="pre">.ll</span></code> suffix, then the
+output file has the same name as the input file, except that the <code class="docutils literal"><span class="pre">.bc</span></code>
 suffix is appended.</li>
 </ul>
 </div>
@@ -100,7 +100,7 @@ write raw bitcode output if the output stream is a terminal. With this option,
 <dt><strong>-help</strong></dt>
 <dd>Print a summary of command line options.</dd>
 <dt><strong>-o</strong> <em>filename</em></dt>
-<dd>Specify the output file name.  If <em>filename</em> is <tt class="docutils literal"><span class="pre">-</span></tt>, then <strong>llvm-as</strong>
+<dd>Specify the output file name.  If <em>filename</em> is <code class="docutils literal"><span class="pre">-</span></code>, then <strong>llvm-as</strong>
 sends its output to standard output.</dd>
 </dl>
 </div>
@@ -120,7 +120,7 @@ will exit with a non-zero value.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -135,13 +135,13 @@ will exit with a non-zero value.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

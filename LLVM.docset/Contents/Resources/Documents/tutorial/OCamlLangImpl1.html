@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-tutorial-introduction-and-the-lexer">
 <h1>1. Kaleidoscope: Tutorial Introduction and the Lexer<a class="headerlink" href="#kaleidoscope-tutorial-introduction-and-the-lexer" title="Permalink to this headline">¶</a></h1>
@@ -224,11 +224,11 @@ numeric value of a number). First, we define the possibilities:</p>
 </div>
 <p>Each token returned by our lexer will be one of the token variant
 values. An unknown character like &#8216;+&#8217; will be returned as
-<tt class="docutils literal"><span class="pre">Token.Kwd</span> <span class="pre">'+'</span></tt>. If the curr token is an identifier, the value will be
-<tt class="docutils literal"><span class="pre">Token.Ident</span> <span class="pre">s</span></tt>. If the current token is a numeric literal (like 1.0),
-the value will be <tt class="docutils literal"><span class="pre">Token.Number</span> <span class="pre">1.0</span></tt>.</p>
+<code class="docutils literal"><span class="pre">Token.Kwd</span> <span class="pre">'+'</span></code>. If the curr token is an identifier, the value will be
+<code class="docutils literal"><span class="pre">Token.Ident</span> <span class="pre">s</span></code>. If the current token is a numeric literal (like 1.0),
+the value will be <code class="docutils literal"><span class="pre">Token.Number</span> <span class="pre">1.0</span></code>.</p>
 <p>The actual implementation of the lexer is a collection of functions
-driven by a function named <tt class="docutils literal"><span class="pre">Lexer.lex</span></tt>. The <tt class="docutils literal"><span class="pre">Lexer.lex</span></tt> function is
+driven by a function named <code class="docutils literal"><span class="pre">Lexer.lex</span></code>. The <code class="docutils literal"><span class="pre">Lexer.lex</span></code> function is
 called to return the next token from standard input. We will use
 <a class="reference external" href="http://caml.inria.fr/pub/docs/manual-camlp4/index.html">Camlp4</a> to
 simplify the tokenization of the standard input. Its definition starts
@@ -242,12 +242,12 @@ as:</p>
   <span class="o">|</span> <span class="o">[&lt;</span> <span class="k">&#39;</span> <span class="o">(</span><span class="sc">&#39; &#39;</span> <span class="o">|</span> <span class="sc">&#39;\n&#39;</span> <span class="o">|</span> <span class="sc">&#39;\r&#39;</span> <span class="o">|</span> <span class="sc">&#39;\t&#39;</span><span class="o">);</span> <span class="n">stream</span> <span class="o">&gt;]</span> <span class="o">-&gt;</span> <span class="n">lex</span> <span class="n">stream</span>
 </pre></div>
 </div>
-<p><tt class="docutils literal"><span class="pre">Lexer.lex</span></tt> works by recursing over a <tt class="docutils literal"><span class="pre">char</span> <span class="pre">Stream.t</span></tt> to read
+<p><code class="docutils literal"><span class="pre">Lexer.lex</span></code> works by recursing over a <code class="docutils literal"><span class="pre">char</span> <span class="pre">Stream.t</span></code> to read
 characters one at a time from the standard input. It eats them as it
-recognizes them and stores them in in a <tt class="docutils literal"><span class="pre">Token.token</span></tt> variant. The
+recognizes them and stores them in in a <code class="docutils literal"><span class="pre">Token.token</span></code> variant. The
 first thing that it has to do is ignore whitespace between tokens. This
 is accomplished with the recursive call above.</p>
-<p>The next thing <tt class="docutils literal"><span class="pre">Lexer.lex</span></tt> needs to do is recognize identifiers and
+<p>The next thing <code class="docutils literal"><span class="pre">Lexer.lex</span></code> needs to do is recognize identifiers and
 specific keywords like &#8220;def&#8221;. Kaleidoscope does this with a pattern
 match and a helper function.</p>
 <div class="highlight-ocaml"><div class="highlight"><pre>  <span class="c">(* identifier: [a-zA-Z][a-zA-Z0-9] *)</span>
@@ -287,10 +287,10 @@ match and a helper function.</p>
 </pre></div>
 </div>
 <p>This is all pretty straight-forward code for processing input. When
-reading a numeric value from input, we use the ocaml <tt class="docutils literal"><span class="pre">float_of_string</span></tt>
+reading a numeric value from input, we use the ocaml <code class="docutils literal"><span class="pre">float_of_string</span></code>
 function to convert it to a numeric value that we store in
-<tt class="docutils literal"><span class="pre">Token.Number</span></tt>. Note that this isn&#8217;t doing sufficient error checking:
-it will raise <tt class="docutils literal"><span class="pre">Failure</span></tt> if the string &#8220;1.23.45.67&#8221;. Feel free to
+<code class="docutils literal"><span class="pre">Token.Number</span></code>. Note that this isn&#8217;t doing sufficient error checking:
+it will raise <code class="docutils literal"><span class="pre">Failure</span></code> if the string &#8220;1.23.45.67&#8221;. Feel free to
 extend it :). Next we handle comments:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre>  <span class="c">(* Comment until end of line. *)</span>
   <span class="o">|</span> <span class="o">[&lt;</span> <span class="k">&#39;</span> <span class="o">(</span><span class="sc">&#39;#&#39;</span><span class="o">);</span> <span class="n">stream</span> <span class="o">&gt;]</span> <span class="o">-&gt;</span>
@@ -331,7 +331,7 @@ include a driver so that you can use the lexer and parser together.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -346,13 +346,13 @@ include a driver so that you can use the lexer and parser together.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="lli-directly-execute-programs-from-llvm-bitcode">
 <h1>lli - directly execute programs from LLVM bitcode<a class="headerlink" href="#lli-directly-execute-programs-from-llvm-bitcode" title="Permalink to this headline">¶</a></h1>
@@ -87,7 +87,7 @@ arguments.</p>
 <h2>GENERAL OPTIONS<a class="headerlink" href="#general-options" title="Permalink to this headline">¶</a></h2>
 <p><strong>-fake-argv0</strong>=<em>executable</em></p>
 <blockquote>
-<div>Override the <tt class="docutils literal"><span class="pre">argv[0]</span></tt> value passed into the executing program.</div></blockquote>
+<div>Override the <code class="docutils literal"><span class="pre">argv[0]</span></code> value passed into the executing program.</div></blockquote>
 <p><strong>-force-interpreter</strong>=<em>{false,true}</em></p>
 <blockquote>
 <div>If set to true, use the interpreter even if a just-in-time compiler is available
@@ -247,7 +247,7 @@ Otherwise, it will return the exit code of the program it executes.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -262,13 +262,13 @@ Otherwise, it will return the exit code of the program it executes.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

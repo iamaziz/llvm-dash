@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-branch-weight-metadata">
 <h1>LLVM Branch Weight Metadata<a class="headerlink" href="#llvm-branch-weight-metadata" title="Permalink to this headline">¶</a></h1>
@@ -69,15 +69,15 @@
 <ul class="simple">
 <li><a class="reference internal" href="#introduction" id="id1">Introduction</a></li>
 <li><a class="reference internal" href="#supported-instructions" id="id2">Supported Instructions</a><ul>
-<li><a class="reference internal" href="#branchinst" id="id3"><tt class="docutils literal"><span class="pre">BranchInst</span></tt></a></li>
-<li><a class="reference internal" href="#switchinst" id="id4"><tt class="docutils literal"><span class="pre">SwitchInst</span></tt></a></li>
-<li><a class="reference internal" href="#indirectbrinst" id="id5"><tt class="docutils literal"><span class="pre">IndirectBrInst</span></tt></a></li>
+<li><a class="reference internal" href="#branchinst" id="id3"><code class="docutils literal"><span class="pre">BranchInst</span></code></a></li>
+<li><a class="reference internal" href="#switchinst" id="id4"><code class="docutils literal"><span class="pre">SwitchInst</span></code></a></li>
+<li><a class="reference internal" href="#indirectbrinst" id="id5"><code class="docutils literal"><span class="pre">IndirectBrInst</span></code></a></li>
 <li><a class="reference internal" href="#other" id="id6">Other</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#built-in-expect-instructions" id="id7">Built-in <tt class="docutils literal"><span class="pre">expect</span></tt> Instructions</a><ul>
-<li><a class="reference internal" href="#if-statement" id="id8"><tt class="docutils literal"><span class="pre">if</span></tt> statement</a></li>
-<li><a class="reference internal" href="#switch-statement" id="id9"><tt class="docutils literal"><span class="pre">switch</span></tt> statement</a></li>
+<li><a class="reference internal" href="#built-in-expect-instructions" id="id7">Built-in <code class="docutils literal"><span class="pre">expect</span></code> Instructions</a><ul>
+<li><a class="reference internal" href="#if-statement" id="id8"><code class="docutils literal"><span class="pre">if</span></code> statement</a></li>
+<li><a class="reference internal" href="#switch-statement" id="id9"><code class="docutils literal"><span class="pre">switch</span></code> statement</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#cfg-modifications" id="id10">CFG Modifications</a></li>
@@ -87,8 +87,8 @@
 <h2><a class="toc-backref" href="#id1">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Branch Weight Metadata represents branch weights as its likeliness to be taken
 (see <a class="reference internal" href="BlockFrequencyTerminology.html"><em>LLVM Block Frequency Terminology</em></a>). Metadata is assigned to the
-<tt class="docutils literal"><span class="pre">TerminatorInst</span></tt> as a <tt class="docutils literal"><span class="pre">MDNode</span></tt> of the <tt class="docutils literal"><span class="pre">MD_prof</span></tt> kind. The first operator
-is always a <tt class="docutils literal"><span class="pre">MDString</span></tt> node with the string &#8220;branch_weights&#8221;.  Number of
+<code class="docutils literal"><span class="pre">TerminatorInst</span></code> as a <code class="docutils literal"><span class="pre">MDNode</span></code> of the <code class="docutils literal"><span class="pre">MD_prof</span></code> kind. The first operator
+is always a <code class="docutils literal"><span class="pre">MDString</span></code> node with the string &#8220;branch_weights&#8221;.  Number of
 operators depends on the terminator type.</p>
 <p>Branch weights might be fetch from the profiling file, or generated based on
 <a class="reference internal" href="#builtin-expect">__builtin_expect</a> instruction.</p>
@@ -98,7 +98,7 @@ indicates greater chance to be taken.</p>
 <div class="section" id="supported-instructions">
 <h2><a class="toc-backref" href="#id2">Supported Instructions</a><a class="headerlink" href="#supported-instructions" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="branchinst">
-<h3><a class="toc-backref" href="#id3"><tt class="docutils literal"><span class="pre">BranchInst</span></tt></a><a class="headerlink" href="#branchinst" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id3"><code class="docutils literal"><span class="pre">BranchInst</span></code></a><a class="headerlink" href="#branchinst" title="Permalink to this headline">¶</a></h3>
 <p>Metadata is only assigned to the conditional branches. There are two extra
 operarands for the true and the false branch.</p>
 <div class="highlight-llvm"><div class="highlight"><pre>!0 = metadata !{
@@ -110,8 +110,8 @@ operarands for the true and the false branch.</p>
 </div>
 </div>
 <div class="section" id="switchinst">
-<h3><a class="toc-backref" href="#id4"><tt class="docutils literal"><span class="pre">SwitchInst</span></tt></a><a class="headerlink" href="#switchinst" title="Permalink to this headline">¶</a></h3>
-<p>Branch weights are assigned to every case (including the <tt class="docutils literal"><span class="pre">default</span></tt> case which
+<h3><a class="toc-backref" href="#id4"><code class="docutils literal"><span class="pre">SwitchInst</span></code></a><a class="headerlink" href="#switchinst" title="Permalink to this headline">¶</a></h3>
+<p>Branch weights are assigned to every case (including the <code class="docutils literal"><span class="pre">default</span></code> case which
 is always case #0).</p>
 <div class="highlight-llvm"><div class="highlight"><pre>!0 = metadata !{
   metadata !&quot;branch_weights&quot;,
@@ -122,7 +122,7 @@ is always case #0).</p>
 </div>
 </div>
 <div class="section" id="indirectbrinst">
-<h3><a class="toc-backref" href="#id5"><tt class="docutils literal"><span class="pre">IndirectBrInst</span></tt></a><a class="headerlink" href="#indirectbrinst" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id5"><code class="docutils literal"><span class="pre">IndirectBrInst</span></code></a><a class="headerlink" href="#indirectbrinst" title="Permalink to this headline">¶</a></h3>
 <p>Branch weights are assigned to every destination.</p>
 <div class="highlight-llvm"><div class="highlight"><pre>!0 = metadata !{
   metadata !&quot;branch_weights&quot;,
@@ -138,14 +138,14 @@ is always case #0).</p>
 </div>
 </div>
 <div class="section" id="built-in-expect-instructions">
-<span id="builtin-expect"></span><h2><a class="toc-backref" href="#id7">Built-in <tt class="docutils literal"><span class="pre">expect</span></tt> Instructions</a><a class="headerlink" href="#built-in-expect-instructions" title="Permalink to this headline">¶</a></h2>
-<p><tt class="docutils literal"><span class="pre">__builtin_expect(long</span> <span class="pre">exp,</span> <span class="pre">long</span> <span class="pre">c)</span></tt> instruction provides branch prediction
-information. The return value is the value of <tt class="docutils literal"><span class="pre">exp</span></tt>.</p>
+<span id="builtin-expect"></span><h2><a class="toc-backref" href="#id7">Built-in <code class="docutils literal"><span class="pre">expect</span></code> Instructions</a><a class="headerlink" href="#built-in-expect-instructions" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">__builtin_expect(long</span> <span class="pre">exp,</span> <span class="pre">long</span> <span class="pre">c)</span></code> instruction provides branch prediction
+information. The return value is the value of <code class="docutils literal"><span class="pre">exp</span></code>.</p>
 <p>It is especially useful in conditional statements. Currently Clang supports two
 conditional statements:</p>
 <div class="section" id="if-statement">
-<h3><a class="toc-backref" href="#id8"><tt class="docutils literal"><span class="pre">if</span></tt> statement</a><a class="headerlink" href="#if-statement" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">exp</span></tt> parameter is the condition. The <tt class="docutils literal"><span class="pre">c</span></tt> parameter is the expected
+<h3><a class="toc-backref" href="#id8"><code class="docutils literal"><span class="pre">if</span></code> statement</a><a class="headerlink" href="#if-statement" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">exp</span></code> parameter is the condition. The <code class="docutils literal"><span class="pre">c</span></code> parameter is the expected
 comparison value. If it is equal to 1 (true), the condition is likely to be
 true, in other case condition is likely to be false. For example:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">__builtin_expect</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span>
@@ -155,9 +155,9 @@ true, in other case condition is likely to be false. For example:</p>
 </div>
 </div>
 <div class="section" id="switch-statement">
-<h3><a class="toc-backref" href="#id9"><tt class="docutils literal"><span class="pre">switch</span></tt> statement</a><a class="headerlink" href="#switch-statement" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">exp</span></tt> parameter is the value. The <tt class="docutils literal"><span class="pre">c</span></tt> parameter is the expected
-value. If the expected value doesn&#8217;t show on the cases list, the <tt class="docutils literal"><span class="pre">default</span></tt>
+<h3><a class="toc-backref" href="#id9"><code class="docutils literal"><span class="pre">switch</span></code> statement</a><a class="headerlink" href="#switch-statement" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">exp</span></code> parameter is the value. The <code class="docutils literal"><span class="pre">c</span></code> parameter is the expected
+value. If the expected value doesn&#8217;t show on the cases list, the <code class="docutils literal"><span class="pre">default</span></code>
 case is assumed to be likely taken.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">switch</span> <span class="p">(</span><span class="n">__builtin_expect</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span> <span class="p">{</span>
 <span class="k">default</span><span class="o">:</span> <span class="k">break</span><span class="p">;</span>
@@ -182,7 +182,7 @@ occur due to incorrent branch prediction information.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -199,10 +199,10 @@ occur due to incorrent branch prediction information.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

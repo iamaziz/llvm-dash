@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-extending-the-language-debug-information">
 <h1>8. Kaleidoscope: Extending the Language: Debug Information<a class="headerlink" href="#kaleidoscope-extending-the-language-debug-information" title="Permalink to this headline">¶</a></h1>
@@ -218,14 +218,14 @@ construct one for our fib.ks file.</p>
 </div>
 <div class="section" id="dwarf-emission-setup">
 <h2><a class="toc-backref" href="#id5">8.5. DWARF Emission Setup</a><a class="headerlink" href="#dwarf-emission-setup" title="Permalink to this headline">¶</a></h2>
-<p>Similar to the <tt class="docutils literal"><span class="pre">IRBuilder</span></tt> class we have a
-<tt class="docutils literal"><span class="pre">`DIBuilder</span></tt> &lt;<a class="reference external" href="http://llvm.org/doxygen/classllvm_1_1DIBuilder.html">http://llvm.org/doxygen/classllvm_1_1DIBuilder.html</a>&gt;`_ class
+<p>Similar to the <code class="docutils literal"><span class="pre">IRBuilder</span></code> class we have a
+<code class="docutils literal"><span class="pre">`DIBuilder</span></code> &lt;<a class="reference external" href="http://llvm.org/doxygen/classllvm_1_1DIBuilder.html">http://llvm.org/doxygen/classllvm_1_1DIBuilder.html</a>&gt;`_ class
 that helps in constructing debug metadata for an llvm IR file. It
-corresponds 1:1 similarly to <tt class="docutils literal"><span class="pre">IRBuilder</span></tt> and llvm IR, but with nicer names.
+corresponds 1:1 similarly to <code class="docutils literal"><span class="pre">IRBuilder</span></code> and llvm IR, but with nicer names.
 Using it does require that you be more familiar with DWARF terminology than
-you needed to be with <tt class="docutils literal"><span class="pre">IRBuilder</span></tt> and <tt class="docutils literal"><span class="pre">Instruction</span></tt> names, but if you
+you needed to be with <code class="docutils literal"><span class="pre">IRBuilder</span></code> and <code class="docutils literal"><span class="pre">Instruction</span></code> names, but if you
 read through the general documentation on the
-<tt class="docutils literal"><span class="pre">`Metadata</span> <span class="pre">Format</span></tt> &lt;<a class="reference external" href="http://llvm.org/docs/SourceLevelDebugging.html">http://llvm.org/docs/SourceLevelDebugging.html</a>&gt;`_ it
+<code class="docutils literal"><span class="pre">`Metadata</span> <span class="pre">Format</span></code> &lt;<a class="reference external" href="http://llvm.org/docs/SourceLevelDebugging.html">http://llvm.org/docs/SourceLevelDebugging.html</a>&gt;`_ it
 should be a little more clear. We&#8217;ll be using this class to construct all
 of our IR level descriptions. Construction for it takes a module so we
 need to construct it shortly after we construct our module. We&#8217;ve left it
@@ -252,7 +252,7 @@ expressions:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>And then later on in <tt class="docutils literal"><span class="pre">main</span></tt> when we&#8217;re constructing our module:</p>
+<p>And then later on in <code class="docutils literal"><span class="pre">main</span></code> when we&#8217;re constructing our module:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">DBuilder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DIBuilder</span><span class="p">(</span><span class="o">*</span><span class="n">TheModule</span><span class="p">);</span>
 
 <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createCompileUnit</span><span class="p">(</span>
@@ -266,7 +266,7 @@ the calling conventions or default ABI for a language it doesn&#8217;t recognize
 and we follow the C ABI in our llvm code generation so it&#8217;s the closest
 thing to accurate. This ensures we can actually call functions from the
 debugger and have them execute. Secondly, you&#8217;ll see the &#8220;fib.ks&#8221; in the
-call to <tt class="docutils literal"><span class="pre">createCompileUnit</span></tt>. This is a default hard coded value since
+call to <code class="docutils literal"><span class="pre">createCompileUnit</span></code>. This is a default hard coded value since
 we&#8217;re using shell redirection to put our source into the Kaleidoscope
 compiler. In a usual front end you&#8217;d have an input file name and it would
 go there.</p>
@@ -281,8 +281,8 @@ main:</p>
 </div>
 <div class="section" id="functions">
 <h2><a class="toc-backref" href="#id6">8.6. Functions</a><a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
-<p>Now that we have our <tt class="docutils literal"><span class="pre">Compile</span> <span class="pre">Unit</span></tt> and our source locations, we can add
-function definitions to the debug info. So in <tt class="docutils literal"><span class="pre">PrototypeAST::Codegen</span></tt> we
+<p>Now that we have our <code class="docutils literal"><span class="pre">Compile</span> <span class="pre">Unit</span></code> and our source locations, we can add
+function definitions to the debug info. So in <code class="docutils literal"><span class="pre">PrototypeAST::Codegen</span></code> we
 add a few lines of code to describe a context for our subprogram, in this
 case the &#8220;File&#8221;, and the actual definition of the function itself.</p>
 <p>So the context:</p>
@@ -290,7 +290,7 @@ case the &#8220;File&#8221;, and the actual definition of the function itself.</
                                    <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getDirectory</span><span class="p">());</span>
 </pre></div>
 </div>
-<p>giving us a DIFile and asking the <tt class="docutils literal"><span class="pre">Compile</span> <span class="pre">Unit</span></tt> we created above for the
+<p>giving us a DIFile and asking the <code class="docutils literal"><span class="pre">Compile</span> <span class="pre">Unit</span></code> we created above for the
 directory and filename where we are currently. Then, for now, we use some
 source locations of 0 (since our AST doesn&#8217;t currently have source location
 information) and construct our function definition:</p>
@@ -335,7 +335,7 @@ or parser so we&#8217;ll need to add it.</p>
 line and column of the &#8220;source file&#8221;. As we lex every token we set our current
 current &#8220;lexical location&#8221; to the assorted line and column for the beginning
 of the token. We do this by overriding all of the previous calls to
-<tt class="docutils literal"><span class="pre">getchar()</span></tt> with our new <tt class="docutils literal"><span class="pre">advance()</span></tt> that keeps track of the information
+<code class="docutils literal"><span class="pre">getchar()</span></code> with our new <code class="docutils literal"><span class="pre">advance()</span></code> that keeps track of the information
 and then we have added to all of our AST classes a source location:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">ExprAST</span> <span class="p">{</span>
   <span class="n">SourceLocation</span> <span class="n">Loc</span><span class="p">;</span>
@@ -354,7 +354,7 @@ and then we have added to all of our AST classes a source location:</p>
 </pre></div>
 </div>
 <p>giving us locations for each of our expressions and variables.</p>
-<p>From this we can make sure to tell <tt class="docutils literal"><span class="pre">DIBuilder</span></tt> when we&#8217;re at a new source
+<p>From this we can make sure to tell <code class="docutils literal"><span class="pre">DIBuilder</span></code> when we&#8217;re at a new source
 location so it can use that when we generate the rest of our code and make
 sure that each instruction has source location information. We do this
 by constructing another small function:</p>
@@ -369,7 +369,7 @@ by constructing another small function:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>that both tells the main <tt class="docutils literal"><span class="pre">IRBuilder</span></tt> where we are, but also what scope
+<p>that both tells the main <code class="docutils literal"><span class="pre">IRBuilder</span></code> where we are, but also what scope
 we&#8217;re in. Since we&#8217;ve just created a function above we can either be in
 the main file scope (like when we created our function), or now we can be
 in the function scope we just created. To represent this we create a stack
@@ -407,7 +407,7 @@ end of the code generation for the function:</p>
 we have in scope. Let&#8217;s get our function arguments set up so we can get
 decent backtraces and see how our functions are being called. It isn&#8217;t
 a lot of code, and we generally handle it when we&#8217;re creating the
-argument allocas in <tt class="docutils literal"><span class="pre">PrototypeAST::CreateArgumentAllocas</span></tt>.</p>
+argument allocas in <code class="docutils literal"><span class="pre">PrototypeAST::CreateArgumentAllocas</span></code>.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">DIScope</span> <span class="o">*</span><span class="n">Scope</span> <span class="o">=</span> <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">LexicalBlocks</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
 <span class="n">DIFile</span> <span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getFilename</span><span class="p">(),</span>
                                    <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getDirectory</span><span class="p">());</span>
@@ -424,7 +424,7 @@ argument allocas in <tt class="docutils literal"><span class="pre">PrototypeAST:
 for the variable so we can say what range of code our variable is valid
 through. Second, we&#8217;re creating the variable, giving it the scope,
 the name, source location, type, and since it&#8217;s an argument, the argument
-index. Third, we create an <tt class="docutils literal"><span class="pre">lvm.dbg.declare</span></tt> call to indicate at the IR
+index. Third, we create an <code class="docutils literal"><span class="pre">lvm.dbg.declare</span></code> call to indicate at the IR
 level that we&#8217;ve got a variable in an alloca (and it gives a starting
 location for the variable). Lastly, we set a source location for the
 beginning of the scope on the declare.</p>
@@ -433,7 +433,7 @@ assumptions based on how code and debug information was generated for them
 in the past. In this case we need to do a little bit of a hack to avoid
 generating line information for the function prologue so that the debugger
 knows to skip over those instructions when setting a breakpoint. So in
-<tt class="docutils literal"><span class="pre">FunctionAST::CodeGen</span></tt> we add a couple of lines:</p>
+<code class="docutils literal"><span class="pre">FunctionAST::CodeGen</span></code> we add a couple of lines:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="c1">// Unset the location for the prologue emission (leading instructions with no</span>
 <span class="c1">// location in a function are considered part of the prologue and the debugger</span>
 <span class="c1">// will run past them when breaking on a function)</span>
@@ -1965,7 +1965,7 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1980,13 +1980,13 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

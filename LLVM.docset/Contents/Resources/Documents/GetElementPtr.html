@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="the-often-misunderstood-gep-instruction">
 <h1>The Often Misunderstood GEP Instruction<a class="headerlink" href="#the-often-misunderstood-gep-instruction" title="Permalink to this headline">¶</a></h1>
@@ -76,7 +76,7 @@
 <li><a class="reference internal" href="#why-do-gep-x-1-0-0-and-gep-x-1-alias" id="id8">Why do GEP x,1,0,0 and GEP x,1 alias?</a></li>
 <li><a class="reference internal" href="#can-gep-index-into-vector-elements" id="id9">Can GEP index into vector elements?</a></li>
 <li><a class="reference internal" href="#what-effect-do-address-spaces-have-on-geps" id="id10">What effect do address spaces have on GEPs?</a></li>
-<li><a class="reference internal" href="#how-is-gep-different-from-ptrtoint-arithmetic-and-inttoptr" id="id11">How is GEP different from <tt class="docutils literal"><span class="pre">ptrtoint</span></tt>, arithmetic, and <tt class="docutils literal"><span class="pre">inttoptr</span></tt>?</a></li>
+<li><a class="reference internal" href="#how-is-gep-different-from-ptrtoint-arithmetic-and-inttoptr" id="id11">How is GEP different from <code class="docutils literal"><span class="pre">ptrtoint</span></code>, arithmetic, and <code class="docutils literal"><span class="pre">inttoptr</span></code>?</a></li>
 <li><a class="reference internal" href="#i-m-writing-a-backend-for-a-target-which-needs-custom-lowering-for-gep-how-do-i-do-this" id="id12">I&#8217;m writing a backend for a target which needs custom lowering for GEP. How do I do this?</a></li>
 <li><a class="reference internal" href="#how-does-vla-addressing-work-with-geps" id="id13">How does VLA addressing work with GEPs?</a></li>
 </ul>
@@ -95,7 +95,7 @@
 </li>
 <li><a class="reference internal" href="#rationale" id="id24">Rationale</a><ul>
 <li><a class="reference internal" href="#why-is-gep-designed-this-way" id="id25">Why is GEP designed this way?</a></li>
-<li><a class="reference internal" href="#why-do-struct-member-indices-always-use-i32" id="id26">Why do struct member indices always use <tt class="docutils literal"><span class="pre">i32</span></tt>?</a></li>
+<li><a class="reference internal" href="#why-do-struct-member-indices-always-use-i32" id="id26">Why do struct member indices always use <code class="docutils literal"><span class="pre">i32</span></code>?</a></li>
 <li><a class="reference internal" href="#what-s-an-uglygep" id="id27">What&#8217;s an uglygep?</a></li>
 </ul>
 </li>
@@ -129,11 +129,11 @@ same. For example, when we write, in &#8220;C&#8221;:</p>
 </pre></div>
 </div>
 <p>it is natural to think that there is only one index, the selection of the field
-<tt class="docutils literal"><span class="pre">F</span></tt>.  However, in this example, <tt class="docutils literal"><span class="pre">Foo</span></tt> is a pointer. That pointer
+<code class="docutils literal"><span class="pre">F</span></code>.  However, in this example, <code class="docutils literal"><span class="pre">Foo</span></code> is a pointer. That pointer
 must be indexed explicitly in LLVM. C, on the other hand, indices through it
 transparently.  To arrive at the same address location as the C code, you would
 provide the GEP instruction with two index operands. The first operand indexes
-through the pointer; the second operand indexes the field <tt class="docutils literal"><span class="pre">F</span></tt> of the
+through the pointer; the second operand indexes the field <code class="docutils literal"><span class="pre">F</span></code> of the
 structure, just as if you wrote:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">X</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">Foo</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">F</span><span class="p">;</span>
 </pre></div>
@@ -162,10 +162,10 @@ therefore be indexed and requires an index operand. Consider this example:</p>
 </div>
 <p>In this &#8220;C&#8221; example, the front end compiler (Clang) will generate three GEP
 instructions for the three indices through &#8220;P&#8221; in the assignment statement.  The
-function argument <tt class="docutils literal"><span class="pre">P</span></tt> will be the first operand of each of these GEP
+function argument <code class="docutils literal"><span class="pre">P</span></code> will be the first operand of each of these GEP
 instructions.  The second operand indexes through that pointer.  The third
-operand will be the field offset into the <tt class="docutils literal"><span class="pre">struct</span> <span class="pre">munger_struct</span></tt> type, for
-either the <tt class="docutils literal"><span class="pre">f1</span></tt> or <tt class="docutils literal"><span class="pre">f2</span></tt> field. So, in LLVM assembly the <tt class="docutils literal"><span class="pre">munge</span></tt> function
+operand will be the field offset into the <code class="docutils literal"><span class="pre">struct</span> <span class="pre">munger_struct</span></code> type, for
+either the <code class="docutils literal"><span class="pre">f1</span></code> or <code class="docutils literal"><span class="pre">f2</span></code> field. So, in LLVM assembly the <code class="docutils literal"><span class="pre">munge</span></code> function
 looks like:</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span class="kt">void</span> <span class="nv">%munge</span><span class="p">(</span><span class="nv">%struct.munger_struct</span><span class="p">*</span> <span class="nv">%P</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
@@ -192,19 +192,19 @@ memory, or a global variable.</p>
 </pre></div>
 </div>
 <p>These GEP instructions are simply making address computations from the base
-address of <tt class="docutils literal"><span class="pre">MyVar</span></tt>.  They compute, as follows (using C syntax):</p>
+address of <code class="docutils literal"><span class="pre">MyVar</span></code>.  They compute, as follows (using C syntax):</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">idx1</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">MyVar</span> <span class="o">+</span> <span class="mi">0</span>
 <span class="n">idx2</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">MyVar</span> <span class="o">+</span> <span class="mi">4</span>
 <span class="n">idx3</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">MyVar</span> <span class="o">+</span> <span class="mi">8</span>
 </pre></div>
 </div>
-<p>Since the type <tt class="docutils literal"><span class="pre">i32</span></tt> is known to be four bytes long, the indices 0, 1 and 2
+<p>Since the type <code class="docutils literal"><span class="pre">i32</span></code> is known to be four bytes long, the indices 0, 1 and 2
 translate into memory offsets of 0, 4, and 8, respectively. No memory is
-accessed to make these computations because the address of <tt class="docutils literal"><span class="pre">%MyVar</span></tt> is passed
+accessed to make these computations because the address of <code class="docutils literal"><span class="pre">%MyVar</span></code> is passed
 directly to the GEP instructions.</p>
-<p>The obtuse part of this example is in the cases of <tt class="docutils literal"><span class="pre">%idx2</span></tt> and <tt class="docutils literal"><span class="pre">%idx3</span></tt>. They
+<p>The obtuse part of this example is in the cases of <code class="docutils literal"><span class="pre">%idx2</span></code> and <code class="docutils literal"><span class="pre">%idx3</span></code>. They
 result in the computation of addresses that point to memory past the end of the
-<tt class="docutils literal"><span class="pre">%MyVar</span></tt> global, which is only one <tt class="docutils literal"><span class="pre">i32</span></tt> long, not three <tt class="docutils literal"><span class="pre">i32</span></tt>s long.
+<code class="docutils literal"><span class="pre">%MyVar</span></code> global, which is only one <code class="docutils literal"><span class="pre">i32</span></code> long, not three <code class="docutils literal"><span class="pre">i32</span></code>s long.
 While this is legal in LLVM, it is inadvisable because any load or store with
 the pointer that results from these GEP instructions would produce undefined
 results.</p>
@@ -219,23 +219,23 @@ variable which is always a pointer type. For example, consider this:</p>
 %idx = getelementptr { float*, i32 }* %MyStruct, i64 0, i32 1
 </pre></div>
 </div>
-<p>The GEP above yields an <tt class="docutils literal"><span class="pre">i32*</span></tt> by indexing the <tt class="docutils literal"><span class="pre">i32</span></tt> typed field of the
-structure <tt class="docutils literal"><span class="pre">%MyStruct</span></tt>. When people first look at it, they wonder why the <tt class="docutils literal"><span class="pre">i64</span>
-<span class="pre">0</span></tt> index is needed. However, a closer inspection of how globals and GEPs work
+<p>The GEP above yields an <code class="docutils literal"><span class="pre">i32*</span></code> by indexing the <code class="docutils literal"><span class="pre">i32</span></code> typed field of the
+structure <code class="docutils literal"><span class="pre">%MyStruct</span></code>. When people first look at it, they wonder why the <code class="docutils literal"><span class="pre">i64</span>
+<span class="pre">0</span></code> index is needed. However, a closer inspection of how globals and GEPs work
 reveals the need. Becoming aware of the following facts will dispel the
 confusion:</p>
 <ol class="arabic simple">
-<li>The type of <tt class="docutils literal"><span class="pre">%MyStruct</span></tt> is <em>not</em> <tt class="docutils literal"><span class="pre">{</span> <span class="pre">float*,</span> <span class="pre">i32</span> <span class="pre">}</span></tt> but rather <tt class="docutils literal"><span class="pre">{</span> <span class="pre">float*,</span>
-<span class="pre">i32</span> <span class="pre">}*</span></tt>. That is, <tt class="docutils literal"><span class="pre">%MyStruct</span></tt> is a pointer to a structure containing a
-pointer to a <tt class="docutils literal"><span class="pre">float</span></tt> and an <tt class="docutils literal"><span class="pre">i32</span></tt>.</li>
+<li>The type of <code class="docutils literal"><span class="pre">%MyStruct</span></code> is <em>not</em> <code class="docutils literal"><span class="pre">{</span> <span class="pre">float*,</span> <span class="pre">i32</span> <span class="pre">}</span></code> but rather <code class="docutils literal"><span class="pre">{</span> <span class="pre">float*,</span>
+<span class="pre">i32</span> <span class="pre">}*</span></code>. That is, <code class="docutils literal"><span class="pre">%MyStruct</span></code> is a pointer to a structure containing a
+pointer to a <code class="docutils literal"><span class="pre">float</span></code> and an <code class="docutils literal"><span class="pre">i32</span></code>.</li>
 <li>Point #1 is evidenced by noticing the type of the first operand of the GEP
-instruction (<tt class="docutils literal"><span class="pre">%MyStruct</span></tt>) which is <tt class="docutils literal"><span class="pre">{</span> <span class="pre">float*,</span> <span class="pre">i32</span> <span class="pre">}*</span></tt>.</li>
-<li>The first index, <tt class="docutils literal"><span class="pre">i64</span> <span class="pre">0</span></tt> is required to step over the global variable
-<tt class="docutils literal"><span class="pre">%MyStruct</span></tt>.  Since the first argument to the GEP instruction must always
+instruction (<code class="docutils literal"><span class="pre">%MyStruct</span></code>) which is <code class="docutils literal"><span class="pre">{</span> <span class="pre">float*,</span> <span class="pre">i32</span> <span class="pre">}*</span></code>.</li>
+<li>The first index, <code class="docutils literal"><span class="pre">i64</span> <span class="pre">0</span></code> is required to step over the global variable
+<code class="docutils literal"><span class="pre">%MyStruct</span></code>.  Since the first argument to the GEP instruction must always
 be a value of pointer type, the first index steps through that pointer. A
 value of 0 means 0 elements offset from that pointer.</li>
-<li>The second index, <tt class="docutils literal"><span class="pre">i32</span> <span class="pre">1</span></tt> selects the second field of the structure (the
-<tt class="docutils literal"><span class="pre">i32</span></tt>).</li>
+<li>The second index, <code class="docutils literal"><span class="pre">i32</span> <span class="pre">1</span></code> selects the second field of the structure (the
+<code class="docutils literal"><span class="pre">i32</span></code>).</li>
 </ol>
 </div>
 <div class="section" id="what-is-dereferenced-by-gep">
@@ -249,7 +249,7 @@ only involved in the computation of addresses. For example, consider this:</p>
 %idx = getelementptr { [40 x i32]* }* %MyVar, i64 0, i32 0, i64 0, i64 17
 </pre></div>
 </div>
-<p>In this example, we have a global variable, <tt class="docutils literal"><span class="pre">%MyVar</span></tt> that is a pointer to a
+<p>In this example, we have a global variable, <code class="docutils literal"><span class="pre">%MyVar</span></code> that is a pointer to a
 structure containing a pointer to an array of 40 ints. The GEP instruction seems
 to be accessing the 18th integer of the structure&#8217;s array of ints. However, this
 is actually an illegal GEP instruction. It won&#8217;t compile. The reason is that the
@@ -272,7 +272,7 @@ instruction before we can index into the array. If the example was changed to:</
 </div>
 <p>then everything works fine. In this case, the structure does not contain a
 pointer and the GEP instruction can index through the global variable, into the
-first field of the structure and access the 18th <tt class="docutils literal"><span class="pre">i32</span></tt> in the array there.</p>
+first field of the structure and access the 18th <code class="docutils literal"><span class="pre">i32</span></code> in the array there.</p>
 </div>
 <div class="section" id="why-don-t-gep-x-0-0-1-and-gep-x-1-alias">
 <h3><a class="toc-backref" href="#id7">Why don&#8217;t GEP x,0,0,1 and GEP x,1 alias?</a><a class="headerlink" href="#why-don-t-gep-x-0-0-1-and-gep-x-1-alias" title="Permalink to this headline">¶</a></h3>
@@ -285,12 +285,12 @@ index. Consider this example:</p>
 <span class="nv">%idx2</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span> <span class="p">]</span> <span class="p">}*</span> <span class="nv">%MyVar</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span>
 </pre></div>
 </div>
-<p>In this example, <tt class="docutils literal"><span class="pre">idx1</span></tt> computes the address of the second integer in the
-array that is in the structure in <tt class="docutils literal"><span class="pre">%MyVar</span></tt>, that is <tt class="docutils literal"><span class="pre">MyVar+4</span></tt>. The type of
-<tt class="docutils literal"><span class="pre">idx1</span></tt> is <tt class="docutils literal"><span class="pre">i32*</span></tt>. However, <tt class="docutils literal"><span class="pre">idx2</span></tt> computes the address of <em>the next</em>
-structure after <tt class="docutils literal"><span class="pre">%MyVar</span></tt>. The type of <tt class="docutils literal"><span class="pre">idx2</span></tt> is <tt class="docutils literal"><span class="pre">{</span> <span class="pre">[10</span> <span class="pre">x</span> <span class="pre">i32]</span> <span class="pre">}*</span></tt> and its
-value is equivalent to <tt class="docutils literal"><span class="pre">MyVar</span> <span class="pre">+</span> <span class="pre">40</span></tt> because it indexes past the ten 4-byte
-integers in <tt class="docutils literal"><span class="pre">MyVar</span></tt>. Obviously, in such a situation, the pointers don&#8217;t
+<p>In this example, <code class="docutils literal"><span class="pre">idx1</span></code> computes the address of the second integer in the
+array that is in the structure in <code class="docutils literal"><span class="pre">%MyVar</span></code>, that is <code class="docutils literal"><span class="pre">MyVar+4</span></code>. The type of
+<code class="docutils literal"><span class="pre">idx1</span></code> is <code class="docutils literal"><span class="pre">i32*</span></code>. However, <code class="docutils literal"><span class="pre">idx2</span></code> computes the address of <em>the next</em>
+structure after <code class="docutils literal"><span class="pre">%MyVar</span></code>. The type of <code class="docutils literal"><span class="pre">idx2</span></code> is <code class="docutils literal"><span class="pre">{</span> <span class="pre">[10</span> <span class="pre">x</span> <span class="pre">i32]</span> <span class="pre">}*</span></code> and its
+value is equivalent to <code class="docutils literal"><span class="pre">MyVar</span> <span class="pre">+</span> <span class="pre">40</span></code> because it indexes past the ten 4-byte
+integers in <code class="docutils literal"><span class="pre">MyVar</span></code>. Obviously, in such a situation, the pointers don&#8217;t
 alias.</p>
 </div>
 <div class="section" id="why-do-gep-x-1-0-0-and-gep-x-1-alias">
@@ -304,9 +304,9 @@ type. Consider this example:</p>
 <span class="nv">%idx2</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span> <span class="p">]</span> <span class="p">}*</span> <span class="nv">%MyVar</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span>
 </pre></div>
 </div>
-<p>In this example, the value of <tt class="docutils literal"><span class="pre">%idx1</span></tt> is <tt class="docutils literal"><span class="pre">%MyVar+40</span></tt> and its type is
-<tt class="docutils literal"><span class="pre">i32*</span></tt>. The value of <tt class="docutils literal"><span class="pre">%idx2</span></tt> is also <tt class="docutils literal"><span class="pre">MyVar+40</span></tt> but its type is <tt class="docutils literal"><span class="pre">{</span> <span class="pre">[10</span> <span class="pre">x</span>
-<span class="pre">i32]</span> <span class="pre">}*</span></tt>.</p>
+<p>In this example, the value of <code class="docutils literal"><span class="pre">%idx1</span></code> is <code class="docutils literal"><span class="pre">%MyVar+40</span></code> and its type is
+<code class="docutils literal"><span class="pre">i32*</span></code>. The value of <code class="docutils literal"><span class="pre">%idx2</span></code> is also <code class="docutils literal"><span class="pre">MyVar+40</span></code> but its type is <code class="docutils literal"><span class="pre">{</span> <span class="pre">[10</span> <span class="pre">x</span>
+<span class="pre">i32]</span> <span class="pre">}*</span></code>.</p>
 </div>
 <div class="section" id="can-gep-index-into-vector-elements">
 <h3><a class="toc-backref" href="#id9">Can GEP index into vector elements?</a><a class="headerlink" href="#can-gep-index-into-vector-elements" title="Permalink to this headline">¶</a></h3>
@@ -320,7 +320,7 @@ in the IR. In the future, it will probably be outright disallowed.</p>
 always matches the address space qualifier on the result type.</p>
 </div>
 <div class="section" id="how-is-gep-different-from-ptrtoint-arithmetic-and-inttoptr">
-<h3><a class="toc-backref" href="#id11">How is GEP different from <tt class="docutils literal"><span class="pre">ptrtoint</span></tt>, arithmetic, and <tt class="docutils literal"><span class="pre">inttoptr</span></tt>?</a><a class="headerlink" href="#how-is-gep-different-from-ptrtoint-arithmetic-and-inttoptr" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id11">How is GEP different from <code class="docutils literal"><span class="pre">ptrtoint</span></code>, arithmetic, and <code class="docutils literal"><span class="pre">inttoptr</span></code>?</a><a class="headerlink" href="#how-is-gep-different-from-ptrtoint-arithmetic-and-inttoptr" title="Permalink to this headline">¶</a></h3>
 <p>It&#8217;s very similar; there are only subtle differences.</p>
 <p>With ptrtoint, you have to pick an integer type. One approach is to pick i64;
 this is safe on everything LLVM supports (LLVM internally assumes pointers are
@@ -354,8 +354,8 @@ the overall picture.</p>
 <p>GEPs don&#8217;t natively support VLAs. LLVM&#8217;s type system is entirely static, and GEP
 address computations are guided by an LLVM type.</p>
 <p>VLA indices can be implemented as linearized indices. For example, an expression
-like <tt class="docutils literal"><span class="pre">X[a][b][c]</span></tt>, must be effectively lowered into a form like
-<tt class="docutils literal"><span class="pre">X[a*m+b*n+c]</span></tt>, so that it appears to the GEP as a single-dimensional array
+like <code class="docutils literal"><span class="pre">X[a][b][c]</span></code>, must be effectively lowered into a form like
+<code class="docutils literal"><span class="pre">X[a*m+b*n+c]</span></code>, so that it appears to the GEP as a single-dimensional array
 reference.</p>
 <p>This means if you want to write an analysis which understands array indices and
 you want to support VLAs, your code will have to be prepared to reverse-engineer
@@ -379,17 +379,17 @@ that the static type says there are zero elements is irrelevant; it&#8217;s perf
 valid to compute arbitrary element indices, as the computation only depends on
 the size of the array element, not the number of elements. Note that zero-sized
 arrays are not a special case here.</p>
-<p>This sense is unconnected with <tt class="docutils literal"><span class="pre">inbounds</span></tt> keyword. The <tt class="docutils literal"><span class="pre">inbounds</span></tt> keyword is
+<p>This sense is unconnected with <code class="docutils literal"><span class="pre">inbounds</span></code> keyword. The <code class="docutils literal"><span class="pre">inbounds</span></code> keyword is
 designed to describe low-level pointer arithmetic overflow conditions, rather
 than high-level array indexing rules.</p>
 <p>Analysis passes which wish to understand array indexing should not assume that
 the static array type bounds are respected.</p>
 <p>The second sense of being out of bounds is computing an address that&#8217;s beyond
 the actual underlying allocated object.</p>
-<p>With the <tt class="docutils literal"><span class="pre">inbounds</span></tt> keyword, the result value of the GEP is undefined if the
+<p>With the <code class="docutils literal"><span class="pre">inbounds</span></code> keyword, the result value of the GEP is undefined if the
 address is outside the actual underlying allocated object and not the address
 one-past-the-end.</p>
-<p>Without the <tt class="docutils literal"><span class="pre">inbounds</span></tt> keyword, there are no restrictions on computing
+<p>Without the <code class="docutils literal"><span class="pre">inbounds</span></code> keyword, there are no restrictions on computing
 out-of-bounds addresses. Obviously, performing a load or a store requires an
 address of allocated and sufficiently aligned memory. But the GEP itself is only
 concerned with computing addresses.</p>
@@ -424,7 +424,7 @@ outside of LLVM.</p>
 <p>The underlying integer computation is sufficiently defined; null has a defined
 value &#8212; zero &#8212; and you can add whatever value you want to it.</p>
 <p>However, it&#8217;s invalid to access (load from or store to) an LLVM-aware object
-with such a pointer. This includes <tt class="docutils literal"><span class="pre">GlobalVariables</span></tt>, <tt class="docutils literal"><span class="pre">Allocas</span></tt>, and objects
+with such a pointer. This includes <code class="docutils literal"><span class="pre">GlobalVariables</span></code>, <code class="docutils literal"><span class="pre">Allocas</span></code>, and objects
 pointed to by noalias pointers.</p>
 <p>If you really need this functionality, you can do the arithmetic with explicit
 integer instructions, and use inttoptr to convert the result to an address. Most
@@ -449,16 +449,16 @@ that.  Further details are in the <a class="reference external" href="LangRef.ht
 </div>
 <div class="section" id="what-happens-if-a-gep-computation-overflows">
 <h3><a class="toc-backref" href="#id22">What happens if a GEP computation overflows?</a><a class="headerlink" href="#what-happens-if-a-gep-computation-overflows" title="Permalink to this headline">¶</a></h3>
-<p>If the GEP lacks the <tt class="docutils literal"><span class="pre">inbounds</span></tt> keyword, the value is the result from
+<p>If the GEP lacks the <code class="docutils literal"><span class="pre">inbounds</span></code> keyword, the value is the result from
 evaluating the implied two&#8217;s complement integer computation. However, since
 there&#8217;s no guarantee of where an object will be allocated in the address space,
 such values have limited meaning.</p>
-<p>If the GEP has the <tt class="docutils literal"><span class="pre">inbounds</span></tt> keyword, the result value is undefined (a &#8220;trap
+<p>If the GEP has the <code class="docutils literal"><span class="pre">inbounds</span></code> keyword, the result value is undefined (a &#8220;trap
 value&#8221;) if the GEP overflows (i.e. wraps around the end of the address space).</p>
 <p>As such, there are some ramifications of this for inbounds GEPs: scales implied
 by array/vector/pointer indices are always known to be &#8220;nsw&#8221; since they are
 signed values that are scaled by the element size.  These values are also
-allowed to be negative (e.g. &#8220;<tt class="docutils literal"><span class="pre">gep</span> <span class="pre">i32</span> <span class="pre">*%P,</span> <span class="pre">i32</span> <span class="pre">-1</span></tt>&#8221;) but the pointer itself
+allowed to be negative (e.g. &#8220;<code class="docutils literal"><span class="pre">gep</span> <span class="pre">i32</span> <span class="pre">*%P,</span> <span class="pre">i32</span> <span class="pre">-1</span></code>&#8221;) but the pointer itself
 is logically treated as an unsigned value.  This means that GEPs have an
 asymmetric relation between the pointer base (which is treated as unsigned) and
 the offset applied to it (which is treated as signed). The result of the
@@ -497,7 +497,7 @@ other goals.</li>
 </ul>
 </div>
 <div class="section" id="why-do-struct-member-indices-always-use-i32">
-<h3><a class="toc-backref" href="#id26">Why do struct member indices always use <tt class="docutils literal"><span class="pre">i32</span></tt>?</a><a class="headerlink" href="#why-do-struct-member-indices-always-use-i32" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id26">Why do struct member indices always use <code class="docutils literal"><span class="pre">i32</span></code>?</a><a class="headerlink" href="#why-do-struct-member-indices-always-use-i32" title="Permalink to this headline">¶</a></h3>
 <p>The specific type i32 is probably just a historical artifact, however it&#8217;s wide
 enough for all practical purposes, so there&#8217;s been no need to change it.  It
 doesn&#8217;t necessarily imply i32 address arithmetic; it&#8217;s just an identifier which
@@ -543,7 +543,7 @@ of the pointers.</li>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -560,10 +560,10 @@ of the pointers.</li>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

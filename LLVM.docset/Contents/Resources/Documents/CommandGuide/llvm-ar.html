@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-ar-llvm-archiver">
 <h1>llvm-ar - LLVM archiver<a class="headerlink" href="#llvm-ar-llvm-archiver" title="Permalink to this headline">¶</a></h1>
@@ -73,7 +73,7 @@
 </div>
 <div class="section" id="description">
 <h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
-<p>The <strong>llvm-ar</strong> command is similar to the common Unix utility, <tt class="docutils literal"><span class="pre">ar</span></tt>. It
+<p>The <strong>llvm-ar</strong> command is similar to the common Unix utility, <code class="docutils literal"><span class="pre">ar</span></code>. It
 archives several files together into a single file. The intent for this is
 to produce archive libraries by LLVM bitcode that can be linked into an
 LLVM program. However, the archive can contain any kind of file. By default,
@@ -82,9 +82,9 @@ only the symbol table needs to be consulted, not each individual file member
 of the archive.</p>
 <p>The <strong>llvm-ar</strong> command can be used to <em>read</em> SVR4, GNU and BSD style archive
 files. However, right now it can only write in the GNU format. If an
-SVR4 or BSD style archive is used with the <tt class="docutils literal"><span class="pre">r</span></tt> (replace) or <tt class="docutils literal"><span class="pre">q</span></tt> (quick
+SVR4 or BSD style archive is used with the <code class="docutils literal"><span class="pre">r</span></code> (replace) or <code class="docutils literal"><span class="pre">q</span></code> (quick
 update) operations, the archive will be reconstructed in GNU format.</p>
-<p>Here&#8217;s where <strong>llvm-ar</strong> departs from previous <tt class="docutils literal"><span class="pre">ar</span></tt> implementations:</p>
+<p>Here&#8217;s where <strong>llvm-ar</strong> departs from previous <code class="docutils literal"><span class="pre">ar</span></code> implementations:</p>
 <p><em>Symbol Table</em></p>
 <blockquote>
 <div>Since <strong>llvm-ar</strong> supports bitcode files. The symbol table it creates
@@ -96,15 +96,15 @@ archives with the GNU format.</div></blockquote>
 </div>
 <div class="section" id="options">
 <h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
-<p>The options to <strong>llvm-ar</strong> are compatible with other <tt class="docutils literal"><span class="pre">ar</span></tt> implementations.
-However, there are a few modifiers (<em>R</em>) that are not found in other <tt class="docutils literal"><span class="pre">ar</span></tt>
+<p>The options to <strong>llvm-ar</strong> are compatible with other <code class="docutils literal"><span class="pre">ar</span></code> implementations.
+However, there are a few modifiers (<em>R</em>) that are not found in other <code class="docutils literal"><span class="pre">ar</span></code>
 implementations. The options to <strong>llvm-ar</strong> specify a single basic operation to
 perform on the archive, a variety of modifiers for that operation, the name of
 the archive file, and an optional list of file names. These options are used to
 determine how <strong>llvm-ar</strong> should process the archive file.</p>
 <p>The Operations and Modifiers are explained in the sections below. The minimal
 set of options is at least one operator and the name of the archive. Typically
-archive files end with a <tt class="docutils literal"><span class="pre">.a</span></tt> suffix, but this is not required. Following
+archive files end with a <code class="docutils literal"><span class="pre">.a</span></code> suffix, but this is not required. Following
 the <em>archive-name</em> comes a list of <em>files</em> that indicate the specific members
 of the archive to operate on. If the <em>files</em> option is not specified, it
 generally means either &#8220;none&#8221; or &#8220;all&#8221; members, depending on the operation.</p>
@@ -215,8 +215,8 @@ what is being done.</div></blockquote>
 <div class="section" id="standards">
 <h2>STANDARDS<a class="headerlink" href="#standards" title="Permalink to this headline">¶</a></h2>
 <p>The <strong>llvm-ar</strong> utility is intended to provide a superset of the IEEE Std 1003.2
-(POSIX.2) functionality for <tt class="docutils literal"><span class="pre">ar</span></tt>. <strong>llvm-ar</strong> can read both SVR4 and BSD4.4 (or
-Mac OS X) archives. If the <tt class="docutils literal"><span class="pre">f</span></tt> modifier is given to the <tt class="docutils literal"><span class="pre">x</span></tt> or <tt class="docutils literal"><span class="pre">r</span></tt> operations
+(POSIX.2) functionality for <code class="docutils literal"><span class="pre">ar</span></code>. <strong>llvm-ar</strong> can read both SVR4 and BSD4.4 (or
+Mac OS X) archives. If the <code class="docutils literal"><span class="pre">f</span></code> modifier is given to the <code class="docutils literal"><span class="pre">x</span></code> or <code class="docutils literal"><span class="pre">r</span></code> operations
 then <strong>llvm-ar</strong> will write SVR4 compatible archives. Without this modifier,
 <strong>llvm-ar</strong> will write BSD4.4 compatible archives that have long names
 immediately after the header and indicated using the &#8220;#1/ddd&#8221; notation for the
@@ -225,7 +225,7 @@ name in the header.</p>
 <div class="section" id="file-format">
 <h2>FILE FORMAT<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h2>
 <p>The file format for LLVM Archive files is similar to that of BSD 4.4 or Mac OSX
-archive files. In fact, except for the symbol table, the <tt class="docutils literal"><span class="pre">ar</span></tt> commands on those
+archive files. In fact, except for the symbol table, the <code class="docutils literal"><span class="pre">ar</span></code> commands on those
 operating systems should be able to read LLVM archive files. The details of the
 file format follow.</p>
 <p>Each archive begins with the archive magic number which is the eight printable
@@ -242,8 +242,8 @@ with space characters.</p>
 <blockquote>
 <div>This field of the header provides the name of the archive member. If the name is
 longer than 15 characters or contains a slash (/) character, then this field
-contains <tt class="docutils literal"><span class="pre">#1/nnn</span></tt> where <tt class="docutils literal"><span class="pre">nnn</span></tt> provides the length of the name and the <tt class="docutils literal"><span class="pre">#1/</span></tt>
-is literal.  In this case, the actual name of the file is provided in the <tt class="docutils literal"><span class="pre">nnn</span></tt>
+contains <code class="docutils literal"><span class="pre">#1/nnn</span></code> where <code class="docutils literal"><span class="pre">nnn</span></code> provides the length of the name and the <code class="docutils literal"><span class="pre">#1/</span></code>
+is literal.  In this case, the actual name of the file is provided in the <code class="docutils literal"><span class="pre">nnn</span></code>
 bytes immediately following the header. If the name is 15 characters or less, it
 is contained directly in this field and terminated with a slash (/) character.</div></blockquote>
 <p>date - char[12]</p>
@@ -319,7 +319,7 @@ exit code of 3.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -334,13 +334,13 @@ exit code of 3.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

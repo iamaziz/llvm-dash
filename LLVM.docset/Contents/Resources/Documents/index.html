@@ -32,14 +32,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="#">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -57,7 +57,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="overview">
 <h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
@@ -167,7 +167,7 @@ and APIs, and some tips &amp; tricks.</dd>
 <dd>Details the LLVM coding standards and provides useful information on writing
 efficient C++ code.</dd>
 <dt><a class="reference internal" href="HowToSetUpLLVMStyleRTTI.html"><em>How to set up LLVM-style RTTI for your class hierarchy</em></a></dt>
-<dd>How to make <tt class="docutils literal"><span class="pre">isa&lt;&gt;</span></tt>, <tt class="docutils literal"><span class="pre">dyn_cast&lt;&gt;</span></tt>, etc. available for clients of your
+<dd>How to make <code class="docutils literal"><span class="pre">isa&lt;&gt;</span></code>, <code class="docutils literal"><span class="pre">dyn_cast&lt;&gt;</span></code>, etc. available for clients of your
 class hierarchy.</dd>
 <dt><a class="reference internal" href="ExtendingLLVM.html"><em>Extending LLVM: Adding instructions, intrinsics, types, etc.</em></a></dt>
 <dd>Look here to see how to add instructions and intrinsics to LLVM.</dd>
@@ -220,7 +220,7 @@ information.</dd>
 <dt><a class="reference internal" href="BitCodeFormat.html"><em>LLVM Bitcode File Format</em></a></dt>
 <dd>This describes the file format and encoding used for LLVM &#8220;bc&#8221; files.</dd>
 <dt><a class="reference internal" href="SystemLibrary.html"><em>System Library</em></a></dt>
-<dd>This document describes the LLVM System Library (<tt class="docutils literal"><span class="pre">lib/System</span></tt>) and
+<dd>This document describes the LLVM System Library (<code class="docutils literal"><span class="pre">lib/System</span></code>) and
 how to keep LLVM source code portable</dd>
 <dt><a class="reference internal" href="LinkTimeOptimization.html"><em>LLVM Link Time Optimization: Design and Implementation</em></a></dt>
 <dd>This document describes the interface between LLVM intermodular optimizer
@@ -234,7 +234,7 @@ and the linker and its design</dd>
 <dt><a class="reference internal" href="BranchWeightMetadata.html"><em>LLVM Branch Weight Metadata</em></a></dt>
 <dd>Provides information about Branch Prediction Information.</dd>
 <dt><a class="reference internal" href="BlockFrequencyTerminology.html"><em>LLVM Block Frequency Terminology</em></a></dt>
-<dd>Provides information about terminology used in the <tt class="docutils literal"><span class="pre">BlockFrequencyInfo</span></tt>
+<dd>Provides information about terminology used in the <code class="docutils literal"><span class="pre">BlockFrequencyInfo</span></code>
 analysis pass.</dd>
 <dt><a class="reference internal" href="SegmentedStacks.html"><em>Segmented Stacks in LLVM</em></a></dt>
 <dd>This document describes segmented stacks and how they are used in LLVM.</dd>
@@ -272,7 +272,7 @@ collection support.</dd>
 <dt><a class="reference internal" href="Projects.html"><em>Creating an LLVM Project</em></a></dt>
 <dd>How-to guide and templates for new projects that <em>use</em> the LLVM
 infrastructure.  The templates (directory organization, Makefiles, and test
-tree) allow the project code to be located outside (or inside) the <tt class="docutils literal"><span class="pre">llvm/</span></tt>
+tree) allow the project code to be located outside (or inside) the <code class="docutils literal"><span class="pre">llvm/</span></code>
 tree, while using LLVM header files and libraries.</dd>
 <dt><a class="reference internal" href="LLVMBuild.html"><em>LLVMBuild Guide</em></a></dt>
 <dd>Describes the LLVMBuild organization and files used by LLVM to specify
@@ -344,8 +344,8 @@ near-trunk clang instead of gcc.</li>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
-<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+<li><a class="reference internal" href="genindex.html"><span>Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span>Search Page</span></a></li>
 </ul>
 </div>
 
@@ -354,7 +354,7 @@ near-trunk clang instead of gcc.</li>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -368,10 +368,10 @@ near-trunk clang instead of gcc.</li>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

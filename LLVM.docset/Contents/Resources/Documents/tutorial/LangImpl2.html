@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-implementing-a-parser-and-ast">
 <h1>2. Kaleidoscope: Implementing a Parser and AST<a class="headerlink" href="#kaleidoscope-implementing-a-parser-and-ast" title="Permalink to this headline">¶</a></h1>
@@ -226,7 +226,7 @@ be parsed.</p>
 <span class="n">FunctionAST</span> <span class="o">*</span><span class="nf">ErrorF</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">Str</span><span class="p">)</span> <span class="p">{</span> <span class="n">Error</span><span class="p">(</span><span class="n">Str</span><span class="p">);</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> <span class="p">}</span>
 </pre></div>
 </div>
-<p>The <tt class="docutils literal"><span class="pre">Error</span></tt> routines are simple helper routines that our parser will
+<p>The <code class="docutils literal"><span class="pre">Error</span></code> routines are simple helper routines that our parser will
 use to handle errors. The error recovery in our parser will not be the
 best and is not particular user-friendly, but it will be enough for our
 tutorial. These routines make it easier to handle errors in routines
@@ -248,8 +248,8 @@ which parses that production. For numeric literals, we have:</p>
 </pre></div>
 </div>
 <p>This routine is very simple: it expects to be called when the current
-token is a <tt class="docutils literal"><span class="pre">tok_number</span></tt> token. It takes the current number value,
-creates a <tt class="docutils literal"><span class="pre">NumberExprAST</span></tt> node, advances the lexer to the next token,
+token is a <code class="docutils literal"><span class="pre">tok_number</span></code> token. It takes the current number value,
+creates a <code class="docutils literal"><span class="pre">NumberExprAST</span></code> node, advances the lexer to the next token,
 and finally returns.</p>
 <p>There are some interesting aspects to this. The most important one is
 that this routine eats all of the tokens that correspond to the
@@ -279,8 +279,8 @@ if the user types in &#8220;(4 x&#8221; instead of &#8220;(4)&#8221;, the parser
 error. Because errors can occur, the parser needs a way to indicate that
 they happened: in our parser, we return null on an error.</p>
 <p>2) Another interesting aspect of this function is that it uses recursion
-by calling <tt class="docutils literal"><span class="pre">ParseExpression</span></tt> (we will soon see that
-<tt class="docutils literal"><span class="pre">ParseExpression</span></tt> can call <tt class="docutils literal"><span class="pre">ParseParenExpr</span></tt>). This is powerful
+by calling <code class="docutils literal"><span class="pre">ParseExpression</span></code> (we will soon see that
+<code class="docutils literal"><span class="pre">ParseExpression</span></code> can call <code class="docutils literal"><span class="pre">ParseParenExpr</span></code>). This is powerful
 because it allows us to handle recursive grammars, and keeps each
 production very simple. Note that parentheses do not cause construction
 of AST nodes themselves. While we could do it this way, the most
@@ -325,13 +325,13 @@ function calls:</p>
 </pre></div>
 </div>
 <p>This routine follows the same style as the other routines. (It expects
-to be called if the current token is a <tt class="docutils literal"><span class="pre">tok_identifier</span></tt> token). It
+to be called if the current token is a <code class="docutils literal"><span class="pre">tok_identifier</span></code> token). It
 also has recursion and error handling. One interesting aspect of this is
 that it uses <em>look-ahead</em> to determine if the current identifier is a
 stand alone variable reference or if it is a function call expression.
 It handles this by checking to see if the token after the identifier is
-a &#8216;(&#8216; token, constructing either a <tt class="docutils literal"><span class="pre">VariableExprAST</span></tt> or
-<tt class="docutils literal"><span class="pre">CallExprAST</span></tt> node as appropriate.</p>
+a &#8216;(&#8216; token, constructing either a <code class="docutils literal"><span class="pre">VariableExprAST</span></code> or
+<code class="docutils literal"><span class="pre">CallExprAST</span></code> node as appropriate.</p>
 <p>Now that we have all of our simple expression-parsing logic in place, we
 can define a helper function to wrap it together into one entry point.
 We call this class of expressions &#8220;primary&#8221; expressions, for reasons
@@ -399,12 +399,12 @@ recursion. To start with, we need a table of precedences:</p>
 </div>
 <p>For the basic form of Kaleidoscope, we will only support 4 binary
 operators (this can obviously be extended by you, our brave and intrepid
-reader). The <tt class="docutils literal"><span class="pre">GetTokPrecedence</span></tt> function returns the precedence for
+reader). The <code class="docutils literal"><span class="pre">GetTokPrecedence</span></code> function returns the precedence for
 the current token, or -1 if the token is not a binary operator. Having a
 map makes it easy to add new operators and makes it clear that the
 algorithm doesn&#8217;t depend on the specific operators involved, but it
 would be easy enough to eliminate the map and do the comparisons in the
-<tt class="docutils literal"><span class="pre">GetTokPrecedence</span></tt> function. (Or just use a fixed-size array).</p>
+<code class="docutils literal"><span class="pre">GetTokPrecedence</span></code> function. (Or just use a fixed-size array).</p>
 <p>With the helper above defined, we can now start parsing binary
 expressions. The basic idea of operator precedence parsing is to break
 down an expression with potentially ambiguous binary operators into
@@ -428,18 +428,18 @@ a sequence of [binop,primaryexpr] pairs:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p><tt class="docutils literal"><span class="pre">ParseBinOpRHS</span></tt> is the function that parses the sequence of pairs for
+<p><code class="docutils literal"><span class="pre">ParseBinOpRHS</span></code> is the function that parses the sequence of pairs for
 us. It takes a precedence and a pointer to an expression for the part
 that has been parsed so far. Note that &#8220;x&#8221; is a perfectly valid
 expression: As such, &#8220;binoprhs&#8221; is allowed to be empty, in which case it
 returns the expression that is passed into it. In our example above, the
-code passes the expression for &#8220;a&#8221; into <tt class="docutils literal"><span class="pre">ParseBinOpRHS</span></tt> and the
+code passes the expression for &#8220;a&#8221; into <code class="docutils literal"><span class="pre">ParseBinOpRHS</span></code> and the
 current token is &#8220;+&#8221;.</p>
-<p>The precedence value passed into <tt class="docutils literal"><span class="pre">ParseBinOpRHS</span></tt> indicates the
+<p>The precedence value passed into <code class="docutils literal"><span class="pre">ParseBinOpRHS</span></code> indicates the
 <em>minimal operator precedence</em> that the function is allowed to eat. For
-example, if the current pair stream is [+, x] and <tt class="docutils literal"><span class="pre">ParseBinOpRHS</span></tt> is
+example, if the current pair stream is [+, x] and <code class="docutils literal"><span class="pre">ParseBinOpRHS</span></code> is
 passed in a precedence of 40, it will not consume any tokens (because
-the precedence of &#8216;+&#8217; is only 20). With this in mind, <tt class="docutils literal"><span class="pre">ParseBinOpRHS</span></tt>
+the precedence of &#8216;+&#8217; is only 20). With this in mind, <code class="docutils literal"><span class="pre">ParseBinOpRHS</span></code>
 starts with:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="c1">/// binoprhs</span>
 <span class="c1">///   ::= (&#39;+&#39; primary)*</span>
@@ -528,7 +528,7 @@ above two blocks duplicated for context):</p>
 primary has higher precedence than the binop we are currently parsing.
 As such, we know that any sequence of pairs whose operators are all
 higher precedence than &#8220;+&#8221; should be parsed together and returned as
-&#8220;RHS&#8221;. To do this, we recursively invoke the <tt class="docutils literal"><span class="pre">ParseBinOpRHS</span></tt> function
+&#8220;RHS&#8221;. To do this, we recursively invoke the <code class="docutils literal"><span class="pre">ParseBinOpRHS</span></code> function
 specifying &#8220;TokPrec+1&#8221; as the minimum precedence required for it to
 continue. In our example above, this will cause it to return the AST
 node for &#8220;(c+d)*e*f&#8221; as RHS, which is then set as the RHS of the &#8216;+&#8217;
@@ -1090,7 +1090,7 @@ clang++ -g -O3 toy.cpp
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1105,13 +1105,13 @@ clang++ -g -O3 toy.cpp
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

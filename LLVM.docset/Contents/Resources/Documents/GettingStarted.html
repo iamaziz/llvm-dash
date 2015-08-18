@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="getting-started-with-the-llvm-system">
 <h1>Getting Started with the LLVM System<a class="headerlink" href="#getting-started-with-the-llvm-system" title="Permalink to this headline">¶</a></h1>
@@ -96,15 +96,15 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#general-layout" id="id25">Program Layout</a><ul>
-<li><a class="reference internal" href="#llvm-examples" id="id26"><tt class="docutils literal"><span class="pre">llvm/examples</span></tt></a></li>
-<li><a class="reference internal" href="#llvm-include" id="id27"><tt class="docutils literal"><span class="pre">llvm/include</span></tt></a></li>
-<li><a class="reference internal" href="#llvm-lib" id="id28"><tt class="docutils literal"><span class="pre">llvm/lib</span></tt></a></li>
-<li><a class="reference internal" href="#llvm-projects" id="id29"><tt class="docutils literal"><span class="pre">llvm/projects</span></tt></a></li>
-<li><a class="reference internal" href="#llvm-runtime" id="id30"><tt class="docutils literal"><span class="pre">llvm/runtime</span></tt></a></li>
-<li><a class="reference internal" href="#llvm-test" id="id31"><tt class="docutils literal"><span class="pre">llvm/test</span></tt></a></li>
-<li><a class="reference internal" href="#test-suite" id="id32"><tt class="docutils literal"><span class="pre">test-suite</span></tt></a></li>
-<li><a class="reference internal" href="#llvm-tools" id="id33"><tt class="docutils literal"><span class="pre">llvm/tools</span></tt></a></li>
-<li><a class="reference internal" href="#llvm-utils" id="id34"><tt class="docutils literal"><span class="pre">llvm/utils</span></tt></a></li>
+<li><a class="reference internal" href="#llvm-examples" id="id26"><code class="docutils literal"><span class="pre">llvm/examples</span></code></a></li>
+<li><a class="reference internal" href="#llvm-include" id="id27"><code class="docutils literal"><span class="pre">llvm/include</span></code></a></li>
+<li><a class="reference internal" href="#llvm-lib" id="id28"><code class="docutils literal"><span class="pre">llvm/lib</span></code></a></li>
+<li><a class="reference internal" href="#llvm-projects" id="id29"><code class="docutils literal"><span class="pre">llvm/projects</span></code></a></li>
+<li><a class="reference internal" href="#llvm-runtime" id="id30"><code class="docutils literal"><span class="pre">llvm/runtime</span></code></a></li>
+<li><a class="reference internal" href="#llvm-test" id="id31"><code class="docutils literal"><span class="pre">llvm/test</span></code></a></li>
+<li><a class="reference internal" href="#test-suite" id="id32"><code class="docutils literal"><span class="pre">test-suite</span></code></a></li>
+<li><a class="reference internal" href="#llvm-tools" id="id33"><code class="docutils literal"><span class="pre">llvm/tools</span></code></a></li>
+<li><a class="reference internal" href="#llvm-utils" id="id34"><code class="docutils literal"><span class="pre">llvm/utils</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#an-example-using-the-llvm-tool-chain" id="id35">An Example Using the LLVM Tool Chain</a><ul>
@@ -143,48 +143,48 @@ good place to start.</p>
 <li>Read the documentation.</li>
 <li>Remember that you were warned twice about reading the documentation.</li>
 <li>Checkout LLVM:<ul>
-<li><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/llvm/trunk</span> <span class="pre">llvm</span></tt></li>
+<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
+<li><code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/llvm/trunk</span> <span class="pre">llvm</span></code></li>
 </ul>
 </li>
 <li>Checkout Clang:<ul>
-<li><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/tools</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/cfe/trunk</span> <span class="pre">clang</span></tt></li>
+<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
+<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/tools</span></code></li>
+<li><code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/cfe/trunk</span> <span class="pre">clang</span></code></li>
 </ul>
 </li>
 <li>Checkout Compiler-RT:<ul>
-<li><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/projects</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/compiler-rt/trunk</span> <span class="pre">compiler-rt</span></tt></li>
+<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
+<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/projects</span></code></li>
+<li><code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/compiler-rt/trunk</span> <span class="pre">compiler-rt</span></code></li>
 </ul>
 </li>
 <li>Get the Test Suite Source Code <strong>[Optional]</strong><ul>
-<li><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/projects</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/test-suite/trunk</span> <span class="pre">test-suite</span></tt></li>
+<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
+<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">llvm/projects</span></code></li>
+<li><code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/test-suite/trunk</span> <span class="pre">test-suite</span></code></li>
 </ul>
 </li>
 <li>Configure and build LLVM and Clang:<ul>
-<li><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-to-build-llvm</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">mkdir</span> <span class="pre">build</span></tt> (for building without polluting the source dir)</li>
-<li><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">build</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">../llvm/configure</span> <span class="pre">[options]</span></tt>
+<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-to-build-llvm</span></code></li>
+<li><code class="docutils literal"><span class="pre">mkdir</span> <span class="pre">build</span></code> (for building without polluting the source dir)</li>
+<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">build</span></code></li>
+<li><code class="docutils literal"><span class="pre">../llvm/configure</span> <span class="pre">[options]</span></code>
 Some common options:<ul>
-<li><tt class="docutils literal"><span class="pre">--prefix=directory</span></tt> &#8212; Specify for <em>directory</em> the full pathname of
+<li><code class="docutils literal"><span class="pre">--prefix=directory</span></code> &#8212; Specify for <em>directory</em> the full pathname of
 where you want the LLVM tools and libraries to be installed (default
-<tt class="docutils literal"><span class="pre">/usr/local</span></tt>).</li>
-<li><tt class="docutils literal"><span class="pre">--enable-optimized</span></tt> &#8212; Compile with optimizations enabled (default
+<code class="docutils literal"><span class="pre">/usr/local</span></code>).</li>
+<li><code class="docutils literal"><span class="pre">--enable-optimized</span></code> &#8212; Compile with optimizations enabled (default
 is NO).</li>
-<li><tt class="docutils literal"><span class="pre">--enable-assertions</span></tt> &#8212; Compile with assertion checks enabled
+<li><code class="docutils literal"><span class="pre">--enable-assertions</span></code> &#8212; Compile with assertion checks enabled
 (default is YES).</li>
 </ul>
 </li>
-<li><tt class="docutils literal"><span class="pre">make</span> <span class="pre">[-j]</span></tt> &#8212; The <tt class="docutils literal"><span class="pre">-j</span></tt> specifies the number of jobs (commands) to run
+<li><code class="docutils literal"><span class="pre">make</span> <span class="pre">[-j]</span></code> &#8212; The <code class="docutils literal"><span class="pre">-j</span></code> specifies the number of jobs (commands) to run
 simultaneously.  This builds both LLVM and Clang for Debug+Asserts mode.
-The <tt class="docutils literal"><span class="pre">--enable-optimized</span></tt> configure option is used to specify a Release
+The <code class="docutils literal"><span class="pre">--enable-optimized</span></code> configure option is used to specify a Release
 build.</li>
-<li><tt class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></tt> &#8212; This run the regression tests to ensure everything
+<li><code class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></code> &#8212; This run the regression tests to ensure everything
 is in working order.</li>
 <li>It is also possible to use <a class="reference external" href="CMake.html">CMake</a> instead of the makefiles.
 With CMake it is possible to generate project files for several IDEs:
@@ -277,7 +277,7 @@ software you will need.</p>
 <li>Code generation supported for Pentium processors and up</li>
 <li>Code generation supported for 32-bit ABI only</li>
 <li>To use LLVM modules on Win32-based system, you may configure LLVM
-with <tt class="docutils literal"><span class="pre">--enable-shared</span></tt>.</li>
+with <code class="docutils literal"><span class="pre">--enable-shared</span></code>.</li>
 <li>MCJIT not working well pre-v7, old JIT engine not supported any more.</li>
 </ol>
 </div>
@@ -285,7 +285,7 @@ with <tt class="docutils literal"><span class="pre">--enable-shared</span></tt>.
 mode, depending on the system (it is so large because of all the debugging
 information and the fact that the libraries are statically linked into multiple
 tools).  If you do not need many of the tools and you are space-conscious, you
-can pass <tt class="docutils literal"><span class="pre">ONLY_TOOLS=&quot;tools</span> <span class="pre">you</span> <span class="pre">need&quot;</span></tt> to make.  The Release build requires
+can pass <code class="docutils literal"><span class="pre">ONLY_TOOLS=&quot;tools</span> <span class="pre">you</span> <span class="pre">need&quot;</span></code> to make.  The Release build requires
 considerably less space.</p>
 <p>The LLVM suite <em>may</em> compile on other platforms, but it is not guaranteed to do
 so.  If compilation is successful, the LLVM utilities should be able to
@@ -354,7 +354,7 @@ uses the package and provides other details.</p>
 other languages for LLVM&#8217;s purposes. See <cite>below</cite> for specific version
 info.</li>
 <li>Only needed if you want to run the automated test suite in the
-<tt class="docutils literal"><span class="pre">llvm/test</span></tt> directory.</li>
+<code class="docutils literal"><span class="pre">llvm/test</span></code> directory.</li>
 <li>If you want to make changes to the configure scripts, you will need GNU
 autoconf (2.60), and consequently, GNU M4 (version 1.4 or higher). You
 will also need automake (1.9.6). We only use aclocal from that package.</li>
@@ -413,10 +413,10 @@ miscompiled LLVM.</p>
 recent version may be required to support all of the C++ features used in LLVM.</p>
 <p>We track certain versions of software that are <em>known</em> to fail when used as
 part of the host toolchain. These even include linkers at times.</p>
-<p><strong>GCC 4.6.3 on ARM</strong>: Miscompiles <tt class="docutils literal"><span class="pre">llvm-readobj</span></tt> at <tt class="docutils literal"><span class="pre">-O3</span></tt>. A test failure
-in <tt class="docutils literal"><span class="pre">test/Object/readobj-shared-object.test</span></tt> is one symptom of the problem.</p>
+<p><strong>GCC 4.6.3 on ARM</strong>: Miscompiles <code class="docutils literal"><span class="pre">llvm-readobj</span></code> at <code class="docutils literal"><span class="pre">-O3</span></code>. A test failure
+in <code class="docutils literal"><span class="pre">test/Object/readobj-shared-object.test</span></code> is one symptom of the problem.</p>
 <p><strong>GNU ld 2.16.X</strong>. Some 2.16.X versions of the ld linker will produce very long
-warning messages complaining that some &#8220;<tt class="docutils literal"><span class="pre">.gnu.linkonce.t.*</span></tt>&#8221; symbol was
+warning messages complaining that some &#8220;<code class="docutils literal"><span class="pre">.gnu.linkonce.t.*</span></code>&#8221; symbol was
 defined in a discarded section. You can safely ignore these messages as they are
 erroneous and the linkage is correct.  These messages disappear using ld 2.17.</p>
 <p><strong>GNU binutils 2.17</strong>: Binutils 2.17 contains <a class="reference external" href="http://sourceware.org/bugzilla/show_bug.cgi?id=3111">a bug</a> which causes huge link
@@ -431,7 +431,7 @@ Fedora 17) have both Clang 3.0 and libstdc++ 4.7 in their repositories.  Clang
 3.0 does not implement a few builtins that are used in this library.  We
 recommend using the system GCC to compile LLVM and Clang in this case.</p>
 <p><strong>Clang 3.0 on Mageia 2</strong>.  There&#8217;s a packaging issue: Clang can not find at
-least some (<tt class="docutils literal"><span class="pre">cxxabi.h</span></tt>) libstdc++ headers.</p>
+least some (<code class="docutils literal"><span class="pre">cxxabi.h</span></code>) libstdc++ headers.</p>
 <p><strong>Clang in C++11 mode and libstdc++ 4.7.2</strong>.  This version of libstdc++
 contained <a class="reference external" href="http://gcc.gnu.org/bugzilla/show_bug.cgi?id=53841">a bug</a> which
 causes Clang to refuse to compile condition_variable header file.  At the time
@@ -479,8 +479,8 @@ of this information from.</p>
 <p>Once you have a GCC toolchain, configure your build of LLVM to use the new
 toolchain for your host compiler and C++ standard library. Because the new
 version of libstdc++ is not on the system library search path, you need to pass
-extra linker flags so that it can be found at link time (<tt class="docutils literal"><span class="pre">-L</span></tt>) and at runtime
-(<tt class="docutils literal"><span class="pre">-rpath</span></tt>). If you are using CMake, this invocation should produce working
+extra linker flags so that it can be found at link time (<code class="docutils literal"><span class="pre">-L</span></code>) and at runtime
+(<code class="docutils literal"><span class="pre">-rpath</span></code>). If you are using CMake, this invocation should produce working
 binaries:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> mkdir build
 <span class="gp">%</span> <span class="nb">cd </span>build
@@ -489,16 +489,16 @@ binaries:</p>
 </pre></div>
 </div>
 <p>If you fail to set rpath, most LLVM binaries will fail on startup with a message
-from the loader similar to <tt class="docutils literal"><span class="pre">libstdc++.so.6:</span> <span class="pre">version</span> <span class="pre">`GLIBCXX_3.4.20'</span> <span class="pre">not</span>
-<span class="pre">found</span></tt>. This means you need to tweak the -rpath linker flag.</p>
+from the loader similar to <code class="docutils literal"><span class="pre">libstdc++.so.6:</span> <span class="pre">version</span> <span class="pre">`GLIBCXX_3.4.20'</span> <span class="pre">not</span>
+<span class="pre">found</span></code>. This means you need to tweak the -rpath linker flag.</p>
 <p>When you build Clang, you will need to give <em>it</em> access to modern C++11
 standard library in order to use it as your new host in part of a bootstrap.
 There are two easy ways to do this, either build (and install) libc++ along
-with Clang and then use it with the <tt class="docutils literal"><span class="pre">-stdlib=libc++</span></tt> compile and link flag,
-or install Clang into the same prefix (<tt class="docutils literal"><span class="pre">$HOME/toolchains</span></tt> above) as GCC.
+with Clang and then use it with the <code class="docutils literal"><span class="pre">-stdlib=libc++</span></code> compile and link flag,
+or install Clang into the same prefix (<code class="docutils literal"><span class="pre">$HOME/toolchains</span></code> above) as GCC.
 Clang will look within its own prefix for libstdc++ and use it if found. You
 can also add an explicit prefix for Clang to look in for a GCC toolchain with
-the <tt class="docutils literal"><span class="pre">--gcc-toolchain=/opt/my/gcc/prefix</span></tt> flag, passing it to both compile and
+the <code class="docutils literal"><span class="pre">--gcc-toolchain=/opt/my/gcc/prefix</span></code> flag, passing it to both compile and
 link commands when using your just-built-Clang to bootstrap.</p>
 </div>
 </div>
@@ -517,10 +517,10 @@ the local system and working environment.  <em>These are not environment variabl
 you need to set but just strings used in the rest of this document below</em>.  In
 any of the examples below, simply replace each of these names with the
 appropriate pathname on your local system.  All these paths are absolute:</p>
-<p><tt class="docutils literal"><span class="pre">SRC_ROOT</span></tt></p>
+<p><code class="docutils literal"><span class="pre">SRC_ROOT</span></code></p>
 <blockquote>
 <div>This is the top level directory of the LLVM source tree.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">OBJ_ROOT</span></tt></p>
+<p><code class="docutils literal"><span class="pre">OBJ_ROOT</span></code></p>
 <blockquote>
 <div>This is the top level directory of the LLVM object tree (i.e. the tree where
 object files and compiled programs will be placed.  It can be the same as
@@ -530,13 +530,13 @@ SRC_ROOT).</div></blockquote>
 <span id="id2"></span><h3><a class="toc-backref" href="#id14">Setting Up Your Environment</a><a class="headerlink" href="#setting-up-your-environment" title="Permalink to this headline">¶</a></h3>
 <p>In order to compile and use LLVM, you may need to set some environment
 variables.</p>
-<p><tt class="docutils literal"><span class="pre">LLVM_LIB_SEARCH_PATH=/path/to/your/bitcode/libs</span></tt></p>
+<p><code class="docutils literal"><span class="pre">LLVM_LIB_SEARCH_PATH=/path/to/your/bitcode/libs</span></code></p>
 <blockquote>
 <div>[Optional] This environment variable helps LLVM linking tools find the
 locations of your bitcode libraries. It is provided only as a convenience
 since you can specify the paths using the -L options of the tools and the
 C/C++ front-end will automatically use the bitcode files installed in its
-<tt class="docutils literal"><span class="pre">lib</span></tt> directory.</div></blockquote>
+<code class="docutils literal"><span class="pre">lib</span></code> directory.</div></blockquote>
 </div>
 <div class="section" id="unpacking-the-llvm-archives">
 <h3><a class="toc-backref" href="#id15">Unpacking the LLVM Archives</a><a class="headerlink" href="#unpacking-the-llvm-archives" title="Permalink to this headline">¶</a></h3>
@@ -546,10 +546,10 @@ and the LLVM GCC front end compiled for your platform.  There is an additional
 test suite that is optional.  Each file is a TAR archive that is compressed with
 the gzip program.</p>
 <p>The files are as follows, with <em>x.y</em> marking the version number:</p>
-<p><tt class="docutils literal"><span class="pre">llvm-x.y.tar.gz</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm-x.y.tar.gz</span></code></p>
 <blockquote>
 <div>Source release for the LLVM libraries and tools.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm-test-x.y.tar.gz</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm-test-x.y.tar.gz</span></code></p>
 <blockquote>
 <div>Source release for the LLVM test-suite.</div></blockquote>
 </div>
@@ -559,16 +559,16 @@ the gzip program.</p>
 entire source code.  All you need to do is check it out from Subversion as
 follows:</p>
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></tt></li>
-<li>Read-Only: <tt class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/llvm/trunk</span> <span class="pre">llvm</span></tt></li>
-<li>Read-Write:<tt class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">https://user&#64;llvm.org/svn/llvm-project/llvm/trunk</span> <span class="pre">llvm</span></tt></li>
+<li><code class="docutils literal"><span class="pre">cd</span> <span class="pre">where-you-want-llvm-to-live</span></code></li>
+<li>Read-Only: <code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">http://llvm.org/svn/llvm-project/llvm/trunk</span> <span class="pre">llvm</span></code></li>
+<li>Read-Write:<code class="docutils literal"><span class="pre">svn</span> <span class="pre">co</span> <span class="pre">https://user&#64;llvm.org/svn/llvm-project/llvm/trunk</span> <span class="pre">llvm</span></code></li>
 </ul>
-<p>This will create an &#8216;<tt class="docutils literal"><span class="pre">llvm</span></tt>&#8216; directory in the current directory and fully
+<p>This will create an &#8216;<code class="docutils literal"><span class="pre">llvm</span></code>&#8216; directory in the current directory and fully
 populate it with the LLVM source code, Makefiles, test directories, and local
 copies of documentation files.</p>
 <p>If you want to get a specific release (as opposed to the most recent revision),
-you can checkout it from the &#8216;<tt class="docutils literal"><span class="pre">tags</span></tt>&#8216; directory (instead of &#8216;<tt class="docutils literal"><span class="pre">trunk</span></tt>&#8216;). The
-following releases are located in the following subdirectories of the &#8216;<tt class="docutils literal"><span class="pre">tags</span></tt>&#8216;
+you can checkout it from the &#8216;<code class="docutils literal"><span class="pre">tags</span></code>&#8216; directory (instead of &#8216;<code class="docutils literal"><span class="pre">trunk</span></code>&#8216;). The
+following releases are located in the following subdirectories of the &#8216;<code class="docutils literal"><span class="pre">tags</span></code>&#8216;
 directory:</p>
 <ul class="simple">
 <li>Release 3.4: <strong>RELEASE_34/final</strong></li>
@@ -603,16 +603,16 @@ get it from the Subversion repository:</p>
 <span class="gp">%</span> svn co http://llvm.org/svn/llvm-project/test-suite/trunk <span class="nb">test</span>-suite
 </pre></div>
 </div>
-<p>By placing it in the <tt class="docutils literal"><span class="pre">llvm/projects</span></tt>, it will be automatically configured by
-the LLVM configure script as well as automatically updated when you run <tt class="docutils literal"><span class="pre">svn</span>
-<span class="pre">update</span></tt>.</p>
+<p>By placing it in the <code class="docutils literal"><span class="pre">llvm/projects</span></code>, it will be automatically configured by
+the LLVM configure script as well as automatically updated when you run <code class="docutils literal"><span class="pre">svn</span>
+<span class="pre">update</span></code>.</p>
 </div>
 <div class="section" id="git-mirror">
 <h3><a class="toc-backref" href="#id17">Git Mirror</a><a class="headerlink" href="#git-mirror" title="Permalink to this headline">¶</a></h3>
 <p>Git mirrors are available for a number of LLVM subprojects. These mirrors sync
 automatically with each Subversion commit and contain all necessary git-svn
 marks (so, you can recreate git-svn metadata locally). Note that right now
-mirrors reflect only <tt class="docutils literal"><span class="pre">trunk</span></tt> for each project. You can do the read-only Git
+mirrors reflect only <code class="docutils literal"><span class="pre">trunk</span></code> for each project. You can do the read-only Git
 clone of LLVM via:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> git clone http://llvm.org/git/llvm.git
 </pre></div>
@@ -632,9 +632,9 @@ clone of LLVM via:</p>
 <span class="gp">%</span> git clone http://llvm.org/git/test-suite.git
 </pre></div>
 </div>
-<p>Since the upstream repository is in Subversion, you should use <tt class="docutils literal"><span class="pre">git</span>
-<span class="pre">pull</span> <span class="pre">--rebase</span></tt> instead of <tt class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></tt> to avoid generating a non-linear history
-in your clone.  To configure <tt class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></tt> to pass <tt class="docutils literal"><span class="pre">--rebase</span></tt> by default on the
+<p>Since the upstream repository is in Subversion, you should use <code class="docutils literal"><span class="pre">git</span>
+<span class="pre">pull</span> <span class="pre">--rebase</span></code> instead of <code class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></code> to avoid generating a non-linear history
+in your clone.  To configure <code class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span></code> to pass <code class="docutils literal"><span class="pre">--rebase</span></code> by default on the
 master branch, run the following command:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> git config branch.master.rebase <span class="nb">true</span>
 </pre></div>
@@ -642,8 +642,8 @@ master branch, run the following command:</p>
 <div class="section" id="sending-patches-with-git">
 <h4><a class="toc-backref" href="#id18">Sending patches with Git</a><a class="headerlink" href="#sending-patches-with-git" title="Permalink to this headline">¶</a></h4>
 <p>Please read <a class="reference external" href="DeveloperPolicy.html#one-off-patches">Developer Policy</a>, too.</p>
-<p>Assume <tt class="docutils literal"><span class="pre">master</span></tt> points the upstream and <tt class="docutils literal"><span class="pre">mybranch</span></tt> points your working
-branch, and <tt class="docutils literal"><span class="pre">mybranch</span></tt> is rebased onto <tt class="docutils literal"><span class="pre">master</span></tt>.  At first you may check
+<p>Assume <code class="docutils literal"><span class="pre">master</span></code> points the upstream and <code class="docutils literal"><span class="pre">mybranch</span></code> points your working
+branch, and <code class="docutils literal"><span class="pre">mybranch</span></code> is rebased onto <code class="docutils literal"><span class="pre">master</span></code>.  At first you may check
 sanity of whitespaces:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> git diff --check master..mybranch
 </pre></div>
@@ -653,8 +653,8 @@ sanity of whitespaces:</p>
 </pre></div>
 </div>
 <p>It is a little different from svn-generated diff. git-diff-generated diff has
-prefixes like <tt class="docutils literal"><span class="pre">a/</span></tt> and <tt class="docutils literal"><span class="pre">b/</span></tt>. Don&#8217;t worry, most developers might know it
-could be accepted with <tt class="docutils literal"><span class="pre">patch</span> <span class="pre">-p1</span> <span class="pre">-N</span></tt>.</p>
+prefixes like <code class="docutils literal"><span class="pre">a/</span></code> and <code class="docutils literal"><span class="pre">b/</span></code>. Don&#8217;t worry, most developers might know it
+could be accepted with <code class="docutils literal"><span class="pre">patch</span> <span class="pre">-p1</span> <span class="pre">-N</span></code>.</p>
 <p>But you may generate patchset with git-format-patch. It generates by-each-commit
 patchset. To generate patch files to attach to your article:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> git format-patch --no-attach master..mybranch -o /path/to/your/patchset
@@ -683,7 +683,7 @@ git-imap-send. Here is an example to generate the patchset in Gmail&#8217;s [Dra
 </div>
 <div class="section" id="for-developers-to-work-with-git-svn">
 <h4><a class="toc-backref" href="#id19">For developers to work with git-svn</a><a class="headerlink" href="#for-developers-to-work-with-git-svn" title="Permalink to this headline">¶</a></h4>
-<p>To set up clone from which you can submit code using <tt class="docutils literal"><span class="pre">git-svn</span></tt>, run:</p>
+<p>To set up clone from which you can submit code using <code class="docutils literal"><span class="pre">git-svn</span></code>, run:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> git clone http://llvm.org/git/llvm.git
 <span class="gp">%</span> <span class="nb">cd </span>llvm
 <span class="gp">%</span> git svn init https://llvm.org/svn/llvm-project/llvm/trunk --username<span class="o">=</span>&lt;username&gt;
@@ -712,46 +712,46 @@ upstream Git repo, run:</p>
 </div>
 <p>Likewise for compiler-rt and test-suite.</p>
 <p>This leaves your working directories on their master branches, so you&#8217;ll need to
-<tt class="docutils literal"><span class="pre">checkout</span></tt> each working branch individually and <tt class="docutils literal"><span class="pre">rebase</span></tt> it on top of its
+<code class="docutils literal"><span class="pre">checkout</span></code> each working branch individually and <code class="docutils literal"><span class="pre">rebase</span></code> it on top of its
 parent branch.</p>
 <p>For those who wish to be able to update an llvm repo/revert patches easily using
-git-svn, please look in the directory for the scripts <tt class="docutils literal"><span class="pre">git-svnup</span></tt> and
-<tt class="docutils literal"><span class="pre">git-svnrevert</span></tt>.</p>
+git-svn, please look in the directory for the scripts <code class="docutils literal"><span class="pre">git-svnup</span></code> and
+<code class="docutils literal"><span class="pre">git-svnrevert</span></code>.</p>
 <p>To perform the aforementioned update steps go into your source directory and
-just type <tt class="docutils literal"><span class="pre">git-svnup</span></tt> or <tt class="docutils literal"><span class="pre">git</span> <span class="pre">svnup</span></tt> and everything will just work.</p>
+just type <code class="docutils literal"><span class="pre">git-svnup</span></code> or <code class="docutils literal"><span class="pre">git</span> <span class="pre">svnup</span></code> and everything will just work.</p>
 <p>If one wishes to revert a commit with git-svn, but do not want the git hash to
-escape into the commit message, one can use the script <tt class="docutils literal"><span class="pre">git-svnrevert</span></tt> or
-<tt class="docutils literal"><span class="pre">git</span> <span class="pre">svnrevert</span></tt> which will take in the git hash for the commit you want to
+escape into the commit message, one can use the script <code class="docutils literal"><span class="pre">git-svnrevert</span></code> or
+<code class="docutils literal"><span class="pre">git</span> <span class="pre">svnrevert</span></code> which will take in the git hash for the commit you want to
 revert, look up the appropriate svn revision, and output a message where all
 references to the git hash have been replaced with the svn revision.</p>
-<p>To commit back changes via git-svn, use <tt class="docutils literal"><span class="pre">git</span> <span class="pre">svn</span> <span class="pre">dcommit</span></tt>:</p>
+<p>To commit back changes via git-svn, use <code class="docutils literal"><span class="pre">git</span> <span class="pre">svn</span> <span class="pre">dcommit</span></code>:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> git svn dcommit
 </pre></div>
 </div>
 <p>Note that git-svn will create one SVN commit for each Git commit you have pending,
-so squash and edit each commit before executing <tt class="docutils literal"><span class="pre">dcommit</span></tt> to make sure they all
+so squash and edit each commit before executing <code class="docutils literal"><span class="pre">dcommit</span></code> to make sure they all
 conform to the coding standards and the developers&#8217; policy.</p>
-<p>On success, <tt class="docutils literal"><span class="pre">dcommit</span></tt> will rebase against the HEAD of SVN, so to avoid conflict,
+<p>On success, <code class="docutils literal"><span class="pre">dcommit</span></code> will rebase against the HEAD of SVN, so to avoid conflict,
 please make sure your current branch is up-to-date (via fetch/rebase) before
 proceeding.</p>
 <p>The git-svn metadata can get out of sync after you mess around with branches and
-<tt class="docutils literal"><span class="pre">dcommit</span></tt>. When that happens, <tt class="docutils literal"><span class="pre">git</span> <span class="pre">svn</span> <span class="pre">dcommit</span></tt> stops working, complaining
+<code class="docutils literal"><span class="pre">dcommit</span></code>. When that happens, <code class="docutils literal"><span class="pre">git</span> <span class="pre">svn</span> <span class="pre">dcommit</span></code> stops working, complaining
 about files with uncommitted changes. The fix is to rebuild the metadata:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> rm -rf .git/svn
 <span class="gp">%</span> git svn rebase -l
 </pre></div>
 </div>
-<p>Please, refer to the Git-SVN manual (<tt class="docutils literal"><span class="pre">man</span> <span class="pre">git-svn</span></tt>) for more information.</p>
+<p>Please, refer to the Git-SVN manual (<code class="docutils literal"><span class="pre">man</span> <span class="pre">git-svn</span></code>) for more information.</p>
 </div>
 </div>
 <div class="section" id="local-llvm-configuration">
 <h3><a class="toc-backref" href="#id20">Local LLVM Configuration</a><a class="headerlink" href="#local-llvm-configuration" title="Permalink to this headline">¶</a></h3>
 <p>Once checked out from the Subversion repository, the LLVM suite source code must
-be configured via the <tt class="docutils literal"><span class="pre">configure</span></tt> script.  This script sets variables in the
-various <tt class="docutils literal"><span class="pre">*.in</span></tt> files, most notably <tt class="docutils literal"><span class="pre">llvm/Makefile.config</span></tt> and
-<tt class="docutils literal"><span class="pre">llvm/include/Config/config.h</span></tt>.  It also populates <em>OBJ_ROOT</em> with the
+be configured via the <code class="docutils literal"><span class="pre">configure</span></code> script.  This script sets variables in the
+various <code class="docutils literal"><span class="pre">*.in</span></code> files, most notably <code class="docutils literal"><span class="pre">llvm/Makefile.config</span></code> and
+<code class="docutils literal"><span class="pre">llvm/include/Config/config.h</span></code>.  It also populates <em>OBJ_ROOT</em> with the
 Makefiles needed to begin building LLVM.</p>
-<p>The following environment variables are used by the <tt class="docutils literal"><span class="pre">configure</span></tt> script to
+<p>The following environment variables are used by the <code class="docutils literal"><span class="pre">configure</span></code> script to
 configure the build system:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -765,48 +765,48 @@ configure the build system:</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>CC</td>
-<td>Tells <tt class="docutils literal"><span class="pre">configure</span></tt> which C compiler to use.  By default,
-<tt class="docutils literal"><span class="pre">configure</span></tt> will check <tt class="docutils literal"><span class="pre">PATH</span></tt> for <tt class="docutils literal"><span class="pre">clang</span></tt> and GCC C
+<td>Tells <code class="docutils literal"><span class="pre">configure</span></code> which C compiler to use.  By default,
+<code class="docutils literal"><span class="pre">configure</span></code> will check <code class="docutils literal"><span class="pre">PATH</span></code> for <code class="docutils literal"><span class="pre">clang</span></code> and GCC C
 compilers (in this order).  Use this variable to override
-<tt class="docutils literal"><span class="pre">configure</span></tt>&#8216;s  default behavior.</td>
+<code class="docutils literal"><span class="pre">configure</span></code>&#8216;s  default behavior.</td>
 </tr>
 <tr class="row-odd"><td>CXX</td>
-<td>Tells <tt class="docutils literal"><span class="pre">configure</span></tt> which C++ compiler to use.  By
-default, <tt class="docutils literal"><span class="pre">configure</span></tt> will check <tt class="docutils literal"><span class="pre">PATH</span></tt> for
-<tt class="docutils literal"><span class="pre">clang++</span></tt> and GCC C++ compilers (in this order).  Use
-this variable to override  <tt class="docutils literal"><span class="pre">configure</span></tt>&#8216;s default
+<td>Tells <code class="docutils literal"><span class="pre">configure</span></code> which C++ compiler to use.  By
+default, <code class="docutils literal"><span class="pre">configure</span></code> will check <code class="docutils literal"><span class="pre">PATH</span></code> for
+<code class="docutils literal"><span class="pre">clang++</span></code> and GCC C++ compilers (in this order).  Use
+this variable to override  <code class="docutils literal"><span class="pre">configure</span></code>&#8216;s default
 behavior.</td>
 </tr>
 </tbody>
 </table>
 <p>The following options can be used to set or enable LLVM specific options:</p>
-<p><tt class="docutils literal"><span class="pre">--enable-optimized</span></tt></p>
+<p><code class="docutils literal"><span class="pre">--enable-optimized</span></code></p>
 <blockquote>
 <div>Enables optimized compilation (debugging symbols are removed and GCC
 optimization flags are enabled). Note that this is the default setting if you
 are using the LLVM distribution. The default behavior of a Subversion
 checkout is to use an unoptimized build (also known as a debug build).</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">--enable-debug-runtime</span></tt></p>
+<p><code class="docutils literal"><span class="pre">--enable-debug-runtime</span></code></p>
 <blockquote>
 <div>Enables debug symbols in the runtime libraries. The default is to strip debug
 symbols from the runtime libraries.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">--enable-jit</span></tt></p>
+<p><code class="docutils literal"><span class="pre">--enable-jit</span></code></p>
 <blockquote>
 <div>Compile the Just In Time (JIT) compiler functionality.  This is not available
 on all platforms.  The default is dependent on platform, so it is best to
 explicitly enable it if you want it.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">--enable-targets=target-option</span></tt></p>
+<p><code class="docutils literal"><span class="pre">--enable-targets=target-option</span></code></p>
 <blockquote>
 <div><p>Controls which targets will be built and linked into llc. The default value
-for <tt class="docutils literal"><span class="pre">target_options</span></tt> is &#8220;all&#8221; which builds and links all available targets.
+for <code class="docutils literal"><span class="pre">target_options</span></code> is &#8220;all&#8221; which builds and links all available targets.
 The &#8220;host&#8221; target is selected as the target of the build host. You can also
 specify a comma separated list of target names that you want available in llc.
 The target names use all lower case. The current set of targets is:</p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">aarch64,</span> <span class="pre">arm,</span> <span class="pre">arm64,</span> <span class="pre">cpp,</span> <span class="pre">hexagon,</span> <span class="pre">mips,</span> <span class="pre">mipsel,</span> <span class="pre">mips64,</span> <span class="pre">mips64el,</span> <span class="pre">msp430,</span>
-<span class="pre">powerpc,</span> <span class="pre">nvptx,</span> <span class="pre">r600,</span> <span class="pre">sparc,</span> <span class="pre">systemz,</span> <span class="pre">x86,</span> <span class="pre">x86_64,</span> <span class="pre">xcore</span></tt>.</div></blockquote>
+<div><code class="docutils literal"><span class="pre">aarch64,</span> <span class="pre">arm,</span> <span class="pre">arm64,</span> <span class="pre">cpp,</span> <span class="pre">hexagon,</span> <span class="pre">mips,</span> <span class="pre">mipsel,</span> <span class="pre">mips64,</span> <span class="pre">mips64el,</span> <span class="pre">msp430,</span>
+<span class="pre">powerpc,</span> <span class="pre">nvptx,</span> <span class="pre">r600,</span> <span class="pre">sparc,</span> <span class="pre">systemz,</span> <span class="pre">x86,</span> <span class="pre">x86_64,</span> <span class="pre">xcore</span></code>.</div></blockquote>
 </div></blockquote>
-<p><tt class="docutils literal"><span class="pre">--enable-doxygen</span></tt></p>
+<p><code class="docutils literal"><span class="pre">--enable-doxygen</span></code></p>
 <blockquote>
 <div>Look for the doxygen program and enable construction of doxygen based
 documentation from the source code. This is disabled by default because
@@ -819,7 +819,7 @@ megabytes of output.</div></blockquote>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Run the <tt class="docutils literal"><span class="pre">configure</span></tt> script located in the LLVM source tree:</p>
+<li><p class="first">Run the <code class="docutils literal"><span class="pre">configure</span></code> script located in the LLVM source tree:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> SRC_ROOT/configure --prefix<span class="o">=</span>/install/path <span class="o">[</span>other options<span class="o">]</span>
 </pre></div>
 </div>
@@ -833,14 +833,14 @@ builds:</p>
 <p>Debug Builds</p>
 <blockquote>
 <div>These builds are the default when one is using a Subversion checkout and
-types <tt class="docutils literal"><span class="pre">gmake</span></tt> (unless the <tt class="docutils literal"><span class="pre">--enable-optimized</span></tt> option was used during
+types <code class="docutils literal"><span class="pre">gmake</span></code> (unless the <code class="docutils literal"><span class="pre">--enable-optimized</span></code> option was used during
 configuration).  The build system will compile the tools and libraries with
 debugging information.  To get a Debug Build using the LLVM distribution the
-<tt class="docutils literal"><span class="pre">--disable-optimized</span></tt> option must be passed to <tt class="docutils literal"><span class="pre">configure</span></tt>.</div></blockquote>
+<code class="docutils literal"><span class="pre">--disable-optimized</span></code> option must be passed to <code class="docutils literal"><span class="pre">configure</span></code>.</div></blockquote>
 <p>Release (Optimized) Builds</p>
 <blockquote>
-<div>These builds are enabled with the <tt class="docutils literal"><span class="pre">--enable-optimized</span></tt> option to
-<tt class="docutils literal"><span class="pre">configure</span></tt> or by specifying <tt class="docutils literal"><span class="pre">ENABLE_OPTIMIZED=1</span></tt> on the <tt class="docutils literal"><span class="pre">gmake</span></tt> command
+<div>These builds are enabled with the <code class="docutils literal"><span class="pre">--enable-optimized</span></code> option to
+<code class="docutils literal"><span class="pre">configure</span></code> or by specifying <code class="docutils literal"><span class="pre">ENABLE_OPTIMIZED=1</span></code> on the <code class="docutils literal"><span class="pre">gmake</span></code> command
 line.  For these builds, the build system will compile the tools and libraries
 with GCC optimizations enabled and strip debugging information from the
 libraries and executables it generates.  Note that Release Builds are default
@@ -848,8 +848,8 @@ when using an LLVM distribution.</div></blockquote>
 <p>Profile Builds</p>
 <blockquote>
 <div>These builds are for use with profiling.  They compile profiling information
-into the code for use with programs like <tt class="docutils literal"><span class="pre">gprof</span></tt>.  Profile builds must be
-started by specifying <tt class="docutils literal"><span class="pre">ENABLE_PROFILING=1</span></tt> on the <tt class="docutils literal"><span class="pre">gmake</span></tt> command line.</div></blockquote>
+into the code for use with programs like <code class="docutils literal"><span class="pre">gprof</span></code>.  Profile builds must be
+started by specifying <code class="docutils literal"><span class="pre">ENABLE_PROFILING=1</span></code> on the <code class="docutils literal"><span class="pre">gmake</span></code> command line.</div></blockquote>
 <p>Once you have LLVM configured, you can build it by entering the <em>OBJ_ROOT</em>
 directory and issuing the following command:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> gmake
@@ -865,52 +865,52 @@ command:</p>
 </div>
 <p>There are several special targets which are useful when working with the LLVM
 source code:</p>
-<p><tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">clean</span></tt></p>
+<p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">clean</span></code></p>
 <blockquote>
 <div>Removes all files generated by the build.  This includes object files,
 generated C/C++ files, libraries, and executables.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">dist-clean</span></tt></p>
+<p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">dist-clean</span></code></p>
 <blockquote>
-<div>Removes everything that <tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">clean</span></tt> does, but also removes files generated
-by <tt class="docutils literal"><span class="pre">configure</span></tt>.  It attempts to return the source tree to the original state
+<div>Removes everything that <code class="docutils literal"><span class="pre">gmake</span> <span class="pre">clean</span></code> does, but also removes files generated
+by <code class="docutils literal"><span class="pre">configure</span></code>.  It attempts to return the source tree to the original state
 in which it was shipped.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">install</span></tt></p>
+<p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">install</span></code></p>
 <blockquote>
 <div>Installs LLVM header files, libraries, tools, and documentation in a hierarchy
-under <tt class="docutils literal"><span class="pre">$PREFIX</span></tt>, specified with <tt class="docutils literal"><span class="pre">./configure</span> <span class="pre">--prefix=[dir]</span></tt>, which
-defaults to <tt class="docutils literal"><span class="pre">/usr/local</span></tt>.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">-C</span> <span class="pre">runtime</span> <span class="pre">install-bytecode</span></tt></p>
+under <code class="docutils literal"><span class="pre">$PREFIX</span></code>, specified with <code class="docutils literal"><span class="pre">./configure</span> <span class="pre">--prefix=[dir]</span></code>, which
+defaults to <code class="docutils literal"><span class="pre">/usr/local</span></code>.</div></blockquote>
+<p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">-C</span> <span class="pre">runtime</span> <span class="pre">install-bytecode</span></code></p>
 <blockquote>
 <div>Assuming you built LLVM into $OBJDIR, when this command is run, it will
 install bitcode libraries into the GCC front end&#8217;s bitcode library directory.
 If you need to update your bitcode libraries, this is the target to use once
 you&#8217;ve built them.</div></blockquote>
 <p>Please see the <a class="reference external" href="MakefileGuide.html">Makefile Guide</a> for further details on
-these <tt class="docutils literal"><span class="pre">make</span></tt> targets and descriptions of other targets available.</p>
-<p>It is also possible to override default values from <tt class="docutils literal"><span class="pre">configure</span></tt> by declaring
+these <code class="docutils literal"><span class="pre">make</span></code> targets and descriptions of other targets available.</p>
+<p>It is also possible to override default values from <code class="docutils literal"><span class="pre">configure</span></code> by declaring
 variables on the command line.  The following are some examples:</p>
-<p><tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">ENABLE_OPTIMIZED=1</span></tt></p>
+<p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">ENABLE_OPTIMIZED=1</span></code></p>
 <blockquote>
 <div>Perform a Release (Optimized) build.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">ENABLE_OPTIMIZED=1</span> <span class="pre">DISABLE_ASSERTIONS=1</span></tt></p>
+<p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">ENABLE_OPTIMIZED=1</span> <span class="pre">DISABLE_ASSERTIONS=1</span></code></p>
 <blockquote>
 <div>Perform a Release (Optimized) build without assertions enabled.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">ENABLE_OPTIMIZED=0</span></tt></p>
+<p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">ENABLE_OPTIMIZED=0</span></code></p>
 <blockquote>
 <div>Perform a Debug build.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">ENABLE_PROFILING=1</span></tt></p>
+<p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">ENABLE_PROFILING=1</span></code></p>
 <blockquote>
 <div>Perform a Profiling build.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">VERBOSE=1</span></tt></p>
+<p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">VERBOSE=1</span></code></p>
 <blockquote>
-<div>Print what <tt class="docutils literal"><span class="pre">gmake</span></tt> is doing on standard output.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">gmake</span> <span class="pre">TOOL_VERBOSE=1</span></tt></p>
+<div>Print what <code class="docutils literal"><span class="pre">gmake</span></code> is doing on standard output.</div></blockquote>
+<p><code class="docutils literal"><span class="pre">gmake</span> <span class="pre">TOOL_VERBOSE=1</span></code></p>
 <blockquote>
 <div>Ask each tool invoked by the makefiles to print out what it is doing on
-the standard output. This also implies <tt class="docutils literal"><span class="pre">VERBOSE=1</span></tt>.</div></blockquote>
-<p>Every directory in the LLVM object tree includes a <tt class="docutils literal"><span class="pre">Makefile</span></tt> to build it and
+the standard output. This also implies <code class="docutils literal"><span class="pre">VERBOSE=1</span></code>.</div></blockquote>
+<p>Every directory in the LLVM object tree includes a <code class="docutils literal"><span class="pre">Makefile</span></code> to build it and
 any subdirectories that it contains.  Entering any directory inside the LLVM
-object tree and typing <tt class="docutils literal"><span class="pre">gmake</span></tt> should rebuild anything in or below that
+object tree and typing <code class="docutils literal"><span class="pre">gmake</span></code> should rebuild anything in or below that
 directory that is out of date.</p>
 <p>This does not apply to building the documentation.
 LLVM&#8217;s (non-Doxygen) documentation is produced with the
@@ -919,7 +919,7 @@ There are some HTML documents that have not yet been converted to the new
 system (which uses the easy-to-read and easy-to-write
 <a class="reference external" href="http://sphinx-doc.org/rest.html">reStructuredText</a> plaintext markup
 language).
-The generated documentation is built in the <tt class="docutils literal"><span class="pre">SRC_ROOT/docs</span></tt> directory using
+The generated documentation is built in the <code class="docutils literal"><span class="pre">SRC_ROOT/docs</span></code> directory using
 a special makefile.
 For instructions on how to install Sphinx, see
 <a class="reference external" href="http://lld.llvm.org/sphinx_intro.html">Sphinx Introduction for LLVM Developers</a>.
@@ -929,11 +929,11 @@ HTML documentation by doing the following:</p>
 <span class="gp">$</span> make -f Makefile.sphinx
 </pre></div>
 </div>
-<p>This creates a <tt class="docutils literal"><span class="pre">_build/html</span></tt> sub-directory with all of the HTML files, not
+<p>This creates a <code class="docutils literal"><span class="pre">_build/html</span></code> sub-directory with all of the HTML files, not
 just the generated ones.
-This directory corresponds to <tt class="docutils literal"><span class="pre">llvm.org/docs</span></tt>.
-For example, <tt class="docutils literal"><span class="pre">_build/html/SphinxQuickstartTemplate.html</span></tt> corresponds to
-<tt class="docutils literal"><span class="pre">llvm.org/docs/SphinxQuickstartTemplate.html</span></tt>.
+This directory corresponds to <code class="docutils literal"><span class="pre">llvm.org/docs</span></code>.
+For example, <code class="docutils literal"><span class="pre">_build/html/SphinxQuickstartTemplate.html</span></code> corresponds to
+<code class="docutils literal"><span class="pre">llvm.org/docs/SphinxQuickstartTemplate.html</span></code>.
 The <a class="reference internal" href="SphinxQuickstartTemplate.html"><em>Sphinx Quickstart Template</em></a> is useful when creating a new document.</p>
 </div>
 <div class="section" id="cross-compiling-llvm">
@@ -941,7 +941,7 @@ The <a class="reference internal" href="SphinxQuickstartTemplate.html"><em>Sphin
 <p>It is possible to cross-compile LLVM itself. That is, you can create LLVM
 executables and libraries to be hosted on a platform different from the platform
 where they are built (a Canadian Cross build). To configure a cross-compile,
-supply the configure script with <tt class="docutils literal"><span class="pre">--build</span></tt> and <tt class="docutils literal"><span class="pre">--host</span></tt> options that are
+supply the configure script with <code class="docutils literal"><span class="pre">--build</span></code> and <code class="docutils literal"><span class="pre">--host</span></code> options that are
 different. The values of these options must be legal target triples that your
 GCC compiler supports.</p>
 <p>The result of such a build is executables that are not runnable on on the build
@@ -961,7 +961,7 @@ platforms or configurations using the same source tree.</p>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Run the <tt class="docutils literal"><span class="pre">configure</span></tt> script found in the LLVM source directory:</p>
+<li><p class="first">Run the <code class="docutils literal"><span class="pre">configure</span></code> script found in the LLVM source directory:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> SRC_ROOT/configure
 </pre></div>
 </div>
@@ -973,28 +973,28 @@ the build type:</p>
 <blockquote>
 <div><p>Tools</p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">OBJ_ROOT/Debug+Asserts/bin</span></tt></div></blockquote>
+<div><code class="docutils literal"><span class="pre">OBJ_ROOT/Debug+Asserts/bin</span></code></div></blockquote>
 <p>Libraries</p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">OBJ_ROOT/Debug+Asserts/lib</span></tt></div></blockquote>
+<div><code class="docutils literal"><span class="pre">OBJ_ROOT/Debug+Asserts/lib</span></code></div></blockquote>
 </div></blockquote>
 <p>Release Builds</p>
 <blockquote>
 <div><p>Tools</p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">OBJ_ROOT/Release/bin</span></tt></div></blockquote>
+<div><code class="docutils literal"><span class="pre">OBJ_ROOT/Release/bin</span></code></div></blockquote>
 <p>Libraries</p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">OBJ_ROOT/Release/lib</span></tt></div></blockquote>
+<div><code class="docutils literal"><span class="pre">OBJ_ROOT/Release/lib</span></code></div></blockquote>
 </div></blockquote>
 <p>Profile Builds</p>
 <blockquote>
 <div><p>Tools</p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">OBJ_ROOT/Profile/bin</span></tt></div></blockquote>
+<div><code class="docutils literal"><span class="pre">OBJ_ROOT/Profile/bin</span></code></div></blockquote>
 <p>Libraries</p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">OBJ_ROOT/Profile/lib</span></tt></div></blockquote>
+<div><code class="docutils literal"><span class="pre">OBJ_ROOT/Profile/lib</span></code></div></blockquote>
 </div></blockquote>
 </div>
 <div class="section" id="optional-configuration-items">
@@ -1022,92 +1022,92 @@ use this command instead of the &#8216;echo&#8217; command above:</p>
 <a class="reference external" href="http://llvm.org/doxygen/">http://llvm.org/doxygen/</a>.  The following is a brief introduction to code
 layout:</p>
 <div class="section" id="llvm-examples">
-<h3><a class="toc-backref" href="#id26"><tt class="docutils literal"><span class="pre">llvm/examples</span></tt></a><a class="headerlink" href="#llvm-examples" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id26"><code class="docutils literal"><span class="pre">llvm/examples</span></code></a><a class="headerlink" href="#llvm-examples" title="Permalink to this headline">¶</a></h3>
 <p>This directory contains some simple examples of how to use the LLVM IR and JIT.</p>
 </div>
 <div class="section" id="llvm-include">
-<h3><a class="toc-backref" href="#id27"><tt class="docutils literal"><span class="pre">llvm/include</span></tt></a><a class="headerlink" href="#llvm-include" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id27"><code class="docutils literal"><span class="pre">llvm/include</span></code></a><a class="headerlink" href="#llvm-include" title="Permalink to this headline">¶</a></h3>
 <p>This directory contains public header files exported from the LLVM library. The
 three main subdirectories of this directory are:</p>
-<p><tt class="docutils literal"><span class="pre">llvm/include/llvm</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/include/llvm</span></code></p>
 <blockquote>
 <div>This directory contains all of the LLVM specific header files.  This directory
-also has subdirectories for different portions of LLVM: <tt class="docutils literal"><span class="pre">Analysis</span></tt>,
-<tt class="docutils literal"><span class="pre">CodeGen</span></tt>, <tt class="docutils literal"><span class="pre">Target</span></tt>, <tt class="docutils literal"><span class="pre">Transforms</span></tt>, etc...</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/include/llvm/Support</span></tt></p>
+also has subdirectories for different portions of LLVM: <code class="docutils literal"><span class="pre">Analysis</span></code>,
+<code class="docutils literal"><span class="pre">CodeGen</span></code>, <code class="docutils literal"><span class="pre">Target</span></code>, <code class="docutils literal"><span class="pre">Transforms</span></code>, etc...</div></blockquote>
+<p><code class="docutils literal"><span class="pre">llvm/include/llvm/Support</span></code></p>
 <blockquote>
 <div>This directory contains generic support libraries that are provided with LLVM
 but not necessarily specific to LLVM. For example, some C++ STL utilities and
 a Command Line option processing library store their header files here.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/include/llvm/Config</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/include/llvm/Config</span></code></p>
 <blockquote>
-<div>This directory contains header files configured by the <tt class="docutils literal"><span class="pre">configure</span></tt> script.
+<div>This directory contains header files configured by the <code class="docutils literal"><span class="pre">configure</span></code> script.
 They wrap &#8220;standard&#8221; UNIX and C header files.  Source code can include these
 header files which automatically take care of the conditional #includes that
-the <tt class="docutils literal"><span class="pre">configure</span></tt> script generates.</div></blockquote>
+the <code class="docutils literal"><span class="pre">configure</span></code> script generates.</div></blockquote>
 </div>
 <div class="section" id="llvm-lib">
-<h3><a class="toc-backref" href="#id28"><tt class="docutils literal"><span class="pre">llvm/lib</span></tt></a><a class="headerlink" href="#llvm-lib" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id28"><code class="docutils literal"><span class="pre">llvm/lib</span></code></a><a class="headerlink" href="#llvm-lib" title="Permalink to this headline">¶</a></h3>
 <p>This directory contains most of the source files of the LLVM system. In LLVM,
 almost all code exists in libraries, making it very easy to share code among the
 different <a class="reference internal" href="#tools">tools</a>.</p>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/IR/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/IR/</span></code></p>
 <blockquote>
 <div>This directory holds the core LLVM source files that implement core classes
 like Instruction and BasicBlock.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/AsmParser/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/AsmParser/</span></code></p>
 <blockquote>
 <div>This directory holds the source code for the LLVM assembly language parser
 library.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/Bitcode/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/Bitcode/</span></code></p>
 <blockquote>
 <div>This directory holds code for reading and write LLVM bitcode.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/Analysis/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/Analysis/</span></code></p>
 <blockquote>
 <div>This directory contains a variety of different program analyses, such as
 Dominator Information, Call Graphs, Induction Variables, Interval
 Identification, Natural Loop Identification, etc.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/Transforms/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/Transforms/</span></code></p>
 <blockquote>
 <div>This directory contains the source code for the LLVM to LLVM program
 transformations, such as Aggressive Dead Code Elimination, Sparse Conditional
 Constant Propagation, Inlining, Loop Invariant Code Motion, Dead Global
 Elimination, and many others.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/Target/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/Target/</span></code></p>
 <blockquote>
 <div>This directory contains files that describe various target architectures for
-code generation.  For example, the <tt class="docutils literal"><span class="pre">llvm/lib/Target/X86</span></tt> directory holds the
-X86 machine description while <tt class="docutils literal"><span class="pre">llvm/lib/Target/ARM</span></tt> implements the ARM
+code generation.  For example, the <code class="docutils literal"><span class="pre">llvm/lib/Target/X86</span></code> directory holds the
+X86 machine description while <code class="docutils literal"><span class="pre">llvm/lib/Target/ARM</span></code> implements the ARM
 backend.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/CodeGen/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/CodeGen/</span></code></p>
 <blockquote>
 <div>This directory contains the major parts of the code generator: Instruction
 Selector, Instruction Scheduling, and Register Allocation.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/MC/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/MC/</span></code></p>
 <blockquote>
 <div>(FIXME: T.B.D.)</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/Debugger/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/Debugger/</span></code></p>
 <blockquote>
 <div>This directory contains the source level debugger library that makes it
 possible to instrument LLVM programs so that a debugger could identify source
 code locations at which the program is executing.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/ExecutionEngine/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/ExecutionEngine/</span></code></p>
 <blockquote>
 <div>This directory contains libraries for executing LLVM bitcode directly at
 runtime in both interpreted and JIT compiled fashions.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm/lib/Support/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm/lib/Support/</span></code></p>
 <blockquote>
 <div>This directory contains the source code that corresponds to the header files
-located in <tt class="docutils literal"><span class="pre">llvm/include/ADT/</span></tt> and <tt class="docutils literal"><span class="pre">llvm/include/Support/</span></tt>.</div></blockquote>
+located in <code class="docutils literal"><span class="pre">llvm/include/ADT/</span></code> and <code class="docutils literal"><span class="pre">llvm/include/Support/</span></code>.</div></blockquote>
 </div>
 <div class="section" id="llvm-projects">
-<h3><a class="toc-backref" href="#id29"><tt class="docutils literal"><span class="pre">llvm/projects</span></tt></a><a class="headerlink" href="#llvm-projects" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id29"><code class="docutils literal"><span class="pre">llvm/projects</span></code></a><a class="headerlink" href="#llvm-projects" title="Permalink to this headline">¶</a></h3>
 <p>This directory contains projects that are not strictly part of LLVM but are
 shipped with LLVM. This is also the directory where you should create your own
 LLVM-based projects.</p>
 </div>
 <div class="section" id="llvm-runtime">
-<h3><a class="toc-backref" href="#id30"><tt class="docutils literal"><span class="pre">llvm/runtime</span></tt></a><a class="headerlink" href="#llvm-runtime" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id30"><code class="docutils literal"><span class="pre">llvm/runtime</span></code></a><a class="headerlink" href="#llvm-runtime" title="Permalink to this headline">¶</a></h3>
 <p>This directory contains libraries which are compiled into LLVM bitcode and used
 when linking programs with the Clang front end.  Most of these libraries are
 skeleton versions of real libraries; for example, libc is a stripped down
@@ -1116,119 +1116,119 @@ version of glibc.</p>
 to compile.</p>
 </div>
 <div class="section" id="llvm-test">
-<h3><a class="toc-backref" href="#id31"><tt class="docutils literal"><span class="pre">llvm/test</span></tt></a><a class="headerlink" href="#llvm-test" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id31"><code class="docutils literal"><span class="pre">llvm/test</span></code></a><a class="headerlink" href="#llvm-test" title="Permalink to this headline">¶</a></h3>
 <p>This directory contains feature and regression tests and other basic sanity
 checks on the LLVM infrastructure. These are intended to run quickly and cover a
 lot of territory without being exhaustive.</p>
 </div>
 <div class="section" id="test-suite">
-<h3><a class="toc-backref" href="#id32"><tt class="docutils literal"><span class="pre">test-suite</span></tt></a><a class="headerlink" href="#test-suite" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id32"><code class="docutils literal"><span class="pre">test-suite</span></code></a><a class="headerlink" href="#test-suite" title="Permalink to this headline">¶</a></h3>
 <p>This is not a directory in the normal llvm module; it is a separate Subversion
-module that must be checked out (usually to <tt class="docutils literal"><span class="pre">projects/test-suite</span></tt>).  This
+module that must be checked out (usually to <code class="docutils literal"><span class="pre">projects/test-suite</span></code>).  This
 module contains a comprehensive correctness, performance, and benchmarking test
 suite for LLVM. It is a separate Subversion module because not every LLVM user
 is interested in downloading or building such a comprehensive test suite. For
 further details on this test suite, please see the <a class="reference internal" href="TestingGuide.html"><em>Testing Guide</em></a> document.</p>
 </div>
 <div class="section" id="llvm-tools">
-<span id="tools"></span><h3><a class="toc-backref" href="#id33"><tt class="docutils literal"><span class="pre">llvm/tools</span></tt></a><a class="headerlink" href="#llvm-tools" title="Permalink to this headline">¶</a></h3>
+<span id="tools"></span><h3><a class="toc-backref" href="#id33"><code class="docutils literal"><span class="pre">llvm/tools</span></code></a><a class="headerlink" href="#llvm-tools" title="Permalink to this headline">¶</a></h3>
 <p>The <strong>tools</strong> directory contains the executables built out of the libraries
 above, which form the main part of the user interface.  You can always get help
-for a tool by typing <tt class="docutils literal"><span class="pre">tool_name</span> <span class="pre">-help</span></tt>.  The following is a brief introduction
+for a tool by typing <code class="docutils literal"><span class="pre">tool_name</span> <span class="pre">-help</span></code>.  The following is a brief introduction
 to the most important tools.  More detailed information is in
 the <a class="reference external" href="CommandGuide/index.html">Command Guide</a>.</p>
-<p><tt class="docutils literal"><span class="pre">bugpoint</span></tt></p>
+<p><code class="docutils literal"><span class="pre">bugpoint</span></code></p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">bugpoint</span></tt> is used to debug optimization passes or code generation backends
+<div><code class="docutils literal"><span class="pre">bugpoint</span></code> is used to debug optimization passes or code generation backends
 by narrowing down the given test case to the minimum number of passes and/or
 instructions that still cause a problem, whether it is a crash or
 miscompilation. See <a class="reference external" href="HowToSubmitABug.html">HowToSubmitABug.html</a> for more information on using
-<tt class="docutils literal"><span class="pre">bugpoint</span></tt>.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm-ar</span></tt></p>
+<code class="docutils literal"><span class="pre">bugpoint</span></code>.</div></blockquote>
+<p><code class="docutils literal"><span class="pre">llvm-ar</span></code></p>
 <blockquote>
 <div>The archiver produces an archive containing the given LLVM bitcode files,
 optionally with an index for faster lookup.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm-as</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm-as</span></code></p>
 <blockquote>
 <div>The assembler transforms the human readable LLVM assembly to LLVM bitcode.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm-dis</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm-dis</span></code></p>
 <blockquote>
 <div>The disassembler transforms the LLVM bitcode to human readable LLVM assembly.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvm-link</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvm-link</span></code></p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">llvm-link</span></tt>, not surprisingly, links multiple LLVM modules into a single
+<div><code class="docutils literal"><span class="pre">llvm-link</span></code>, not surprisingly, links multiple LLVM modules into a single
 program.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">lli</span></tt></p>
+<p><code class="docutils literal"><span class="pre">lli</span></code></p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">lli</span></tt> is the LLVM interpreter, which can directly execute LLVM bitcode
+<div><code class="docutils literal"><span class="pre">lli</span></code> is the LLVM interpreter, which can directly execute LLVM bitcode
 (although very slowly...). For architectures that support it (currently x86,
-Sparc, and PowerPC), by default, <tt class="docutils literal"><span class="pre">lli</span></tt> will function as a Just-In-Time
+Sparc, and PowerPC), by default, <code class="docutils literal"><span class="pre">lli</span></code> will function as a Just-In-Time
 compiler (if the functionality was compiled in), and will execute the code
 <em>much</em> faster than the interpreter.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llc</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llc</span></code></p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">llc</span></tt> is the LLVM backend compiler, which translates LLVM bitcode to a
-native code assembly file or to C code (with the <tt class="docutils literal"><span class="pre">-march=c</span></tt> option).</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">opt</span></tt></p>
+<div><code class="docutils literal"><span class="pre">llc</span></code> is the LLVM backend compiler, which translates LLVM bitcode to a
+native code assembly file or to C code (with the <code class="docutils literal"><span class="pre">-march=c</span></code> option).</div></blockquote>
+<p><code class="docutils literal"><span class="pre">opt</span></code></p>
 <blockquote>
-<div><p><tt class="docutils literal"><span class="pre">opt</span></tt> reads LLVM bitcode, applies a series of LLVM to LLVM transformations
+<div><p><code class="docutils literal"><span class="pre">opt</span></code> reads LLVM bitcode, applies a series of LLVM to LLVM transformations
 (which are specified on the command line), and then outputs the resultant
-bitcode.  The &#8216;<tt class="docutils literal"><span class="pre">opt</span> <span class="pre">-help</span></tt>&#8216; command is a good way to get a list of the
+bitcode.  The &#8216;<code class="docutils literal"><span class="pre">opt</span> <span class="pre">-help</span></code>&#8216; command is a good way to get a list of the
 program transformations available in LLVM.</p>
-<p><tt class="docutils literal"><span class="pre">opt</span></tt> can also be used to run a specific analysis on an input LLVM bitcode
+<p><code class="docutils literal"><span class="pre">opt</span></code> can also be used to run a specific analysis on an input LLVM bitcode
 file and print out the results.  It is primarily useful for debugging
 analyses, or familiarizing yourself with what an analysis does.</p>
 </div></blockquote>
 </div>
 <div class="section" id="llvm-utils">
-<h3><a class="toc-backref" href="#id34"><tt class="docutils literal"><span class="pre">llvm/utils</span></tt></a><a class="headerlink" href="#llvm-utils" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id34"><code class="docutils literal"><span class="pre">llvm/utils</span></code></a><a class="headerlink" href="#llvm-utils" title="Permalink to this headline">¶</a></h3>
 <p>This directory contains utilities for working with LLVM source code, and some of
 the utilities are actually required as part of the build process because they
 are code generators for parts of LLVM infrastructure.</p>
-<p><tt class="docutils literal"><span class="pre">codegen-diff</span></tt></p>
+<p><code class="docutils literal"><span class="pre">codegen-diff</span></code></p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">codegen-diff</span></tt> is a script that finds differences between code that LLC
+<div><code class="docutils literal"><span class="pre">codegen-diff</span></code> is a script that finds differences between code that LLC
 generates and code that LLI generates. This is a useful tool if you are
 debugging one of them, assuming that the other generates correct output. For
-the full user manual, run <tt class="docutils literal"><span class="pre">`perldoc</span> <span class="pre">codegen-diff'</span></tt>.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">emacs/</span></tt></p>
+the full user manual, run <code class="docutils literal"><span class="pre">`perldoc</span> <span class="pre">codegen-diff'</span></code>.</div></blockquote>
+<p><code class="docutils literal"><span class="pre">emacs/</span></code></p>
 <blockquote>
-<div>The <tt class="docutils literal"><span class="pre">emacs</span></tt> directory contains syntax-highlighting files which will work
+<div>The <code class="docutils literal"><span class="pre">emacs</span></code> directory contains syntax-highlighting files which will work
 with Emacs and XEmacs editors, providing syntax highlighting support for LLVM
 assembly files and TableGen description files. For information on how to use
-the syntax files, consult the <tt class="docutils literal"><span class="pre">README</span></tt> file in that directory.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">getsrcs.sh</span></tt></p>
+the syntax files, consult the <code class="docutils literal"><span class="pre">README</span></code> file in that directory.</div></blockquote>
+<p><code class="docutils literal"><span class="pre">getsrcs.sh</span></code></p>
 <blockquote>
-<div>The <tt class="docutils literal"><span class="pre">getsrcs.sh</span></tt> script finds and outputs all non-generated source files,
+<div>The <code class="docutils literal"><span class="pre">getsrcs.sh</span></code> script finds and outputs all non-generated source files,
 which is useful if one wishes to do a lot of development across directories
 and does not want to individually find each file. One way to use it is to run,
-for example: <tt class="docutils literal"><span class="pre">xemacs</span> <span class="pre">`utils/getsources.sh`</span></tt> from the top of your LLVM source
+for example: <code class="docutils literal"><span class="pre">xemacs</span> <span class="pre">`utils/getsources.sh`</span></code> from the top of your LLVM source
 tree.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">llvmgrep</span></tt></p>
+<p><code class="docutils literal"><span class="pre">llvmgrep</span></code></p>
 <blockquote>
-<div>This little tool performs an <tt class="docutils literal"><span class="pre">egrep</span> <span class="pre">-H</span> <span class="pre">-n</span></tt> on each source file in LLVM and
-passes to it a regular expression provided on <tt class="docutils literal"><span class="pre">llvmgrep</span></tt>&#8216;s command
+<div>This little tool performs an <code class="docutils literal"><span class="pre">egrep</span> <span class="pre">-H</span> <span class="pre">-n</span></code> on each source file in LLVM and
+passes to it a regular expression provided on <code class="docutils literal"><span class="pre">llvmgrep</span></code>&#8216;s command
 line. This is a very efficient way of searching the source base for a
 particular regular expression.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">makellvm</span></tt></p>
+<p><code class="docutils literal"><span class="pre">makellvm</span></code></p>
 <blockquote>
-<div>The <tt class="docutils literal"><span class="pre">makellvm</span></tt> script compiles all files in the current directory and then
+<div>The <code class="docutils literal"><span class="pre">makellvm</span></code> script compiles all files in the current directory and then
 compiles and links the tool that is the first argument. For example, assuming
-you are in the directory <tt class="docutils literal"><span class="pre">llvm/lib/Target/Sparc</span></tt>, if <tt class="docutils literal"><span class="pre">makellvm</span></tt> is in your
-path, simply running <tt class="docutils literal"><span class="pre">makellvm</span> <span class="pre">llc</span></tt> will make a build of the current
-directory, switch to directory <tt class="docutils literal"><span class="pre">llvm/tools/llc</span></tt> and build it, causing a
+you are in the directory <code class="docutils literal"><span class="pre">llvm/lib/Target/Sparc</span></code>, if <code class="docutils literal"><span class="pre">makellvm</span></code> is in your
+path, simply running <code class="docutils literal"><span class="pre">makellvm</span> <span class="pre">llc</span></code> will make a build of the current
+directory, switch to directory <code class="docutils literal"><span class="pre">llvm/tools/llc</span></code> and build it, causing a
 re-linking of LLC.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">TableGen/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">TableGen/</span></code></p>
 <blockquote>
-<div>The <tt class="docutils literal"><span class="pre">TableGen</span></tt> directory contains the tool used to generate register
+<div>The <code class="docutils literal"><span class="pre">TableGen</span></code> directory contains the tool used to generate register
 descriptions, instruction set descriptions, and even assemblers from common
 TableGen description files.</div></blockquote>
-<p><tt class="docutils literal"><span class="pre">vim/</span></tt></p>
+<p><code class="docutils literal"><span class="pre">vim/</span></code></p>
 <blockquote>
-<div>The <tt class="docutils literal"><span class="pre">vim</span></tt> directory contains syntax-highlighting files which will work with
+<div>The <code class="docutils literal"><span class="pre">vim</span></code> directory contains syntax-highlighting files which will work with
 the VIM editor, providing syntax highlighting support for LLVM assembly files
 and TableGen description files. For information on how to use the syntax
-files, consult the <tt class="docutils literal"><span class="pre">README</span></tt> file in that directory.</div></blockquote>
+files, consult the <code class="docutils literal"><span class="pre">README</span></code> file in that directory.</div></blockquote>
 </div>
 </div>
 <div class="section" id="an-example-using-the-llvm-tool-chain">
@@ -1262,7 +1262,7 @@ work as usual (producing a native .s or .o file, respectively).</p>
 </pre></div>
 </div>
 <p>The -emit-llvm option can be used with the -S or -c options to emit an LLVM
-<tt class="docutils literal"><span class="pre">.ll</span></tt> or <tt class="docutils literal"><span class="pre">.bc</span></tt> file (respectively) for the code.  This allows you to use
+<code class="docutils literal"><span class="pre">.ll</span></code> or <code class="docutils literal"><span class="pre">.bc</span></code> file (respectively) for the code.  This allows you to use
 the <a class="reference external" href="CommandGuide/index.html">standard LLVM tools</a> on the bitcode file.</p>
 </li>
 <li><p class="first">Run the program in both forms. To run the program, use:</p>
@@ -1275,7 +1275,7 @@ the <a class="reference external" href="CommandGuide/index.html">standard LLVM t
 </div>
 <p>The second examples shows how to invoke the LLVM JIT, <a class="reference internal" href="CommandGuide/lli.html"><em>lli</em></a>.</p>
 </li>
-<li><p class="first">Use the <tt class="docutils literal"><span class="pre">llvm-dis</span></tt> utility to take a look at the LLVM assembly code:</p>
+<li><p class="first">Use the <code class="docutils literal"><span class="pre">llvm-dis</span></code> utility to take a look at the LLVM assembly code:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">%</span> llvm-dis &lt; hello.bc <span class="p">|</span> less
 </pre></div>
 </div>
@@ -1297,7 +1297,7 @@ the <a class="reference external" href="CommandGuide/index.html">standard LLVM t
 </pre></div>
 </div>
 <p>Note that using clang to compile directly to native code (i.e. when the
-<tt class="docutils literal"><span class="pre">-emit-llvm</span></tt> option is not present) does steps 6/7/8 for you.</p>
+<code class="docutils literal"><span class="pre">-emit-llvm</span></code> option is not present) does steps 6/7/8 for you.</p>
 </li>
 </ol>
 </div>
@@ -1327,7 +1327,7 @@ write something up!).  For more information about LLVM, check out:</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1344,10 +1344,10 @@ write something up!).  For more information about LLVM, check out:</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

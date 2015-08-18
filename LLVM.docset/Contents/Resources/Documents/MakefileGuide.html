@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-makefile-guide">
 <h1>LLVM Makefile Guide<a class="headerlink" href="#llvm-makefile-guide" title="Permalink to this headline">¶</a></h1>
@@ -72,10 +72,10 @@
 <li><a class="reference internal" href="#projects" id="id5">Projects</a></li>
 <li><a class="reference internal" href="#variable-values" id="id6">Variable Values</a></li>
 <li><a class="reference internal" href="#including-makefiles" id="id7">Including Makefiles</a><ul>
-<li><a class="reference internal" href="#makefile" id="id8"><tt class="docutils literal"><span class="pre">Makefile</span></tt></a></li>
-<li><a class="reference internal" href="#makefile-common" id="id9"><tt class="docutils literal"><span class="pre">Makefile.common</span></tt></a></li>
-<li><a class="reference internal" href="#makefile-config" id="id10"><tt class="docutils literal"><span class="pre">Makefile.config</span></tt></a></li>
-<li><a class="reference internal" href="#makefile-rules" id="id11"><tt class="docutils literal"><span class="pre">Makefile.rules</span></tt></a></li>
+<li><a class="reference internal" href="#makefile" id="id8"><code class="docutils literal"><span class="pre">Makefile</span></code></a></li>
+<li><a class="reference internal" href="#makefile-common" id="id9"><code class="docutils literal"><span class="pre">Makefile.common</span></code></a></li>
+<li><a class="reference internal" href="#makefile-config" id="id10"><code class="docutils literal"><span class="pre">Makefile.config</span></code></a></li>
+<li><a class="reference internal" href="#makefile-rules" id="id11"><code class="docutils literal"><span class="pre">Makefile.rules</span></code></a></li>
 <li><a class="reference internal" href="#comments" id="id12">Comments</a></li>
 </ul>
 </li>
@@ -93,22 +93,22 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#targets-supported" id="id18">Targets Supported</a><ul>
-<li><a class="reference internal" href="#all-default" id="id19"><tt class="docutils literal"><span class="pre">all</span></tt> (default)</a></li>
-<li><a class="reference internal" href="#all-local" id="id20"><tt class="docutils literal"><span class="pre">all-local</span></tt></a></li>
-<li><a class="reference internal" href="#check" id="id21"><tt class="docutils literal"><span class="pre">check</span></tt></a></li>
-<li><a class="reference internal" href="#check-local" id="id22"><tt class="docutils literal"><span class="pre">check-local</span></tt></a></li>
-<li><a class="reference internal" href="#clean" id="id23"><tt class="docutils literal"><span class="pre">clean</span></tt></a></li>
-<li><a class="reference internal" href="#clean-local" id="id24"><tt class="docutils literal"><span class="pre">clean-local</span></tt></a></li>
-<li><a class="reference internal" href="#dist" id="id25"><tt class="docutils literal"><span class="pre">dist</span></tt></a></li>
-<li><a class="reference internal" href="#dist-check" id="id26"><tt class="docutils literal"><span class="pre">dist-check</span></tt></a></li>
-<li><a class="reference internal" href="#dist-clean" id="id27"><tt class="docutils literal"><span class="pre">dist-clean</span></tt></a></li>
-<li><a class="reference internal" href="#install" id="id28"><tt class="docutils literal"><span class="pre">install</span></tt></a></li>
-<li><a class="reference internal" href="#preconditions" id="id29"><tt class="docutils literal"><span class="pre">preconditions</span></tt></a></li>
-<li><a class="reference internal" href="#printvars" id="id30"><tt class="docutils literal"><span class="pre">printvars</span></tt></a></li>
-<li><a class="reference internal" href="#reconfigure" id="id31"><tt class="docutils literal"><span class="pre">reconfigure</span></tt></a></li>
-<li><a class="reference internal" href="#spotless" id="id32"><tt class="docutils literal"><span class="pre">spotless</span></tt></a></li>
-<li><a class="reference internal" href="#tags" id="id33"><tt class="docutils literal"><span class="pre">tags</span></tt></a></li>
-<li><a class="reference internal" href="#uninstall" id="id34"><tt class="docutils literal"><span class="pre">uninstall</span></tt></a></li>
+<li><a class="reference internal" href="#all-default" id="id19"><code class="docutils literal"><span class="pre">all</span></code> (default)</a></li>
+<li><a class="reference internal" href="#all-local" id="id20"><code class="docutils literal"><span class="pre">all-local</span></code></a></li>
+<li><a class="reference internal" href="#check" id="id21"><code class="docutils literal"><span class="pre">check</span></code></a></li>
+<li><a class="reference internal" href="#check-local" id="id22"><code class="docutils literal"><span class="pre">check-local</span></code></a></li>
+<li><a class="reference internal" href="#clean" id="id23"><code class="docutils literal"><span class="pre">clean</span></code></a></li>
+<li><a class="reference internal" href="#clean-local" id="id24"><code class="docutils literal"><span class="pre">clean-local</span></code></a></li>
+<li><a class="reference internal" href="#dist" id="id25"><code class="docutils literal"><span class="pre">dist</span></code></a></li>
+<li><a class="reference internal" href="#dist-check" id="id26"><code class="docutils literal"><span class="pre">dist-check</span></code></a></li>
+<li><a class="reference internal" href="#dist-clean" id="id27"><code class="docutils literal"><span class="pre">dist-clean</span></code></a></li>
+<li><a class="reference internal" href="#install" id="id28"><code class="docutils literal"><span class="pre">install</span></code></a></li>
+<li><a class="reference internal" href="#preconditions" id="id29"><code class="docutils literal"><span class="pre">preconditions</span></code></a></li>
+<li><a class="reference internal" href="#printvars" id="id30"><code class="docutils literal"><span class="pre">printvars</span></code></a></li>
+<li><a class="reference internal" href="#reconfigure" id="id31"><code class="docutils literal"><span class="pre">reconfigure</span></code></a></li>
+<li><a class="reference internal" href="#spotless" id="id32"><code class="docutils literal"><span class="pre">spotless</span></code></a></li>
+<li><a class="reference internal" href="#tags" id="id33"><code class="docutils literal"><span class="pre">tags</span></code></a></li>
+<li><a class="reference internal" href="#uninstall" id="id34"><code class="docutils literal"><span class="pre">uninstall</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#variables" id="id35">Variables</a><ul>
@@ -125,12 +125,12 @@
 <p>This document provides <em>usage</em> information about the LLVM makefile system. While
 loosely patterned after the BSD makefile system, LLVM has taken a departure from
 BSD in order to implement additional features needed by LLVM.  Although makefile
-systems, such as <tt class="docutils literal"><span class="pre">automake</span></tt>, were attempted at one point, it has become clear
-that the features needed by LLVM and the <tt class="docutils literal"><span class="pre">Makefile</span></tt> norm are too great to use
+systems, such as <code class="docutils literal"><span class="pre">automake</span></code>, were attempted at one point, it has become clear
+that the features needed by LLVM and the <code class="docutils literal"><span class="pre">Makefile</span></code> norm are too great to use
 a more limited tool. Consequently, LLVM requires simply GNU Make 3.79, a widely
 portable makefile processor. LLVM unabashedly makes heavy use of the features of
 GNU Make so the dependency on GNU Make is firm. If you&#8217;re not familiar with
-<tt class="docutils literal"><span class="pre">make</span></tt>, it is recommended that you read the <a class="reference external" href="http://www.gnu.org/software/make/manual/make.html">GNU Makefile Manual</a>.</p>
+<code class="docutils literal"><span class="pre">make</span></code>, it is recommended that you read the <a class="reference external" href="http://www.gnu.org/software/make/manual/make.html">GNU Makefile Manual</a>.</p>
 <p>While this document is rightly part of the <a class="reference external" href="ProgrammersManual.html">LLVM Programmer&#8217;s
 Manual</a>, it is treated separately here because of the
 volume of content and because it is often an early source of bewilderment for
@@ -147,10 +147,10 @@ in this section.</p>
 <h3><a class="toc-backref" href="#id5">Projects</a><a class="headerlink" href="#projects" title="Permalink to this headline">¶</a></h3>
 <p>The LLVM Makefile System is quite generous. It not only builds its own software,
 but it can build yours too. Built into the system is knowledge of the
-<tt class="docutils literal"><span class="pre">llvm/projects</span></tt> directory. Any directory under <tt class="docutils literal"><span class="pre">projects</span></tt> that has both a
-<tt class="docutils literal"><span class="pre">configure</span></tt> script and a <tt class="docutils literal"><span class="pre">Makefile</span></tt> is assumed to be a project that uses the
+<code class="docutils literal"><span class="pre">llvm/projects</span></code> directory. Any directory under <code class="docutils literal"><span class="pre">projects</span></code> that has both a
+<code class="docutils literal"><span class="pre">configure</span></code> script and a <code class="docutils literal"><span class="pre">Makefile</span></code> is assumed to be a project that uses the
 LLVM Makefile system.  Building software that uses LLVM does not require the
-LLVM Makefile System nor even placement in the <tt class="docutils literal"><span class="pre">llvm/projects</span></tt>
+LLVM Makefile System nor even placement in the <code class="docutils literal"><span class="pre">llvm/projects</span></code>
 directory. However, doing so will allow your project to get up and running
 quickly by utilizing the built-in features that are used to compile LLVM. LLVM
 compiles itself using the same features of the makefile system as used for
@@ -159,7 +159,7 @@ projects.</p>
 </div>
 <div class="section" id="variable-values">
 <h3><a class="toc-backref" href="#id6">Variable Values</a><a class="headerlink" href="#variable-values" title="Permalink to this headline">¶</a></h3>
-<p>To use the makefile system, you simply create a file named <tt class="docutils literal"><span class="pre">Makefile</span></tt> in your
+<p>To use the makefile system, you simply create a file named <code class="docutils literal"><span class="pre">Makefile</span></code> in your
 directory and declare values for certain variables.  The variables and values
 that you select determine what the makefile system will do. These variables
 enable rules and processing in the makefile system that automatically Do The
@@ -171,57 +171,57 @@ Right Thing (C).</p>
 additional files that provide the rules of the LLVM Makefile system. The various
 files involved are described in the sections that follow.</p>
 <div class="section" id="makefile">
-<h4><a class="toc-backref" href="#id8"><tt class="docutils literal"><span class="pre">Makefile</span></tt></a><a class="headerlink" href="#makefile" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id8"><code class="docutils literal"><span class="pre">Makefile</span></code></a><a class="headerlink" href="#makefile" title="Permalink to this headline">¶</a></h4>
 <p>Each directory to participate in the build needs to have a file named
-<tt class="docutils literal"><span class="pre">Makefile</span></tt>. This is the file first read by <tt class="docutils literal"><span class="pre">make</span></tt>. It has three
+<code class="docutils literal"><span class="pre">Makefile</span></code>. This is the file first read by <code class="docutils literal"><span class="pre">make</span></code>. It has three
 sections:</p>
 <ol class="arabic simple">
 <li>Settable Variables &#8212; Required that must be set first.</li>
-<li><tt class="docutils literal"><span class="pre">include</span> <span class="pre">$(LEVEL)/Makefile.common</span></tt> &#8212; include the LLVM Makefile system.</li>
+<li><code class="docutils literal"><span class="pre">include</span> <span class="pre">$(LEVEL)/Makefile.common</span></code> &#8212; include the LLVM Makefile system.</li>
 <li>Override Variables &#8212; Override variables set by the LLVM Makefile system.</li>
 </ol>
 </div>
 <div class="section" id="makefile-common">
-<span id="level-makefile-common"></span><h4><a class="toc-backref" href="#id9"><tt class="docutils literal"><span class="pre">Makefile.common</span></tt></a><a class="headerlink" href="#makefile-common" title="Permalink to this headline">¶</a></h4>
-<p>Every project must have a <tt class="docutils literal"><span class="pre">Makefile.common</span></tt> file at its top source
+<span id="level-makefile-common"></span><h4><a class="toc-backref" href="#id9"><code class="docutils literal"><span class="pre">Makefile.common</span></code></a><a class="headerlink" href="#makefile-common" title="Permalink to this headline">¶</a></h4>
+<p>Every project must have a <code class="docutils literal"><span class="pre">Makefile.common</span></code> file at its top source
 directory. This file serves three purposes:</p>
 <ol class="arabic simple">
 <li>It includes the project&#8217;s configuration makefile to obtain values determined
-by the <tt class="docutils literal"><span class="pre">configure</span></tt> script. This is done by including the
+by the <code class="docutils literal"><span class="pre">configure</span></code> script. This is done by including the
 <a class="reference internal" href="#level-makefile-config">$(LEVEL)/Makefile.config</a> file.</li>
 <li>It specifies any other (static) values that are needed throughout the
 project. Only values that are used in all or a large proportion of the
 project&#8217;s directories should be placed here.</li>
 <li>It includes the standard rules for the LLVM Makefile system,
 <a class="reference internal" href="#llvm-src-root-makefile-rules">$(LLVM_SRC_ROOT)/Makefile.rules</a>.  This file is the <em>guts</em> of the LLVM
-<tt class="docutils literal"><span class="pre">Makefile</span></tt> system.</li>
+<code class="docutils literal"><span class="pre">Makefile</span></code> system.</li>
 </ol>
 </div>
 <div class="section" id="makefile-config">
-<span id="level-makefile-config"></span><h4><a class="toc-backref" href="#id10"><tt class="docutils literal"><span class="pre">Makefile.config</span></tt></a><a class="headerlink" href="#makefile-config" title="Permalink to this headline">¶</a></h4>
-<p>Every project must have a <tt class="docutils literal"><span class="pre">Makefile.config</span></tt> at the top of its <em>build</em>
-directory. This file is <strong>generated</strong> by the <tt class="docutils literal"><span class="pre">configure</span></tt> script from the
-pattern provided by the <tt class="docutils literal"><span class="pre">Makefile.config.in</span></tt> file located at the top of the
+<span id="level-makefile-config"></span><h4><a class="toc-backref" href="#id10"><code class="docutils literal"><span class="pre">Makefile.config</span></code></a><a class="headerlink" href="#makefile-config" title="Permalink to this headline">¶</a></h4>
+<p>Every project must have a <code class="docutils literal"><span class="pre">Makefile.config</span></code> at the top of its <em>build</em>
+directory. This file is <strong>generated</strong> by the <code class="docutils literal"><span class="pre">configure</span></code> script from the
+pattern provided by the <code class="docutils literal"><span class="pre">Makefile.config.in</span></code> file located at the top of the
 project&#8217;s <em>source</em> directory. The contents of this file depend largely on what
 configuration items the project uses, however most projects can get what they
 need by just relying on LLVM&#8217;s configuration found in
-<tt class="docutils literal"><span class="pre">$(LLVM_OBJ_ROOT)/Makefile.config</span></tt>.</p>
+<code class="docutils literal"><span class="pre">$(LLVM_OBJ_ROOT)/Makefile.config</span></code>.</p>
 </div>
 <div class="section" id="makefile-rules">
-<span id="llvm-src-root-makefile-rules"></span><h4><a class="toc-backref" href="#id11"><tt class="docutils literal"><span class="pre">Makefile.rules</span></tt></a><a class="headerlink" href="#makefile-rules" title="Permalink to this headline">¶</a></h4>
-<p>This file, located at <tt class="docutils literal"><span class="pre">$(LLVM_SRC_ROOT)/Makefile.rules</span></tt> is the heart of the
+<span id="llvm-src-root-makefile-rules"></span><h4><a class="toc-backref" href="#id11"><code class="docutils literal"><span class="pre">Makefile.rules</span></code></a><a class="headerlink" href="#makefile-rules" title="Permalink to this headline">¶</a></h4>
+<p>This file, located at <code class="docutils literal"><span class="pre">$(LLVM_SRC_ROOT)/Makefile.rules</span></code> is the heart of the
 LLVM Makefile System. It provides all the logic, dependencies, and rules for
 building the targets supported by the system. What it does largely depends on
-the values of <tt class="docutils literal"><span class="pre">make</span></tt> <a class="reference internal" href="#variables">variables</a> that have been set <em>before</em>
-<tt class="docutils literal"><span class="pre">Makefile.rules</span></tt> is included.</p>
+the values of <code class="docutils literal"><span class="pre">make</span></code> <a class="reference internal" href="#variables">variables</a> that have been set <em>before</em>
+<code class="docutils literal"><span class="pre">Makefile.rules</span></code> is included.</p>
 </div>
 <div class="section" id="comments">
 <h4><a class="toc-backref" href="#id12">Comments</a><a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h4>
-<p>User <tt class="docutils literal"><span class="pre">Makefile</span></tt>s need not have comments in them unless the construction is
+<p>User <code class="docutils literal"><span class="pre">Makefile</span></code>s need not have comments in them unless the construction is
 unusual or it does not strictly follow the rules and patterns of the LLVM
-makefile system. Makefile comments are invoked with the pound (<tt class="docutils literal"><span class="pre">#</span></tt>) character.
-The <tt class="docutils literal"><span class="pre">#</span></tt> character and any text following it, to the end of the line, are
-ignored by <tt class="docutils literal"><span class="pre">make</span></tt>.</p>
+makefile system. Makefile comments are invoked with the pound (<code class="docutils literal"><span class="pre">#</span></code>) character.
+The <code class="docutils literal"><span class="pre">#</span></code> character and any text following it, to the end of the line, are
+ignored by <code class="docutils literal"><span class="pre">make</span></code>.</p>
 </div>
 </div>
 </div>
@@ -235,7 +235,7 @@ compiled components.</p>
 <h3><a class="toc-backref" href="#id14">Libraries</a><a class="headerlink" href="#libraries" title="Permalink to this headline">¶</a></h3>
 <p>Only a few variable definitions are needed to build a regular library.
 Normally, the makefile system will build all the software into a single
-<tt class="docutils literal"><span class="pre">libname.o</span></tt> (pre-linked) object. This means the library is not searchable and
+<code class="docutils literal"><span class="pre">libname.o</span></code> (pre-linked) object. This means the library is not searchable and
 that the distinction between compilation units has been dissolved. Optionally,
 you can ask for a shared library (.so) or archive library (.a) built.  Archive
 libraries are the default. For example:</p>
@@ -244,41 +244,41 @@ libraries are the default. For example:</p>
 <span class="nv">BUILD_ARCHIVE</span> <span class="o">=</span> 1
 </pre></div>
 </div>
-<p>says to build a library named <tt class="docutils literal"><span class="pre">mylib</span></tt> with both a shared library
-(<tt class="docutils literal"><span class="pre">mylib.so</span></tt>) and an archive library (<tt class="docutils literal"><span class="pre">mylib.a</span></tt>) version. The contents of all
+<p>says to build a library named <code class="docutils literal"><span class="pre">mylib</span></code> with both a shared library
+(<code class="docutils literal"><span class="pre">mylib.so</span></code>) and an archive library (<code class="docutils literal"><span class="pre">mylib.a</span></code>) version. The contents of all
 the libraries produced will be the same, they are just constructed differently.
 Note that you normally do not need to specify the sources involved. The LLVM
 Makefile system will infer the source files from the contents of the source
 directory.</p>
-<p>The <tt class="docutils literal"><span class="pre">LOADABLE_MODULE=1</span></tt> directive can be used in conjunction with
-<tt class="docutils literal"><span class="pre">SHARED_LIBRARY=1</span></tt> to indicate that the resulting shared library should be
-openable with the <tt class="docutils literal"><span class="pre">dlopen</span></tt> function and searchable with the <tt class="docutils literal"><span class="pre">dlsym</span></tt> function
+<p>The <code class="docutils literal"><span class="pre">LOADABLE_MODULE=1</span></code> directive can be used in conjunction with
+<code class="docutils literal"><span class="pre">SHARED_LIBRARY=1</span></code> to indicate that the resulting shared library should be
+openable with the <code class="docutils literal"><span class="pre">dlopen</span></code> function and searchable with the <code class="docutils literal"><span class="pre">dlsym</span></code> function
 (or your operating system&#8217;s equivalents). While this isn&#8217;t strictly necessary on
 Linux and a few other platforms, it is required on systems like HP-UX and
-Darwin. You should use <tt class="docutils literal"><span class="pre">LOADABLE_MODULE</span></tt> for any shared library that you
-intend to be loaded into an tool via the <tt class="docutils literal"><span class="pre">-load</span></tt> option.  <a class="reference internal" href="WritingAnLLVMPass.html#writing-an-llvm-pass-makefile"><em>Pass
-documentation</em></a> has an example of why you might
+Darwin. You should use <code class="docutils literal"><span class="pre">LOADABLE_MODULE</span></code> for any shared library that you
+intend to be loaded into an tool via the <code class="docutils literal"><span class="pre">-load</span></code> option.  <a class="reference internal" href="WritingAnLLVMPass.html#writing-an-llvm-pass-makefile"><span>Pass
+documentation</span></a> has an example of why you might
 want to do this.</p>
 <div class="section" id="loadable-modules">
 <h4><a class="toc-backref" href="#id15">Loadable Modules</a><a class="headerlink" href="#loadable-modules" title="Permalink to this headline">¶</a></h4>
 <p>In some situations, you need to create a loadable module. Loadable modules can
-be loaded into programs like <tt class="docutils literal"><span class="pre">opt</span></tt> or <tt class="docutils literal"><span class="pre">llc</span></tt> to specify additional passes to
+be loaded into programs like <code class="docutils literal"><span class="pre">opt</span></code> or <code class="docutils literal"><span class="pre">llc</span></code> to specify additional passes to
 run or targets to support.  Loadable modules are also useful for debugging a
 pass or providing a pass with another package if that pass can&#8217;t be included in
 LLVM.</p>
 <p>LLVM provides complete support for building such a module. All you need to do is
-use the <tt class="docutils literal"><span class="pre">LOADABLE_MODULE</span></tt> variable in your <tt class="docutils literal"><span class="pre">Makefile</span></tt>. For example, to build
-a loadable module named <tt class="docutils literal"><span class="pre">MyMod</span></tt> that uses the LLVM libraries <tt class="docutils literal"><span class="pre">LLVMSupport.a</span></tt>
-and <tt class="docutils literal"><span class="pre">LLVMSystem.a</span></tt>, you would specify:</p>
+use the <code class="docutils literal"><span class="pre">LOADABLE_MODULE</span></code> variable in your <code class="docutils literal"><span class="pre">Makefile</span></code>. For example, to build
+a loadable module named <code class="docutils literal"><span class="pre">MyMod</span></code> that uses the LLVM libraries <code class="docutils literal"><span class="pre">LLVMSupport.a</span></code>
+and <code class="docutils literal"><span class="pre">LLVMSystem.a</span></code>, you would specify:</p>
 <div class="highlight-makefile"><div class="highlight"><pre><span class="nv">LIBRARYNAME</span> <span class="o">:=</span> MyMod
 <span class="nv">LOADABLE_MODULE</span> <span class="o">:=</span> 1
 <span class="nv">LINK_COMPONENTS</span> <span class="o">:=</span> support system
 </pre></div>
 </div>
-<p>Use of the <tt class="docutils literal"><span class="pre">LOADABLE_MODULE</span></tt> facility implies several things:</p>
+<p>Use of the <code class="docutils literal"><span class="pre">LOADABLE_MODULE</span></code> facility implies several things:</p>
 <ol class="arabic">
 <li><dl class="first docutils">
-<dt>There will be no &#8220;<tt class="docutils literal"><span class="pre">lib</span></tt>&#8221; prefix on the module. This differentiates it from</dt>
+<dt>There will be no &#8220;<code class="docutils literal"><span class="pre">lib</span></code>&#8221; prefix on the module. This differentiates it from</dt>
 <dd><p class="first last">a standard shared library of the same name.</p>
 </dd>
 </dl>
@@ -289,7 +289,7 @@ and <tt class="docutils literal"><span class="pre">LLVMSystem.a</span></tt>, you
 </li>
 </ol>
 <p>A loadable module is loaded by LLVM via the facilities of libtool&#8217;s libltdl
-library which is part of <tt class="docutils literal"><span class="pre">lib/System</span></tt> implementation.</p>
+library which is part of <code class="docutils literal"><span class="pre">lib/System</span></code> implementation.</p>
 </div>
 </div>
 <div class="section" id="tools">
@@ -301,25 +301,25 @@ and the names of the libraries you wish to link with the tool. For example:</p>
 <span class="nv">LINK_COMPONENTS</span> <span class="o">=</span> support system
 </pre></div>
 </div>
-<p>says that we are to build a tool name <tt class="docutils literal"><span class="pre">mytool</span></tt> and that it requires three
-libraries: <tt class="docutils literal"><span class="pre">mylib</span></tt>, <tt class="docutils literal"><span class="pre">LLVMSupport.a</span></tt> and <tt class="docutils literal"><span class="pre">LLVMSystem.a</span></tt>.</p>
+<p>says that we are to build a tool name <code class="docutils literal"><span class="pre">mytool</span></code> and that it requires three
+libraries: <code class="docutils literal"><span class="pre">mylib</span></code>, <code class="docutils literal"><span class="pre">LLVMSupport.a</span></code> and <code class="docutils literal"><span class="pre">LLVMSystem.a</span></code>.</p>
 <p>Note that two different variables are used to indicate which libraries are
-linked: <tt class="docutils literal"><span class="pre">USEDLIBS</span></tt> and <tt class="docutils literal"><span class="pre">LLVMLIBS</span></tt>. This distinction is necessary to support
-projects. <tt class="docutils literal"><span class="pre">LLVMLIBS</span></tt> refers to the LLVM libraries found in the LLVM object
-directory. <tt class="docutils literal"><span class="pre">USEDLIBS</span></tt> refers to the libraries built by your project. In the
-case of building LLVM tools, <tt class="docutils literal"><span class="pre">USEDLIBS</span></tt> and <tt class="docutils literal"><span class="pre">LLVMLIBS</span></tt> can be used
-interchangeably since the &#8220;project&#8221; is LLVM itself and <tt class="docutils literal"><span class="pre">USEDLIBS</span></tt> refers to
-the same place as <tt class="docutils literal"><span class="pre">LLVMLIBS</span></tt>.</p>
+linked: <code class="docutils literal"><span class="pre">USEDLIBS</span></code> and <code class="docutils literal"><span class="pre">LLVMLIBS</span></code>. This distinction is necessary to support
+projects. <code class="docutils literal"><span class="pre">LLVMLIBS</span></code> refers to the LLVM libraries found in the LLVM object
+directory. <code class="docutils literal"><span class="pre">USEDLIBS</span></code> refers to the libraries built by your project. In the
+case of building LLVM tools, <code class="docutils literal"><span class="pre">USEDLIBS</span></code> and <code class="docutils literal"><span class="pre">LLVMLIBS</span></code> can be used
+interchangeably since the &#8220;project&#8221; is LLVM itself and <code class="docutils literal"><span class="pre">USEDLIBS</span></code> refers to
+the same place as <code class="docutils literal"><span class="pre">LLVMLIBS</span></code>.</p>
 <p>Also note that there are two different ways of specifying a library: with a
-<tt class="docutils literal"><span class="pre">.a</span></tt> suffix and without. Without the suffix, the entry refers to the re-linked
+<code class="docutils literal"><span class="pre">.a</span></code> suffix and without. Without the suffix, the entry refers to the re-linked
 (.o) file which will include <em>all</em> symbols of the library.  This is
 useful, for example, to include all passes from a library of passes.  If the
-<tt class="docutils literal"><span class="pre">.a</span></tt> suffix is used then the library is linked as a searchable library (with
-the <tt class="docutils literal"><span class="pre">-l</span></tt> option). In this case, only the symbols that are unresolved <em>at
+<code class="docutils literal"><span class="pre">.a</span></code> suffix is used then the library is linked as a searchable library (with
+the <code class="docutils literal"><span class="pre">-l</span></code> option). In this case, only the symbols that are unresolved <em>at
 that point</em> will be resolved from the library, if they exist. Other
-(unreferenced) symbols will not be included when the <tt class="docutils literal"><span class="pre">.a</span></tt> syntax is used. Note
-that in order to use the <tt class="docutils literal"><span class="pre">.a</span></tt> suffix, the library in question must have been
-built with the <tt class="docutils literal"><span class="pre">BUILD_ARCHIVE</span></tt> option set.</p>
+(unreferenced) symbols will not be included when the <code class="docutils literal"><span class="pre">.a</span></code> syntax is used. Note
+that in order to use the <code class="docutils literal"><span class="pre">.a</span></code> suffix, the library in question must have been
+built with the <code class="docutils literal"><span class="pre">BUILD_ARCHIVE</span></code> option set.</p>
 <div class="section" id="jit-tools">
 <h4><a class="toc-backref" href="#id17">JIT Tools</a><a class="headerlink" href="#jit-tools" title="Permalink to this headline">¶</a></h4>
 <p>Many tools will want to use the JIT features of LLVM.  To do this, you simply
@@ -360,122 +360,122 @@ operate as if invoked from the top level directory).</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">all</span></tt></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">all</span></code></td>
 <td></td>
 <td>Compile the software recursively. Default target.</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">all-local</span></tt></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">all-local</span></code></td>
 <td></td>
 <td>Compile the software in the local directory only.</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">check</span></tt></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">check</span></code></td>
 <td></td>
-<td>Change to the <tt class="docutils literal"><span class="pre">test</span></tt> directory in a project and run the test suite there.</td>
+<td>Change to the <code class="docutils literal"><span class="pre">test</span></code> directory in a project and run the test suite there.</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">check-local</span></tt></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">check-local</span></code></td>
 <td></td>
-<td>Run a local test suite. Generally this is only defined in the  <tt class="docutils literal"><span class="pre">Makefile</span></tt> of the project&#8217;s <tt class="docutils literal"><span class="pre">test</span></tt> directory.</td>
+<td>Run a local test suite. Generally this is only defined in the  <code class="docutils literal"><span class="pre">Makefile</span></code> of the project&#8217;s <code class="docutils literal"><span class="pre">test</span></code> directory.</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">clean</span></tt></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">clean</span></code></td>
 <td></td>
 <td>Remove built objects recursively.</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">clean-local</span></tt></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">clean-local</span></code></td>
 <td></td>
 <td>Remove built objects from the local directory only.</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">dist</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">all</span></tt></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">dist</span></code></td>
+<td><code class="docutils literal"><span class="pre">all</span></code></td>
 <td>Prepare a source distribution tarball.</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">dist-check</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">all</span></tt></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">dist-check</span></code></td>
+<td><code class="docutils literal"><span class="pre">all</span></code></td>
 <td>Prepare a source distribution tarball and check that it builds.</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">dist-clean</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">clean</span></tt></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">dist-clean</span></code></td>
+<td><code class="docutils literal"><span class="pre">clean</span></code></td>
 <td>Clean source distribution tarball temporary files.</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">install</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">all</span></tt></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">install</span></code></td>
+<td><code class="docutils literal"><span class="pre">all</span></code></td>
 <td>Copy built objects to installation directory.</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">preconditions</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">all</span></tt></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">preconditions</span></code></td>
+<td><code class="docutils literal"><span class="pre">all</span></code></td>
 <td>Check to make sure configuration and makefiles are up to date.</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">printvars</span></tt></td>
-<td><tt class="docutils literal"><span class="pre">all</span></tt></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">printvars</span></code></td>
+<td><code class="docutils literal"><span class="pre">all</span></code></td>
 <td>Prints variables defined by the makefile system (for debugging).</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">tags</span></tt></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">tags</span></code></td>
 <td></td>
 <td>Make C and C++ tags files for emacs and vi.</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">uninstall</span></tt></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">uninstall</span></code></td>
 <td></td>
 <td>Remove built objects from installation directory.</td>
 </tr>
 </tbody>
 </table>
 <div class="section" id="all-default">
-<span id="all"></span><h3><a class="toc-backref" href="#id19"><tt class="docutils literal"><span class="pre">all</span></tt> (default)</a><a class="headerlink" href="#all-default" title="Permalink to this headline">¶</a></h3>
-<p>When you invoke <tt class="docutils literal"><span class="pre">make</span></tt> with no arguments, you are implicitly instructing it to
-seek the <tt class="docutils literal"><span class="pre">all</span></tt> target (goal). This target is used for building the software
+<span id="all"></span><h3><a class="toc-backref" href="#id19"><code class="docutils literal"><span class="pre">all</span></code> (default)</a><a class="headerlink" href="#all-default" title="Permalink to this headline">¶</a></h3>
+<p>When you invoke <code class="docutils literal"><span class="pre">make</span></code> with no arguments, you are implicitly instructing it to
+seek the <code class="docutils literal"><span class="pre">all</span></code> target (goal). This target is used for building the software
 recursively and will do different things in different directories.  For example,
-in a <tt class="docutils literal"><span class="pre">lib</span></tt> directory, the <tt class="docutils literal"><span class="pre">all</span></tt> target will compile source files and
-generate libraries. But, in a <tt class="docutils literal"><span class="pre">tools</span></tt> directory, it will link libraries and
+in a <code class="docutils literal"><span class="pre">lib</span></code> directory, the <code class="docutils literal"><span class="pre">all</span></code> target will compile source files and
+generate libraries. But, in a <code class="docutils literal"><span class="pre">tools</span></code> directory, it will link libraries and
 generate executables.</p>
 </div>
 <div class="section" id="all-local">
-<h3><a class="toc-backref" href="#id20"><tt class="docutils literal"><span class="pre">all-local</span></tt></a><a class="headerlink" href="#all-local" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id20"><code class="docutils literal"><span class="pre">all-local</span></code></a><a class="headerlink" href="#all-local" title="Permalink to this headline">¶</a></h3>
 <p>This target is the same as <a class="reference internal" href="#all">all</a> but it operates only on the current directory
 instead of recursively.</p>
 </div>
 <div class="section" id="check">
-<h3><a class="toc-backref" href="#id21"><tt class="docutils literal"><span class="pre">check</span></tt></a><a class="headerlink" href="#check" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id21"><code class="docutils literal"><span class="pre">check</span></code></a><a class="headerlink" href="#check" title="Permalink to this headline">¶</a></h3>
 <p>This target can be invoked from anywhere within a project&#8217;s directories but
-always invokes the <a class="reference internal" href="#check-local">check-local</a> target in the project&#8217;s <tt class="docutils literal"><span class="pre">test</span></tt> directory, if
-it exists and has a <tt class="docutils literal"><span class="pre">Makefile</span></tt>. A warning is produced otherwise.  If
-<a class="reference internal" href="#testsuite">TESTSUITE</a> is defined on the <tt class="docutils literal"><span class="pre">make</span></tt> command line, it will be passed down to
-the invocation of <tt class="docutils literal"><span class="pre">make</span> <span class="pre">check-local</span></tt> in the <tt class="docutils literal"><span class="pre">test</span></tt> directory. The intended
+always invokes the <a class="reference internal" href="#check-local">check-local</a> target in the project&#8217;s <code class="docutils literal"><span class="pre">test</span></code> directory, if
+it exists and has a <code class="docutils literal"><span class="pre">Makefile</span></code>. A warning is produced otherwise.  If
+<a class="reference internal" href="#testsuite">TESTSUITE</a> is defined on the <code class="docutils literal"><span class="pre">make</span></code> command line, it will be passed down to
+the invocation of <code class="docutils literal"><span class="pre">make</span> <span class="pre">check-local</span></code> in the <code class="docutils literal"><span class="pre">test</span></code> directory. The intended
 usage for this is to assist in running specific suites of tests. If
-<tt class="docutils literal"><span class="pre">TESTSUITE</span></tt> is not set, the implementation of <tt class="docutils literal"><span class="pre">check-local</span></tt> should run all
+<code class="docutils literal"><span class="pre">TESTSUITE</span></code> is not set, the implementation of <code class="docutils literal"><span class="pre">check-local</span></code> should run all
 normal tests.  It is up to the project to define what different values for
-<tt class="docutils literal"><span class="pre">TESTSUTE</span></tt> will do. See the <a class="reference internal" href="TestingGuide.html"><em>Testing Guide</em></a> for further
+<code class="docutils literal"><span class="pre">TESTSUTE</span></code> will do. See the <a class="reference internal" href="TestingGuide.html"><em>Testing Guide</em></a> for further
 details.</p>
 </div>
 <div class="section" id="check-local">
-<h3><a class="toc-backref" href="#id22"><tt class="docutils literal"><span class="pre">check-local</span></tt></a><a class="headerlink" href="#check-local" title="Permalink to this headline">¶</a></h3>
-<p>This target should be implemented by the <tt class="docutils literal"><span class="pre">Makefile</span></tt> in the project&#8217;s <tt class="docutils literal"><span class="pre">test</span></tt>
-directory. It is invoked by the <tt class="docutils literal"><span class="pre">check</span></tt> target elsewhere.  Each project is
-free to define the actions of <tt class="docutils literal"><span class="pre">check-local</span></tt> as appropriate for that
+<h3><a class="toc-backref" href="#id22"><code class="docutils literal"><span class="pre">check-local</span></code></a><a class="headerlink" href="#check-local" title="Permalink to this headline">¶</a></h3>
+<p>This target should be implemented by the <code class="docutils literal"><span class="pre">Makefile</span></code> in the project&#8217;s <code class="docutils literal"><span class="pre">test</span></code>
+directory. It is invoked by the <code class="docutils literal"><span class="pre">check</span></code> target elsewhere.  Each project is
+free to define the actions of <code class="docutils literal"><span class="pre">check-local</span></code> as appropriate for that
 project. The LLVM project itself uses the <a class="reference internal" href="CommandGuide/lit.html"><em>Lit</em></a> testing
 tool to run a suite of feature and regression tests. Other projects may choose
 to use <strong class="program">lit</strong> or any other testing mechanism.</p>
 </div>
 <div class="section" id="clean">
-<h3><a class="toc-backref" href="#id23"><tt class="docutils literal"><span class="pre">clean</span></tt></a><a class="headerlink" href="#clean" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id23"><code class="docutils literal"><span class="pre">clean</span></code></a><a class="headerlink" href="#clean" title="Permalink to this headline">¶</a></h3>
 <p>This target cleans the build directory, recursively removing all things that the
 Makefile builds. The cleaning rules have been made guarded so they shouldn&#8217;t go
-awry (via <tt class="docutils literal"><span class="pre">rm</span> <span class="pre">-f</span> <span class="pre">$(UNSET_VARIABLE)/*</span></tt> which will attempt to erase the entire
+awry (via <code class="docutils literal"><span class="pre">rm</span> <span class="pre">-f</span> <span class="pre">$(UNSET_VARIABLE)/*</span></code> which will attempt to erase the entire
 directory structure).</p>
 </div>
 <div class="section" id="clean-local">
-<h3><a class="toc-backref" href="#id24"><tt class="docutils literal"><span class="pre">clean-local</span></tt></a><a class="headerlink" href="#clean-local" title="Permalink to this headline">¶</a></h3>
-<p>This target does the same thing as <tt class="docutils literal"><span class="pre">clean</span></tt> but only for the current (local)
+<h3><a class="toc-backref" href="#id24"><code class="docutils literal"><span class="pre">clean-local</span></code></a><a class="headerlink" href="#clean-local" title="Permalink to this headline">¶</a></h3>
+<p>This target does the same thing as <code class="docutils literal"><span class="pre">clean</span></code> but only for the current (local)
 directory.</p>
 </div>
 <div class="section" id="dist">
-<h3><a class="toc-backref" href="#id25"><tt class="docutils literal"><span class="pre">dist</span></tt></a><a class="headerlink" href="#dist" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id25"><code class="docutils literal"><span class="pre">dist</span></code></a><a class="headerlink" href="#dist" title="Permalink to this headline">¶</a></h3>
 <p>This target builds a distribution tarball. It first builds the entire project
-using the <tt class="docutils literal"><span class="pre">all</span></tt> target and then tars up the necessary files and compresses
+using the <code class="docutils literal"><span class="pre">all</span></code> target and then tars up the necessary files and compresses
 it. The generated tarball is sufficient for a casual source distribution, but
-probably not for a release (see <tt class="docutils literal"><span class="pre">dist-check</span></tt>).</p>
+probably not for a release (see <code class="docutils literal"><span class="pre">dist-check</span></code>).</p>
 </div>
 <div class="section" id="dist-check">
-<h3><a class="toc-backref" href="#id26"><tt class="docutils literal"><span class="pre">dist-check</span></tt></a><a class="headerlink" href="#dist-check" title="Permalink to this headline">¶</a></h3>
-<p>This target does the same thing as the <tt class="docutils literal"><span class="pre">dist</span></tt> target but also checks the
+<h3><a class="toc-backref" href="#id26"><code class="docutils literal"><span class="pre">dist-check</span></code></a><a class="headerlink" href="#dist-check" title="Permalink to this headline">¶</a></h3>
+<p>This target does the same thing as the <code class="docutils literal"><span class="pre">dist</span></code> target but also checks the
 distribution tarball. The check is made by unpacking the tarball to a new
 directory, configuring it, building it, installing it, and then verifying that
 the installation results are correct (by comparing to the original build).  This
@@ -484,69 +484,69 @@ to make sure that the distributed tarball can actually be built into a working
 release.</p>
 </div>
 <div class="section" id="dist-clean">
-<h3><a class="toc-backref" href="#id27"><tt class="docutils literal"><span class="pre">dist-clean</span></tt></a><a class="headerlink" href="#dist-clean" title="Permalink to this headline">¶</a></h3>
-<p>This is a special form of the <tt class="docutils literal"><span class="pre">clean</span></tt> clean target. It performs a normal
-<tt class="docutils literal"><span class="pre">clean</span></tt> but also removes things pertaining to building the distribution.</p>
+<h3><a class="toc-backref" href="#id27"><code class="docutils literal"><span class="pre">dist-clean</span></code></a><a class="headerlink" href="#dist-clean" title="Permalink to this headline">¶</a></h3>
+<p>This is a special form of the <code class="docutils literal"><span class="pre">clean</span></code> clean target. It performs a normal
+<code class="docutils literal"><span class="pre">clean</span></code> but also removes things pertaining to building the distribution.</p>
 </div>
 <div class="section" id="install">
-<h3><a class="toc-backref" href="#id28"><tt class="docutils literal"><span class="pre">install</span></tt></a><a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id28"><code class="docutils literal"><span class="pre">install</span></code></a><a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h3>
 <p>This target finalizes shared objects and executables and copies all libraries,
 headers, executables and documentation to the directory given with the
-<tt class="docutils literal"><span class="pre">--prefix</span></tt> option to <tt class="docutils literal"><span class="pre">configure</span></tt>.  When completed, the prefix directory will
+<code class="docutils literal"><span class="pre">--prefix</span></code> option to <code class="docutils literal"><span class="pre">configure</span></code>.  When completed, the prefix directory will
 have everything needed to <strong>use</strong> LLVM.</p>
 <p>The LLVM makefiles can generate complete <strong>internal</strong> documentation for all the
-classes by using <tt class="docutils literal"><span class="pre">doxygen</span></tt>. By default, this feature is <strong>not</strong> enabled
+classes by using <code class="docutils literal"><span class="pre">doxygen</span></code>. By default, this feature is <strong>not</strong> enabled
 because it takes a long time and generates a massive amount of data (&gt;100MB). If
 you want this feature, you must configure LLVM with the &#8211;enable-doxygen switch
 and ensure that a modern version of doxygen (1.3.7 or later) is available in
-your <tt class="docutils literal"><span class="pre">PATH</span></tt>. You can download doxygen from <a class="reference external" href="http://www.stack.nl/~dimitri/doxygen/download.html#latestsrc">here</a>.</p>
+your <code class="docutils literal"><span class="pre">PATH</span></code>. You can download doxygen from <a class="reference external" href="http://www.stack.nl/~dimitri/doxygen/download.html#latestsrc">here</a>.</p>
 </div>
 <div class="section" id="preconditions">
-<h3><a class="toc-backref" href="#id29"><tt class="docutils literal"><span class="pre">preconditions</span></tt></a><a class="headerlink" href="#preconditions" title="Permalink to this headline">¶</a></h3>
-<p>This utility target checks to see if the <tt class="docutils literal"><span class="pre">Makefile</span></tt> in the object directory is
-older than the <tt class="docutils literal"><span class="pre">Makefile</span></tt> in the source directory and copies it if so. It also
-reruns the <tt class="docutils literal"><span class="pre">configure</span></tt> script if that needs to be done and rebuilds the
-<tt class="docutils literal"><span class="pre">Makefile.config</span></tt> file similarly. Users may overload this target to ensure
+<h3><a class="toc-backref" href="#id29"><code class="docutils literal"><span class="pre">preconditions</span></code></a><a class="headerlink" href="#preconditions" title="Permalink to this headline">¶</a></h3>
+<p>This utility target checks to see if the <code class="docutils literal"><span class="pre">Makefile</span></code> in the object directory is
+older than the <code class="docutils literal"><span class="pre">Makefile</span></code> in the source directory and copies it if so. It also
+reruns the <code class="docutils literal"><span class="pre">configure</span></code> script if that needs to be done and rebuilds the
+<code class="docutils literal"><span class="pre">Makefile.config</span></code> file similarly. Users may overload this target to ensure
 that sanity checks are run <em>before</em> any building of targets as all the targets
-depend on <tt class="docutils literal"><span class="pre">preconditions</span></tt>.</p>
+depend on <code class="docutils literal"><span class="pre">preconditions</span></code>.</p>
 </div>
 <div class="section" id="printvars">
-<h3><a class="toc-backref" href="#id30"><tt class="docutils literal"><span class="pre">printvars</span></tt></a><a class="headerlink" href="#printvars" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id30"><code class="docutils literal"><span class="pre">printvars</span></code></a><a class="headerlink" href="#printvars" title="Permalink to this headline">¶</a></h3>
 <p>This utility target just causes the LLVM makefiles to print out some of the
 makefile variables so that you can double check how things are set.</p>
 </div>
 <div class="section" id="reconfigure">
-<h3><a class="toc-backref" href="#id31"><tt class="docutils literal"><span class="pre">reconfigure</span></tt></a><a class="headerlink" href="#reconfigure" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id31"><code class="docutils literal"><span class="pre">reconfigure</span></code></a><a class="headerlink" href="#reconfigure" title="Permalink to this headline">¶</a></h3>
 <p>This utility target will force a reconfigure of LLVM or your project. It simply
-runs <tt class="docutils literal"><span class="pre">$(PROJ_OBJ_ROOT)/config.status</span> <span class="pre">--recheck</span></tt> to rerun the configuration
+runs <code class="docutils literal"><span class="pre">$(PROJ_OBJ_ROOT)/config.status</span> <span class="pre">--recheck</span></code> to rerun the configuration
 tests and rebuild the configured files. This isn&#8217;t generally useful as the
 makefiles will reconfigure themselves whenever its necessary.</p>
 </div>
 <div class="section" id="spotless">
-<h3><a class="toc-backref" href="#id32"><tt class="docutils literal"><span class="pre">spotless</span></tt></a><a class="headerlink" href="#spotless" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id32"><code class="docutils literal"><span class="pre">spotless</span></code></a><a class="headerlink" href="#spotless" title="Permalink to this headline">¶</a></h3>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Use with caution!</p>
 </div>
-<p>This utility target, only available when <tt class="docutils literal"><span class="pre">$(PROJ_OBJ_ROOT)</span></tt> is not the same as
-<tt class="docutils literal"><span class="pre">$(PROJ_SRC_ROOT)</span></tt>, will completely clean the <tt class="docutils literal"><span class="pre">$(PROJ_OBJ_ROOT)</span></tt> directory
+<p>This utility target, only available when <code class="docutils literal"><span class="pre">$(PROJ_OBJ_ROOT)</span></code> is not the same as
+<code class="docutils literal"><span class="pre">$(PROJ_SRC_ROOT)</span></code>, will completely clean the <code class="docutils literal"><span class="pre">$(PROJ_OBJ_ROOT)</span></code> directory
 by removing its content entirely and reconfiguring the directory. This returns
-the <tt class="docutils literal"><span class="pre">$(PROJ_OBJ_ROOT)</span></tt> directory to a completely fresh state. All content in
+the <code class="docutils literal"><span class="pre">$(PROJ_OBJ_ROOT)</span></code> directory to a completely fresh state. All content in
 the directory except configured files and top-level makefiles will be lost.</p>
 </div>
 <div class="section" id="tags">
-<h3><a class="toc-backref" href="#id33"><tt class="docutils literal"><span class="pre">tags</span></tt></a><a class="headerlink" href="#tags" title="Permalink to this headline">¶</a></h3>
-<p>This target will generate a <tt class="docutils literal"><span class="pre">TAGS</span></tt> file in the top-level source directory. It
+<h3><a class="toc-backref" href="#id33"><code class="docutils literal"><span class="pre">tags</span></code></a><a class="headerlink" href="#tags" title="Permalink to this headline">¶</a></h3>
+<p>This target will generate a <code class="docutils literal"><span class="pre">TAGS</span></code> file in the top-level source directory. It
 is meant for use with emacs, XEmacs, or ViM. The TAGS file provides an index of
 symbol definitions so that the editor can jump you to the definition
 quickly.</p>
 </div>
 <div class="section" id="uninstall">
-<h3><a class="toc-backref" href="#id34"><tt class="docutils literal"><span class="pre">uninstall</span></tt></a><a class="headerlink" href="#uninstall" title="Permalink to this headline">¶</a></h3>
-<p>This target is the opposite of the <tt class="docutils literal"><span class="pre">install</span></tt> target. It removes the header,
+<h3><a class="toc-backref" href="#id34"><code class="docutils literal"><span class="pre">uninstall</span></code></a><a class="headerlink" href="#uninstall" title="Permalink to this headline">¶</a></h3>
+<p>This target is the opposite of the <code class="docutils literal"><span class="pre">install</span></code> target. It removes the header,
 library and executable files from the installation directories. Note that the
 directories themselves are not removed because it is not guaranteed that LLVM is
-the only thing installing there (e.g. <tt class="docutils literal"><span class="pre">--prefix=/usr</span></tt>).</p>
+the only thing installing there (e.g. <code class="docutils literal"><span class="pre">--prefix=/usr</span></code>).</p>
 </div>
 </div>
 <div class="section" id="variables">
@@ -564,79 +564,79 @@ variables.</p>
 <a class="reference internal" href="#level-makefile-common">$(LEVEL)/Makefile.common</a>.  These variables provide input to the LLVM make
 system that tell it what to do for the current directory.</p>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">BUILD_ARCHIVE</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">BUILD_ARCHIVE</span></code></dt>
 <dd>If set to any value, causes an archive (.a) library to be built.</dd>
-<dt><tt class="docutils literal"><span class="pre">BUILT_SOURCES</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">BUILT_SOURCES</span></code></dt>
 <dd>Specifies a set of source files that are generated from other source
 files. These sources will be built before any other target processing to
 ensure they are present.</dd>
-<dt><tt class="docutils literal"><span class="pre">CONFIG_FILES</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">CONFIG_FILES</span></code></dt>
 <dd>Specifies a set of configuration files to be installed.</dd>
-<dt><tt class="docutils literal"><span class="pre">DEBUG_SYMBOLS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">DEBUG_SYMBOLS</span></code></dt>
 <dd>If set to any value, causes the build to include debugging symbols even in
 optimized objects, libraries and executables. This alters the flags
 specified to the compilers and linkers. Debugging isn&#8217;t fun in an optimized
 build, but it is possible.</dd>
-<dt><tt class="docutils literal"><span class="pre">DIRS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">DIRS</span></code></dt>
 <dd>Specifies a set of directories, usually children of the current directory,
 that should also be made using the same goal. These directories will be
 built serially.</dd>
-<dt><tt class="docutils literal"><span class="pre">DISABLE_AUTO_DEPENDENCIES</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">DISABLE_AUTO_DEPENDENCIES</span></code></dt>
 <dd>If set to any value, causes the makefiles to <strong>not</strong> automatically generate
 dependencies when running the compiler. Use of this feature is discouraged
 and it may be removed at a later date.</dd>
-<dt><tt class="docutils literal"><span class="pre">ENABLE_OPTIMIZED</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">ENABLE_OPTIMIZED</span></code></dt>
 <dd>If set to 1, causes the build to generate optimized objects, libraries and
 executables. This alters the flags specified to the compilers and
 linkers. Generally debugging won&#8217;t be a fun experience with an optimized
 build.</dd>
-<dt><tt class="docutils literal"><span class="pre">ENABLE_PROFILING</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">ENABLE_PROFILING</span></code></dt>
 <dd>If set to 1, causes the build to generate both optimized and profiled
 objects, libraries and executables. This alters the flags specified to the
 compilers and linkers to ensure that profile data can be collected from the
-tools built. Use the <tt class="docutils literal"><span class="pre">gprof</span></tt> tool to analyze the output from the profiled
-tools (<tt class="docutils literal"><span class="pre">gmon.out</span></tt>).</dd>
-<dt><tt class="docutils literal"><span class="pre">DISABLE_ASSERTIONS</span></tt></dt>
+tools built. Use the <code class="docutils literal"><span class="pre">gprof</span></code> tool to analyze the output from the profiled
+tools (<code class="docutils literal"><span class="pre">gmon.out</span></code>).</dd>
+<dt><code class="docutils literal"><span class="pre">DISABLE_ASSERTIONS</span></code></dt>
 <dd>If set to 1, causes the build to disable assertions, even if building a
 debug or profile build.  This will exclude all assertion check code from the
 build. LLVM will execute faster, but with little help when things go
 wrong.</dd>
-<dt><tt class="docutils literal"><span class="pre">EXPERIMENTAL_DIRS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">EXPERIMENTAL_DIRS</span></code></dt>
 <dd>Specify a set of directories that should be built, but if they fail, it
 should not cause the build to fail. Note that this should only be used
 temporarily while code is being written.</dd>
-<dt><tt class="docutils literal"><span class="pre">EXPORTED_SYMBOL_FILE</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">EXPORTED_SYMBOL_FILE</span></code></dt>
 <dd>Specifies the name of a single file that contains a list of the symbols to
 be exported by the linker. One symbol per line.</dd>
-<dt><tt class="docutils literal"><span class="pre">EXPORTED_SYMBOL_LIST</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">EXPORTED_SYMBOL_LIST</span></code></dt>
 <dd>Specifies a set of symbols to be exported by the linker.</dd>
-<dt><tt class="docutils literal"><span class="pre">EXTRA_DIST</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">EXTRA_DIST</span></code></dt>
 <dd>Specifies additional files that should be distributed with LLVM. All source
 files, all built sources, all Makefiles, and most documentation files will
 be automatically distributed. Use this variable to distribute any files that
 are not automatically distributed.</dd>
-<dt><tt class="docutils literal"><span class="pre">KEEP_SYMBOLS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">KEEP_SYMBOLS</span></code></dt>
 <dd>If set to any value, specifies that when linking executables the makefiles
 should retain debug symbols in the executable. Normally, symbols are
 stripped from the executable.</dd>
-<dt><tt class="docutils literal"><span class="pre">LEVEL</span></tt> (required)</dt>
+<dt><code class="docutils literal"><span class="pre">LEVEL</span></code> (required)</dt>
 <dd>Specify the level of nesting from the top level. This variable must be set
 in each makefile as it is used to find the top level and thus the other
 makefiles.</dd>
-<dt><tt class="docutils literal"><span class="pre">LIBRARYNAME</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">LIBRARYNAME</span></code></dt>
 <dd>Specify the name of the library to be built. (Required For Libraries)</dd>
-<dt><tt class="docutils literal"><span class="pre">LINK_COMPONENTS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">LINK_COMPONENTS</span></code></dt>
 <dd>When specified for building a tool, the value of this variable will be
-passed to the <tt class="docutils literal"><span class="pre">llvm-config</span></tt> tool to generate a link line for the
-tool. Unlike <tt class="docutils literal"><span class="pre">USEDLIBS</span></tt> and <tt class="docutils literal"><span class="pre">LLVMLIBS</span></tt>, not all libraries need to be
-specified. The <tt class="docutils literal"><span class="pre">llvm-config</span></tt> tool will figure out the library dependencies
-and add any libraries that are needed. The <tt class="docutils literal"><span class="pre">USEDLIBS</span></tt> variable can still
-be used in conjunction with <tt class="docutils literal"><span class="pre">LINK_COMPONENTS</span></tt> so that additional
+passed to the <code class="docutils literal"><span class="pre">llvm-config</span></code> tool to generate a link line for the
+tool. Unlike <code class="docutils literal"><span class="pre">USEDLIBS</span></code> and <code class="docutils literal"><span class="pre">LLVMLIBS</span></code>, not all libraries need to be
+specified. The <code class="docutils literal"><span class="pre">llvm-config</span></code> tool will figure out the library dependencies
+and add any libraries that are needed. The <code class="docutils literal"><span class="pre">USEDLIBS</span></code> variable can still
+be used in conjunction with <code class="docutils literal"><span class="pre">LINK_COMPONENTS</span></code> so that additional
 project-specific libraries can be linked with the LLVM libraries specified
-by <tt class="docutils literal"><span class="pre">LINK_COMPONENTS</span></tt>.</dd>
+by <code class="docutils literal"><span class="pre">LINK_COMPONENTS</span></code>.</dd>
 </dl>
 <dl class="docutils" id="link-libs-in-shared">
-<dt><tt class="docutils literal"><span class="pre">LINK_LIBS_IN_SHARED</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">LINK_LIBS_IN_SHARED</span></code></dt>
 <dd>By default, shared library linking will ignore any libraries specified with
 the <a class="reference internal" href="#llvmlibs">LLVMLIBS</a> or <a class="reference internal" href="#usedlibs">USEDLIBS</a>. This prevents shared libs from including
 things that will be in the LLVM tool the shared library will be loaded
@@ -644,65 +644,65 @@ into. However, sometimes it is useful to link certain libraries into your
 shared library and this option enables that feature.</dd>
 </dl>
 <dl class="docutils" id="llvmlibs">
-<dt><tt class="docutils literal"><span class="pre">LLVMLIBS</span></tt></dt>
-<dd>Specifies the set of libraries from the LLVM <tt class="docutils literal"><span class="pre">$(ObjDir)</span></tt> that will be
+<dt><code class="docutils literal"><span class="pre">LLVMLIBS</span></code></dt>
+<dd>Specifies the set of libraries from the LLVM <code class="docutils literal"><span class="pre">$(ObjDir)</span></code> that will be
 linked into the tool or library.</dd>
-<dt><tt class="docutils literal"><span class="pre">LOADABLE_MODULE</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">LOADABLE_MODULE</span></code></dt>
 <dd>If set to any value, causes the shared library being built to also be a
 loadable module. Loadable modules can be opened with the dlopen() function
 and searched with dlsym (or the operating system&#8217;s equivalent). Note that
-setting this variable without also setting <tt class="docutils literal"><span class="pre">SHARED_LIBRARY</span></tt> will have no
+setting this variable without also setting <code class="docutils literal"><span class="pre">SHARED_LIBRARY</span></code> will have no
 effect.</dd>
-<dt><tt class="docutils literal"><span class="pre">NO_INSTALL</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">NO_INSTALL</span></code></dt>
 <dd>Specifies that the build products of the directory should not be installed
-but should be built even if the <tt class="docutils literal"><span class="pre">install</span></tt> target is given.  This is handy
+but should be built even if the <code class="docutils literal"><span class="pre">install</span></code> target is given.  This is handy
 for directories that build libraries or tools that are only used as part of
-the build process, such as code generators (e.g.  <tt class="docutils literal"><span class="pre">tblgen</span></tt>).</dd>
-<dt><tt class="docutils literal"><span class="pre">OPTIONAL_DIRS</span></tt></dt>
+the build process, such as code generators (e.g.  <code class="docutils literal"><span class="pre">tblgen</span></code>).</dd>
+<dt><code class="docutils literal"><span class="pre">OPTIONAL_DIRS</span></code></dt>
 <dd>Specify a set of directories that may be built, if they exist, but it is
 not an error for them not to exist.</dd>
-<dt><tt class="docutils literal"><span class="pre">PARALLEL_DIRS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">PARALLEL_DIRS</span></code></dt>
 <dd>Specify a set of directories to build recursively and in parallel if the
-<tt class="docutils literal"><span class="pre">-j</span></tt> option was used with <tt class="docutils literal"><span class="pre">make</span></tt>.</dd>
+<code class="docutils literal"><span class="pre">-j</span></code> option was used with <code class="docutils literal"><span class="pre">make</span></code>.</dd>
 </dl>
 <dl class="docutils" id="shared-library">
-<dt><tt class="docutils literal"><span class="pre">SHARED_LIBRARY</span></tt></dt>
-<dd>If set to any value, causes a shared library (<tt class="docutils literal"><span class="pre">.so</span></tt>) to be built in
+<dt><code class="docutils literal"><span class="pre">SHARED_LIBRARY</span></code></dt>
+<dd>If set to any value, causes a shared library (<code class="docutils literal"><span class="pre">.so</span></code>) to be built in
 addition to any other kinds of libraries. Note that this option will cause
 all source files to be built twice: once with options for position
 independent code and once without. Use it only where you really need a
 shared library.</dd>
-<dt><tt class="docutils literal"><span class="pre">SOURCES</span></tt> (optional)</dt>
+<dt><code class="docutils literal"><span class="pre">SOURCES</span></code> (optional)</dt>
 <dd>Specifies the list of source files in the current directory to be
 built. Source files of any type may be specified (programs, documentation,
 config files, etc.). If not specified, the makefile system will infer the
 set of source files from the files present in the current directory.</dd>
-<dt><tt class="docutils literal"><span class="pre">SUFFIXES</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">SUFFIXES</span></code></dt>
 <dd>Specifies a set of filename suffixes that occur in suffix match rules.  Only
-set this if your local <tt class="docutils literal"><span class="pre">Makefile</span></tt> specifies additional suffix match
+set this if your local <code class="docutils literal"><span class="pre">Makefile</span></code> specifies additional suffix match
 rules.</dd>
-<dt><tt class="docutils literal"><span class="pre">TARGET</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">TARGET</span></code></dt>
 <dd>Specifies the name of the LLVM code generation target that the current
 directory builds. Setting this variable enables additional rules to build
-<tt class="docutils literal"><span class="pre">.inc</span></tt> files from <tt class="docutils literal"><span class="pre">.td</span></tt> files.</dd>
+<code class="docutils literal"><span class="pre">.inc</span></code> files from <code class="docutils literal"><span class="pre">.td</span></code> files.</dd>
 </dl>
 <dl class="docutils" id="testsuite">
-<dt><tt class="docutils literal"><span class="pre">TESTSUITE</span></tt></dt>
-<dd>Specifies the directory of tests to run in <tt class="docutils literal"><span class="pre">llvm/test</span></tt>.</dd>
-<dt><tt class="docutils literal"><span class="pre">TOOLNAME</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">TESTSUITE</span></code></dt>
+<dd>Specifies the directory of tests to run in <code class="docutils literal"><span class="pre">llvm/test</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">TOOLNAME</span></code></dt>
 <dd>Specifies the name of the tool that the current directory should build.</dd>
-<dt><tt class="docutils literal"><span class="pre">TOOL_VERBOSE</span></tt></dt>
-<dd>Implies <tt class="docutils literal"><span class="pre">VERBOSE</span></tt> and also tells each tool invoked to be verbose. This is
+<dt><code class="docutils literal"><span class="pre">TOOL_VERBOSE</span></code></dt>
+<dd>Implies <code class="docutils literal"><span class="pre">VERBOSE</span></code> and also tells each tool invoked to be verbose. This is
 handy when you&#8217;re trying to see the sub-tools invoked by each tool invoked
-by the makefile. For example, this will pass <tt class="docutils literal"><span class="pre">-v</span></tt> to the GCC compilers
+by the makefile. For example, this will pass <code class="docutils literal"><span class="pre">-v</span></code> to the GCC compilers
 which causes it to print out the command lines it uses to invoke sub-tools
 (compiler, assembler, linker).</dd>
 </dl>
 <dl class="docutils" id="usedlibs">
-<dt><tt class="docutils literal"><span class="pre">USEDLIBS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">USEDLIBS</span></code></dt>
 <dd>Specifies the list of project libraries that will be linked into the tool or
 library.</dd>
-<dt><tt class="docutils literal"><span class="pre">VERBOSE</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">VERBOSE</span></code></dt>
 <dd>Tells the Makefile system to produce detailed output of what it is doing
 instead of just summary comments. This will generate a LOT of output.</dd>
 </dl>
@@ -713,92 +713,92 @@ instead of just summary comments. This will generate a LOT of output.</dd>
 LLVM makefile system. These variables can be set in several ways:</p>
 <ul class="simple">
 <li>In the environment (e.g. setenv, export) &#8212; not recommended.</li>
-<li>On the <tt class="docutils literal"><span class="pre">make</span></tt> command line &#8212; recommended.</li>
-<li>On the <tt class="docutils literal"><span class="pre">configure</span></tt> command line.</li>
+<li>On the <code class="docutils literal"><span class="pre">make</span></code> command line &#8212; recommended.</li>
+<li>On the <code class="docutils literal"><span class="pre">configure</span></code> command line.</li>
 <li>In the Makefile (only <em>after</em> the inclusion of <a class="reference internal" href="#level-makefile-common">$(LEVEL)/Makefile.common</a>).</li>
 </ul>
 <p>The override variables are given below:</p>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">AR</span></tt> (defaulted)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">ar</span></tt> tool.</dd>
-<dt><tt class="docutils literal"><span class="pre">PROJ_OBJ_DIR</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">AR</span></code> (defaulted)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">ar</span></code> tool.</dd>
+<dt><code class="docutils literal"><span class="pre">PROJ_OBJ_DIR</span></code></dt>
 <dd>The directory into which the products of build rules will be placed.  This
 might be the same as <a class="reference internal" href="#proj-src-dir">PROJ_SRC_DIR</a> but typically is not.</dd>
 </dl>
 <dl class="docutils" id="proj-src-dir">
-<dt><tt class="docutils literal"><span class="pre">PROJ_SRC_DIR</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">PROJ_SRC_DIR</span></code></dt>
 <dd>The directory which contains the source files to be built.</dd>
-<dt><tt class="docutils literal"><span class="pre">BUILD_EXAMPLES</span></tt></dt>
-<dd>If set to 1, build examples in <tt class="docutils literal"><span class="pre">examples</span></tt> and (if building Clang)
-<tt class="docutils literal"><span class="pre">tools/clang/examples</span></tt> directories.</dd>
-<dt><tt class="docutils literal"><span class="pre">BZIP2</span></tt> (configured)</dt>
-<dd>The path to the <tt class="docutils literal"><span class="pre">bzip2</span></tt> tool.</dd>
-<dt><tt class="docutils literal"><span class="pre">CC</span></tt> (configured)</dt>
+<dt><code class="docutils literal"><span class="pre">BUILD_EXAMPLES</span></code></dt>
+<dd>If set to 1, build examples in <code class="docutils literal"><span class="pre">examples</span></code> and (if building Clang)
+<code class="docutils literal"><span class="pre">tools/clang/examples</span></code> directories.</dd>
+<dt><code class="docutils literal"><span class="pre">BZIP2</span></code> (configured)</dt>
+<dd>The path to the <code class="docutils literal"><span class="pre">bzip2</span></code> tool.</dd>
+<dt><code class="docutils literal"><span class="pre">CC</span></code> (configured)</dt>
 <dd>The path to the &#8216;C&#8217; compiler.</dd>
-<dt><tt class="docutils literal"><span class="pre">CFLAGS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">CFLAGS</span></code></dt>
 <dd>Additional flags to be passed to the &#8216;C&#8217; compiler.</dd>
-<dt><tt class="docutils literal"><span class="pre">CPPFLAGS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">CPPFLAGS</span></code></dt>
 <dd>Additional flags passed to the C/C++ preprocessor.</dd>
-<dt><tt class="docutils literal"><span class="pre">CXX</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">CXX</span></code></dt>
 <dd>Specifies the path to the C++ compiler.</dd>
-<dt><tt class="docutils literal"><span class="pre">CXXFLAGS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">CXXFLAGS</span></code></dt>
 <dd>Additional flags to be passed to the C++ compiler.</dd>
-<dt><tt class="docutils literal"><span class="pre">DATE</span></tt> (configured)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">date</span></tt> program or any program that can generate
+<dt><code class="docutils literal"><span class="pre">DATE</span></code> (configured)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">date</span></code> program or any program that can generate
 the current date and time on its standard output.</dd>
-<dt><tt class="docutils literal"><span class="pre">DOT</span></tt> (configured)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">dot</span></tt> tool or <tt class="docutils literal"><span class="pre">false</span></tt> if there isn&#8217;t one.</dd>
-<dt><tt class="docutils literal"><span class="pre">ECHO</span></tt> (configured)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">echo</span></tt> tool for printing output.</dd>
-<dt><tt class="docutils literal"><span class="pre">EXEEXT</span></tt> (configured)</dt>
+<dt><code class="docutils literal"><span class="pre">DOT</span></code> (configured)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">dot</span></code> tool or <code class="docutils literal"><span class="pre">false</span></code> if there isn&#8217;t one.</dd>
+<dt><code class="docutils literal"><span class="pre">ECHO</span></code> (configured)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">echo</span></code> tool for printing output.</dd>
+<dt><code class="docutils literal"><span class="pre">EXEEXT</span></code> (configured)</dt>
 <dd>Provides the extension to be used on executables built by the makefiles.
 The value may be empty on platforms that do not use file extensions for
 executables (e.g. Unix).</dd>
-<dt><tt class="docutils literal"><span class="pre">INSTALL</span></tt> (configured)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">install</span></tt> tool.</dd>
-<dt><tt class="docutils literal"><span class="pre">LDFLAGS</span></tt> (configured)</dt>
+<dt><code class="docutils literal"><span class="pre">INSTALL</span></code> (configured)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">install</span></code> tool.</dd>
+<dt><code class="docutils literal"><span class="pre">LDFLAGS</span></code> (configured)</dt>
 <dd>Allows users to specify additional flags to pass to the linker.</dd>
-<dt><tt class="docutils literal"><span class="pre">LIBS</span></tt> (configured)</dt>
+<dt><code class="docutils literal"><span class="pre">LIBS</span></code> (configured)</dt>
 <dd>The list of libraries that should be linked with each tool.</dd>
-<dt><tt class="docutils literal"><span class="pre">LIBTOOL</span></tt> (configured)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">libtool</span></tt> tool. This tool is renamed <tt class="docutils literal"><span class="pre">mklib</span></tt>
-by the <tt class="docutils literal"><span class="pre">configure</span></tt> script.</dd>
-<dt><tt class="docutils literal"><span class="pre">LLVMAS</span></tt> (defaulted)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">llvm-as</span></tt> tool.</dd>
-<dt><tt class="docutils literal"><span class="pre">LLVMGCC</span></tt> (defaulted)</dt>
+<dt><code class="docutils literal"><span class="pre">LIBTOOL</span></code> (configured)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">libtool</span></code> tool. This tool is renamed <code class="docutils literal"><span class="pre">mklib</span></code>
+by the <code class="docutils literal"><span class="pre">configure</span></code> script.</dd>
+<dt><code class="docutils literal"><span class="pre">LLVMAS</span></code> (defaulted)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">llvm-as</span></code> tool.</dd>
+<dt><code class="docutils literal"><span class="pre">LLVMGCC</span></code> (defaulted)</dt>
 <dd>Specifies the path to the LLVM version of the GCC &#8216;C&#8217; Compiler.</dd>
-<dt><tt class="docutils literal"><span class="pre">LLVMGXX</span></tt> (defaulted)</dt>
+<dt><code class="docutils literal"><span class="pre">LLVMGXX</span></code> (defaulted)</dt>
 <dd>Specifies the path to the LLVM version of the GCC C++ Compiler.</dd>
-<dt><tt class="docutils literal"><span class="pre">LLVMLD</span></tt> (defaulted)</dt>
+<dt><code class="docutils literal"><span class="pre">LLVMLD</span></code> (defaulted)</dt>
 <dd>Specifies the path to the LLVM bitcode linker tool</dd>
-<dt><tt class="docutils literal"><span class="pre">LLVM_OBJ_ROOT</span></tt> (configured)</dt>
+<dt><code class="docutils literal"><span class="pre">LLVM_OBJ_ROOT</span></code> (configured)</dt>
 <dd>Specifies the top directory into which the output of the build is placed.</dd>
-<dt><tt class="docutils literal"><span class="pre">LLVM_SRC_ROOT</span></tt> (configured)</dt>
+<dt><code class="docutils literal"><span class="pre">LLVM_SRC_ROOT</span></code> (configured)</dt>
 <dd>Specifies the top directory in which the sources are found.</dd>
-<dt><tt class="docutils literal"><span class="pre">LLVM_TARBALL_NAME</span></tt> (configured)</dt>
+<dt><code class="docutils literal"><span class="pre">LLVM_TARBALL_NAME</span></code> (configured)</dt>
 <dd>Specifies the name of the distribution tarball to create. This is configured
 from the name of the project and its version number.</dd>
-<dt><tt class="docutils literal"><span class="pre">MKDIR</span></tt> (defaulted)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">mkdir</span></tt> tool that creates directories.</dd>
-<dt><tt class="docutils literal"><span class="pre">ONLY_TOOLS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">MKDIR</span></code> (defaulted)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">mkdir</span></code> tool that creates directories.</dd>
+<dt><code class="docutils literal"><span class="pre">ONLY_TOOLS</span></code></dt>
 <dd>If set, specifies the list of tools to build.</dd>
-<dt><tt class="docutils literal"><span class="pre">PLATFORMSTRIPOPTS</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">PLATFORMSTRIPOPTS</span></code></dt>
 <dd>The options to provide to the linker to specify that a stripped (no symbols)
 executable should be built.</dd>
-<dt><tt class="docutils literal"><span class="pre">RANLIB</span></tt> (defaulted)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">ranlib</span></tt> tool.</dd>
-<dt><tt class="docutils literal"><span class="pre">RM</span></tt> (defaulted)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">rm</span></tt> tool.</dd>
-<dt><tt class="docutils literal"><span class="pre">SED</span></tt> (defaulted)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">sed</span></tt> tool.</dd>
-<dt><tt class="docutils literal"><span class="pre">SHLIBEXT</span></tt> (configured)</dt>
+<dt><code class="docutils literal"><span class="pre">RANLIB</span></code> (defaulted)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">ranlib</span></code> tool.</dd>
+<dt><code class="docutils literal"><span class="pre">RM</span></code> (defaulted)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">rm</span></code> tool.</dd>
+<dt><code class="docutils literal"><span class="pre">SED</span></code> (defaulted)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">sed</span></code> tool.</dd>
+<dt><code class="docutils literal"><span class="pre">SHLIBEXT</span></code> (configured)</dt>
 <dd>Provides the filename extension to use for shared libraries.</dd>
-<dt><tt class="docutils literal"><span class="pre">TBLGEN</span></tt> (defaulted)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">tblgen</span></tt> tool.</dd>
-<dt><tt class="docutils literal"><span class="pre">TAR</span></tt> (defaulted)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">tar</span></tt> tool.</dd>
-<dt><tt class="docutils literal"><span class="pre">ZIP</span></tt> (defaulted)</dt>
-<dd>Specifies the path to the <tt class="docutils literal"><span class="pre">zip</span></tt> tool.</dd>
+<dt><code class="docutils literal"><span class="pre">TBLGEN</span></code> (defaulted)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">tblgen</span></code> tool.</dd>
+<dt><code class="docutils literal"><span class="pre">TAR</span></code> (defaulted)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">tar</span></code> tool.</dd>
+<dt><code class="docutils literal"><span class="pre">ZIP</span></code> (defaulted)</dt>
+<dd>Specifies the path to the <code class="docutils literal"><span class="pre">zip</span></code> tool.</dd>
 </dl>
 </div>
 <div class="section" id="readable-variables">
@@ -807,61 +807,61 @@ executable should be built.</dd>
 should not be changed. Changing the value will generally cause the build to go
 wrong, so don&#8217;t do it.</p>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">bindir</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">bindir</span></code></dt>
 <dd>The directory into which executables will ultimately be installed. This
-value is derived from the <tt class="docutils literal"><span class="pre">--prefix</span></tt> option given to <tt class="docutils literal"><span class="pre">configure</span></tt>.</dd>
-<dt><tt class="docutils literal"><span class="pre">BuildMode</span></tt></dt>
+value is derived from the <code class="docutils literal"><span class="pre">--prefix</span></code> option given to <code class="docutils literal"><span class="pre">configure</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">BuildMode</span></code></dt>
 <dd>The name of the type of build being performed: Debug, Release, or
 Profile.</dd>
-<dt><tt class="docutils literal"><span class="pre">bytecode_libdir</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">bytecode_libdir</span></code></dt>
 <dd>The directory into which bitcode libraries will ultimately be installed.
-This value is derived from the <tt class="docutils literal"><span class="pre">--prefix</span></tt> option given to <tt class="docutils literal"><span class="pre">configure</span></tt>.</dd>
-<dt><tt class="docutils literal"><span class="pre">ConfigureScriptFLAGS</span></tt></dt>
-<dd>Additional flags given to the <tt class="docutils literal"><span class="pre">configure</span></tt> script when reconfiguring.</dd>
-<dt><tt class="docutils literal"><span class="pre">DistDir</span></tt></dt>
+This value is derived from the <code class="docutils literal"><span class="pre">--prefix</span></code> option given to <code class="docutils literal"><span class="pre">configure</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">ConfigureScriptFLAGS</span></code></dt>
+<dd>Additional flags given to the <code class="docutils literal"><span class="pre">configure</span></code> script when reconfiguring.</dd>
+<dt><code class="docutils literal"><span class="pre">DistDir</span></code></dt>
 <dd>The <em>current</em> directory for which a distribution copy is being made.</dd>
 </dl>
 <dl class="docutils" id="echo">
-<dt><tt class="docutils literal"><span class="pre">Echo</span></tt></dt>
-<dd>The LLVM Makefile System output command. This provides the <tt class="docutils literal"><span class="pre">llvm[n]</span></tt>
-prefix and starts with <tt class="docutils literal"><span class="pre">&#64;</span></tt> so the command itself is not printed by
-<tt class="docutils literal"><span class="pre">make</span></tt>.</dd>
-<dt><tt class="docutils literal"><span class="pre">EchoCmd</span></tt></dt>
-<dd>Same as <a class="reference internal" href="#echo">Echo</a> but without the leading <tt class="docutils literal"><span class="pre">&#64;</span></tt>.</dd>
-<dt><tt class="docutils literal"><span class="pre">includedir</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">Echo</span></code></dt>
+<dd>The LLVM Makefile System output command. This provides the <code class="docutils literal"><span class="pre">llvm[n]</span></code>
+prefix and starts with <code class="docutils literal"><span class="pre">&#64;</span></code> so the command itself is not printed by
+<code class="docutils literal"><span class="pre">make</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">EchoCmd</span></code></dt>
+<dd>Same as <a class="reference internal" href="#echo">Echo</a> but without the leading <code class="docutils literal"><span class="pre">&#64;</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">includedir</span></code></dt>
 <dd>The directory into which include files will ultimately be installed.  This
-value is derived from the <tt class="docutils literal"><span class="pre">--prefix</span></tt> option given to <tt class="docutils literal"><span class="pre">configure</span></tt>.</dd>
-<dt><tt class="docutils literal"><span class="pre">libdir</span></tt></dt>
+value is derived from the <code class="docutils literal"><span class="pre">--prefix</span></code> option given to <code class="docutils literal"><span class="pre">configure</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">libdir</span></code></dt>
 <dd>The directory into which native libraries will ultimately be installed.
-This value is derived from the <tt class="docutils literal"><span class="pre">--prefix</span></tt> option given to
-<tt class="docutils literal"><span class="pre">configure</span></tt>.</dd>
-<dt><tt class="docutils literal"><span class="pre">LibDir</span></tt></dt>
+This value is derived from the <code class="docutils literal"><span class="pre">--prefix</span></code> option given to
+<code class="docutils literal"><span class="pre">configure</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">LibDir</span></code></dt>
 <dd>The configuration specific directory into which libraries are placed before
 installation.</dd>
-<dt><tt class="docutils literal"><span class="pre">MakefileConfig</span></tt></dt>
-<dd>Full path of the <tt class="docutils literal"><span class="pre">Makefile.config</span></tt> file.</dd>
-<dt><tt class="docutils literal"><span class="pre">MakefileConfigIn</span></tt></dt>
-<dd>Full path of the <tt class="docutils literal"><span class="pre">Makefile.config.in</span></tt> file.</dd>
-<dt><tt class="docutils literal"><span class="pre">ObjDir</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">MakefileConfig</span></code></dt>
+<dd>Full path of the <code class="docutils literal"><span class="pre">Makefile.config</span></code> file.</dd>
+<dt><code class="docutils literal"><span class="pre">MakefileConfigIn</span></code></dt>
+<dd>Full path of the <code class="docutils literal"><span class="pre">Makefile.config.in</span></code> file.</dd>
+<dt><code class="docutils literal"><span class="pre">ObjDir</span></code></dt>
 <dd>The configuration and directory specific directory where build objects
 (compilation results) are placed.</dd>
-<dt><tt class="docutils literal"><span class="pre">SubDirs</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">SubDirs</span></code></dt>
 <dd>The complete list of sub-directories of the current directory as
 specified by other variables.</dd>
-<dt><tt class="docutils literal"><span class="pre">Sources</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">Sources</span></code></dt>
 <dd>The complete list of source files.</dd>
-<dt><tt class="docutils literal"><span class="pre">sysconfdir</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">sysconfdir</span></code></dt>
 <dd>The directory into which configuration files will ultimately be
-installed. This value is derived from the <tt class="docutils literal"><span class="pre">--prefix</span></tt> option given to
-<tt class="docutils literal"><span class="pre">configure</span></tt>.</dd>
-<dt><tt class="docutils literal"><span class="pre">ToolDir</span></tt></dt>
+installed. This value is derived from the <code class="docutils literal"><span class="pre">--prefix</span></code> option given to
+<code class="docutils literal"><span class="pre">configure</span></code>.</dd>
+<dt><code class="docutils literal"><span class="pre">ToolDir</span></code></dt>
 <dd>The configuration specific directory into which executables are placed
 before they are installed.</dd>
-<dt><tt class="docutils literal"><span class="pre">TopDistDir</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">TopDistDir</span></code></dt>
 <dd>The top most directory into which the distribution files are copied.</dd>
-<dt><tt class="docutils literal"><span class="pre">Verb</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">Verb</span></code></dt>
 <dd>Use this as the first thing on your build script lines to enable or disable
-verbose mode. It expands to either an <tt class="docutils literal"><span class="pre">&#64;</span></tt> (quiet mode) or nothing (verbose
+verbose mode. It expands to either an <code class="docutils literal"><span class="pre">&#64;</span></code> (quiet mode) or nothing (verbose
 mode).</dd>
 </dl>
 </div>
@@ -947,7 +947,7 @@ UserTargets
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -964,10 +964,10 @@ UserTargets
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

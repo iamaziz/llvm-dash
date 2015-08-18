@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-developer-policy">
 <h1>LLVM Developer Policy<a class="headerlink" href="#llvm-developer-policy" title="Permalink to this headline">¶</a></h1>
@@ -104,8 +104,8 @@ LLDB, libc++, etc.</p>
 <li>Attract both users and developers to the LLVM project.</li>
 <li>Make life as simple and easy for contributors as possible.</li>
 <li>Keep the top of Subversion trees as stable as possible.</li>
-<li>Establish awareness of the project&#8217;s <a class="reference internal" href="#copyright-license-patents"><em>copyright, license, and patent
-policies</em></a> with contributors to the project.</li>
+<li>Establish awareness of the project&#8217;s <a class="reference internal" href="#copyright-license-patents"><span>copyright, license, and patent
+policies</span></a> with contributors to the project.</li>
 </ol>
 <p>This policy is aimed at frequent contributors to LLVM. People interested in
 contributing one-off patches can do so in an informal way by sending them to the
@@ -150,10 +150,10 @@ Guide</a>.</li>
 <li>Similarly, patches should be submitted soon after they are generated.  Old
 patches may not apply correctly if the underlying code changes between the
 time the patch was created and the time it is applied.</li>
-<li>Patches should be made with <tt class="docutils literal"><span class="pre">svn</span> <span class="pre">diff</span></tt>, or similar. If you use a
-different tool, make sure it uses the <tt class="docutils literal"><span class="pre">diff</span> <span class="pre">-u</span></tt> format and that it
+<li>Patches should be made with <code class="docutils literal"><span class="pre">svn</span> <span class="pre">diff</span></code>, or similar. If you use a
+different tool, make sure it uses the <code class="docutils literal"><span class="pre">diff</span> <span class="pre">-u</span></code> format and that it
 doesn&#8217;t contain clutter which makes it hard to read.</li>
-<li>If you are modifying generated files, such as the top-level <tt class="docutils literal"><span class="pre">configure</span></tt>
+<li>If you are modifying generated files, such as the top-level <code class="docutils literal"><span class="pre">configure</span></code>
 script, please separate out those changes into a separate patch from the rest
 of your changes.</li>
 </ol>
@@ -168,9 +168,9 @@ ensures that your mailer will not mangle the patch when it sends it (e.g. by
 making whitespace changes or by wrapping lines).</p>
 <p><em>For Thunderbird users:</em> Before submitting a patch, please open <em>Preferences &gt;
 Advanced &gt; General &gt; Config Editor</em>, find the key
-<tt class="docutils literal"><span class="pre">mail.content_disposition_type</span></tt>, and set its value to <tt class="docutils literal"><span class="pre">1</span></tt>. Without this
-setting, Thunderbird sends your attachment using <tt class="docutils literal"><span class="pre">Content-Disposition:</span> <span class="pre">inline</span></tt>
-rather than <tt class="docutils literal"><span class="pre">Content-Disposition:</span> <span class="pre">attachment</span></tt>. Apple Mail gamely displays such
+<code class="docutils literal"><span class="pre">mail.content_disposition_type</span></code>, and set its value to <code class="docutils literal"><span class="pre">1</span></code>. Without this
+setting, Thunderbird sends your attachment using <code class="docutils literal"><span class="pre">Content-Disposition:</span> <span class="pre">inline</span></code>
+rather than <code class="docutils literal"><span class="pre">Content-Disposition:</span> <span class="pre">attachment</span></code>. Apple Mail gamely displays such
 a file inline, making it difficult to work with for reviewers using that
 program.</p>
 <p>When submitting patches, please do not add confidentiality or non-disclosure
@@ -250,18 +250,18 @@ have an official policy on how one gets elected to be a code owner.</p>
 <p>Developers are required to create test cases for any bugs fixed and any new
 features added.  Some tips for getting your testcase approved:</p>
 <ul class="simple">
-<li>All feature and regression test cases are added to the <tt class="docutils literal"><span class="pre">llvm/test</span></tt>
+<li>All feature and regression test cases are added to the <code class="docutils literal"><span class="pre">llvm/test</span></code>
 directory. The appropriate sub-directory should be selected (see the
 <a class="reference internal" href="TestingGuide.html"><em>Testing Guide</em></a> for details).</li>
 <li>Test cases should be written in <a class="reference internal" href="LangRef.html"><em>LLVM assembly language</em></a>.</li>
 <li>Test cases, especially for regressions, should be reduced as much as possible,
 by <a class="reference internal" href="Bugpoint.html"><em>bugpoint</em></a> or manually. It is unacceptable to place an
-entire failing program into <tt class="docutils literal"><span class="pre">llvm/test</span></tt> as this creates a <em>time-to-test</em>
+entire failing program into <code class="docutils literal"><span class="pre">llvm/test</span></code> as this creates a <em>time-to-test</em>
 burden on all developers. Please keep them short.</li>
 </ul>
 <p>Note that llvm/test and clang/test are designed for regression and small feature
 tests only. More extensive test cases (e.g., entire applications, benchmarks,
-etc) should be added to the <tt class="docutils literal"><span class="pre">llvm-test</span></tt> test suite.  The llvm-test suite is
+etc) should be added to the <code class="docutils literal"><span class="pre">llvm-test</span></code> test suite.  The llvm-test suite is
 for coverage (correctness, performance, etc) testing, not feature or regression
 testing.</p>
 </div>
@@ -274,17 +274,17 @@ committed to the main development branch are:</p>
 <li>Code must compile cleanly (no errors, no warnings) on at least one platform.</li>
 <li>Bug fixes and new features should <a class="reference internal" href="#include-a-testcase">include a testcase</a> so we know if the
 fix/feature ever regresses in the future.</li>
-<li>Code must pass the <tt class="docutils literal"><span class="pre">llvm/test</span></tt> test suite.</li>
+<li>Code must pass the <code class="docutils literal"><span class="pre">llvm/test</span></code> test suite.</li>
 <li>The code must not cause regressions on a reasonable subset of llvm-test,
 where &#8220;reasonable&#8221; depends on the contributor&#8217;s judgement and the scope of
 the change (more invasive changes require more testing). A reasonable subset
-might be something like &#8220;<tt class="docutils literal"><span class="pre">llvm-test/MultiSource/Benchmarks</span></tt>&#8221;.</li>
+might be something like &#8220;<code class="docutils literal"><span class="pre">llvm-test/MultiSource/Benchmarks</span></code>&#8221;.</li>
 </ol>
 <p>Additionally, the committer is responsible for addressing any problems found in
 the future that the change is responsible for.  For example:</p>
 <ul class="simple">
 <li>The code should compile cleanly on all supported platforms.</li>
-<li>The changes should not cause any correctness regressions in the <tt class="docutils literal"><span class="pre">llvm-test</span></tt>
+<li>The changes should not cause any correctness regressions in the <code class="docutils literal"><span class="pre">llvm-test</span></code>
 suite and must not cause any major performance regressions.</li>
 <li>The change set should not cause performance or correctness regressions for the
 LLVM tools.</li>
@@ -314,10 +314,10 @@ quality patches.  If you would like commit access, please send an email to
 <li>The user name you want to commit with, e.g. &#8220;hacker&#8221;.</li>
 <li>The full name and email address you want message to llvm-commits to come
 from, e.g. &#8220;J. Random Hacker &lt;<a class="reference external" href="mailto:hacker&#37;&#52;&#48;yoyodyne&#46;com">hacker<span>&#64;</span>yoyodyne<span>&#46;</span>com</a>&gt;&#8221;.</li>
-<li>A &#8220;password hash&#8221; of the password you want to use, e.g. &#8220;<tt class="docutils literal"><span class="pre">2ACR96qjUqsyM</span></tt>&#8221;.
+<li>A &#8220;password hash&#8221; of the password you want to use, e.g. &#8220;<code class="docutils literal"><span class="pre">2ACR96qjUqsyM</span></code>&#8221;.
 Note that you don&#8217;t ever tell us what your password is; you just give it to
-us in an encrypted form.  To get this, run &#8220;<tt class="docutils literal"><span class="pre">htpasswd</span></tt>&#8221; (a utility that
-comes with apache) in crypt mode (often enabled with &#8220;<tt class="docutils literal"><span class="pre">-d</span></tt>&#8221;), or find a web
+us in an encrypted form.  To get this, run &#8220;<code class="docutils literal"><span class="pre">htpasswd</span></code>&#8221; (a utility that
+comes with apache) in crypt mode (often enabled with &#8220;<code class="docutils literal"><span class="pre">-d</span></code>&#8221;), or find a web
 page that will do it for you.</li>
 </ol>
 <p>Once you&#8217;ve been granted commit access, you should be able to check out an LLVM
@@ -556,7 +556,7 @@ details.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -573,10 +573,10 @@ details.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-coding-standards">
 <h1>LLVM Coding Standards<a class="headerlink" href="#llvm-coding-standards" title="Permalink to this headline">¶</a></h1>
@@ -85,7 +85,7 @@
 </li>
 <li><a class="reference internal" href="#comment-formatting" id="id13">Comment Formatting</a></li>
 <li><a class="reference internal" href="#doxygen-use-in-documentation-comments" id="id14">Doxygen Use in Documentation Comments</a></li>
-<li><a class="reference internal" href="#include-style" id="id15"><tt class="docutils literal"><span class="pre">#include</span></tt> Style</a></li>
+<li><a class="reference internal" href="#include-style" id="id15"><code class="docutils literal"><span class="pre">#include</span></code> Style</a></li>
 <li><a class="reference internal" href="#source-code-width" id="id16">Source Code Width</a></li>
 <li><a class="reference internal" href="#use-spaces-instead-of-tabs" id="id17">Use Spaces Instead of Tabs</a></li>
 <li><a class="reference internal" href="#indent-code-consistently" id="id18">Indent Code Consistently</a><ul>
@@ -100,10 +100,10 @@
 <li><a class="reference internal" href="#write-portable-code" id="id23">Write Portable Code</a></li>
 <li><a class="reference internal" href="#do-not-use-rtti-or-exceptions" id="id24">Do not use RTTI or Exceptions</a></li>
 <li><a class="reference internal" href="#do-not-use-static-constructors" id="id25">Do not use Static Constructors</a></li>
-<li><a class="reference internal" href="#use-of-class-and-struct-keywords" id="id26">Use of <tt class="docutils literal"><span class="pre">class</span></tt> and <tt class="docutils literal"><span class="pre">struct</span></tt> Keywords</a></li>
+<li><a class="reference internal" href="#use-of-class-and-struct-keywords" id="id26">Use of <code class="docutils literal"><span class="pre">class</span></code> and <code class="docutils literal"><span class="pre">struct</span></code> Keywords</a></li>
 <li><a class="reference internal" href="#do-not-use-braced-initializer-lists-to-call-a-constructor" id="id27">Do not use Braced Initializer Lists to Call a Constructor</a></li>
-<li><a class="reference internal" href="#use-auto-type-deduction-to-make-code-more-readable" id="id28">Use <tt class="docutils literal"><span class="pre">auto</span></tt> Type Deduction to Make Code More Readable</a></li>
-<li><a class="reference internal" href="#beware-unnecessary-copies-with-auto" id="id29">Beware unnecessary copies with <tt class="docutils literal"><span class="pre">auto</span></tt></a></li>
+<li><a class="reference internal" href="#use-auto-type-deduction-to-make-code-more-readable" id="id28">Use <code class="docutils literal"><span class="pre">auto</span></code> Type Deduction to Make Code More Readable</a></li>
+<li><a class="reference internal" href="#beware-unnecessary-copies-with-auto" id="id29">Beware unnecessary copies with <code class="docutils literal"><span class="pre">auto</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -111,25 +111,25 @@
 <li><a class="reference internal" href="#style-issues" id="id30">Style Issues</a><ul>
 <li><a class="reference internal" href="#the-high-level-issues" id="id31">The High-Level Issues</a><ul>
 <li><a class="reference internal" href="#a-public-header-file-is-a-module" id="id32">A Public Header File <strong>is</strong> a Module</a></li>
-<li><a class="reference internal" href="#include-as-little-as-possible" id="id33"><tt class="docutils literal"><span class="pre">#include</span></tt> as Little as Possible</a></li>
+<li><a class="reference internal" href="#include-as-little-as-possible" id="id33"><code class="docutils literal"><span class="pre">#include</span></code> as Little as Possible</a></li>
 <li><a class="reference internal" href="#keep-internal-headers-private" id="id34">Keep &#8220;Internal&#8221; Headers Private</a></li>
-<li><a class="reference internal" href="#use-early-exits-and-continue-to-simplify-code" id="id35">Use Early Exits and <tt class="docutils literal"><span class="pre">continue</span></tt> to Simplify Code</a></li>
-<li><a class="reference internal" href="#don-t-use-else-after-a-return" id="id36">Don&#8217;t use <tt class="docutils literal"><span class="pre">else</span></tt> after a <tt class="docutils literal"><span class="pre">return</span></tt></a></li>
+<li><a class="reference internal" href="#use-early-exits-and-continue-to-simplify-code" id="id35">Use Early Exits and <code class="docutils literal"><span class="pre">continue</span></code> to Simplify Code</a></li>
+<li><a class="reference internal" href="#don-t-use-else-after-a-return" id="id36">Don&#8217;t use <code class="docutils literal"><span class="pre">else</span></code> after a <code class="docutils literal"><span class="pre">return</span></code></a></li>
 <li><a class="reference internal" href="#turn-predicate-loops-into-predicate-functions" id="id37">Turn Predicate Loops into Predicate Functions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#the-low-level-issues" id="id38">The Low-Level Issues</a><ul>
 <li><a class="reference internal" href="#name-types-functions-variables-and-enumerators-properly" id="id39">Name Types, Functions, Variables, and Enumerators Properly</a></li>
 <li><a class="reference internal" href="#assert-liberally" id="id40">Assert Liberally</a></li>
-<li><a class="reference internal" href="#do-not-use-using-namespace-std" id="id41">Do Not Use <tt class="docutils literal"><span class="pre">using</span> <span class="pre">namespace</span> <span class="pre">std</span></tt></a></li>
+<li><a class="reference internal" href="#do-not-use-using-namespace-std" id="id41">Do Not Use <code class="docutils literal"><span class="pre">using</span> <span class="pre">namespace</span> <span class="pre">std</span></code></a></li>
 <li><a class="reference internal" href="#provide-a-virtual-method-anchor-for-classes-in-headers" id="id42">Provide a Virtual Method Anchor for Classes in Headers</a></li>
 <li><a class="reference internal" href="#don-t-use-default-labels-in-fully-covered-switches-over-enumerations" id="id43">Don&#8217;t use default labels in fully covered switches over enumerations</a></li>
-<li><a class="reference internal" href="#use-llvm-deleted-function-to-mark-uncallable-methods" id="id44">Use <tt class="docutils literal"><span class="pre">LLVM_DELETED_FUNCTION</span></tt> to mark uncallable methods</a></li>
-<li><a class="reference internal" href="#don-t-evaluate-end-every-time-through-a-loop" id="id45">Don&#8217;t evaluate <tt class="docutils literal"><span class="pre">end()</span></tt> every time through a loop</a></li>
-<li><a class="reference internal" href="#include-iostream-is-forbidden" id="id46"><tt class="docutils literal"><span class="pre">#include</span> <span class="pre">&lt;iostream&gt;</span></tt> is Forbidden</a></li>
-<li><a class="reference internal" href="#use-raw-ostream" id="id47">Use <tt class="docutils literal"><span class="pre">raw_ostream</span></tt></a></li>
-<li><a class="reference internal" href="#avoid-std-endl" id="id48">Avoid <tt class="docutils literal"><span class="pre">std::endl</span></tt></a></li>
-<li><a class="reference internal" href="#don-t-use-inline-when-defining-a-function-in-a-class-definition" id="id49">Don&#8217;t use <tt class="docutils literal"><span class="pre">inline</span></tt> when defining a function in a class definition</a></li>
+<li><a class="reference internal" href="#use-llvm-deleted-function-to-mark-uncallable-methods" id="id44">Use <code class="docutils literal"><span class="pre">LLVM_DELETED_FUNCTION</span></code> to mark uncallable methods</a></li>
+<li><a class="reference internal" href="#don-t-evaluate-end-every-time-through-a-loop" id="id45">Don&#8217;t evaluate <code class="docutils literal"><span class="pre">end()</span></code> every time through a loop</a></li>
+<li><a class="reference internal" href="#include-iostream-is-forbidden" id="id46"><code class="docutils literal"><span class="pre">#include</span> <span class="pre">&lt;iostream&gt;</span></code> is Forbidden</a></li>
+<li><a class="reference internal" href="#use-raw-ostream" id="id47">Use <code class="docutils literal"><span class="pre">raw_ostream</span></code></a></li>
+<li><a class="reference internal" href="#avoid-std-endl" id="id48">Avoid <code class="docutils literal"><span class="pre">std::endl</span></code></a></li>
+<li><a class="reference internal" href="#don-t-use-inline-when-defining-a-function-in-a-class-definition" id="id49">Don&#8217;t use <code class="docutils literal"><span class="pre">inline</span></code> when defining a function in a class definition</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#microscopic-details" id="id50">Microscopic Details</a><ul>
@@ -158,8 +158,8 @@ Always follow the golden rule:</p>
 <div><strong>If you are extending, enhancing, or bug fixing already implemented code,
 use the style that is already being used so that the source is uniform and
 easy to follow.</strong></div></blockquote>
-<p>Note that some code bases (e.g. <tt class="docutils literal"><span class="pre">libc++</span></tt>) have really good reasons to deviate
-from the coding standards.  In the case of <tt class="docutils literal"><span class="pre">libc++</span></tt>, this is because the
+<p>Note that some code bases (e.g. <code class="docutils literal"><span class="pre">libc++</span></code>) have really good reasons to deviate
+from the coding standards.  In the case of <code class="docutils literal"><span class="pre">libc++</span></code>, this is because the
 naming and other conventions are dictated by the C++ standard.  If you think
 there is a specific good reason to deviate from the standards here, please bring
 it up on the LLVMdev mailing list.</p>
@@ -224,29 +224,29 @@ of the features that are expected to work. Features not on this list are
 unlikely to be supported by our host compilers.</p>
 <ul class="simple">
 <li>Rvalue references: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2118.html">N2118</a><ul>
-<li>But <em>not</em> Rvalue references for <tt class="docutils literal"><span class="pre">*this</span></tt> or member qualifiers (<a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2439.htm">N2439</a>)</li>
+<li>But <em>not</em> Rvalue references for <code class="docutils literal"><span class="pre">*this</span></code> or member qualifiers (<a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2439.htm">N2439</a>)</li>
 </ul>
 </li>
 <li>Static assert: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1720.html">N1720</a></li>
-<li><tt class="docutils literal"><span class="pre">auto</span></tt> type deduction: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1984.pdf">N1984</a>, <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1737.pdf">N1737</a></li>
+<li><code class="docutils literal"><span class="pre">auto</span></code> type deduction: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1984.pdf">N1984</a>, <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1737.pdf">N1737</a></li>
 <li>Trailing return types: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2541.htm">N2541</a></li>
 <li>Lambdas: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2009/n2927.pdf">N2927</a><ul>
 <li>But <em>not</em> lambdas with default arguments.</li>
 </ul>
 </li>
-<li><tt class="docutils literal"><span class="pre">decltype</span></tt>: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2343.pdf">N2343</a></li>
+<li><code class="docutils literal"><span class="pre">decltype</span></code>: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2343.pdf">N2343</a></li>
 <li>Nested closing right angle brackets: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1757.html">N1757</a></li>
 <li>Extern templates: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1987.htm">N1987</a></li>
-<li><tt class="docutils literal"><span class="pre">nullptr</span></tt>: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2431.pdf">N2431</a></li>
+<li><code class="docutils literal"><span class="pre">nullptr</span></code>: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2431.pdf">N2431</a></li>
 <li>Strongly-typed and forward declarable enums: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2347.pdf">N2347</a>, <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2764.pdf">N2764</a></li>
 <li>Local and unnamed types as template arguments: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2008/n2657.htm">N2657</a></li>
 <li>Range-based for-loop: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2009/n2930.html">N2930</a><ul>
-<li>But <tt class="docutils literal"><span class="pre">{}</span></tt> are required around inner <tt class="docutils literal"><span class="pre">do</span> <span class="pre">{}</span> <span class="pre">while()</span></tt> loops.  As a result,
-<tt class="docutils literal"><span class="pre">{}</span></tt> are required around function-like macros inside range-based for
+<li>But <code class="docutils literal"><span class="pre">{}</span></code> are required around inner <code class="docutils literal"><span class="pre">do</span> <span class="pre">{}</span> <span class="pre">while()</span></code> loops.  As a result,
+<code class="docutils literal"><span class="pre">{}</span></code> are required around function-like macros inside range-based for
 loops.</li>
 </ul>
 </li>
-<li><tt class="docutils literal"><span class="pre">override</span></tt> and <tt class="docutils literal"><span class="pre">final</span></tt>: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2009/n2928.htm">N2928</a>, <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2010/n3206.htm">N3206</a>, <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3272.htm">N3272</a></li>
+<li><code class="docutils literal"><span class="pre">override</span></code> and <code class="docutils literal"><span class="pre">final</span></code>: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2009/n2928.htm">N2928</a>, <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2010/n3206.htm">N3206</a>, <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2011/n3272.htm">N3272</a></li>
 <li>Atomic operations and the C++11 memory model: <a class="reference external" href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2429.htm">N2429</a></li>
 </ul>
 <p>The supported features in the C++11 standard libraries are less well tracked,
@@ -263,11 +263,11 @@ being aware of:</p>
 <li>While most of the atomics library is well implemented, the fences are
 missing. Fortunately, they are rarely needed.</li>
 <li>The locale support is incomplete.</li>
-<li><tt class="docutils literal"><span class="pre">std::initializer_list</span></tt> (and the constructors and functions that take it as
+<li><code class="docutils literal"><span class="pre">std::initializer_list</span></code> (and the constructors and functions that take it as
 an argument) are not always available, so you cannot (for example) initialize
-a <tt class="docutils literal"><span class="pre">std::vector</span></tt> with a braced initializer list.</li>
-<li><tt class="docutils literal"><span class="pre">std::equal()</span></tt> (and other algorithms) incorrectly assert in MSVC when given
-<tt class="docutils literal"><span class="pre">nullptr</span></tt> as an iterator.</li>
+a <code class="docutils literal"><span class="pre">std::vector</span></code> with a braced initializer list.</li>
+<li><code class="docutils literal"><span class="pre">std::equal()</span></code> (and other algorithms) incorrectly assert in MSVC when given
+<code class="docutils literal"><span class="pre">nullptr</span></code> as an iterator.</li>
 </ul>
 <p>Other than these areas you should assume the standard library is available and
 working as expected until some build bot tells you otherwise. If you&#8217;re in an
@@ -318,12 +318,12 @@ tree.  The standard header looks like this:</p>
 <span class="c1">//===----------------------------------------------------------------------===//</span>
 </pre></div>
 </div>
-<p>A few things to note about this particular format: The &#8220;<tt class="docutils literal"><span class="pre">-*-</span> <span class="pre">C++</span> <span class="pre">-*-</span></tt>&#8221; string
+<p>A few things to note about this particular format: The &#8220;<code class="docutils literal"><span class="pre">-*-</span> <span class="pre">C++</span> <span class="pre">-*-</span></code>&#8221; string
 on the first line is there to tell Emacs that the source file is a C++ file, not
-a C file (Emacs assumes <tt class="docutils literal"><span class="pre">.h</span></tt> files are C files by default).</p>
+a C file (Emacs assumes <code class="docutils literal"><span class="pre">.h</span></code> files are C files by default).</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This tag is not necessary in <tt class="docutils literal"><span class="pre">.cpp</span></tt> files.  The name of the file is also
+<p class="last">This tag is not necessary in <code class="docutils literal"><span class="pre">.cpp</span></code> files.  The name of the file is also
 on the first line, along with a very short description of the purpose of the
 file.  This is important when printing out code and flipping though lots of
 pages.</p>
@@ -331,8 +331,8 @@ pages.</p>
 <p>The next section in the file is a concise note that defines the license that the
 file is released under.  This makes it perfectly clear what terms the source
 code can be distributed under and should not be modified in any way.</p>
-<p>The main body is a <tt class="docutils literal"><span class="pre">doxygen</span></tt> comment describing the purpose of the file.  It
-should have a <tt class="docutils literal"><span class="pre">\brief</span></tt> command that describes the file in one or two
+<p>The main body is a <code class="docutils literal"><span class="pre">doxygen</span></code> comment describing the purpose of the file.  It
+should have a <code class="docutils literal"><span class="pre">\brief</span></code> command that describes the file in one or two
 sentences.  Any additional information should be separated by a blank line.  If
 an algorithm is being implemented or something tricky is going on, a reference
 to the paper where it is published should be included, as well as any notes or
@@ -343,7 +343,7 @@ to the paper where it is published should be included, as well as any notes or
 <p>Classes are one fundamental part of a good object oriented design.  As such, a
 class definition should have a comment block that explains what the class is
 used for and how it works.  Every non-trivial class is expected to have a
-<tt class="docutils literal"><span class="pre">doxygen</span></tt> comment block.</p>
+<code class="docutils literal"><span class="pre">doxygen</span></code> comment block.</p>
 </div>
 <div class="section" id="method-information">
 <h5><a class="toc-backref" href="#id12">Method information</a><a class="headerlink" href="#method-information" title="Permalink to this headline">¶</a></h5>
@@ -358,36 +358,36 @@ happens: does the method return null?  Abort?  Format your hard disk?</p>
 </div>
 <div class="section" id="comment-formatting">
 <h4><a class="toc-backref" href="#id13">Comment Formatting</a><a class="headerlink" href="#comment-formatting" title="Permalink to this headline">¶</a></h4>
-<p>In general, prefer C++ style (<tt class="docutils literal"><span class="pre">//</span></tt>) comments.  They take less space, require
+<p>In general, prefer C++ style (<code class="docutils literal"><span class="pre">//</span></code>) comments.  They take less space, require
 less typing, don&#8217;t have nesting problems, etc.  There are a few cases when it is
-useful to use C style (<tt class="docutils literal"><span class="pre">/*</span> <span class="pre">*/</span></tt>) comments however:</p>
+useful to use C style (<code class="docutils literal"><span class="pre">/*</span> <span class="pre">*/</span></code>) comments however:</p>
 <ol class="arabic simple">
 <li>When writing C code: Obviously if you are writing C code, use C style
 comments.</li>
-<li>When writing a header file that may be <tt class="docutils literal"><span class="pre">#include</span></tt>d by a C source file.</li>
+<li>When writing a header file that may be <code class="docutils literal"><span class="pre">#include</span></code>d by a C source file.</li>
 <li>When writing a source file that is used by a tool that only accepts C style
 comments.</li>
 </ol>
-<p>To comment out a large block of code, use <tt class="docutils literal"><span class="pre">#if</span> <span class="pre">0</span></tt> and <tt class="docutils literal"><span class="pre">#endif</span></tt>. These nest
+<p>To comment out a large block of code, use <code class="docutils literal"><span class="pre">#if</span> <span class="pre">0</span></code> and <code class="docutils literal"><span class="pre">#endif</span></code>. These nest
 properly and are better behaved in general than C style comments.</p>
 </div>
 <div class="section" id="doxygen-use-in-documentation-comments">
 <h4><a class="toc-backref" href="#id14">Doxygen Use in Documentation Comments</a><a class="headerlink" href="#doxygen-use-in-documentation-comments" title="Permalink to this headline">¶</a></h4>
-<p>Use the <tt class="docutils literal"><span class="pre">\file</span></tt> command to turn the standard file header into a file-level
+<p>Use the <code class="docutils literal"><span class="pre">\file</span></code> command to turn the standard file header into a file-level
 comment.</p>
-<p>Include descriptive <tt class="docutils literal"><span class="pre">\brief</span></tt> paragraphs for all public interfaces (public
+<p>Include descriptive <code class="docutils literal"><span class="pre">\brief</span></code> paragraphs for all public interfaces (public
 classes, member and non-member functions).  Explain API use and purpose in
-<tt class="docutils literal"><span class="pre">\brief</span></tt> paragraphs, don&#8217;t just restate the information that can be inferred
+<code class="docutils literal"><span class="pre">\brief</span></code> paragraphs, don&#8217;t just restate the information that can be inferred
 from the API name.  Put detailed discussion into separate paragraphs.</p>
-<p>To refer to parameter names inside a paragraph, use the <tt class="docutils literal"><span class="pre">\p</span> <span class="pre">name</span></tt> command.
-Don&#8217;t use the <tt class="docutils literal"><span class="pre">\arg</span> <span class="pre">name</span></tt> command since it starts a new paragraph that
+<p>To refer to parameter names inside a paragraph, use the <code class="docutils literal"><span class="pre">\p</span> <span class="pre">name</span></code> command.
+Don&#8217;t use the <code class="docutils literal"><span class="pre">\arg</span> <span class="pre">name</span></code> command since it starts a new paragraph that
 contains documentation for the parameter.</p>
-<p>Wrap non-inline code examples in <tt class="docutils literal"><span class="pre">\code</span> <span class="pre">...</span> <span class="pre">\endcode</span></tt>.</p>
+<p>Wrap non-inline code examples in <code class="docutils literal"><span class="pre">\code</span> <span class="pre">...</span> <span class="pre">\endcode</span></code>.</p>
 <p>To document a function parameter, start a new paragraph with the
-<tt class="docutils literal"><span class="pre">\param</span> <span class="pre">name</span></tt> command.  If the parameter is used as an out or an in/out
-parameter, use the <tt class="docutils literal"><span class="pre">\param</span> <span class="pre">[out]</span> <span class="pre">name</span></tt> or <tt class="docutils literal"><span class="pre">\param</span> <span class="pre">[in,out]</span> <span class="pre">name</span></tt> command,
+<code class="docutils literal"><span class="pre">\param</span> <span class="pre">name</span></code> command.  If the parameter is used as an out or an in/out
+parameter, use the <code class="docutils literal"><span class="pre">\param</span> <span class="pre">[out]</span> <span class="pre">name</span></code> or <code class="docutils literal"><span class="pre">\param</span> <span class="pre">[in,out]</span> <span class="pre">name</span></code> command,
 respectively.</p>
-<p>To describe function return value, start a new paragraph with the <tt class="docutils literal"><span class="pre">\returns</span></tt>
+<p>To describe function return value, start a new paragraph with the <code class="docutils literal"><span class="pre">\returns</span></code>
 command.</p>
 <p>A minimal documentation comment:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="c1">/// \brief Does foo and bar.</span>
@@ -477,29 +477,29 @@ groups to organize within a class.</li>
 </div>
 </div>
 <div class="section" id="include-style">
-<h4><a class="toc-backref" href="#id15"><tt class="docutils literal"><span class="pre">#include</span></tt> Style</a><a class="headerlink" href="#include-style" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id15"><code class="docutils literal"><span class="pre">#include</span></code> Style</a><a class="headerlink" href="#include-style" title="Permalink to this headline">¶</a></h4>
 <p>Immediately after the <a class="reference internal" href="#header-file-comment">header file comment</a> (and include guards if working on a
 header file), the <a class="reference internal" href="#minimal-list-of-includes">minimal list of #includes</a> required by the file should be
-listed.  We prefer these <tt class="docutils literal"><span class="pre">#include</span></tt>s to be listed in this order:</p>
+listed.  We prefer these <code class="docutils literal"><span class="pre">#include</span></code>s to be listed in this order:</p>
 <ol class="arabic simple" id="local-private-headers">
 <span id="main-module-header"></span><li>Main Module Header</li>
 <li>Local/Private Headers</li>
-<li><tt class="docutils literal"><span class="pre">llvm/...</span></tt></li>
-<li>System <tt class="docutils literal"><span class="pre">#include</span></tt>s</li>
+<li><code class="docutils literal"><span class="pre">llvm/...</span></code></li>
+<li>System <code class="docutils literal"><span class="pre">#include</span></code>s</li>
 </ol>
 <p>and each category should be sorted lexicographically by the full path.</p>
-<p>The <a class="reference internal" href="#main-module-header">Main Module Header</a> file applies to <tt class="docutils literal"><span class="pre">.cpp</span></tt> files which implement an
-interface defined by a <tt class="docutils literal"><span class="pre">.h</span></tt> file.  This <tt class="docutils literal"><span class="pre">#include</span></tt> should always be included
+<p>The <a class="reference internal" href="#main-module-header">Main Module Header</a> file applies to <code class="docutils literal"><span class="pre">.cpp</span></code> files which implement an
+interface defined by a <code class="docutils literal"><span class="pre">.h</span></code> file.  This <code class="docutils literal"><span class="pre">#include</span></code> should always be included
 <strong>first</strong> regardless of where it lives on the file system.  By including a
-header file first in the <tt class="docutils literal"><span class="pre">.cpp</span></tt> files that implement the interfaces, we ensure
+header file first in the <code class="docutils literal"><span class="pre">.cpp</span></code> files that implement the interfaces, we ensure
 that the header does not have any hidden dependencies which are not explicitly
-<tt class="docutils literal"><span class="pre">#include</span></tt>d in the header, but should be. It is also a form of documentation
-in the <tt class="docutils literal"><span class="pre">.cpp</span></tt> file to indicate where the interfaces it implements are defined.</p>
+<code class="docutils literal"><span class="pre">#include</span></code>d in the header, but should be. It is also a form of documentation
+in the <code class="docutils literal"><span class="pre">.cpp</span></code> file to indicate where the interfaces it implements are defined.</p>
 </div>
 <div class="section" id="source-code-width">
 <span id="fit-into-80-columns"></span><h4><a class="toc-backref" href="#id16">Source Code Width</a><a class="headerlink" href="#source-code-width" title="Permalink to this headline">¶</a></h4>
 <p>Write your code to fit within 80 columns of text.  This helps those of us who
-like to print out code and look at your code in an <tt class="docutils literal"><span class="pre">xterm</span></tt> without resizing
+like to print out code and look at your code in an <code class="docutils literal"><span class="pre">xterm</span></code> without resizing
 it.</p>
 <p>The longer answer is that there must be some limit to the width of the code in
 order to reasonably allow developers to have multiple files side-by-side in
@@ -550,10 +550,10 @@ by the preceding part of the statement:</p>
 </div>
 <p>To take best advantage of this formatting, if you are designing an API which
 accepts a continuation or single callable argument (be it a functor, or
-a <tt class="docutils literal"><span class="pre">std::function</span></tt>), it should be the last argument if at all possible.</p>
+a <code class="docutils literal"><span class="pre">std::function</span></code>), it should be the last argument if at all possible.</p>
 <p>If there are multiple multi-line lambdas in a statement, or there is anything
 interesting after the lambda in the statement, indent the block two spaces from
-the indent of the <tt class="docutils literal"><span class="pre">[]</span></tt>:</p>
+the indent of the <code class="docutils literal"><span class="pre">[]</span></code>:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">dyn_switch</span><span class="p">(</span><span class="n">V</span><span class="o">-&gt;</span><span class="n">stripPointerCasts</span><span class="p">(),</span>
            <span class="p">[]</span> <span class="p">(</span><span class="n">PHINode</span> <span class="o">*</span><span class="n">PN</span><span class="p">)</span> <span class="p">{</span>
              <span class="c1">// process phis...</span>
@@ -607,9 +607,9 @@ casting values correctly, you have &#8220;questionable&#8221; constructs in your
 you are doing something legitimately wrong.  Compiler warnings can cover up
 legitimate errors in output and make dealing with a translation unit difficult.</p>
 <p>It is not possible to prevent all warnings from all compilers, nor is it
-desirable.  Instead, pick a standard compiler (like <tt class="docutils literal"><span class="pre">gcc</span></tt>) that provides a
+desirable.  Instead, pick a standard compiler (like <code class="docutils literal"><span class="pre">gcc</span></code>) that provides a
 good thorough set of warnings, and stick to it.  At least in the case of
-<tt class="docutils literal"><span class="pre">gcc</span></tt>, it is possible to work around any spurious errors by changing the
+<code class="docutils literal"><span class="pre">gcc</span></code>, it is possible to work around any spurious errors by changing the
 syntax of the code slightly.  For example, a warning that annoys me occurs when
 I write code like this:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">if</span> <span class="p">(</span><span class="n">V</span> <span class="o">=</span> <span class="n">getValue</span><span class="p">())</span> <span class="p">{</span>
@@ -617,7 +617,7 @@ I write code like this:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p><tt class="docutils literal"><span class="pre">gcc</span></tt> will warn me that I probably want to use the <tt class="docutils literal"><span class="pre">==</span></tt> operator, and that I
+<p><code class="docutils literal"><span class="pre">gcc</span></code> will warn me that I probably want to use the <code class="docutils literal"><span class="pre">==</span></code> operator, and that I
 probably mistyped it.  In most cases, I haven&#8217;t, and I really don&#8217;t want the
 spurious errors.  To fix this particular problem, I rewrite the code like
 this:</p>
@@ -626,7 +626,7 @@ this:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>which shuts <tt class="docutils literal"><span class="pre">gcc</span></tt> up.  Any <tt class="docutils literal"><span class="pre">gcc</span></tt> warning that annoys you can be fixed by
+<p>which shuts <code class="docutils literal"><span class="pre">gcc</span></code> up.  Any <code class="docutils literal"><span class="pre">gcc</span></code> warning that annoys you can be fixed by
 massaging the code appropriately.</p>
 </div>
 <div class="section" id="write-portable-code">
@@ -637,21 +637,21 @@ code, isolate it behind a well defined (and well documented) interface.</p>
 <p>In practice, this means that you shouldn&#8217;t assume much about the host compiler
 (and Visual Studio tends to be the lowest common denominator).  If advanced
 features are used, they should only be an implementation detail of a library
-which has a simple exposed API, and preferably be buried in <tt class="docutils literal"><span class="pre">libSystem</span></tt>.</p>
+which has a simple exposed API, and preferably be buried in <code class="docutils literal"><span class="pre">libSystem</span></code>.</p>
 </div>
 <div class="section" id="do-not-use-rtti-or-exceptions">
 <h4><a class="toc-backref" href="#id24">Do not use RTTI or Exceptions</a><a class="headerlink" href="#do-not-use-rtti-or-exceptions" title="Permalink to this headline">¶</a></h4>
 <p>In an effort to reduce code and executable size, LLVM does not use RTTI
-(e.g. <tt class="docutils literal"><span class="pre">dynamic_cast&lt;&gt;;</span></tt>) or exceptions.  These two language features violate
+(e.g. <code class="docutils literal"><span class="pre">dynamic_cast&lt;&gt;;</span></code>) or exceptions.  These two language features violate
 the general C++ principle of <em>&#8220;you only pay for what you use&#8221;</em>, causing
 executable bloat even if exceptions are never used in the code base, or if RTTI
 is never used for a class.  Because of this, we turn them off globally in the
 code.</p>
 <p>That said, LLVM does make extensive use of a hand-rolled form of RTTI that use
-templates like <a class="reference internal" href="ProgrammersManual.html#isa"><em>isa&lt;&gt;, cast&lt;&gt;, and dyn_cast&lt;&gt;</em></a>.
+templates like <a class="reference internal" href="ProgrammersManual.html#isa"><span>isa&lt;&gt;, cast&lt;&gt;, and dyn_cast&lt;&gt;</span></a>.
 This form of RTTI is opt-in and can be
 <a class="reference internal" href="HowToSetUpLLVMStyleRTTI.html"><em>added to any class</em></a>. It is also
-substantially more efficient than <tt class="docutils literal"><span class="pre">dynamic_cast&lt;&gt;</span></tt>.</p>
+substantially more efficient than <code class="docutils literal"><span class="pre">dynamic_cast&lt;&gt;</span></code>.</p>
 </div>
 <div class="section" id="do-not-use-static-constructors">
 <span id="static-constructor"></span><h4><a class="toc-backref" href="#id25">Do not use Static Constructors</a><a class="headerlink" href="#do-not-use-static-constructors" title="Permalink to this headline">¶</a></h4>
@@ -670,7 +670,7 @@ application.  There are two problems with this:</p>
 <li>The time to run the static constructors impacts startup time of applications
 &#8212; a critical time for GUI apps, among others.</li>
 <li>The static constructors cause the app to pull many extra pages of memory off
-the disk: both the code for the constructor in each <tt class="docutils literal"><span class="pre">.o</span></tt> file and the small
+the disk: both the code for the constructor in each <code class="docutils literal"><span class="pre">.o</span></code> file and the small
 amount of data that gets touched. In addition, touched/dirty pages put more
 pressure on the VM system on low-memory machines.</li>
 </ul>
@@ -679,20 +679,20 @@ target or other library into an application, but static constructors violate
 this goal.</p>
 <p>That said, LLVM unfortunately does contain static constructors.  It would be a
 <a class="reference external" href="http://llvm.org/PR11944">great project</a> for someone to purge all static
-constructors from LLVM, and then enable the <tt class="docutils literal"><span class="pre">-Wglobal-constructors</span></tt> warning
+constructors from LLVM, and then enable the <code class="docutils literal"><span class="pre">-Wglobal-constructors</span></code> warning
 flag (when building with Clang) to ensure we do not regress in the future.</p>
 </div>
 <div class="section" id="use-of-class-and-struct-keywords">
-<h4><a class="toc-backref" href="#id26">Use of <tt class="docutils literal"><span class="pre">class</span></tt> and <tt class="docutils literal"><span class="pre">struct</span></tt> Keywords</a><a class="headerlink" href="#use-of-class-and-struct-keywords" title="Permalink to this headline">¶</a></h4>
-<p>In C++, the <tt class="docutils literal"><span class="pre">class</span></tt> and <tt class="docutils literal"><span class="pre">struct</span></tt> keywords can be used almost
+<h4><a class="toc-backref" href="#id26">Use of <code class="docutils literal"><span class="pre">class</span></code> and <code class="docutils literal"><span class="pre">struct</span></code> Keywords</a><a class="headerlink" href="#use-of-class-and-struct-keywords" title="Permalink to this headline">¶</a></h4>
+<p>In C++, the <code class="docutils literal"><span class="pre">class</span></code> and <code class="docutils literal"><span class="pre">struct</span></code> keywords can be used almost
 interchangeably. The only difference is when they are used to declare a class:
-<tt class="docutils literal"><span class="pre">class</span></tt> makes all members private by default while <tt class="docutils literal"><span class="pre">struct</span></tt> makes all
+<code class="docutils literal"><span class="pre">class</span></code> makes all members private by default while <code class="docutils literal"><span class="pre">struct</span></code> makes all
 members public by default.</p>
 <p>Unfortunately, not all compilers follow the rules and some will generate
-different symbols based on whether <tt class="docutils literal"><span class="pre">class</span></tt> or <tt class="docutils literal"><span class="pre">struct</span></tt> was used to declare
+different symbols based on whether <code class="docutils literal"><span class="pre">class</span></code> or <code class="docutils literal"><span class="pre">struct</span></code> was used to declare
 the symbol (e.g., MSVC).  This can lead to problems at link time.</p>
 <ul class="simple">
-<li>All declarations and definitions of a given <tt class="docutils literal"><span class="pre">class</span></tt> or <tt class="docutils literal"><span class="pre">struct</span></tt> must use
+<li>All declarations and definitions of a given <code class="docutils literal"><span class="pre">class</span></code> or <code class="docutils literal"><span class="pre">struct</span></code> must use
 the same keyword.  For example:</li>
 </ul>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Foo</span><span class="p">;</span>
@@ -702,7 +702,7 @@ the same keyword.  For example:</li>
 </pre></div>
 </div>
 <ul class="simple">
-<li>As a rule of thumb, <tt class="docutils literal"><span class="pre">struct</span></tt> should be kept to structures where <em>all</em>
+<li>As a rule of thumb, <code class="docutils literal"><span class="pre">struct</span></code> should be kept to structures where <em>all</em>
 members are declared public.</li>
 </ul>
 <div class="highlight-c++"><div class="highlight"><pre><span class="c1">// Foo feels like a class... this is strange.</span>
@@ -758,22 +758,22 @@ something notionally equivalent. Examples:</p>
 </div>
 </div>
 <div class="section" id="use-auto-type-deduction-to-make-code-more-readable">
-<h4><a class="toc-backref" href="#id28">Use <tt class="docutils literal"><span class="pre">auto</span></tt> Type Deduction to Make Code More Readable</a><a class="headerlink" href="#use-auto-type-deduction-to-make-code-more-readable" title="Permalink to this headline">¶</a></h4>
-<p>Some are advocating a policy of &#8220;almost always <tt class="docutils literal"><span class="pre">auto</span></tt>&#8221; in C++11, however LLVM
-uses a more moderate stance. Use <tt class="docutils literal"><span class="pre">auto</span></tt> if and only if it makes the code more
-readable or easier to maintain. Don&#8217;t &#8220;almost always&#8221; use <tt class="docutils literal"><span class="pre">auto</span></tt>, but do use
-<tt class="docutils literal"><span class="pre">auto</span></tt> with initializers like <tt class="docutils literal"><span class="pre">cast&lt;Foo&gt;(...)</span></tt> or other places where the
-type is already obvious from the context. Another time when <tt class="docutils literal"><span class="pre">auto</span></tt> works well
+<h4><a class="toc-backref" href="#id28">Use <code class="docutils literal"><span class="pre">auto</span></code> Type Deduction to Make Code More Readable</a><a class="headerlink" href="#use-auto-type-deduction-to-make-code-more-readable" title="Permalink to this headline">¶</a></h4>
+<p>Some are advocating a policy of &#8220;almost always <code class="docutils literal"><span class="pre">auto</span></code>&#8221; in C++11, however LLVM
+uses a more moderate stance. Use <code class="docutils literal"><span class="pre">auto</span></code> if and only if it makes the code more
+readable or easier to maintain. Don&#8217;t &#8220;almost always&#8221; use <code class="docutils literal"><span class="pre">auto</span></code>, but do use
+<code class="docutils literal"><span class="pre">auto</span></code> with initializers like <code class="docutils literal"><span class="pre">cast&lt;Foo&gt;(...)</span></code> or other places where the
+type is already obvious from the context. Another time when <code class="docutils literal"><span class="pre">auto</span></code> works well
 for these purposes is when the type would have been abstracted away anyways,
-often behind a container&#8217;s typedef such as <tt class="docutils literal"><span class="pre">std::vector&lt;T&gt;::iterator</span></tt>.</p>
+often behind a container&#8217;s typedef such as <code class="docutils literal"><span class="pre">std::vector&lt;T&gt;::iterator</span></code>.</p>
 </div>
 <div class="section" id="beware-unnecessary-copies-with-auto">
-<h4><a class="toc-backref" href="#id29">Beware unnecessary copies with <tt class="docutils literal"><span class="pre">auto</span></tt></a><a class="headerlink" href="#beware-unnecessary-copies-with-auto" title="Permalink to this headline">¶</a></h4>
-<p>The convenience of <tt class="docutils literal"><span class="pre">auto</span></tt> makes it easy to forget that its default behavior
-is a copy.  Particularly in range-based <tt class="docutils literal"><span class="pre">for</span></tt> loops, careless copies are
+<h4><a class="toc-backref" href="#id29">Beware unnecessary copies with <code class="docutils literal"><span class="pre">auto</span></code></a><a class="headerlink" href="#beware-unnecessary-copies-with-auto" title="Permalink to this headline">¶</a></h4>
+<p>The convenience of <code class="docutils literal"><span class="pre">auto</span></code> makes it easy to forget that its default behavior
+is a copy.  Particularly in range-based <code class="docutils literal"><span class="pre">for</span></code> loops, careless copies are
 expensive.</p>
-<p>As a rule of thumb, use <tt class="docutils literal"><span class="pre">auto</span> <span class="pre">&amp;</span></tt> unless you need to copy the result, and use
-<tt class="docutils literal"><span class="pre">auto</span> <span class="pre">*</span></tt> when copying pointers.</p>
+<p>As a rule of thumb, use <code class="docutils literal"><span class="pre">auto</span> <span class="pre">&amp;</span></code> unless you need to copy the result, and use
+<code class="docutils literal"><span class="pre">auto</span> <span class="pre">*</span></code> when copying pointers.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="c1">// Typically there&#39;s no reason to copy.</span>
 <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span> <span class="o">&amp;</span><span class="nl">Val</span> <span class="p">:</span> <span class="n">Container</span><span class="p">)</span> <span class="p">{</span> <span class="n">observe</span><span class="p">(</span><span class="n">Val</span><span class="p">);</span> <span class="p">}</span>
 <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="nl">Val</span> <span class="p">:</span> <span class="n">Container</span><span class="p">)</span> <span class="p">{</span> <span class="n">Val</span><span class="p">.</span><span class="n">change</span><span class="p">();</span> <span class="p">}</span>
@@ -798,31 +798,31 @@ expensive.</p>
 <p>C++ doesn&#8217;t do too well in the modularity department.  There is no real
 encapsulation or data hiding (unless you use expensive protocol classes), but it
 is what we have to work with.  When you write a public header file (in the LLVM
-source tree, they live in the top level &#8220;<tt class="docutils literal"><span class="pre">include</span></tt>&#8221; directory), you are
+source tree, they live in the top level &#8220;<code class="docutils literal"><span class="pre">include</span></code>&#8221; directory), you are
 defining a module of functionality.</p>
 <p>Ideally, modules should be completely independent of each other, and their
-header files should only <tt class="docutils literal"><span class="pre">#include</span></tt> the absolute minimum number of headers
+header files should only <code class="docutils literal"><span class="pre">#include</span></code> the absolute minimum number of headers
 possible. A module is not just a class, a function, or a namespace: it&#8217;s a
 collection of these that defines an interface.  This interface may be several
 functions, classes, or data structures, but the important issue is how they work
 together.</p>
-<p>In general, a module should be implemented by one or more <tt class="docutils literal"><span class="pre">.cpp</span></tt> files.  Each
-of these <tt class="docutils literal"><span class="pre">.cpp</span></tt> files should include the header that defines their interface
+<p>In general, a module should be implemented by one or more <code class="docutils literal"><span class="pre">.cpp</span></code> files.  Each
+of these <code class="docutils literal"><span class="pre">.cpp</span></code> files should include the header that defines their interface
 first.  This ensures that all of the dependences of the module header have been
 properly added to the module header itself, and are not implicit.  System
 headers should be included after user headers for a translation unit.</p>
 </div>
 <div class="section" id="include-as-little-as-possible">
-<span id="minimal-list-of-includes"></span><h4><a class="toc-backref" href="#id33"><tt class="docutils literal"><span class="pre">#include</span></tt> as Little as Possible</a><a class="headerlink" href="#include-as-little-as-possible" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">#include</span></tt> hurts compile time performance.  Don&#8217;t do it unless you have to,
+<span id="minimal-list-of-includes"></span><h4><a class="toc-backref" href="#id33"><code class="docutils literal"><span class="pre">#include</span></code> as Little as Possible</a><a class="headerlink" href="#include-as-little-as-possible" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">#include</span></code> hurts compile time performance.  Don&#8217;t do it unless you have to,
 especially in header files.</p>
 <p>But wait! Sometimes you need to have the definition of a class to use it, or to
-inherit from it.  In these cases go ahead and <tt class="docutils literal"><span class="pre">#include</span></tt> that header file.  Be
+inherit from it.  In these cases go ahead and <code class="docutils literal"><span class="pre">#include</span></code> that header file.  Be
 aware however that there are many cases where you don&#8217;t need to have the full
 definition of a class.  If you are using a pointer or reference to a class, you
 don&#8217;t need the header file.  If you are simply returning a class instance from a
 prototyped function or method, you don&#8217;t need it.  In fact, for most cases, you
-simply don&#8217;t need the definition of a class. And not <tt class="docutils literal"><span class="pre">#include</span></tt>ing speeds up
+simply don&#8217;t need the definition of a class. And not <code class="docutils literal"><span class="pre">#include</span></code>ing speeds up
 compilation.</p>
 <p>It is easy to try to go too overboard on this recommendation, however.  You
 <strong>must</strong> include all of the header files that you are using &#8212; you can include
@@ -835,7 +835,7 @@ you&#8217;ll find out about later.</p>
 <div class="section" id="keep-internal-headers-private">
 <h4><a class="toc-backref" href="#id34">Keep &#8220;Internal&#8221; Headers Private</a><a class="headerlink" href="#keep-internal-headers-private" title="Permalink to this headline">¶</a></h4>
 <p>Many modules have a complex implementation that causes them to use more than one
-implementation (<tt class="docutils literal"><span class="pre">.cpp</span></tt>) file.  It is often tempting to put the internal
+implementation (<code class="docutils literal"><span class="pre">.cpp</span></code>) file.  It is often tempting to put the internal
 communication interface (helper classes, extra functions, etc) in the public
 module header file.  Don&#8217;t do this!</p>
 <p>If you really need to do something like this, put a private header file in the
@@ -848,12 +848,12 @@ make them private (or protected) and all is well.</p>
 </div>
 </div>
 <div class="section" id="use-early-exits-and-continue-to-simplify-code">
-<span id="early-exits"></span><h4><a class="toc-backref" href="#id35">Use Early Exits and <tt class="docutils literal"><span class="pre">continue</span></tt> to Simplify Code</a><a class="headerlink" href="#use-early-exits-and-continue-to-simplify-code" title="Permalink to this headline">¶</a></h4>
+<span id="early-exits"></span><h4><a class="toc-backref" href="#id35">Use Early Exits and <code class="docutils literal"><span class="pre">continue</span></code> to Simplify Code</a><a class="headerlink" href="#use-early-exits-and-continue-to-simplify-code" title="Permalink to this headline">¶</a></h4>
 <p>When reading code, keep in mind how much state and how many previous decisions
 have to be remembered by the reader to understand a block of code.  Aim to
 reduce indentation where possible when it doesn&#8217;t make it more difficult to
 understand the code.  One great way to do this is by making use of early exits
-and the <tt class="docutils literal"><span class="pre">continue</span></tt> keyword in long loops.  As an example of using an early
+and the <code class="docutils literal"><span class="pre">continue</span></code> keyword in long loops.  As an example of using an early
 exit from a function, consider this &#8220;bad&#8221; code:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">Value</span> <span class="o">*</span><span class="nf">doSomething</span><span class="p">(</span><span class="n">Instruction</span> <span class="o">*</span><span class="n">I</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">isa</span><span class="o">&lt;</span><span class="n">TerminatorInst</span><span class="o">&gt;</span><span class="p">(</span><span class="n">I</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
@@ -865,11 +865,11 @@ exit from a function, consider this &#8220;bad&#8221; code:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>This code has several problems if the body of the <tt class="docutils literal"><span class="pre">'if'</span></tt> is large.  When
+<p>This code has several problems if the body of the <code class="docutils literal"><span class="pre">'if'</span></code> is large.  When
 you&#8217;re looking at the top of the function, it isn&#8217;t immediately clear that this
 <em>only</em> does interesting things with non-terminator instructions, and only
 applies to things with the other predicates.  Second, it is relatively difficult
-to describe (in comments) why these predicates are important because the <tt class="docutils literal"><span class="pre">if</span></tt>
+to describe (in comments) why these predicates are important because the <code class="docutils literal"><span class="pre">if</span></code>
 statement makes it difficult to lay out the comments.  Third, when you&#8217;re deep
 within the body of the code, it is indented an extra level.  Finally, when
 reading the top of the function, it isn&#8217;t clear what the result is if the
@@ -894,7 +894,7 @@ it returns null.</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>This fixes these problems.  A similar problem frequently happens in <tt class="docutils literal"><span class="pre">for</span></tt>
+<p>This fixes these problems.  A similar problem frequently happens in <code class="docutils literal"><span class="pre">for</span></code>
 loops.  A silly example is something like this:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">for</span> <span class="p">(</span><span class="n">BasicBlock</span><span class="o">::</span><span class="n">iterator</span> <span class="n">II</span> <span class="o">=</span> <span class="n">BB</span><span class="o">-&gt;</span><span class="n">begin</span><span class="p">(),</span> <span class="n">E</span> <span class="o">=</span> <span class="n">BB</span><span class="o">-&gt;</span><span class="n">end</span><span class="p">();</span> <span class="n">II</span> <span class="o">!=</span> <span class="n">E</span><span class="p">;</span> <span class="o">++</span><span class="n">II</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">BinaryOperator</span> <span class="o">*</span><span class="n">BO</span> <span class="o">=</span> <span class="n">dyn_cast</span><span class="o">&lt;</span><span class="n">BinaryOperator</span><span class="o">&gt;</span><span class="p">(</span><span class="n">II</span><span class="p">))</span> <span class="p">{</span>
@@ -912,7 +912,7 @@ exceeds more than 10-15 lines, it becomes difficult for people to read and
 understand at a glance. The problem with this sort of code is that it gets very
 nested very quickly. Meaning that the reader of the code has to keep a lot of
 context in their brain to remember what is going immediately on in the loop,
-because they don&#8217;t know if/when the <tt class="docutils literal"><span class="pre">if</span></tt> conditions will have <tt class="docutils literal"><span class="pre">else</span></tt>s etc.
+because they don&#8217;t know if/when the <code class="docutils literal"><span class="pre">if</span></code> conditions will have <code class="docutils literal"><span class="pre">else</span></code>s etc.
 It is strongly preferred to structure the loop like this:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">for</span> <span class="p">(</span><span class="n">BasicBlock</span><span class="o">::</span><span class="n">iterator</span> <span class="n">II</span> <span class="o">=</span> <span class="n">BB</span><span class="o">-&gt;</span><span class="n">begin</span><span class="p">(),</span> <span class="n">E</span> <span class="o">=</span> <span class="n">BB</span><span class="o">-&gt;</span><span class="n">end</span><span class="p">();</span> <span class="n">II</span> <span class="o">!=</span> <span class="n">E</span><span class="p">;</span> <span class="o">++</span><span class="n">II</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">BinaryOperator</span> <span class="o">*</span><span class="n">BO</span> <span class="o">=</span> <span class="n">dyn_cast</span><span class="o">&lt;</span><span class="n">BinaryOperator</span><span class="o">&gt;</span><span class="p">(</span><span class="n">II</span><span class="p">);</span>
@@ -928,15 +928,15 @@ It is strongly preferred to structure the loop like this:</p>
 </div>
 <p>This has all the benefits of using early exits for functions: it reduces nesting
 of the loop, it makes it easier to describe why the conditions are true, and it
-makes it obvious to the reader that there is no <tt class="docutils literal"><span class="pre">else</span></tt> coming up that they
+makes it obvious to the reader that there is no <code class="docutils literal"><span class="pre">else</span></code> coming up that they
 have to push context into their brain for.  If a loop is large, this can be a
 big understandability win.</p>
 </div>
 <div class="section" id="don-t-use-else-after-a-return">
-<h4><a class="toc-backref" href="#id36">Don&#8217;t use <tt class="docutils literal"><span class="pre">else</span></tt> after a <tt class="docutils literal"><span class="pre">return</span></tt></a><a class="headerlink" href="#don-t-use-else-after-a-return" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id36">Don&#8217;t use <code class="docutils literal"><span class="pre">else</span></code> after a <code class="docutils literal"><span class="pre">return</span></code></a><a class="headerlink" href="#don-t-use-else-after-a-return" title="Permalink to this headline">¶</a></h4>
 <p>For similar reasons above (reduction of indentation and easier reading), please
-do not use <tt class="docutils literal"><span class="pre">'else'</span></tt> or <tt class="docutils literal"><span class="pre">'else</span> <span class="pre">if'</span></tt> after something that interrupts control
-flow &#8212; like <tt class="docutils literal"><span class="pre">return</span></tt>, <tt class="docutils literal"><span class="pre">break</span></tt>, <tt class="docutils literal"><span class="pre">continue</span></tt>, <tt class="docutils literal"><span class="pre">goto</span></tt>, etc. For
+do not use <code class="docutils literal"><span class="pre">'else'</span></code> or <code class="docutils literal"><span class="pre">'else</span> <span class="pre">if'</span></code> after something that interrupts control
+flow &#8212; like <code class="docutils literal"><span class="pre">return</span></code>, <code class="docutils literal"><span class="pre">break</span></code>, <code class="docutils literal"><span class="pre">continue</span></code>, <code class="docutils literal"><span class="pre">goto</span></code>, etc. For
 example, this is <em>bad</em>:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">case</span> <span class="sc">&#39;J&#39;</span><span class="o">:</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">Signed</span><span class="p">)</span> <span class="p">{</span>
@@ -1051,32 +1051,32 @@ the semantics and role of the underlying entities, within reason.  Avoid
 abbreviations unless they are well known.  After picking a good name, make sure
 to use consistent capitalization for the name, as inconsistency requires clients
 to either memorize the APIs or to look it up to find the exact spelling.</p>
-<p>In general, names should be in camel case (e.g. <tt class="docutils literal"><span class="pre">TextFileReader</span></tt> and
-<tt class="docutils literal"><span class="pre">isLValue()</span></tt>).  Different kinds of declarations have different rules:</p>
+<p>In general, names should be in camel case (e.g. <code class="docutils literal"><span class="pre">TextFileReader</span></code> and
+<code class="docutils literal"><span class="pre">isLValue()</span></code>).  Different kinds of declarations have different rules:</p>
 <ul>
 <li><p class="first"><strong>Type names</strong> (including classes, structs, enums, typedefs, etc) should be
-nouns and start with an upper-case letter (e.g. <tt class="docutils literal"><span class="pre">TextFileReader</span></tt>).</p>
+nouns and start with an upper-case letter (e.g. <code class="docutils literal"><span class="pre">TextFileReader</span></code>).</p>
 </li>
 <li><p class="first"><strong>Variable names</strong> should be nouns (as they represent state).  The name should
-be camel case, and start with an upper case letter (e.g. <tt class="docutils literal"><span class="pre">Leader</span></tt> or
-<tt class="docutils literal"><span class="pre">Boats</span></tt>).</p>
+be camel case, and start with an upper case letter (e.g. <code class="docutils literal"><span class="pre">Leader</span></code> or
+<code class="docutils literal"><span class="pre">Boats</span></code>).</p>
 </li>
 <li><p class="first"><strong>Function names</strong> should be verb phrases (as they represent actions), and
 command-like function should be imperative.  The name should be camel case,
-and start with a lower case letter (e.g. <tt class="docutils literal"><span class="pre">openFile()</span></tt> or <tt class="docutils literal"><span class="pre">isFoo()</span></tt>).</p>
+and start with a lower case letter (e.g. <code class="docutils literal"><span class="pre">openFile()</span></code> or <code class="docutils literal"><span class="pre">isFoo()</span></code>).</p>
 </li>
-<li><p class="first"><strong>Enum declarations</strong> (e.g. <tt class="docutils literal"><span class="pre">enum</span> <span class="pre">Foo</span> <span class="pre">{...}</span></tt>) are types, so they should
+<li><p class="first"><strong>Enum declarations</strong> (e.g. <code class="docutils literal"><span class="pre">enum</span> <span class="pre">Foo</span> <span class="pre">{...}</span></code>) are types, so they should
 follow the naming conventions for types.  A common use for enums is as a
 discriminator for a union, or an indicator of a subclass.  When an enum is
-used for something like this, it should have a <tt class="docutils literal"><span class="pre">Kind</span></tt> suffix
-(e.g. <tt class="docutils literal"><span class="pre">ValueKind</span></tt>).</p>
+used for something like this, it should have a <code class="docutils literal"><span class="pre">Kind</span></code> suffix
+(e.g. <code class="docutils literal"><span class="pre">ValueKind</span></code>).</p>
 </li>
-<li><p class="first"><strong>Enumerators</strong> (e.g. <tt class="docutils literal"><span class="pre">enum</span> <span class="pre">{</span> <span class="pre">Foo,</span> <span class="pre">Bar</span> <span class="pre">}</span></tt>) and <strong>public member variables</strong>
+<li><p class="first"><strong>Enumerators</strong> (e.g. <code class="docutils literal"><span class="pre">enum</span> <span class="pre">{</span> <span class="pre">Foo,</span> <span class="pre">Bar</span> <span class="pre">}</span></code>) and <strong>public member variables</strong>
 should start with an upper-case letter, just like types.  Unless the
 enumerators are defined in their own small namespace or inside a class,
 enumerators should have a prefix corresponding to the enum declaration name.
-For example, <tt class="docutils literal"><span class="pre">enum</span> <span class="pre">ValueKind</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">};</span></tt> may contain enumerators like
-<tt class="docutils literal"><span class="pre">VK_Argument</span></tt>, <tt class="docutils literal"><span class="pre">VK_BasicBlock</span></tt>, etc.  Enumerators that are just
+For example, <code class="docutils literal"><span class="pre">enum</span> <span class="pre">ValueKind</span> <span class="pre">{</span> <span class="pre">...</span> <span class="pre">};</span></code> may contain enumerators like
+<code class="docutils literal"><span class="pre">VK_Argument</span></code>, <code class="docutils literal"><span class="pre">VK_BasicBlock</span></code>, etc.  Enumerators that are just
 convenience constants are exempt from the requirement for a prefix.  For
 instance:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">enum</span> <span class="p">{</span>
@@ -1088,10 +1088,10 @@ instance:</p>
 </li>
 </ul>
 <p>As an exception, classes that mimic STL classes can have member names in STL&#8217;s
-style of lower-case words separated by underscores (e.g. <tt class="docutils literal"><span class="pre">begin()</span></tt>,
-<tt class="docutils literal"><span class="pre">push_back()</span></tt>, and <tt class="docutils literal"><span class="pre">empty()</span></tt>). Classes that provide multiple
-iterators should add a singular prefix to <tt class="docutils literal"><span class="pre">begin()</span></tt> and <tt class="docutils literal"><span class="pre">end()</span></tt>
-(e.g. <tt class="docutils literal"><span class="pre">global_begin()</span></tt> and <tt class="docutils literal"><span class="pre">use_begin()</span></tt>).</p>
+style of lower-case words separated by underscores (e.g. <code class="docutils literal"><span class="pre">begin()</span></code>,
+<code class="docutils literal"><span class="pre">push_back()</span></code>, and <code class="docutils literal"><span class="pre">empty()</span></code>). Classes that provide multiple
+iterators should add a singular prefix to <code class="docutils literal"><span class="pre">begin()</span></code> and <code class="docutils literal"><span class="pre">end()</span></code>
+(e.g. <code class="docutils literal"><span class="pre">global_begin()</span></code> and <code class="docutils literal"><span class="pre">use_begin()</span></code>).</p>
 <p>Here are some examples of good and bad names:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">VehicleMaker</span> <span class="p">{</span>
   <span class="p">...</span>
@@ -1112,10 +1112,10 @@ iterators should add a singular prefix to <tt class="docutils literal"><span cla
 </div>
 <div class="section" id="assert-liberally">
 <h4><a class="toc-backref" href="#id40">Assert Liberally</a><a class="headerlink" href="#assert-liberally" title="Permalink to this headline">¶</a></h4>
-<p>Use the &#8220;<tt class="docutils literal"><span class="pre">assert</span></tt>&#8221; macro to its fullest.  Check all of your preconditions and
+<p>Use the &#8220;<code class="docutils literal"><span class="pre">assert</span></code>&#8221; macro to its fullest.  Check all of your preconditions and
 assumptions, you never know when a bug (not necessarily even yours) might be
 caught early by an assertion, which reduces debugging time dramatically.  The
-&#8220;<tt class="docutils literal"><span class="pre">&lt;cassert&gt;</span></tt>&#8221; header file is probably already included by the header files you
+&#8220;<code class="docutils literal"><span class="pre">&lt;cassert&gt;</span></code>&#8221; header file is probably already included by the header files you
 are using, so it doesn&#8217;t cost anything to use it.</p>
 <p>To further assist with debugging, make sure to put some kind of error message in
 the assertion statement, which is printed if the assertion is tripped. This
@@ -1148,13 +1148,13 @@ reached.  These were typically of the form:</p>
 <p>This has a few issues, the main one being that some compilers might not
 understand the assertion, or warn about a missing return in builds where
 assertions are compiled out.</p>
-<p>Today, we have something much better: <tt class="docutils literal"><span class="pre">llvm_unreachable</span></tt>:</p>
+<p>Today, we have something much better: <code class="docutils literal"><span class="pre">llvm_unreachable</span></code>:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">llvm_unreachable</span><span class="p">(</span><span class="s">&quot;Invalid radix for integer literal&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>When assertions are enabled, this will print the message if it&#8217;s ever reached
 and then exit the program. When assertions are disabled (i.e. in release
-builds), <tt class="docutils literal"><span class="pre">llvm_unreachable</span></tt> becomes a hint to compilers to skip generating
+builds), <code class="docutils literal"><span class="pre">llvm_unreachable</span></code> becomes a hint to compilers to skip generating
 code for this branch. If the compiler does not support this, it will fall back
 to the &#8220;abort&#8221; implementation.</p>
 <p>Another issue is that values used only by assertions will produce an &#8220;unused
@@ -1167,7 +1167,7 @@ value&#8221; warning when assertions are disabled.  For example, this code will 
 </pre></div>
 </div>
 <p>These are two interesting different cases. In the first case, the call to
-<tt class="docutils literal"><span class="pre">V.size()</span></tt> is only useful for the assert, and we don&#8217;t want it executed when
+<code class="docutils literal"><span class="pre">V.size()</span></code> is only useful for the assert, and we don&#8217;t want it executed when
 assertions are disabled.  Code like this should move the call into the assert
 itself.  In the second case, the side effects of the call must happen whether
 the assert is enabled or not.  In this case, the value should be cast to void to
@@ -1181,30 +1181,30 @@ this:</p>
 </div>
 </div>
 <div class="section" id="do-not-use-using-namespace-std">
-<h4><a class="toc-backref" href="#id41">Do Not Use <tt class="docutils literal"><span class="pre">using</span> <span class="pre">namespace</span> <span class="pre">std</span></tt></a><a class="headerlink" href="#do-not-use-using-namespace-std" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id41">Do Not Use <code class="docutils literal"><span class="pre">using</span> <span class="pre">namespace</span> <span class="pre">std</span></code></a><a class="headerlink" href="#do-not-use-using-namespace-std" title="Permalink to this headline">¶</a></h4>
 <p>In LLVM, we prefer to explicitly prefix all identifiers from the standard
-namespace with an &#8220;<tt class="docutils literal"><span class="pre">std::</span></tt>&#8221; prefix, rather than rely on &#8220;<tt class="docutils literal"><span class="pre">using</span> <span class="pre">namespace</span>
-<span class="pre">std;</span></tt>&#8221;.</p>
-<p>In header files, adding a <tt class="docutils literal"><span class="pre">'using</span> <span class="pre">namespace</span> <span class="pre">XXX'</span></tt> directive pollutes the
-namespace of any source file that <tt class="docutils literal"><span class="pre">#include</span></tt>s the header.  This is clearly a
+namespace with an &#8220;<code class="docutils literal"><span class="pre">std::</span></code>&#8221; prefix, rather than rely on &#8220;<code class="docutils literal"><span class="pre">using</span> <span class="pre">namespace</span>
+<span class="pre">std;</span></code>&#8221;.</p>
+<p>In header files, adding a <code class="docutils literal"><span class="pre">'using</span> <span class="pre">namespace</span> <span class="pre">XXX'</span></code> directive pollutes the
+namespace of any source file that <code class="docutils literal"><span class="pre">#include</span></code>s the header.  This is clearly a
 bad thing.</p>
-<p>In implementation files (e.g. <tt class="docutils literal"><span class="pre">.cpp</span></tt> files), the rule is more of a stylistic
+<p>In implementation files (e.g. <code class="docutils literal"><span class="pre">.cpp</span></code> files), the rule is more of a stylistic
 rule, but is still important.  Basically, using explicit namespace prefixes
 makes the code <strong>clearer</strong>, because it is immediately obvious what facilities
 are being used and where they are coming from. And <strong>more portable</strong>, because
 namespace clashes cannot occur between LLVM code and other namespaces.  The
 portability rule is important because different standard library implementations
 expose different symbols (potentially ones they shouldn&#8217;t), and future revisions
-to the C++ standard will add more symbols to the <tt class="docutils literal"><span class="pre">std</span></tt> namespace.  As such, we
-never use <tt class="docutils literal"><span class="pre">'using</span> <span class="pre">namespace</span> <span class="pre">std;'</span></tt> in LLVM.</p>
-<p>The exception to the general rule (i.e. it&#8217;s not an exception for the <tt class="docutils literal"><span class="pre">std</span></tt>
+to the C++ standard will add more symbols to the <code class="docutils literal"><span class="pre">std</span></code> namespace.  As such, we
+never use <code class="docutils literal"><span class="pre">'using</span> <span class="pre">namespace</span> <span class="pre">std;'</span></code> in LLVM.</p>
+<p>The exception to the general rule (i.e. it&#8217;s not an exception for the <code class="docutils literal"><span class="pre">std</span></code>
 namespace) is for implementation files.  For example, all of the code in the
 LLVM project implements code that lives in the &#8216;llvm&#8217; namespace.  As such, it is
-ok, and actually clearer, for the <tt class="docutils literal"><span class="pre">.cpp</span></tt> files to have a <tt class="docutils literal"><span class="pre">'using</span> <span class="pre">namespace</span>
-<span class="pre">llvm;'</span></tt> directive at the top, after the <tt class="docutils literal"><span class="pre">#include</span></tt>s.  This reduces
+ok, and actually clearer, for the <code class="docutils literal"><span class="pre">.cpp</span></code> files to have a <code class="docutils literal"><span class="pre">'using</span> <span class="pre">namespace</span>
+<span class="pre">llvm;'</span></code> directive at the top, after the <code class="docutils literal"><span class="pre">#include</span></code>s.  This reduces
 indentation in the body of the file for source editors that indent based on
 braces, and keeps the conceptual context cleaner.  The general form of this rule
-is that any <tt class="docutils literal"><span class="pre">.cpp</span></tt> file that implements code in any namespace may use that
+is that any <code class="docutils literal"><span class="pre">.cpp</span></code> file that implements code in any namespace may use that
 namespace (and its parents&#8217;), but should not use any others.</p>
 </div>
 <div class="section" id="provide-a-virtual-method-anchor-for-classes-in-headers">
@@ -1212,38 +1212,38 @@ namespace (and its parents&#8217;), but should not use any others.</p>
 <p>If a class is defined in a header file and has a vtable (either it has virtual
 methods or it derives from classes with virtual methods), it must always have at
 least one out-of-line virtual method in the class.  Without this, the compiler
-will copy the vtable and RTTI into every <tt class="docutils literal"><span class="pre">.o</span></tt> file that <tt class="docutils literal"><span class="pre">#include</span></tt>s the
-header, bloating <tt class="docutils literal"><span class="pre">.o</span></tt> file sizes and increasing link times.</p>
+will copy the vtable and RTTI into every <code class="docutils literal"><span class="pre">.o</span></code> file that <code class="docutils literal"><span class="pre">#include</span></code>s the
+header, bloating <code class="docutils literal"><span class="pre">.o</span></code> file sizes and increasing link times.</p>
 </div>
 <div class="section" id="don-t-use-default-labels-in-fully-covered-switches-over-enumerations">
 <h4><a class="toc-backref" href="#id43">Don&#8217;t use default labels in fully covered switches over enumerations</a><a class="headerlink" href="#don-t-use-default-labels-in-fully-covered-switches-over-enumerations" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">-Wswitch</span></tt> warns if a switch, without a default label, over an enumeration
+<p><code class="docutils literal"><span class="pre">-Wswitch</span></code> warns if a switch, without a default label, over an enumeration
 does not cover every enumeration value. If you write a default label on a fully
-covered switch over an enumeration then the <tt class="docutils literal"><span class="pre">-Wswitch</span></tt> warning won&#8217;t fire
+covered switch over an enumeration then the <code class="docutils literal"><span class="pre">-Wswitch</span></code> warning won&#8217;t fire
 when new elements are added to that enumeration. To help avoid adding these
-kinds of defaults, Clang has the warning <tt class="docutils literal"><span class="pre">-Wcovered-switch-default</span></tt> which is
+kinds of defaults, Clang has the warning <code class="docutils literal"><span class="pre">-Wcovered-switch-default</span></code> which is
 off by default but turned on when building LLVM with a version of Clang that
 supports the warning.</p>
 <p>A knock-on effect of this stylistic requirement is that when building LLVM with
 GCC you may get warnings related to &#8220;control may reach end of non-void function&#8221;
 if you return from each case of a covered switch-over-enum because GCC assumes
 that the enum expression may take any representable value, not just those of
-individual enumerators. To suppress this warning, use <tt class="docutils literal"><span class="pre">llvm_unreachable</span></tt> after
+individual enumerators. To suppress this warning, use <code class="docutils literal"><span class="pre">llvm_unreachable</span></code> after
 the switch.</p>
 </div>
 <div class="section" id="use-llvm-deleted-function-to-mark-uncallable-methods">
-<h4><a class="toc-backref" href="#id44">Use <tt class="docutils literal"><span class="pre">LLVM_DELETED_FUNCTION</span></tt> to mark uncallable methods</a><a class="headerlink" href="#use-llvm-deleted-function-to-mark-uncallable-methods" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id44">Use <code class="docutils literal"><span class="pre">LLVM_DELETED_FUNCTION</span></code> to mark uncallable methods</a><a class="headerlink" href="#use-llvm-deleted-function-to-mark-uncallable-methods" title="Permalink to this headline">¶</a></h4>
 <p>Prior to C++11, a common pattern to make a class uncopyable was to declare an
 unimplemented copy constructor and copy assignment operator and make them
 private. This would give a compiler error for accessing a private method or a
 linker error because it wasn&#8217;t implemented.</p>
-<p>With C++11, we can mark methods that won&#8217;t be implemented with <tt class="docutils literal"><span class="pre">=</span> <span class="pre">delete</span></tt>.
+<p>With C++11, we can mark methods that won&#8217;t be implemented with <code class="docutils literal"><span class="pre">=</span> <span class="pre">delete</span></code>.
 This will trigger a much better error message and tell the compiler that the
 method will never be implemented. This enables other checks like
-<tt class="docutils literal"><span class="pre">-Wunused-private-field</span></tt> to run correctly on classes that contain these
+<code class="docutils literal"><span class="pre">-Wunused-private-field</span></code> to run correctly on classes that contain these
 methods.</p>
-<p>For compatibility with MSVC, <tt class="docutils literal"><span class="pre">LLVM_DELETED_FUNCTION</span></tt> should be used which
-will expand to <tt class="docutils literal"><span class="pre">=</span> <span class="pre">delete</span></tt> on compilers that support it. These methods should
+<p>For compatibility with MSVC, <code class="docutils literal"><span class="pre">LLVM_DELETED_FUNCTION</span></code> should be used which
+will expand to <code class="docutils literal"><span class="pre">=</span> <span class="pre">delete</span></code> on compilers that support it. These methods should
 still be declared private. Example of the uncopyable pattern:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">DontCopy</span> <span class="p">{</span>
 <span class="k">private</span><span class="o">:</span>
@@ -1256,8 +1256,8 @@ still be declared private. Example of the uncopyable pattern:</p>
 </div>
 </div>
 <div class="section" id="don-t-evaluate-end-every-time-through-a-loop">
-<h4><a class="toc-backref" href="#id45">Don&#8217;t evaluate <tt class="docutils literal"><span class="pre">end()</span></tt> every time through a loop</a><a class="headerlink" href="#don-t-evaluate-end-every-time-through-a-loop" title="Permalink to this headline">¶</a></h4>
-<p>Because C++ doesn&#8217;t have a standard &#8220;<tt class="docutils literal"><span class="pre">foreach</span></tt>&#8221; loop (though it can be
+<h4><a class="toc-backref" href="#id45">Don&#8217;t evaluate <code class="docutils literal"><span class="pre">end()</span></code> every time through a loop</a><a class="headerlink" href="#don-t-evaluate-end-every-time-through-a-loop" title="Permalink to this headline">¶</a></h4>
+<p>Because C++ doesn&#8217;t have a standard &#8220;<code class="docutils literal"><span class="pre">foreach</span></code>&#8221; loop (though it can be
 emulated with macros and may be coming in C++&#8216;0x) we end up writing a lot of
 loops that manually iterate from begin to end on a variety of containers or
 through other data structures.  One common mistake is to write a loop in this
@@ -1267,7 +1267,7 @@ style:</p>
   <span class="p">...</span> <span class="n">use</span> <span class="n">I</span> <span class="p">...</span>
 </pre></div>
 </div>
-<p>The problem with this construct is that it evaluates &#8220;<tt class="docutils literal"><span class="pre">BB-&gt;end()</span></tt>&#8221; every time
+<p>The problem with this construct is that it evaluates &#8220;<code class="docutils literal"><span class="pre">BB-&gt;end()</span></code>&#8221; every time
 through the loop.  Instead of writing the loop like this, we strongly prefer
 loops to be written so that they evaluate it once before the loop starts.  A
 convenient way to do this is like so:</p>
@@ -1278,7 +1278,7 @@ convenient way to do this is like so:</p>
 </div>
 <p>The observant may quickly point out that these two loops may have different
 semantics: if the container (a basic block in this case) is being mutated, then
-&#8220;<tt class="docutils literal"><span class="pre">BB-&gt;end()</span></tt>&#8221; may change its value every time through the loop and the second
+&#8220;<code class="docutils literal"><span class="pre">BB-&gt;end()</span></code>&#8221; may change its value every time through the loop and the second
 loop may not in fact be correct.  If you actually do depend on this behavior,
 please write the loop in the first form and add a comment indicating that you
 did it intentionally.</p>
@@ -1287,7 +1287,7 @@ form has two problems. First it may be less efficient than evaluating it at the
 start of the loop.  In this case, the cost is probably minor &#8212; a few extra
 loads every time through the loop.  However, if the base expression is more
 complex, then the cost can rise quickly.  I&#8217;ve seen loops where the end
-expression was actually something like: &#8220;<tt class="docutils literal"><span class="pre">SomeMap[X]-&gt;end()</span></tt>&#8221; and map lookups
+expression was actually something like: &#8220;<code class="docutils literal"><span class="pre">SomeMap[X]-&gt;end()</span></code>&#8221; and map lookups
 really aren&#8217;t cheap.  By writing it in the second form consistently, you
 eliminate the issue entirely and don&#8217;t even have to think about it.</p>
 <p>The second (even bigger) issue is that writing the loop in the first form hints
@@ -1300,34 +1300,34 @@ understand what it does.</p>
 prefer it.</p>
 </div>
 <div class="section" id="include-iostream-is-forbidden">
-<h4><a class="toc-backref" href="#id46"><tt class="docutils literal"><span class="pre">#include</span> <span class="pre">&lt;iostream&gt;</span></tt> is Forbidden</a><a class="headerlink" href="#include-iostream-is-forbidden" title="Permalink to this headline">¶</a></h4>
-<p>The use of <tt class="docutils literal"><span class="pre">#include</span> <span class="pre">&lt;iostream&gt;</span></tt> in library files is hereby <strong>forbidden</strong>,
+<h4><a class="toc-backref" href="#id46"><code class="docutils literal"><span class="pre">#include</span> <span class="pre">&lt;iostream&gt;</span></code> is Forbidden</a><a class="headerlink" href="#include-iostream-is-forbidden" title="Permalink to this headline">¶</a></h4>
+<p>The use of <code class="docutils literal"><span class="pre">#include</span> <span class="pre">&lt;iostream&gt;</span></code> in library files is hereby <strong>forbidden</strong>,
 because many common implementations transparently inject a <a class="reference internal" href="#static-constructor">static constructor</a>
 into every translation unit that includes it.</p>
-<p>Note that using the other stream headers (<tt class="docutils literal"><span class="pre">&lt;sstream&gt;</span></tt> for example) is not
-problematic in this regard &#8212; just <tt class="docutils literal"><span class="pre">&lt;iostream&gt;</span></tt>. However, <tt class="docutils literal"><span class="pre">raw_ostream</span></tt>
+<p>Note that using the other stream headers (<code class="docutils literal"><span class="pre">&lt;sstream&gt;</span></code> for example) is not
+problematic in this regard &#8212; just <code class="docutils literal"><span class="pre">&lt;iostream&gt;</span></code>. However, <code class="docutils literal"><span class="pre">raw_ostream</span></code>
 provides various APIs that are better performing for almost every use than
-<tt class="docutils literal"><span class="pre">std::ostream</span></tt> style APIs.</p>
+<code class="docutils literal"><span class="pre">std::ostream</span></code> style APIs.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">New code should always use <a class="reference internal" href="#raw-ostream">raw_ostream</a> for writing, or the
-<tt class="docutils literal"><span class="pre">llvm::MemoryBuffer</span></tt> API for reading files.</p>
+<code class="docutils literal"><span class="pre">llvm::MemoryBuffer</span></code> API for reading files.</p>
 </div>
 </div>
 <div class="section" id="use-raw-ostream">
-<span id="raw-ostream"></span><h4><a class="toc-backref" href="#id47">Use <tt class="docutils literal"><span class="pre">raw_ostream</span></tt></a><a class="headerlink" href="#use-raw-ostream" title="Permalink to this headline">¶</a></h4>
+<span id="raw-ostream"></span><h4><a class="toc-backref" href="#id47">Use <code class="docutils literal"><span class="pre">raw_ostream</span></code></a><a class="headerlink" href="#use-raw-ostream" title="Permalink to this headline">¶</a></h4>
 <p>LLVM includes a lightweight, simple, and efficient stream implementation in
-<tt class="docutils literal"><span class="pre">llvm/Support/raw_ostream.h</span></tt>, which provides all of the common features of
-<tt class="docutils literal"><span class="pre">std::ostream</span></tt>.  All new code should use <tt class="docutils literal"><span class="pre">raw_ostream</span></tt> instead of
-<tt class="docutils literal"><span class="pre">ostream</span></tt>.</p>
-<p>Unlike <tt class="docutils literal"><span class="pre">std::ostream</span></tt>, <tt class="docutils literal"><span class="pre">raw_ostream</span></tt> is not a template and can be forward
-declared as <tt class="docutils literal"><span class="pre">class</span> <span class="pre">raw_ostream</span></tt>.  Public headers should generally not include
-the <tt class="docutils literal"><span class="pre">raw_ostream</span></tt> header, but use forward declarations and constant references
-to <tt class="docutils literal"><span class="pre">raw_ostream</span></tt> instances.</p>
+<code class="docutils literal"><span class="pre">llvm/Support/raw_ostream.h</span></code>, which provides all of the common features of
+<code class="docutils literal"><span class="pre">std::ostream</span></code>.  All new code should use <code class="docutils literal"><span class="pre">raw_ostream</span></code> instead of
+<code class="docutils literal"><span class="pre">ostream</span></code>.</p>
+<p>Unlike <code class="docutils literal"><span class="pre">std::ostream</span></code>, <code class="docutils literal"><span class="pre">raw_ostream</span></code> is not a template and can be forward
+declared as <code class="docutils literal"><span class="pre">class</span> <span class="pre">raw_ostream</span></code>.  Public headers should generally not include
+the <code class="docutils literal"><span class="pre">raw_ostream</span></code> header, but use forward declarations and constant references
+to <code class="docutils literal"><span class="pre">raw_ostream</span></code> instances.</p>
 </div>
 <div class="section" id="avoid-std-endl">
-<h4><a class="toc-backref" href="#id48">Avoid <tt class="docutils literal"><span class="pre">std::endl</span></tt></a><a class="headerlink" href="#avoid-std-endl" title="Permalink to this headline">¶</a></h4>
-<p>The <tt class="docutils literal"><span class="pre">std::endl</span></tt> modifier, when used with <tt class="docutils literal"><span class="pre">iostreams</span></tt> outputs a newline to
+<h4><a class="toc-backref" href="#id48">Avoid <code class="docutils literal"><span class="pre">std::endl</span></code></a><a class="headerlink" href="#avoid-std-endl" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">std::endl</span></code> modifier, when used with <code class="docutils literal"><span class="pre">iostreams</span></code> outputs a newline to
 the output stream specified.  In addition to doing this, however, it also
 flushes the output stream.  In other words, these are equivalent:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
@@ -1335,12 +1335,12 @@ flushes the output stream.  In other words, these are equivalent:</p>
 </pre></div>
 </div>
 <p>Most of the time, you probably have no reason to flush the output stream, so
-it&#8217;s better to use a literal <tt class="docutils literal"><span class="pre">'\n'</span></tt>.</p>
+it&#8217;s better to use a literal <code class="docutils literal"><span class="pre">'\n'</span></code>.</p>
 </div>
 <div class="section" id="don-t-use-inline-when-defining-a-function-in-a-class-definition">
-<h4><a class="toc-backref" href="#id49">Don&#8217;t use <tt class="docutils literal"><span class="pre">inline</span></tt> when defining a function in a class definition</a><a class="headerlink" href="#don-t-use-inline-when-defining-a-function-in-a-class-definition" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id49">Don&#8217;t use <code class="docutils literal"><span class="pre">inline</span></code> when defining a function in a class definition</a><a class="headerlink" href="#don-t-use-inline-when-defining-a-function-in-a-class-definition" title="Permalink to this headline">¶</a></h4>
 <p>A member function defined in a class definition is implicitly inline, so don&#8217;t
-put the <tt class="docutils literal"><span class="pre">inline</span></tt> keyword in this case.</p>
+put the <code class="docutils literal"><span class="pre">inline</span></code> keyword in this case.</p>
 <p>Don&#8217;t:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Foo</span> <span class="p">{</span>
 <span class="k">public</span><span class="o">:</span>
@@ -1397,7 +1397,7 @@ call operator binds very tightly as a postfix operator.  Putting a space after a
 function name (as in the last example) makes it appear that the code might bind
 the arguments of the left-hand-side of a binary operator with the argument list
 of a function and the name of the right side.  More specifically, it is easy to
-misread the &#8220;<tt class="docutils literal"><span class="pre">A</span></tt>&#8221; example as:</p>
+misread the &#8220;<code class="docutils literal"><span class="pre">A</span></code>&#8221; example as:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">A</span> <span class="o">=</span> <span class="n">foo</span> <span class="p">((</span><span class="mi">42</span><span class="p">,</span> <span class="mi">92</span><span class="p">)</span> <span class="o">+</span> <span class="n">bar</span><span class="p">)</span> <span class="p">(</span><span class="n">X</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1406,8 +1406,8 @@ this misinterpretation.</p>
 </div>
 <div class="section" id="prefer-preincrement">
 <h4><a class="toc-backref" href="#id52">Prefer Preincrement</a><a class="headerlink" href="#prefer-preincrement" title="Permalink to this headline">¶</a></h4>
-<p>Hard fast rule: Preincrement (<tt class="docutils literal"><span class="pre">++X</span></tt>) may be no slower than postincrement
-(<tt class="docutils literal"><span class="pre">X++</span></tt>) and could very well be a lot faster than it.  Use preincrementation
+<p>Hard fast rule: Preincrement (<code class="docutils literal"><span class="pre">++X</span></code>) may be no slower than postincrement
+(<code class="docutils literal"><span class="pre">X++</span></code>) and could very well be a lot faster than it.  Use preincrementation
 whenever possible.</p>
 <p>The semantics of postincrement include making a copy of the value being
 incremented, returning it, and then preincrementing the &#8220;work value&#8221;.  For
@@ -1423,7 +1423,7 @@ because we want code to <a class="reference internal" href="#fit-into-80-columns
 also because it makes it easier to understand the code. To facilitate this and
 avoid some insanely deep nesting on occasion, don&#8217;t indent namespaces. If it
 helps readability, feel free to add a comment indicating what namespace is
-being closed by a <tt class="docutils literal"><span class="pre">}</span></tt>.  For example:</p>
+being closed by a <code class="docutils literal"><span class="pre">}</span></code>.  For example:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">namespace</span> <span class="n">llvm</span> <span class="p">{</span>
 <span class="k">namespace</span> <span class="n">knowledge</span> <span class="p">{</span>
 
@@ -1456,7 +1456,7 @@ namespaces in particular.  Anonymous namespaces are a great language feature
 that tells the C++ compiler that the contents of the namespace are only visible
 within the current translation unit, allowing more aggressive optimization and
 eliminating the possibility of symbol name collisions.  Anonymous namespaces are
-to C++ as &#8220;static&#8221; is to C functions and global variables.  While &#8220;<tt class="docutils literal"><span class="pre">static</span></tt>&#8221;
+to C++ as &#8220;static&#8221; is to C functions and global variables.  While &#8220;<code class="docutils literal"><span class="pre">static</span></code>&#8221;
 is available in C++, anonymous namespaces are more general: they can make entire
 classes private to a file.</p>
 <p>The problem with anonymous namespaces is that they naturally want to encourage
@@ -1506,10 +1506,10 @@ good:</p>
 <span class="p">}</span> <span class="c1">// end anonymous namespace</span>
 </pre></div>
 </div>
-<p>This is bad specifically because if you&#8217;re looking at &#8220;<tt class="docutils literal"><span class="pre">runHelper</span></tt>&#8221; in the middle
+<p>This is bad specifically because if you&#8217;re looking at &#8220;<code class="docutils literal"><span class="pre">runHelper</span></code>&#8221; in the middle
 of a large C++ file, that you have no immediate way to tell if it is local to
 the file.  When it is marked static explicitly, this is immediately obvious.
-Also, there is no reason to enclose the definition of &#8220;<tt class="docutils literal"><span class="pre">operator&lt;</span></tt>&#8221; in the
+Also, there is no reason to enclose the definition of &#8220;<code class="docutils literal"><span class="pre">operator&lt;</span></code>&#8221; in the
 namespace just because it was declared there.</p>
 </div>
 </div>
@@ -1535,7 +1535,7 @@ something.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1552,10 +1552,10 @@ something.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

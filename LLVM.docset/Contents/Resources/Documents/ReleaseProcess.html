@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="how-to-validate-a-new-release">
 <h1>How To Validate a New Release<a class="headerlink" href="#how-to-validate-a-new-release" title="Permalink to this headline">¶</a></h1>
@@ -106,11 +106,11 @@ taken more lightly than correctness.</li>
 </div>
 <div class="section" id="scripts">
 <span id="id1"></span><h2><a class="toc-backref" href="#id10">Scripts</a><a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
-<p>The scripts are in the <tt class="docutils literal"><span class="pre">utils/release</span></tt> directory.</p>
+<p>The scripts are in the <code class="docutils literal"><span class="pre">utils/release</span></code> directory.</p>
 <div class="section" id="test-release-sh">
 <h3>test-release.sh<a class="headerlink" href="#test-release-sh" title="Permalink to this headline">¶</a></h3>
-<p>This script will check-out, configure and compile LLVM+Clang (+ most add-ons, like <tt class="docutils literal"><span class="pre">compiler-rt</span></tt>,
-<tt class="docutils literal"><span class="pre">libcxx</span></tt> and <tt class="docutils literal"><span class="pre">clang-extra-tools</span></tt>) in three stages, and will test the final stage.
+<p>This script will check-out, configure and compile LLVM+Clang (+ most add-ons, like <code class="docutils literal"><span class="pre">compiler-rt</span></code>,
+<code class="docutils literal"><span class="pre">libcxx</span></code> and <code class="docutils literal"><span class="pre">clang-extra-tools</span></code>) in three stages, and will test the final stage.
 It&#8217;ll have installed the final binaries on the Phase3/Releasei(+Asserts) directory, and
 that&#8217;s the one you should use for the test-suite and other external tests.</p>
 <p>To run the script on a specific release candidate run:</p>
@@ -123,19 +123,19 @@ that&#8217;s the one you should use for the test-suite and other external tests.
 </pre></div>
 </div>
 <p>Each system will require different options. For instance, x86_64 will obviously not need
-<tt class="docutils literal"><span class="pre">-no-64bit</span></tt> while 32-bit systems will, or the script will fail.</p>
+<code class="docutils literal"><span class="pre">-no-64bit</span></code> while 32-bit systems will, or the script will fail.</p>
 <p>The important flags to get right are:</p>
 <ul class="simple">
-<li>On the pre-release, you should change <tt class="docutils literal"><span class="pre">-rc</span> <span class="pre">1</span></tt> to <tt class="docutils literal"><span class="pre">-final</span></tt>. On RC2, change it to <tt class="docutils literal"><span class="pre">-rc</span> <span class="pre">2</span></tt> and so on.</li>
-<li>On non-release testing, you can use <tt class="docutils literal"><span class="pre">-final</span></tt> in conjunction with <tt class="docutils literal"><span class="pre">-no-checkout</span></tt>, but you&#8217;ll have to
-create the <tt class="docutils literal"><span class="pre">final</span></tt> directory by hand and link the correct source dir to <tt class="docutils literal"><span class="pre">final/llvm.src</span></tt>.</li>
-<li>For release candidates, you need <tt class="docutils literal"><span class="pre">-test-asserts</span></tt>, or it won&#8217;t create a &#8220;Release+Asserts&#8221; directory,
+<li>On the pre-release, you should change <code class="docutils literal"><span class="pre">-rc</span> <span class="pre">1</span></code> to <code class="docutils literal"><span class="pre">-final</span></code>. On RC2, change it to <code class="docutils literal"><span class="pre">-rc</span> <span class="pre">2</span></code> and so on.</li>
+<li>On non-release testing, you can use <code class="docutils literal"><span class="pre">-final</span></code> in conjunction with <code class="docutils literal"><span class="pre">-no-checkout</span></code>, but you&#8217;ll have to
+create the <code class="docutils literal"><span class="pre">final</span></code> directory by hand and link the correct source dir to <code class="docutils literal"><span class="pre">final/llvm.src</span></code>.</li>
+<li>For release candidates, you need <code class="docutils literal"><span class="pre">-test-asserts</span></code>, or it won&#8217;t create a &#8220;Release+Asserts&#8221; directory,
 which is needed for release testing and benchmarking. This will take twice as long.</li>
 <li>On the final candidate you just need Release builds, and that&#8217;s the binary directory you&#8217;ll have to pack.</li>
 </ul>
 <p>This script builds three phases of Clang+LLVM twice each (Release and Release+Asserts), so use
 screen or nohup to avoid headaches, since it&#8217;ll take a long time.</p>
-<p>Use the <tt class="docutils literal"><span class="pre">--help</span></tt> option to see all the options and chose it according to your needs.</p>
+<p>Use the <code class="docutils literal"><span class="pre">--help</span></code> option to see all the options and chose it according to your needs.</p>
 </div>
 <div class="section" id="findregressions-nightly-py">
 <h3>findRegressions-nightly.py<a class="headerlink" href="#findregressions-nightly-py" title="Permalink to this headline">¶</a></h3>
@@ -145,10 +145,10 @@ screen or nohup to avoid headaches, since it&#8217;ll take a long time.</p>
 <div class="section" id="test-suite">
 <span id="id2"></span><h2><a class="toc-backref" href="#id11">Test Suite</a><a class="headerlink" href="#test-suite" title="Permalink to this headline">¶</a></h2>
 <p>Follow the <a class="reference external" href="http://llvm.org/docs/lnt/quickstart.html">LNT Quick Start Guide</a> link on how to set-up the test-suite</p>
-<p>The binary location you&#8217;ll have to use for testing is inside the <tt class="docutils literal"><span class="pre">rcN/Phase3/Release+Asserts/llvmCore-REL-RC.install</span></tt>.
+<p>The binary location you&#8217;ll have to use for testing is inside the <code class="docutils literal"><span class="pre">rcN/Phase3/Release+Asserts/llvmCore-REL-RC.install</span></code>.
 Link that directory to an easier location and run the test-suite.</p>
 <p>An example on the run command line, assuming you created a link from the correct
-install directory to <tt class="docutils literal"><span class="pre">~/devel/llvm/install</span></tt>:</p>
+install directory to <code class="docutils literal"><span class="pre">~/devel/llvm/install</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre>./sandbox/bin/python sandbox/bin/lnt runtest \
     nt \
     -j4 \
@@ -174,12 +174,12 @@ on the previous release.</p>
 <p>You should:</p>
 <ul class="simple">
 <li>Download the previous release sources from <a class="reference external" href="http://llvm.org/releases/download.html">http://llvm.org/releases/download.html</a>.</li>
-<li>Run the test-release.sh script on <tt class="docutils literal"><span class="pre">final</span></tt> mode (change <tt class="docutils literal"><span class="pre">-rc</span> <span class="pre">1</span></tt> to <tt class="docutils literal"><span class="pre">-final</span></tt>).</li>
+<li>Run the test-release.sh script on <code class="docutils literal"><span class="pre">final</span></code> mode (change <code class="docutils literal"><span class="pre">-rc</span> <span class="pre">1</span></code> to <code class="docutils literal"><span class="pre">-final</span></code>).</li>
 <li>Once all three stages are done, it&#8217;ll test the final stage.</li>
-<li>Using the <tt class="docutils literal"><span class="pre">Phase3/Release+Asserts/llvmCore-MAJ.MIN-final.install</span></tt> base, run the test-suite.</li>
+<li>Using the <code class="docutils literal"><span class="pre">Phase3/Release+Asserts/llvmCore-MAJ.MIN-final.install</span></code> base, run the test-suite.</li>
 </ul>
-<p>If the final phase&#8217;s <tt class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></tt> failed, it&#8217;s a good idea to also test the
-intermediate stages by going on the obj directory and running <tt class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></tt> to find
+<p>If the final phase&#8217;s <code class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></code> failed, it&#8217;s a good idea to also test the
+intermediate stages by going on the obj directory and running <code class="docutils literal"><span class="pre">make</span> <span class="pre">check-all</span></code> to find
 if there&#8217;s at least one stage that passes (helps when reducing the error for bug report
 purposes).</p>
 </div>
@@ -192,17 +192,17 @@ to them), and run the release test as above.</p>
 <ul class="simple">
 <li>Download the current candidate sources from where the release manager points you
 (ex. <a class="reference external" href="http://llvm.org/pre-releases/3.3/rc1/">http://llvm.org/pre-releases/3.3/rc1/</a>).</li>
-<li>Repeat the steps above with <tt class="docutils literal"><span class="pre">-rc</span> <span class="pre">1</span></tt>, <tt class="docutils literal"><span class="pre">-rc</span> <span class="pre">2</span></tt> etc modes and run the test-suite
+<li>Repeat the steps above with <code class="docutils literal"><span class="pre">-rc</span> <span class="pre">1</span></code>, <code class="docutils literal"><span class="pre">-rc</span> <span class="pre">2</span></code> etc modes and run the test-suite
 the same way.</li>
 <li>Compare the results, report all errors on Bugzilla and publish the binary blob
 where the release manager can grab it.</li>
 </ul>
 <p>Once the release manages announces that the latest candidate is the good one, you
-have to pack the <tt class="docutils literal"><span class="pre">Release</span></tt> (no Asserts) install directory on <tt class="docutils literal"><span class="pre">Phase3</span></tt> and that
+have to pack the <code class="docutils literal"><span class="pre">Release</span></code> (no Asserts) install directory on <code class="docutils literal"><span class="pre">Phase3</span></code> and that
 will be the official binary.</p>
 <ul class="simple">
-<li>Rename (or link) <tt class="docutils literal"><span class="pre">clang+llvm-REL-ARCH-ENV</span></tt> to the .install directory</li>
-<li>Tar that into the same name with <tt class="docutils literal"><span class="pre">.tar.gz</span></tt> extensioan from outside the directory</li>
+<li>Rename (or link) <code class="docutils literal"><span class="pre">clang+llvm-REL-ARCH-ENV</span></code> to the .install directory</li>
+<li>Tar that into the same name with <code class="docutils literal"><span class="pre">.tar.gz</span></code> extensioan from outside the directory</li>
 <li>Make it available for the release manager to download</li>
 </ul>
 </div>
@@ -229,7 +229,7 @@ releasing an unstable (but untested) binary package.</li>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -246,10 +246,10 @@ releasing an unstable (but untested) binary package.</li>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

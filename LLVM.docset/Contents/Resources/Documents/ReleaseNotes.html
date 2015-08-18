@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,61 +61,65 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-3-6-release-notes">
 <h1>LLVM 3.6 Release Notes<a class="headerlink" href="#llvm-3-6-release-notes" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
-<li><a class="reference internal" href="#non-comprehensive-list-of-changes-in-this-release" id="id3">Non-comprehensive list of changes in this release</a><ul>
-<li><a class="reference internal" href="#prefix-data-rework" id="id4">Prefix data rework</a></li>
-<li><a class="reference internal" href="#metadata-is-not-a-value" id="id5">Metadata is not a Value</a><ul>
-<li><a class="reference internal" href="#bridges-between-value-and-metadata" id="id6">Bridges between Value and Metadata</a></li>
-<li><a class="reference internal" href="#metadata-is-typeless" id="id7">Metadata is typeless</a></li>
-<li><a class="reference internal" href="#distinct-metadata-nodes" id="id8">Distinct metadata nodes</a></li>
-<li><a class="reference internal" href="#constructing-cyclic-graphs" id="id9">Constructing cyclic graphs</a></li>
-<li><a class="reference internal" href="#mdlocation-aka-debugloc-aka-dilocation" id="id10">MDLocation (aka DebugLoc aka DILocation)</a></li>
+<li><a class="reference internal" href="#introduction" id="id3">Introduction</a></li>
+<li><a class="reference internal" href="#non-comprehensive-list-of-changes-in-this-release" id="id4">Non-comprehensive list of changes in this release</a><ul>
+<li><a class="reference internal" href="#changes-to-the-mips-target" id="id5">Changes to the MIPS Target</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#alias-syntax-change" id="id11">Alias syntax change</a></li>
-<li><a class="reference internal" href="#the-old-jit-has-been-removed" id="id12">The old JIT has been removed</a></li>
-<li><a class="reference internal" href="#object-binary-doesn-t-own-the-file-buffer" id="id13">object::Binary doesn&#8217;t own the file buffer</a></li>
-<li><a class="reference internal" href="#ir-in-object-files-is-now-supported" id="id14">IR in object files is now supported</a></li>
-<li><a class="reference internal" href="#the-gold-plugin-has-been-rewritten" id="id15">The gold plugin has been rewritten</a></li>
-<li><a class="reference internal" href="#change-in-the-representation-of-lazy-loaded-funcs" id="id16">Change in the representation of lazy loaded funcs</a></li>
-<li><a class="reference internal" href="#the-opt-option-std-compile-opts-was-removed" id="id17">The opt option -std-compile-opts was removed</a></li>
-<li><a class="reference internal" href="#python-2-7-is-now-required" id="id18">Python 2.7 is now required</a></li>
-<li><a class="reference internal" href="#the-leak-detector-has-been-removed" id="id19">The leak detector has been removed</a></li>
-<li><a class="reference internal" href="#new-comdat-syntax" id="id20">New comdat syntax</a></li>
-<li><a class="reference internal" href="#added-support-for-win64-unwind-information" id="id21">Added support for Win64 unwind information</a></li>
-<li><a class="reference internal" href="#diagnostic-infrastructure-used-by-lib-linker-and-lib-bitcode" id="id22">Diagnostic infrastructure used by lib/Linker and lib/Bitcode</a></li>
-<li><a class="reference internal" href="#the-preservesource-linker-mode-was-removed" id="id23">The PreserveSource linker mode was removed</a></li>
-<li><a class="reference internal" href="#garbage-collection" id="id24">Garbage Collection</a></li>
-<li><a class="reference internal" href="#changes-to-the-mips-target" id="id25">Changes to the MIPS Target</a><ul>
-<li><a class="reference internal" href="#abi" id="id26">ABI</a></li>
-<li><a class="reference internal" href="#llvmlinux" id="id27">LLVMLinux</a></li>
-<li><a class="reference internal" href="#miscellaneous" id="id28">Miscellaneous</a></li>
+<li><a class="reference internal" href="#non-comprehensive-list-of-changes-in-3-6-0" id="id6">Non-comprehensive list of changes in 3.6.0</a><ul>
+<li><a class="reference internal" href="#prefix-data-rework" id="id7">Prefix data rework</a></li>
+<li><a class="reference internal" href="#metadata-is-not-a-value" id="id8">Metadata is not a Value</a><ul>
+<li><a class="reference internal" href="#bridges-between-value-and-metadata" id="id9">Bridges between Value and Metadata</a></li>
+<li><a class="reference internal" href="#metadata-is-typeless" id="id10">Metadata is typeless</a></li>
+<li><a class="reference internal" href="#distinct-metadata-nodes" id="id11">Distinct metadata nodes</a></li>
+<li><a class="reference internal" href="#constructing-cyclic-graphs" id="id12">Constructing cyclic graphs</a></li>
+<li><a class="reference internal" href="#mdlocation-aka-debugloc-aka-dilocation" id="id13">MDLocation (aka DebugLoc aka DILocation)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#changes-to-the-powerpc-target" id="id29">Changes to the PowerPC Target</a></li>
-<li><a class="reference internal" href="#changes-to-the-ocaml-bindings" id="id30">Changes to the OCaml bindings</a></li>
-<li><a class="reference internal" href="#go-bindings" id="id31">Go bindings</a></li>
+<li><a class="reference internal" href="#alias-syntax-change" id="id14">Alias syntax change</a></li>
+<li><a class="reference internal" href="#the-old-jit-has-been-removed" id="id15">The old JIT has been removed</a></li>
+<li><a class="reference internal" href="#object-binary-doesn-t-own-the-file-buffer" id="id16">object::Binary doesn&#8217;t own the file buffer</a></li>
+<li><a class="reference internal" href="#ir-in-object-files-is-now-supported" id="id17">IR in object files is now supported</a></li>
+<li><a class="reference internal" href="#the-gold-plugin-has-been-rewritten" id="id18">The gold plugin has been rewritten</a></li>
+<li><a class="reference internal" href="#change-in-the-representation-of-lazy-loaded-funcs" id="id19">Change in the representation of lazy loaded funcs</a></li>
+<li><a class="reference internal" href="#the-opt-option-std-compile-opts-was-removed" id="id20">The opt option -std-compile-opts was removed</a></li>
+<li><a class="reference internal" href="#python-2-7-is-now-required" id="id21">Python 2.7 is now required</a></li>
+<li><a class="reference internal" href="#the-leak-detector-has-been-removed" id="id22">The leak detector has been removed</a></li>
+<li><a class="reference internal" href="#new-comdat-syntax" id="id23">New comdat syntax</a></li>
+<li><a class="reference internal" href="#added-support-for-win64-unwind-information" id="id24">Added support for Win64 unwind information</a></li>
+<li><a class="reference internal" href="#diagnostic-infrastructure-used-by-lib-linker-and-lib-bitcode" id="id25">Diagnostic infrastructure used by lib/Linker and lib/Bitcode</a></li>
+<li><a class="reference internal" href="#the-preservesource-linker-mode-was-removed" id="id26">The PreserveSource linker mode was removed</a></li>
+<li><a class="reference internal" href="#garbage-collection" id="id27">Garbage Collection</a></li>
+<li><a class="reference internal" href="#id1" id="id28">Changes to the MIPS Target</a><ul>
+<li><a class="reference internal" href="#abi" id="id29">ABI</a></li>
+<li><a class="reference internal" href="#llvmlinux" id="id30">LLVMLinux</a></li>
+<li><a class="reference internal" href="#miscellaneous" id="id31">Miscellaneous</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#external-open-source-projects-using-llvm-3-6" id="id32">External Open Source Projects Using LLVM 3.6</a><ul>
-<li><a class="reference internal" href="#portable-computing-language-pocl" id="id33">Portable Computing Language (pocl)</a></li>
-<li><a class="reference internal" href="#tta-based-co-design-environment-tce" id="id34">TTA-based Co-design Environment (TCE)</a></li>
-<li><a class="reference internal" href="#likely" id="id35">Likely</a></li>
-<li><a class="reference internal" href="#ldc-the-llvm-based-d-compiler" id="id36">LDC - the LLVM-based D compiler</a></li>
-<li><a class="reference internal" href="#llvmsharp-clangsharp" id="id37">LLVMSharp &amp; ClangSharp</a></li>
+<li><a class="reference internal" href="#changes-to-the-powerpc-target" id="id32">Changes to the PowerPC Target</a></li>
+<li><a class="reference internal" href="#changes-to-the-ocaml-bindings" id="id33">Changes to the OCaml bindings</a></li>
+<li><a class="reference internal" href="#go-bindings" id="id34">Go bindings</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#additional-information" id="id38">Additional Information</a></li>
+<li><a class="reference internal" href="#external-open-source-projects-using-llvm-3-6" id="id35">External Open Source Projects Using LLVM 3.6</a><ul>
+<li><a class="reference internal" href="#portable-computing-language-pocl" id="id36">Portable Computing Language (pocl)</a></li>
+<li><a class="reference internal" href="#tta-based-co-design-environment-tce" id="id37">TTA-based Co-design Environment (TCE)</a></li>
+<li><a class="reference internal" href="#likely" id="id38">Likely</a></li>
+<li><a class="reference internal" href="#ldc-the-llvm-based-d-compiler" id="id39">LDC - the LLVM-based D compiler</a></li>
+<li><a class="reference internal" href="#llvmsharp-clangsharp" id="id40">LLVMSharp &amp; ClangSharp</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-information" id="id41">Additional Information</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>This document contains the release notes for the LLVM Compiler Infrastructure,
 release 3.6.  Here we describe the status of LLVM, including major improvements
 from the previous release, improvements in various subprojects of LLVM, and
@@ -127,24 +131,44 @@ have questions or comments, the <a class="reference external" href="http://lists
 them.</p>
 </div>
 <div class="section" id="non-comprehensive-list-of-changes-in-this-release">
-<h2><a class="toc-backref" href="#id3">Non-comprehensive list of changes in this release</a><a class="headerlink" href="#non-comprehensive-list-of-changes-in-this-release" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">Non-comprehensive list of changes in this release</a><a class="headerlink" href="#non-comprehensive-list-of-changes-in-this-release" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="changes-to-the-mips-target">
+<h3><a class="toc-backref" href="#id5">Changes to the MIPS Target</a><a class="headerlink" href="#changes-to-the-mips-target" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Added support for 128-bit integers on 64-bit targets.</li>
+<li>Fixed some remaining N32/N64 calling convention bugs when using small
+structures on big-endian targets.</li>
+<li>Fixed missing sign-extensions that are required by the N32/N64 calling
+convention when generating calls to library functions with 32-bit parameters.</li>
+<li><code class="docutils literal"><span class="pre">-mno-odd-spreg</span></code> is now honoured for vector insertion/extraction operations
+when using <code class="docutils literal"><span class="pre">-mmsa</span></code>.</li>
+<li>Corrected the representation of member function pointers. This makes them
+usable on microMIPS targets.</li>
+<li>Fixed multiple segfaults and assertions in the disassembler when
+disassembling instructions that have memory operands.</li>
+<li>Fixed multiple cases of suboptimal code generation involving <code class="docutils literal"><span class="pre">$zero</span></code>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="non-comprehensive-list-of-changes-in-3-6-0">
+<h2><a class="toc-backref" href="#id6">Non-comprehensive list of changes in 3.6.0</a><a class="headerlink" href="#non-comprehensive-list-of-changes-in-3-6-0" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li>Support for AuroraUX has been removed.</li>
 <li>Added support for a <a class="reference external" href="BitCodeFormat.html#native-object-file">native object file-based bitcode wrapper format</a>.</li>
-<li>Added support for MSVC&#8217;s <tt class="docutils literal"><span class="pre">__vectorcall</span></tt> calling convention as
-<tt class="docutils literal"><span class="pre">x86_vectorcallcc</span></tt>.</li>
+<li>Added support for MSVC&#8217;s <code class="docutils literal"><span class="pre">__vectorcall</span></code> calling convention as
+<code class="docutils literal"><span class="pre">x86_vectorcallcc</span></code>.</li>
 </ul>
 <div class="section" id="prefix-data-rework">
-<h3><a class="toc-backref" href="#id4">Prefix data rework</a><a class="headerlink" href="#prefix-data-rework" title="Permalink to this headline">¶</a></h3>
-<p>The semantics of the <tt class="docutils literal"><span class="pre">prefix</span></tt> attribute have been changed. Users
-that want the previous <tt class="docutils literal"><span class="pre">prefix</span></tt> semantics should instead use
-<tt class="docutils literal"><span class="pre">prologue</span></tt>.  To motivate this change, let&#8217;s examine the primary
+<h3><a class="toc-backref" href="#id7">Prefix data rework</a><a class="headerlink" href="#prefix-data-rework" title="Permalink to this headline">¶</a></h3>
+<p>The semantics of the <code class="docutils literal"><span class="pre">prefix</span></code> attribute have been changed. Users
+that want the previous <code class="docutils literal"><span class="pre">prefix</span></code> semantics should instead use
+<code class="docutils literal"><span class="pre">prologue</span></code>.  To motivate this change, let&#8217;s examine the primary
 usecases that these attributes aim to serve,</p>
 <blockquote>
 <div><ol class="arabic simple">
 <li>Code sanitization metadata (e.g. Clang&#8217;s undefined behavior
 sanitizer)</li>
-<li>Function hot-patching: Enable the user to insert <tt class="docutils literal"><span class="pre">nop</span></tt> operations
+<li>Function hot-patching: Enable the user to insert <code class="docutils literal"><span class="pre">nop</span></code> operations
 at the beginning of the function which can later be safely replaced
 with a call to some instrumentation facility.</li>
 <li>Language runtime metadata: Allow a compiler to insert data for
@@ -153,7 +177,7 @@ compiler that needs this functionality for its
 tables-next-to-code functionality.</li>
 </ol>
 </div></blockquote>
-<p>Previously <tt class="docutils literal"><span class="pre">prefix</span></tt> served cases (1) and (2) quite well by allowing the user
+<p>Previously <code class="docutils literal"><span class="pre">prefix</span></code> served cases (1) and (2) quite well by allowing the user
 to introduce arbitrary data at the entrypoint but before the function
 body. Case (3), however, was poorly handled by this approach as it
 required that prefix data was valid executable code.</p>
@@ -171,17 +195,17 @@ response to a proposal to introduce the notion of symbol offsets to
 enable handling of case (3).</p>
 </div>
 <div class="section" id="metadata-is-not-a-value">
-<h3><a class="toc-backref" href="#id5">Metadata is not a Value</a><a class="headerlink" href="#metadata-is-not-a-value" title="Permalink to this headline">¶</a></h3>
-<p>Metadata nodes (<tt class="docutils literal"><span class="pre">!{...}</span></tt>) and strings (<tt class="docutils literal"><span class="pre">!&quot;...&quot;</span></tt>) are no longer values.
+<h3><a class="toc-backref" href="#id8">Metadata is not a Value</a><a class="headerlink" href="#metadata-is-not-a-value" title="Permalink to this headline">¶</a></h3>
+<p>Metadata nodes (<code class="docutils literal"><span class="pre">!{...}</span></code>) and strings (<code class="docutils literal"><span class="pre">!&quot;...&quot;</span></code>) are no longer values.
 They have no use-lists, no type, cannot RAUW, and cannot be function-local.</p>
 <div class="section" id="bridges-between-value-and-metadata">
-<h4><a class="toc-backref" href="#id6">Bridges between Value and Metadata</a><a class="headerlink" href="#bridges-between-value-and-metadata" title="Permalink to this headline">¶</a></h4>
-<p>LLVM intrinsics can reference metadata using the <tt class="docutils literal"><span class="pre">metadata</span></tt> type, and
+<h4><a class="toc-backref" href="#id9">Bridges between Value and Metadata</a><a class="headerlink" href="#bridges-between-value-and-metadata" title="Permalink to this headline">¶</a></h4>
+<p>LLVM intrinsics can reference metadata using the <code class="docutils literal"><span class="pre">metadata</span></code> type, and
 metadata nodes can reference constant values.</p>
 <p>Function-local metadata is limited to direct arguments to LLVM intrinsics.</p>
 </div>
 <div class="section" id="metadata-is-typeless">
-<h4><a class="toc-backref" href="#id7">Metadata is typeless</a><a class="headerlink" href="#metadata-is-typeless" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id10">Metadata is typeless</a><a class="headerlink" href="#metadata-is-typeless" title="Permalink to this headline">¶</a></h4>
 <p>The following old IR:</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span class="vg">@g</span> <span class="p">=</span> <span class="k">global</span> <span class="k">i32</span> <span class="m">0</span>
 
@@ -225,15 +249,15 @@ metadata nodes can reference constant values.</p>
 </div>
 </div>
 <div class="section" id="distinct-metadata-nodes">
-<h4><a class="toc-backref" href="#id8">Distinct metadata nodes</a><a class="headerlink" href="#distinct-metadata-nodes" title="Permalink to this headline">¶</a></h4>
-<p>Metadata nodes can opt-out of uniquing, using the keyword <tt class="docutils literal"><span class="pre">distinct</span></tt>.
+<h4><a class="toc-backref" href="#id11">Distinct metadata nodes</a><a class="headerlink" href="#distinct-metadata-nodes" title="Permalink to this headline">¶</a></h4>
+<p>Metadata nodes can opt-out of uniquing, using the keyword <code class="docutils literal"><span class="pre">distinct</span></code>.
 Distinct nodes are still owned by the context, but are stored in a side table,
 and not uniqued.</p>
 <p>In LLVM 3.5, metadata nodes would drop uniquing if an operand changed to
-<tt class="docutils literal"><span class="pre">null</span></tt> during optimizations.  This is no longer true.  However, if an operand
-change causes a uniquing collision, they become <tt class="docutils literal"><span class="pre">distinct</span></tt>.  Unlike LLVM 3.5,
+<code class="docutils literal"><span class="pre">null</span></code> during optimizations.  This is no longer true.  However, if an operand
+change causes a uniquing collision, they become <code class="docutils literal"><span class="pre">distinct</span></code>.  Unlike LLVM 3.5,
 where serializing to assembly or bitcode would re-unique the nodes, they now
-remain <tt class="docutils literal"><span class="pre">distinct</span></tt>.</p>
+remain <code class="docutils literal"><span class="pre">distinct</span></code>.</p>
 <p>The following IR:</p>
 <div class="highlight-llvm"><div class="highlight"><pre>!named = !{!0, !1, !2, !3, !4, !5, !6, !7, !8}
 
@@ -262,16 +286,16 @@ remain <tt class="docutils literal"><span class="pre">distinct</span></tt>.</p>
 </div>
 </div>
 <div class="section" id="constructing-cyclic-graphs">
-<h4><a class="toc-backref" href="#id9">Constructing cyclic graphs</a><a class="headerlink" href="#constructing-cyclic-graphs" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id12">Constructing cyclic graphs</a><a class="headerlink" href="#constructing-cyclic-graphs" title="Permalink to this headline">¶</a></h4>
 <p>During graph construction, if a metadata node transitively references a forward
 declaration, the node itself is considered &#8220;unresolved&#8221; until the forward
 declaration resolves.  An unresolved node can RAUW itself to support uniquing.
 Nodes automatically resolve once all their operands have resolved.</p>
 <p>However, cyclic graphs prevent the nodes from resolving.  An API client that
-constructs a cyclic graph must call <tt class="docutils literal"><span class="pre">resolveCycles()</span></tt> to resolve nodes in the
+constructs a cyclic graph must call <code class="docutils literal"><span class="pre">resolveCycles()</span></code> to resolve nodes in the
 cycle.</p>
 <p>To save self-references from that burden, self-referencing nodes are implicitly
-<tt class="docutils literal"><span class="pre">distinct</span></tt>.  So the following IR:</p>
+<code class="docutils literal"><span class="pre">distinct</span></code>.  So the following IR:</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span class="nv">!named</span> <span class="p">=</span> <span class="p">!{</span><span class="nv-Anonymous">!0</span><span class="p">,</span> <span class="nv-Anonymous">!1</span><span class="p">,</span> <span class="nv-Anonymous">!2</span><span class="p">,</span> <span class="nv-Anonymous">!3</span><span class="p">,</span> <span class="nv-Anonymous">!4</span><span class="p">}</span>
 
 <span class="nv-Anonymous">!0</span> <span class="p">=</span> <span class="p">!{</span><span class="nv-Anonymous">!0</span><span class="p">}</span>
@@ -292,11 +316,11 @@ cycle.</p>
 </div>
 </div>
 <div class="section" id="mdlocation-aka-debugloc-aka-dilocation">
-<h4><a class="toc-backref" href="#id10">MDLocation (aka DebugLoc aka DILocation)</a><a class="headerlink" href="#mdlocation-aka-debugloc-aka-dilocation" title="Permalink to this headline">¶</a></h4>
-<p>There&#8217;s a new first-class metadata construct called <tt class="docutils literal"><span class="pre">MDLocation</span></tt> (to be
+<h4><a class="toc-backref" href="#id13">MDLocation (aka DebugLoc aka DILocation)</a><a class="headerlink" href="#mdlocation-aka-debugloc-aka-dilocation" title="Permalink to this headline">¶</a></h4>
+<p>There&#8217;s a new first-class metadata construct called <code class="docutils literal"><span class="pre">MDLocation</span></code> (to be
 followed in subsequent releases by others).  It&#8217;s used for the locations
-referenced by <tt class="docutils literal"><span class="pre">!dbg</span></tt> metadata attachments.</p>
-<p>For example, if an old <tt class="docutils literal"><span class="pre">!dbg</span></tt> attachment looked like this:</p>
+referenced by <code class="docutils literal"><span class="pre">!dbg</span></code> metadata attachments.</p>
+<p>For example, if an old <code class="docutils literal"><span class="pre">!dbg</span></code> attachment looked like this:</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i32</span> <span class="vg">@foo</span><span class="p">(</span><span class="k">i32</span> <span class="nv">%a</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%b</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="nv">%add</span> <span class="p">=</span> <span class="k">add</span> <span class="k">i32</span> <span class="nv">%a</span><span class="p">,</span> <span class="nv">%b</span><span class="p">,</span> <span class="nv">!dbg</span> <span class="nv-Anonymous">!0</span>
@@ -323,58 +347,58 @@ referenced by <tt class="docutils literal"><span class="pre">!dbg</span></tt> me
 </pre></div>
 </div>
 <p>The fields are named, can be reordered, and have sane defaults if left out
-(although <tt class="docutils literal"><span class="pre">scope:</span></tt> is required).</p>
+(although <code class="docutils literal"><span class="pre">scope:</span></code> is required).</p>
 </div>
 </div>
 <div class="section" id="alias-syntax-change">
-<h3><a class="toc-backref" href="#id11">Alias syntax change</a><a class="headerlink" href="#alias-syntax-change" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">Alias syntax change</a><a class="headerlink" href="#alias-syntax-change" title="Permalink to this headline">¶</a></h3>
 <p>The syntax for aliases is now closer to what is used for global variables</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span class="vg">@a</span> <span class="p">=</span> <span class="k">weak</span> <span class="k">global</span> <span class="p">...</span>
 <span class="vg">@b</span> <span class="p">=</span> <span class="k">weak</span> <span class="k">alias</span> <span class="p">...</span>
 </pre></div>
 </div>
-<p>The order of the <tt class="docutils literal"><span class="pre">alias</span></tt> keyword and the linkage was swapped before.</p>
+<p>The order of the <code class="docutils literal"><span class="pre">alias</span></code> keyword and the linkage was swapped before.</p>
 </div>
 <div class="section" id="the-old-jit-has-been-removed">
-<h3><a class="toc-backref" href="#id12">The old JIT has been removed</a><a class="headerlink" href="#the-old-jit-has-been-removed" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id15">The old JIT has been removed</a><a class="headerlink" href="#the-old-jit-has-been-removed" title="Permalink to this headline">¶</a></h3>
 <p>All users should transition to MCJIT.</p>
 </div>
 <div class="section" id="object-binary-doesn-t-own-the-file-buffer">
-<h3><a class="toc-backref" href="#id13">object::Binary doesn&#8217;t own the file buffer</a><a class="headerlink" href="#object-binary-doesn-t-own-the-file-buffer" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id16">object::Binary doesn&#8217;t own the file buffer</a><a class="headerlink" href="#object-binary-doesn-t-own-the-file-buffer" title="Permalink to this headline">¶</a></h3>
 <p>It is now just a wrapper, which simplifies using object::Binary with other
 users of the underlying file.</p>
 </div>
 <div class="section" id="ir-in-object-files-is-now-supported">
-<h3><a class="toc-backref" href="#id14">IR in object files is now supported</a><a class="headerlink" href="#ir-in-object-files-is-now-supported" title="Permalink to this headline">¶</a></h3>
-<p>Regular object files can contain IR in a section named <tt class="docutils literal"><span class="pre">.llvmbc</span></tt>.</p>
+<h3><a class="toc-backref" href="#id17">IR in object files is now supported</a><a class="headerlink" href="#ir-in-object-files-is-now-supported" title="Permalink to this headline">¶</a></h3>
+<p>Regular object files can contain IR in a section named <code class="docutils literal"><span class="pre">.llvmbc</span></code>.</p>
 </div>
 <div class="section" id="the-gold-plugin-has-been-rewritten">
-<h3><a class="toc-backref" href="#id15">The gold plugin has been rewritten</a><a class="headerlink" href="#the-gold-plugin-has-been-rewritten" title="Permalink to this headline">¶</a></h3>
-<p>It is now implemented directly on top of lib/Linker instead of <tt class="docutils literal"><span class="pre">lib/LTO</span></tt>.
-The API of <tt class="docutils literal"><span class="pre">lib/LTO</span></tt> is sufficiently different from gold&#8217;s view of the
+<h3><a class="toc-backref" href="#id18">The gold plugin has been rewritten</a><a class="headerlink" href="#the-gold-plugin-has-been-rewritten" title="Permalink to this headline">¶</a></h3>
+<p>It is now implemented directly on top of lib/Linker instead of <code class="docutils literal"><span class="pre">lib/LTO</span></code>.
+The API of <code class="docutils literal"><span class="pre">lib/LTO</span></code> is sufficiently different from gold&#8217;s view of the
 linking process that some cases could not be conveniently implemented.</p>
-<p>The new implementation is also lazier and has a <tt class="docutils literal"><span class="pre">save-temps</span></tt> option.</p>
+<p>The new implementation is also lazier and has a <code class="docutils literal"><span class="pre">save-temps</span></code> option.</p>
 </div>
 <div class="section" id="change-in-the-representation-of-lazy-loaded-funcs">
-<h3><a class="toc-backref" href="#id16">Change in the representation of lazy loaded funcs</a><a class="headerlink" href="#change-in-the-representation-of-lazy-loaded-funcs" title="Permalink to this headline">¶</a></h3>
-<p>Lazy loaded functions are now represented in a way that <tt class="docutils literal"><span class="pre">isDeclaration</span></tt>
+<h3><a class="toc-backref" href="#id19">Change in the representation of lazy loaded funcs</a><a class="headerlink" href="#change-in-the-representation-of-lazy-loaded-funcs" title="Permalink to this headline">¶</a></h3>
+<p>Lazy loaded functions are now represented in a way that <code class="docutils literal"><span class="pre">isDeclaration</span></code>
 returns the correct answer even before reading the body.</p>
 </div>
 <div class="section" id="the-opt-option-std-compile-opts-was-removed">
-<h3><a class="toc-backref" href="#id17">The opt option -std-compile-opts was removed</a><a class="headerlink" href="#the-opt-option-std-compile-opts-was-removed" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id20">The opt option -std-compile-opts was removed</a><a class="headerlink" href="#the-opt-option-std-compile-opts-was-removed" title="Permalink to this headline">¶</a></h3>
 <p>It was effectively an alias of -O3.</p>
 </div>
 <div class="section" id="python-2-7-is-now-required">
-<h3><a class="toc-backref" href="#id18">Python 2.7 is now required</a><a class="headerlink" href="#python-2-7-is-now-required" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id21">Python 2.7 is now required</a><a class="headerlink" href="#python-2-7-is-now-required" title="Permalink to this headline">¶</a></h3>
 <p>This was done to simplify compatibility with python 3.</p>
 </div>
 <div class="section" id="the-leak-detector-has-been-removed">
-<h3><a class="toc-backref" href="#id19">The leak detector has been removed</a><a class="headerlink" href="#the-leak-detector-has-been-removed" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id22">The leak detector has been removed</a><a class="headerlink" href="#the-leak-detector-has-been-removed" title="Permalink to this headline">¶</a></h3>
 <p>In practice, tools like asan and valgrind were finding way more bugs than
 the old leak detector, so it was removed.</p>
 </div>
 <div class="section" id="new-comdat-syntax">
-<h3><a class="toc-backref" href="#id20">New comdat syntax</a><a class="headerlink" href="#new-comdat-syntax" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id23">New comdat syntax</a><a class="headerlink" href="#new-comdat-syntax" title="Permalink to this headline">¶</a></h3>
 <p>The syntax of comdats was changed to</p>
 <div class="highlight-llvm"><div class="highlight"><pre>$c = comdat any
 @g = global i32 0, comdat($c)
@@ -385,27 +409,27 @@ the old leak detector, so it was removed.</p>
 the same name as the global.</p>
 </div>
 <div class="section" id="added-support-for-win64-unwind-information">
-<h3><a class="toc-backref" href="#id21">Added support for Win64 unwind information</a><a class="headerlink" href="#added-support-for-win64-unwind-information" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id24">Added support for Win64 unwind information</a><a class="headerlink" href="#added-support-for-win64-unwind-information" title="Permalink to this headline">¶</a></h3>
 <p>LLVM now obeys the <a class="reference external" href="https://msdn.microsoft.com/en-us/library/tawsa7cb.aspx">Win64 prologue and epilogue conventions</a> documented by
 Microsoft. Unwind information is also emitted into the .xdata section.</p>
 <p>As a result of the ABI-required prologue changes, it is now no longer possible
 to unwind the stack using a standard frame pointer walk on Win64. Instead,
-users should call <tt class="docutils literal"><span class="pre">CaptureStackBackTrace</span></tt>, or implement equivalent
+users should call <code class="docutils literal"><span class="pre">CaptureStackBackTrace</span></code>, or implement equivalent
 functionality by consulting the unwind tables present in the binary.</p>
 </div>
 <div class="section" id="diagnostic-infrastructure-used-by-lib-linker-and-lib-bitcode">
-<h3><a class="toc-backref" href="#id22">Diagnostic infrastructure used by lib/Linker and lib/Bitcode</a><a class="headerlink" href="#diagnostic-infrastructure-used-by-lib-linker-and-lib-bitcode" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id25">Diagnostic infrastructure used by lib/Linker and lib/Bitcode</a><a class="headerlink" href="#diagnostic-infrastructure-used-by-lib-linker-and-lib-bitcode" title="Permalink to this headline">¶</a></h3>
 <p>These libraries now use the diagnostic handler to print errors and warnings.
 This provides better error messages and simpler error handling.</p>
 </div>
 <div class="section" id="the-preservesource-linker-mode-was-removed">
-<h3><a class="toc-backref" href="#id23">The PreserveSource linker mode was removed</a><a class="headerlink" href="#the-preservesource-linker-mode-was-removed" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id26">The PreserveSource linker mode was removed</a><a class="headerlink" href="#the-preservesource-linker-mode-was-removed" title="Permalink to this headline">¶</a></h3>
 <p>It was fairly broken and was removed.</p>
 <p>The mode is currently still available in the C API for source
 compatibility, but it doesn&#8217;t have any effect.</p>
 </div>
 <div class="section" id="garbage-collection">
-<h3><a class="toc-backref" href="#id24">Garbage Collection</a><a class="headerlink" href="#garbage-collection" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id27">Garbage Collection</a><a class="headerlink" href="#garbage-collection" title="Permalink to this headline">¶</a></h3>
 <p>A new experimental mechanism for describing a garbage collection safepoint was
 added to LLVM.  The new mechanism was not complete at the point this release
 was branched so it is recommended that anyone interested in using this
@@ -420,8 +444,8 @@ considered for future development.</p>
 <p>We are expecting to migrate away from gc.root in the 3.8 time frame,
 but both mechanisms will be supported in 3.7.</p>
 </div>
-<div class="section" id="changes-to-the-mips-target">
-<h3><a class="toc-backref" href="#id25">Changes to the MIPS Target</a><a class="headerlink" href="#changes-to-the-mips-target" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h3><a class="toc-backref" href="#id28">Changes to the MIPS Target</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>During this release the MIPS target has reached a few major milestones. The
 compiler has gained support for MIPS-II and MIPS-III; become ABI-compatible
 with GCC for big and little endian O32, N32, and N64; and is now able to
@@ -429,12 +453,12 @@ compile the Linux kernel for 32-bit targets. Additionally, LLD now supports
 microMIPS for the O32 ABI on little endian targets, and code generation for
 microMIPS is almost completely passing the test-suite.</p>
 <div class="section" id="abi">
-<h4><a class="toc-backref" href="#id26">ABI</a><a class="headerlink" href="#abi" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id29">ABI</a><a class="headerlink" href="#abi" title="Permalink to this headline">¶</a></h4>
 <p>A large number of bugs have been fixed for big-endian MIPS targets using the
 N32 and N64 ABI&#8217;s as well as a small number of bugs affecting other ABI&#8217;s.
 Please note that some of these bugs will still affect LLVM-IR generated by
 LLVM 3.5 since correct code generation depends on appropriate usage of the
-<tt class="docutils literal"><span class="pre">inreg</span></tt>, <tt class="docutils literal"><span class="pre">signext</span></tt>, and <tt class="docutils literal"><span class="pre">zeroext</span></tt> attributes on all function arguments
+<code class="docutils literal"><span class="pre">inreg</span></code>, <code class="docutils literal"><span class="pre">signext</span></code>, and <code class="docutils literal"><span class="pre">zeroext</span></code> attributes on all function arguments
 and returns.</p>
 <p>There are far too many corrections to provide a complete list but here are a
 few notable ones:</p>
@@ -444,7 +468,7 @@ Previously this didn&#8217;t work for the majority of cases.</li>
 <li>The registers used to return a structure containing a single 128-bit floating
 point member on the N32/N64 ABI&#8217;s have been changed from those specified by
 the ABI documentation to match those used by GCC. The documentation specifies
-that <tt class="docutils literal"><span class="pre">$f0</span></tt> and <tt class="docutils literal"><span class="pre">$f2</span></tt> should be used but GCC has used <tt class="docutils literal"><span class="pre">$f0</span></tt> and <tt class="docutils literal"><span class="pre">$f1</span></tt>
+that <code class="docutils literal"><span class="pre">$f0</span></code> and <code class="docutils literal"><span class="pre">$f2</span></code> should be used but GCC has used <code class="docutils literal"><span class="pre">$f0</span></code> and <code class="docutils literal"><span class="pre">$f1</span></code>
 for many years.</li>
 <li>Returning a zero-byte struct no longer causes arguments to be read from the
 wrong registers when using the O32 ABI.</li>
@@ -456,7 +480,7 @@ and -mno-odd-spreg.</li>
 </ul>
 </div>
 <div class="section" id="llvmlinux">
-<h4><a class="toc-backref" href="#id27">LLVMLinux</a><a class="headerlink" href="#llvmlinux" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id30">LLVMLinux</a><a class="headerlink" href="#llvmlinux" title="Permalink to this headline">¶</a></h4>
 <p>It is now possible to compile the Linux kernel. This currently requires a small
 number of kernel patches. See the <a class="reference external" href="http://llvm.linuxfoundation.org/index.php/Main_Page">LLVMLinux project</a> for details.</p>
 <ul class="simple">
@@ -469,7 +493,7 @@ Assembler.</li>
 </ul>
 </div>
 <div class="section" id="miscellaneous">
-<h4><a class="toc-backref" href="#id28">Miscellaneous</a><a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id31">Miscellaneous</a><a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h4>
 <ul class="simple">
 <li>Attempting to disassemble l[wd]c[23], s[wd]c[23], cache, and pref no longer
 triggers an assertion.</li>
@@ -477,14 +501,14 @@ triggers an assertion.</li>
 GLibC.</li>
 <li>__SIZEOF_INT128__ is no longer defined for 64-bit targets since 128-bit
 integers do not work at this time for this target.</li>
-<li>Using $t4-$t7 with the N32 and N64 ABI is deprecated when <tt class="docutils literal"><span class="pre">-fintegrated-as</span></tt>
+<li>Using $t4-$t7 with the N32 and N64 ABI is deprecated when <code class="docutils literal"><span class="pre">-fintegrated-as</span></code>
 is in use and will be removed in LLVM 3.7. These names have never been
 supported by the GNU Assembler for these ABI&#8217;s.</li>
 </ul>
 </div>
 </div>
 <div class="section" id="changes-to-the-powerpc-target">
-<h3><a class="toc-backref" href="#id29">Changes to the PowerPC Target</a><a class="headerlink" href="#changes-to-the-powerpc-target" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id32">Changes to the PowerPC Target</a><a class="headerlink" href="#changes-to-the-powerpc-target" title="Permalink to this headline">¶</a></h3>
 <p>There are numerous improvements to the PowerPC target in this release:</p>
 <ul class="simple">
 <li>LLVM now generates the Vector-Scalar eXtension (VSX) instructions from
@@ -501,7 +525,7 @@ significant performance benefit.</li>
 </ul>
 </div>
 <div class="section" id="changes-to-the-ocaml-bindings">
-<h3><a class="toc-backref" href="#id30">Changes to the OCaml bindings</a><a class="headerlink" href="#changes-to-the-ocaml-bindings" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id33">Changes to the OCaml bindings</a><a class="headerlink" href="#changes-to-the-ocaml-bindings" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>The bindings now require OCaml &gt;=4.00.0, ocamlfind,
 ctypes &gt;=0.3.0 &lt;0.4 and OUnit 2 if tests are enabled.</li>
@@ -522,7 +546,7 @@ see r221139.</li>
 </ul>
 </div>
 <div class="section" id="go-bindings">
-<h3><a class="toc-backref" href="#id31">Go bindings</a><a class="headerlink" href="#go-bindings" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id34">Go bindings</a><a class="headerlink" href="#go-bindings" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li>A set of Go bindings based on <a class="reference external" href="https://github.com/go-llvm/llvm">gollvm</a>
 was introduced in this release.</li>
@@ -530,12 +554,12 @@ was introduced in this release.</li>
 </div>
 </div>
 <div class="section" id="external-open-source-projects-using-llvm-3-6">
-<h2><a class="toc-backref" href="#id32">External Open Source Projects Using LLVM 3.6</a><a class="headerlink" href="#external-open-source-projects-using-llvm-3-6" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id35">External Open Source Projects Using LLVM 3.6</a><a class="headerlink" href="#external-open-source-projects-using-llvm-3-6" title="Permalink to this headline">¶</a></h2>
 <p>An exciting aspect of LLVM is that it is used as an enabling technology for
 a lot of other language and tools projects. This section lists some of the
 projects that have already been updated to work with LLVM 3.6.</p>
 <div class="section" id="portable-computing-language-pocl">
-<h3><a class="toc-backref" href="#id33">Portable Computing Language (pocl)</a><a class="headerlink" href="#portable-computing-language-pocl" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id36">Portable Computing Language (pocl)</a><a class="headerlink" href="#portable-computing-language-pocl" title="Permalink to this headline">¶</a></h3>
 <p>In addition to producing an easily portable open source OpenCL
 implementation, another major goal of <a class="reference external" href="http://portablecl.org/">pocl</a>
 is improving performance portability of OpenCL programs with
@@ -546,7 +570,7 @@ the presence of work-group barriers. This enables static parallelization of
 the fine-grained static concurrency in the work groups in multiple ways.</p>
 </div>
 <div class="section" id="tta-based-co-design-environment-tce">
-<h3><a class="toc-backref" href="#id34">TTA-based Co-design Environment (TCE)</a><a class="headerlink" href="#tta-based-co-design-environment-tce" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id37">TTA-based Co-design Environment (TCE)</a><a class="headerlink" href="#tta-based-co-design-environment-tce" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="http://tce.cs.tut.fi/">TCE</a> is a toolset for designing customized
 exposed datapath processors based on the Transport triggered
 architecture (TTA).</p>
@@ -561,7 +585,7 @@ loads them in to the compiler backend as runtime libraries to avoid
 per-target recompilation of larger parts of the compiler chain.</p>
 </div>
 <div class="section" id="likely">
-<h3><a class="toc-backref" href="#id35">Likely</a><a class="headerlink" href="#likely" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id38">Likely</a><a class="headerlink" href="#likely" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="http://www.liblikely.org">Likely</a> is an embeddable just-in-time Lisp for
 image recognition and heterogeneous computing. Algorithms are just-in-time
 compiled using LLVM&#8217;s MCJIT infrastructure to execute on single or
@@ -572,7 +596,7 @@ compile-time evaluation of a function (the learning algorithm) with constant
 arguments (the training data).</p>
 </div>
 <div class="section" id="ldc-the-llvm-based-d-compiler">
-<h3><a class="toc-backref" href="#id36">LDC - the LLVM-based D compiler</a><a class="headerlink" href="#ldc-the-llvm-based-d-compiler" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id39">LDC - the LLVM-based D compiler</a><a class="headerlink" href="#ldc-the-llvm-based-d-compiler" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="http://dlang.org">D</a> is a language with C-like syntax and static typing. It
 pragmatically combines efficiency, control, and modeling power, with safety and
 programmer productivity. D supports powerful concepts like Compile-Time Function
@@ -585,7 +609,7 @@ PowerPC (32/64 bit). Ports to other architectures like ARM, AArch64 and MIPS64
 are underway.</p>
 </div>
 <div class="section" id="llvmsharp-clangsharp">
-<h3><a class="toc-backref" href="#id37">LLVMSharp &amp; ClangSharp</a><a class="headerlink" href="#llvmsharp-clangsharp" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id40">LLVMSharp &amp; ClangSharp</a><a class="headerlink" href="#llvmsharp-clangsharp" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference external" href="http://www.llvmsharp.org">LLVMSharp</a> and
 <a class="reference external" href="http://www.clangsharp.org">ClangSharp</a> are type-safe C# bindings for
 Microsoft.NET and Mono that Platform Invoke into the native libraries.
@@ -600,11 +624,11 @@ LibClang to generate Platform Invoke (PInvoke) signatures for C APIs.</p>
 </div>
 </div>
 <div class="section" id="additional-information">
-<h2><a class="toc-backref" href="#id38">Additional Information</a><a class="headerlink" href="#additional-information" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id41">Additional Information</a><a class="headerlink" href="#additional-information" title="Permalink to this headline">¶</a></h2>
 <p>A wide variety of additional information is available on the <a class="reference external" href="http://llvm.org/">LLVM web page</a>, in particular in the <a class="reference external" href="http://llvm.org/docs/">documentation</a> section.  The web page also contains versions of the
 API documentation which is up-to-date with the Subversion version of the source
 code.  You can access versions of these documents specific to this release by
-going into the <tt class="docutils literal"><span class="pre">llvm/docs/</span></tt> directory in the LLVM tree.</p>
+going into the <code class="docutils literal"><span class="pre">llvm/docs/</span></code> directory in the LLVM tree.</p>
 <p>If you have any questions or comments about LLVM, please feel free to contact
 us via the <a class="reference external" href="http://llvm.org/docs/#maillist">mailing lists</a>.</p>
 </div>
@@ -615,7 +639,7 @@ us via the <a class="reference external" href="http://llvm.org/docs/#maillist">m
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -632,10 +656,10 @@ us via the <a class="reference external" href="http://llvm.org/docs/#maillist">m
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

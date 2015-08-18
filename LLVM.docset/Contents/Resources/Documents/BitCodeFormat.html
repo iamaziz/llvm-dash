@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-bitcode-file-format">
 <h1>LLVM Bitcode File Format<a class="headerlink" href="#llvm-bitcode-file-format" title="Permalink to this headline">¶</a></h1>
@@ -197,7 +197,7 @@ used to dump and inspect arbitrary bitstreams, which is very useful for
 understanding the encoding.</p>
 <div class="section" id="magic-numbers">
 <span id="magic-number"></span><h3><a class="toc-backref" href="#id12">Magic Numbers</a><a class="headerlink" href="#magic-numbers" title="Permalink to this headline">¶</a></h3>
-<p>The first two bytes of a bitcode file are &#8216;BC&#8217; (<tt class="docutils literal"><span class="pre">0x42</span></tt>, <tt class="docutils literal"><span class="pre">0x43</span></tt>).  The second
+<p>The first two bytes of a bitcode file are &#8216;BC&#8217; (<code class="docutils literal"><span class="pre">0x42</span></code>, <code class="docutils literal"><span class="pre">0x43</span></code>).  The second
 two bytes are an application-specific magic number.  Generic bitcode tools can
 look at only the first two bytes to verify the file is bitcode, while
 application-specific programs will want to look at all four.</p>
@@ -293,7 +293,7 @@ specifies the abbrev id width for the body of the block.</li>
 which case they are only defined in that block (neither subblocks nor
 enclosing blocks see the abbreviation).  Abbreviations can also be defined
 inside a <a class="reference internal" href="#blockinfo">BLOCKINFO</a> block, in which case they are defined in all blocks
-that match the ID that the <tt class="docutils literal"><span class="pre">BLOCKINFO</span></tt> block is describing.</li>
+that match the ID that the <code class="docutils literal"><span class="pre">BLOCKINFO</span></code> block is describing.</li>
 </ol>
 <p>As sub blocks are entered, these properties are saved and the new sub-block has
 its own set of abbreviations, and its own abbrev id width.  When a sub-block is
@@ -303,18 +303,18 @@ popped, the saved values are restored.</p>
 <p><span class="raw-html"><tt></span>
 [ENTER_SUBBLOCK, blockid<sub>vbr8</sub>, newabbrevlen<sub>vbr4</sub>, &lt;align32bits&gt;, blocklen_32]
 <span class="raw-html"></tt></span></p>
-<p>The <tt class="docutils literal"><span class="pre">ENTER_SUBBLOCK</span></tt> abbreviation ID specifies the start of a new block
-record.  The <tt class="docutils literal"><span class="pre">blockid</span></tt> value is encoded as an 8-bit VBR identifier, and
+<p>The <code class="docutils literal"><span class="pre">ENTER_SUBBLOCK</span></code> abbreviation ID specifies the start of a new block
+record.  The <code class="docutils literal"><span class="pre">blockid</span></code> value is encoded as an 8-bit VBR identifier, and
 indicates the type of block being entered, which can be a <a class="reference internal" href="#standard-block">standard block</a> or
-an application-specific block.  The <tt class="docutils literal"><span class="pre">newabbrevlen</span></tt> value is a 4-bit VBR, which
-specifies the abbrev id width for the sub-block.  The <tt class="docutils literal"><span class="pre">blocklen</span></tt> value is a
+an application-specific block.  The <code class="docutils literal"><span class="pre">newabbrevlen</span></code> value is a 4-bit VBR, which
+specifies the abbrev id width for the sub-block.  The <code class="docutils literal"><span class="pre">blocklen</span></code> value is a
 32-bit aligned value that specifies the size of the subblock in 32-bit
 words. This value allows the reader to skip over the entire block in one jump.</p>
 </div>
 <div class="section" id="end-block-encoding">
 <span id="end-block"></span><h4><a class="toc-backref" href="#id21">END_BLOCK Encoding</a><a class="headerlink" href="#end-block-encoding" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[END_BLOCK,</span> <span class="pre">&lt;align32bits&gt;]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">END_BLOCK</span></tt> abbreviation ID specifies the end of the current block record.
+<p><code class="docutils literal"><span class="pre">[END_BLOCK,</span> <span class="pre">&lt;align32bits&gt;]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">END_BLOCK</span></code> abbreviation ID specifies the end of the current block record.
 Its end is aligned to 32-bits to ensure that the size of the block is an even
 multiple of 32-bits.</p>
 </div>
@@ -326,19 +326,19 @@ values.  The interpretation of the code and values is application specific and
 may vary between different block types.  Records can be encoded either using an
 unabbrev record, or with an abbreviation.  In the LLVM IR format, for example,
 there is a record which encodes the target triple of a module.  The code is
-<tt class="docutils literal"><span class="pre">MODULE_CODE_TRIPLE</span></tt>, and the values of the record are the ASCII codes for the
+<code class="docutils literal"><span class="pre">MODULE_CODE_TRIPLE</span></code>, and the values of the record are the ASCII codes for the
 characters in the string.</p>
 <div class="section" id="unabbrev-record-encoding">
 <span id="unabbrev-record"></span><h4><a class="toc-backref" href="#id23">UNABBREV_RECORD Encoding</a><a class="headerlink" href="#unabbrev-record-encoding" title="Permalink to this headline">¶</a></h4>
 <p><span class="raw-html"><tt></span>
 [UNABBREV_RECORD, code<sub>vbr6</sub>, numops<sub>vbr6</sub>, op0<sub>vbr6</sub>, op1<sub>vbr6</sub>, ...]
 <span class="raw-html"></tt></span></p>
-<p>An <tt class="docutils literal"><span class="pre">UNABBREV_RECORD</span></tt> provides a default fallback encoding, which is both
+<p>An <code class="docutils literal"><span class="pre">UNABBREV_RECORD</span></code> provides a default fallback encoding, which is both
 completely general and extremely inefficient.  It can describe an arbitrary
 record by emitting the code and operands as VBRs.</p>
 <p>For example, emitting an LLVM IR target triple as an unabbreviated record
-requires emitting the <tt class="docutils literal"><span class="pre">UNABBREV_RECORD</span></tt> abbrevid, a vbr6 for the
-<tt class="docutils literal"><span class="pre">MODULE_CODE_TRIPLE</span></tt> code, a vbr6 for the length of the string, which is equal
+requires emitting the <code class="docutils literal"><span class="pre">UNABBREV_RECORD</span></code> abbrevid, a vbr6 for the
+<code class="docutils literal"><span class="pre">MODULE_CODE_TRIPLE</span></code> code, a vbr6 for the length of the string, which is equal
 to the number of operands, and a vbr6 for each character.  Because there are no
 letters with values less than 32, each letter would need to be emitted as at
 least a two-part VBR, which means that each letter would require at least 12
@@ -346,7 +346,7 @@ bits.  This is not an efficient encoding, but it is fully general.</p>
 </div>
 <div class="section" id="abbreviated-record-encoding">
 <span id="id6"></span><h4><a class="toc-backref" href="#id24">Abbreviated Record Encoding</a><a class="headerlink" href="#abbreviated-record-encoding" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[&lt;abbrevid&gt;,</span> <span class="pre">fields...]</span></tt></p>
+<p><code class="docutils literal"><span class="pre">[&lt;abbrevid&gt;,</span> <span class="pre">fields...]</span></code></p>
 <p>An abbreviated record is a abbreviation id followed by a set of fields that are
 encoded according to the <a class="reference internal" href="#abbreviation-definition">abbreviation definition</a>.  This allows records to be
 encoded significantly more densely than records encoded with the
@@ -376,15 +376,15 @@ few binary operators, the abbreviation does not need to be emitted.</p>
 <p><span class="raw-html"><tt></span>
 [DEFINE_ABBREV, numabbrevops<sub>vbr5</sub>, abbrevop0, abbrevop1, ...]
 <span class="raw-html"></tt></span></p>
-<p>A <tt class="docutils literal"><span class="pre">DEFINE_ABBREV</span></tt> record adds an abbreviation to the list of currently defined
+<p>A <code class="docutils literal"><span class="pre">DEFINE_ABBREV</span></code> record adds an abbreviation to the list of currently defined
 abbreviations in the scope of this block.  This definition only exists inside
 this immediate block &#8212; it is not visible in subblocks or enclosing blocks.
 Abbreviations are implicitly assigned IDs sequentially starting from 4 (the
 first application-defined abbreviation ID).  Any abbreviations defined in a
-<tt class="docutils literal"><span class="pre">BLOCKINFO</span></tt> record for the particular block type receive IDs first, in order,
+<code class="docutils literal"><span class="pre">BLOCKINFO</span></code> record for the particular block type receive IDs first, in order,
 followed by any abbreviations defined within the block itself.  Abbreviated data
 records reference this ID to indicate what abbreviation they are invoking.</p>
-<p>An abbreviation definition consists of the <tt class="docutils literal"><span class="pre">DEFINE_ABBREV</span></tt> abbrevid followed
+<p>An abbreviation definition consists of the <code class="docutils literal"><span class="pre">DEFINE_ABBREV</span></code> abbrevid followed
 by a VBR that specifies the number of abbrev operands, then the abbrev operands
 themselves.  Abbreviation operands come in three forms.  They all start with a
 single bit that indicates whether the abbrev operand is a literal operand (when
@@ -423,7 +423,7 @@ in the mapped in file and poke directly at it.  A blob may only occur as the
 last operand of an abbreviation.</li>
 </ul>
 <p>For example, target triples in LLVM modules are encoded as a record of the form
-<tt class="docutils literal"><span class="pre">[TRIPLE,</span> <span class="pre">'a',</span> <span class="pre">'b',</span> <span class="pre">'c',</span> <span class="pre">'d']</span></tt>.  Consider if the bitstream emitted the
+<code class="docutils literal"><span class="pre">[TRIPLE,</span> <span class="pre">'a',</span> <span class="pre">'b',</span> <span class="pre">'c',</span> <span class="pre">'d']</span></code>.  Consider if the bitstream emitted the
 following abbrev entry:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">Fixed</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
 <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">Array</span><span class="p">]</span>
@@ -438,14 +438,14 @@ as:</p>
 <p>These values are:</p>
 <ol class="arabic simple">
 <li>The first value, 4, is the abbreviation ID for this abbreviation.</li>
-<li>The second value, 2, is the record code for <tt class="docutils literal"><span class="pre">TRIPLE</span></tt> records within LLVM IR
-file <tt class="docutils literal"><span class="pre">MODULE_BLOCK</span></tt> blocks.</li>
+<li>The second value, 2, is the record code for <code class="docutils literal"><span class="pre">TRIPLE</span></code> records within LLVM IR
+file <code class="docutils literal"><span class="pre">MODULE_BLOCK</span></code> blocks.</li>
 <li>The third value, 4, is the length of the array.</li>
-<li>The rest of the values are the char6 encoded values for <tt class="docutils literal"><span class="pre">&quot;abcd&quot;</span></tt>.</li>
+<li>The rest of the values are the char6 encoded values for <code class="docutils literal"><span class="pre">&quot;abcd&quot;</span></code>.</li>
 </ol>
 <p>With this abbreviation, the triple is emitted with only 37 bits (assuming a
 abbrev id width of 3).  Without the abbreviation, significantly more space would
-be required to emit the target triple.  Also, because the <tt class="docutils literal"><span class="pre">TRIPLE</span></tt> value is
+be required to emit the target triple.  Also, because the <code class="docutils literal"><span class="pre">TRIPLE</span></code> value is
 not emitted as a literal in the abbreviation, the abbreviation can also be used
 for any other string value.</p>
 </div>
@@ -458,7 +458,7 @@ stream is to be decoded or other metadata.  In the future, new standard blocks
 may be added.  Block IDs 0-7 are reserved for standard blocks.</p>
 <div class="section" id="blockinfo-block">
 <span id="blockinfo"></span><h4><a class="toc-backref" href="#id28">#0 - BLOCKINFO Block</a><a class="headerlink" href="#blockinfo-block" title="Permalink to this headline">¶</a></h4>
-<p>The <tt class="docutils literal"><span class="pre">BLOCKINFO</span></tt> block allows the description of metadata for other blocks.
+<p>The <code class="docutils literal"><span class="pre">BLOCKINFO</span></code> block allows the description of metadata for other blocks.
 The currently specified records are:</p>
 <div class="highlight-python"><div class="highlight"><pre>[SETBID (#1), blockid]
 [DEFINE_ABBREV, ...]
@@ -466,23 +466,23 @@ The currently specified records are:</p>
 [SETRECORDNAME, RecordID, ...name...]
 </pre></div>
 </div>
-<p>The <tt class="docutils literal"><span class="pre">SETBID</span></tt> record (code 1) indicates which block ID is being described.
-<tt class="docutils literal"><span class="pre">SETBID</span></tt> records can occur multiple times throughout the block to change which
-block ID is being described.  There must be a <tt class="docutils literal"><span class="pre">SETBID</span></tt> record prior to any
+<p>The <code class="docutils literal"><span class="pre">SETBID</span></code> record (code 1) indicates which block ID is being described.
+<code class="docutils literal"><span class="pre">SETBID</span></code> records can occur multiple times throughout the block to change which
+block ID is being described.  There must be a <code class="docutils literal"><span class="pre">SETBID</span></code> record prior to any
 other records.</p>
-<p>Standard <tt class="docutils literal"><span class="pre">DEFINE_ABBREV</span></tt> records can occur inside <tt class="docutils literal"><span class="pre">BLOCKINFO</span></tt> blocks, but
+<p>Standard <code class="docutils literal"><span class="pre">DEFINE_ABBREV</span></code> records can occur inside <code class="docutils literal"><span class="pre">BLOCKINFO</span></code> blocks, but
 unlike their occurrence in normal blocks, the abbreviation is defined for blocks
-matching the block ID we are describing, <em>not</em> the <tt class="docutils literal"><span class="pre">BLOCKINFO</span></tt> block
-itself.  The abbreviations defined in <tt class="docutils literal"><span class="pre">BLOCKINFO</span></tt> blocks receive abbreviation
+matching the block ID we are describing, <em>not</em> the <code class="docutils literal"><span class="pre">BLOCKINFO</span></code> block
+itself.  The abbreviations defined in <code class="docutils literal"><span class="pre">BLOCKINFO</span></code> blocks receive abbreviation
 IDs as described in <a class="reference internal" href="#define-abbrev">DEFINE_ABBREV</a>.</p>
-<p>The <tt class="docutils literal"><span class="pre">BLOCKNAME</span></tt> record (code 2) can optionally occur in this block.  The
+<p>The <code class="docutils literal"><span class="pre">BLOCKNAME</span></code> record (code 2) can optionally occur in this block.  The
 elements of the record are the bytes of the string name of the block.
 llvm-bcanalyzer can use this to dump out bitcode files symbolically.</p>
-<p>The <tt class="docutils literal"><span class="pre">SETRECORDNAME</span></tt> record (code 3) can also optionally occur in this block.
+<p>The <code class="docutils literal"><span class="pre">SETRECORDNAME</span></code> record (code 3) can also optionally occur in this block.
 The first operand value is a record ID number, and the rest of the elements of
 the record are the bytes for the string name of the record.  llvm-bcanalyzer can
 use this to dump out bitcode files symbolically.</p>
-<p>Note that although the data in <tt class="docutils literal"><span class="pre">BLOCKINFO</span></tt> blocks is described as &#8220;metadata,&#8221;
+<p>Note that although the data in <code class="docutils literal"><span class="pre">BLOCKINFO</span></code> blocks is described as &#8220;metadata,&#8221;
 the abbreviations they contain are essential for parsing records from the
 corresponding blocks.  It is not safe to skip them.</p>
 </div>
@@ -498,8 +498,8 @@ stored alongside the BC file.  The structure of this file header is:</p>
 [Magic<sub>32</sub>, Version<sub>32</sub>, Offset<sub>32</sub>, Size<sub>32</sub>, CPUType<sub>32</sub>]
 <span class="raw-html"></blockquote></tt></span></p>
 <p>Each of the fields are 32-bit fields stored in little endian form (as with the
-rest of the bitcode file fields).  The Magic number is always <tt class="docutils literal"><span class="pre">0x0B17C0DE</span></tt> and
-the version is currently always <tt class="docutils literal"><span class="pre">0</span></tt>.  The Offset field is the offset in bytes
+rest of the bitcode file fields).  The Magic number is always <code class="docutils literal"><span class="pre">0x0B17C0DE</span></code> and
+the version is currently always <code class="docutils literal"><span class="pre">0</span></code>.  The Offset field is the offset in bytes
 to the start of the bitcode stream in the file, and the Size field is the size
 in bytes of the stream. CPUType is a target-specific value that can be used to
 encode the CPU of the target.</p>
@@ -508,7 +508,7 @@ encode the CPU of the target.</p>
 <span id="native-object-file"></span><h2><a class="toc-backref" href="#id30">Native Object File Wrapper Format</a><a class="headerlink" href="#native-object-file-wrapper-format" title="Permalink to this headline">¶</a></h2>
 <p>Bitcode files for LLVM IR may also be wrapped in a native object file
 (i.e. ELF, COFF, Mach-O).  The bitcode must be stored in a section of the
-object file named <tt class="docutils literal"><span class="pre">.llvmbc</span></tt>.  This wrapper format is useful for accommodating
+object file named <code class="docutils literal"><span class="pre">.llvmbc</span></code>.  This wrapper format is useful for accommodating
 LTO in compilation pipelines where intermediate objects must be native object
 files which contain metadata in other sections.</p>
 <p>Not all tools support this format.</p>
@@ -530,7 +530,7 @@ reader is not allowed to build in any knowledge of this.</p>
 [0x0<sub>4</sub>, 0xC<sub>4</sub>, 0xE<sub>4</sub>, 0xD<sub>4</sub>]
 <span class="raw-html"></blockquote></tt></span></p>
 <p>When combined with the bitcode magic number and viewed as bytes, this is
-<tt class="docutils literal"><span class="pre">&quot;BC</span> <span class="pre">0xC0DE&quot;</span></tt>.</p>
+<code class="docutils literal"><span class="pre">&quot;BC</span> <span class="pre">0xC0DE&quot;</span></code>.</p>
 </div>
 <div class="section" id="signed-vbrs">
 <span id="id8"></span><h4><a class="toc-backref" href="#id34">Signed VBRs</a><a class="headerlink" href="#signed-vbrs" title="Permalink to this headline">¶</a></h4>
@@ -545,8 +545,8 @@ value shifted left by one.</li>
 value is shifted left by one, and the low bit is set.</li>
 </ul>
 <p>With this encoding, small positive and small negative values can both be emitted
-efficiently. Signed VBR encoding is used in <tt class="docutils literal"><span class="pre">CST_CODE_INTEGER</span></tt> and
-<tt class="docutils literal"><span class="pre">CST_CODE_WIDE_INTEGER</span></tt> records within <tt class="docutils literal"><span class="pre">CONSTANTS_BLOCK</span></tt> blocks.
+efficiently. Signed VBR encoding is used in <code class="docutils literal"><span class="pre">CST_CODE_INTEGER</span></code> and
+<code class="docutils literal"><span class="pre">CST_CODE_WIDE_INTEGER</span></code> records within <code class="docutils literal"><span class="pre">CONSTANTS_BLOCK</span></code> blocks.
 It is also used for phi instruction operands in <a class="reference internal" href="#module-code-version">MODULE_CODE_VERSION</a> 1.</p>
 </div>
 <div class="section" id="llvm-ir-blocks">
@@ -570,9 +570,9 @@ with function instruction values.</li>
 </div>
 <div class="section" id="module-block-contents">
 <span id="module-block"></span><h3><a class="toc-backref" href="#id36">MODULE_BLOCK Contents</a><a class="headerlink" href="#module-block-contents" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">MODULE_BLOCK</span></tt> block (id 8) is the top-level block for LLVM bitcode files,
+<p>The <code class="docutils literal"><span class="pre">MODULE_BLOCK</span></code> block (id 8) is the top-level block for LLVM bitcode files,
 and each bitcode file must contain exactly one. In addition to records
-(described below) containing information about the module, a <tt class="docutils literal"><span class="pre">MODULE_BLOCK</span></tt>
+(described below) containing information about the module, a <code class="docutils literal"><span class="pre">MODULE_BLOCK</span></code>
 block may contain the following sub-blocks:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#blockinfo">BLOCKINFO</a></li>
@@ -586,14 +586,14 @@ block may contain the following sub-blocks:</p>
 </ul>
 <div class="section" id="module-code-version-record">
 <span id="module-code-version"></span><h4><a class="toc-backref" href="#id37">MODULE_CODE_VERSION Record</a><a class="headerlink" href="#module-code-version-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[VERSION,</span> <span class="pre">version#]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">VERSION</span></tt> record (code 1) contains a single value indicating the format
+<p><code class="docutils literal"><span class="pre">[VERSION,</span> <span class="pre">version#]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">VERSION</span></code> record (code 1) contains a single value indicating the format
 version. Versions 0 and 1 are supported at this time. The difference between
 version 0 and 1 is in the encoding of instruction operands in
 each <a class="reference internal" href="#function-block">FUNCTION_BLOCK</a>.</p>
 <p>In version 0, each value defined by an instruction is assigned an ID
 unique to the function. Function-level value IDs are assigned starting from
-<tt class="docutils literal"><span class="pre">NumModuleValues</span></tt> since they share the same namespace as module-level
+<code class="docutils literal"><span class="pre">NumModuleValues</span></code> since they share the same namespace as module-level
 values. The value enumerator resets after each function. When a value is
 an operand of an instruction, the value ID is used to represent the operand.
 For large functions or large modules, these operand values can be large.</p>
@@ -625,45 +625,45 @@ case of phi instructions. For phi instructions, operands are encoded as
 </div>
 <div class="section" id="module-code-triple-record">
 <h4><a class="toc-backref" href="#id38">MODULE_CODE_TRIPLE Record</a><a class="headerlink" href="#module-code-triple-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[TRIPLE,</span> <span class="pre">...string...]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">TRIPLE</span></tt> record (code 2) contains a variable number of values representing
-the bytes of the <tt class="docutils literal"><span class="pre">target</span> <span class="pre">triple</span></tt> specification string.</p>
+<p><code class="docutils literal"><span class="pre">[TRIPLE,</span> <span class="pre">...string...]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">TRIPLE</span></code> record (code 2) contains a variable number of values representing
+the bytes of the <code class="docutils literal"><span class="pre">target</span> <span class="pre">triple</span></code> specification string.</p>
 </div>
 <div class="section" id="module-code-datalayout-record">
 <h4><a class="toc-backref" href="#id39">MODULE_CODE_DATALAYOUT Record</a><a class="headerlink" href="#module-code-datalayout-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[DATALAYOUT,</span> <span class="pre">...string...]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">DATALAYOUT</span></tt> record (code 3) contains a variable number of values
-representing the bytes of the <tt class="docutils literal"><span class="pre">target</span> <span class="pre">datalayout</span></tt> specification string.</p>
+<p><code class="docutils literal"><span class="pre">[DATALAYOUT,</span> <span class="pre">...string...]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">DATALAYOUT</span></code> record (code 3) contains a variable number of values
+representing the bytes of the <code class="docutils literal"><span class="pre">target</span> <span class="pre">datalayout</span></code> specification string.</p>
 </div>
 <div class="section" id="module-code-asm-record">
 <h4><a class="toc-backref" href="#id40">MODULE_CODE_ASM Record</a><a class="headerlink" href="#module-code-asm-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[ASM,</span> <span class="pre">...string...]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">ASM</span></tt> record (code 4) contains a variable number of values representing
-the bytes of <tt class="docutils literal"><span class="pre">module</span> <span class="pre">asm</span></tt> strings, with individual assembly blocks separated
+<p><code class="docutils literal"><span class="pre">[ASM,</span> <span class="pre">...string...]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">ASM</span></code> record (code 4) contains a variable number of values representing
+the bytes of <code class="docutils literal"><span class="pre">module</span> <span class="pre">asm</span></code> strings, with individual assembly blocks separated
 by newline (ASCII 10) characters.</p>
 </div>
 <div class="section" id="module-code-sectionname-record">
 <span id="module-code-sectionname"></span><h4><a class="toc-backref" href="#id41">MODULE_CODE_SECTIONNAME Record</a><a class="headerlink" href="#module-code-sectionname-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[SECTIONNAME,</span> <span class="pre">...string...]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">SECTIONNAME</span></tt> record (code 5) contains a variable number of values
+<p><code class="docutils literal"><span class="pre">[SECTIONNAME,</span> <span class="pre">...string...]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">SECTIONNAME</span></code> record (code 5) contains a variable number of values
 representing the bytes of a single section name string. There should be one
-<tt class="docutils literal"><span class="pre">SECTIONNAME</span></tt> record for each section name referenced (e.g., in global
-variable or function <tt class="docutils literal"><span class="pre">section</span></tt> attributes) within the module. These records
-can be referenced by the 1-based index in the <em>section</em> fields of <tt class="docutils literal"><span class="pre">GLOBALVAR</span></tt>
-or <tt class="docutils literal"><span class="pre">FUNCTION</span></tt> records.</p>
+<code class="docutils literal"><span class="pre">SECTIONNAME</span></code> record for each section name referenced (e.g., in global
+variable or function <code class="docutils literal"><span class="pre">section</span></code> attributes) within the module. These records
+can be referenced by the 1-based index in the <em>section</em> fields of <code class="docutils literal"><span class="pre">GLOBALVAR</span></code>
+or <code class="docutils literal"><span class="pre">FUNCTION</span></code> records.</p>
 </div>
 <div class="section" id="module-code-deplib-record">
 <h4><a class="toc-backref" href="#id42">MODULE_CODE_DEPLIB Record</a><a class="headerlink" href="#module-code-deplib-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[DEPLIB,</span> <span class="pre">...string...]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">DEPLIB</span></tt> record (code 6) contains a variable number of values representing
+<p><code class="docutils literal"><span class="pre">[DEPLIB,</span> <span class="pre">...string...]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">DEPLIB</span></code> record (code 6) contains a variable number of values representing
 the bytes of a single dependent library name string, one of the libraries
-mentioned in a <tt class="docutils literal"><span class="pre">deplibs</span></tt> declaration.  There should be one <tt class="docutils literal"><span class="pre">DEPLIB</span></tt> record
+mentioned in a <code class="docutils literal"><span class="pre">deplibs</span></code> declaration.  There should be one <code class="docutils literal"><span class="pre">DEPLIB</span></code> record
 for each library name referenced.</p>
 </div>
 <div class="section" id="module-code-globalvar-record">
 <h4><a class="toc-backref" href="#id43">MODULE_CODE_GLOBALVAR Record</a><a class="headerlink" href="#module-code-globalvar-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[GLOBALVAR,</span> <span class="pre">pointer</span> <span class="pre">type,</span> <span class="pre">isconst,</span> <span class="pre">initid,</span> <span class="pre">linkage,</span> <span class="pre">alignment,</span> <span class="pre">section,</span> <span class="pre">visibility,</span> <span class="pre">threadlocal,</span> <span class="pre">unnamed_addr,</span> <span class="pre">dllstorageclass]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">GLOBALVAR</span></tt> record (code 7) marks the declaration or definition of a
+<p><code class="docutils literal"><span class="pre">[GLOBALVAR,</span> <span class="pre">pointer</span> <span class="pre">type,</span> <span class="pre">isconst,</span> <span class="pre">initid,</span> <span class="pre">linkage,</span> <span class="pre">alignment,</span> <span class="pre">section,</span> <span class="pre">visibility,</span> <span class="pre">threadlocal,</span> <span class="pre">unnamed_addr,</span> <span class="pre">dllstorageclass]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">GLOBALVAR</span></code> record (code 7) marks the declaration or definition of a
 global variable. The operand fields are:</p>
 <ul class="simple">
 <li><em>pointer type</em>: The type index of the pointer type used to point to this
@@ -675,19 +675,19 @@ plus 1.</li>
 </ul>
 <ul class="simple" id="linkage-type">
 <li><em>linkage</em>: An encoding of the linkage type for this variable:
-* <tt class="docutils literal"><span class="pre">external</span></tt>: code 0
-* <tt class="docutils literal"><span class="pre">weak</span></tt>: code 1
-* <tt class="docutils literal"><span class="pre">appending</span></tt>: code 2
-* <tt class="docutils literal"><span class="pre">internal</span></tt>: code 3
-* <tt class="docutils literal"><span class="pre">linkonce</span></tt>: code 4
-* <tt class="docutils literal"><span class="pre">dllimport</span></tt>: code 5
-* <tt class="docutils literal"><span class="pre">dllexport</span></tt>: code 6
-* <tt class="docutils literal"><span class="pre">extern_weak</span></tt>: code 7
-* <tt class="docutils literal"><span class="pre">common</span></tt>: code 8
-* <tt class="docutils literal"><span class="pre">private</span></tt>: code 9
-* <tt class="docutils literal"><span class="pre">weak_odr</span></tt>: code 10
-* <tt class="docutils literal"><span class="pre">linkonce_odr</span></tt>: code 11
-* <tt class="docutils literal"><span class="pre">available_externally</span></tt>: code 12
+* <code class="docutils literal"><span class="pre">external</span></code>: code 0
+* <code class="docutils literal"><span class="pre">weak</span></code>: code 1
+* <code class="docutils literal"><span class="pre">appending</span></code>: code 2
+* <code class="docutils literal"><span class="pre">internal</span></code>: code 3
+* <code class="docutils literal"><span class="pre">linkonce</span></code>: code 4
+* <code class="docutils literal"><span class="pre">dllimport</span></code>: code 5
+* <code class="docutils literal"><span class="pre">dllexport</span></code>: code 6
+* <code class="docutils literal"><span class="pre">extern_weak</span></code>: code 7
+* <code class="docutils literal"><span class="pre">common</span></code>: code 8
+* <code class="docutils literal"><span class="pre">private</span></code>: code 9
+* <code class="docutils literal"><span class="pre">weak_odr</span></code>: code 10
+* <code class="docutils literal"><span class="pre">linkonce_odr</span></code>: code 11
+* <code class="docutils literal"><span class="pre">available_externally</span></code>: code 12
 * deprecated : code 13
 * deprecated : code 14</li>
 <li>alignment*: The logarithm base 2 of the variable&#8217;s requested alignment, plus 1</li>
@@ -696,48 +696,48 @@ plus 1.</li>
 </ul>
 <ul class="simple" id="visibility">
 <li><em>visibility</em>: If present, an encoding of the visibility of this variable:
-* <tt class="docutils literal"><span class="pre">default</span></tt>: code 0
-* <tt class="docutils literal"><span class="pre">hidden</span></tt>: code 1
-* <tt class="docutils literal"><span class="pre">protected</span></tt>: code 2</li>
+* <code class="docutils literal"><span class="pre">default</span></code>: code 0
+* <code class="docutils literal"><span class="pre">hidden</span></code>: code 1
+* <code class="docutils literal"><span class="pre">protected</span></code>: code 2</li>
 <li><em>threadlocal</em>: If present, an encoding of the thread local storage mode of the
 variable:
-* <tt class="docutils literal"><span class="pre">not</span> <span class="pre">thread</span> <span class="pre">local</span></tt>: code 0
-* <tt class="docutils literal"><span class="pre">thread</span> <span class="pre">local;</span> <span class="pre">default</span> <span class="pre">TLS</span> <span class="pre">model</span></tt>: code 1
-* <tt class="docutils literal"><span class="pre">localdynamic</span></tt>: code 2
-* <tt class="docutils literal"><span class="pre">initialexec</span></tt>: code 3
-* <tt class="docutils literal"><span class="pre">localexec</span></tt>: code 4</li>
+* <code class="docutils literal"><span class="pre">not</span> <span class="pre">thread</span> <span class="pre">local</span></code>: code 0
+* <code class="docutils literal"><span class="pre">thread</span> <span class="pre">local;</span> <span class="pre">default</span> <span class="pre">TLS</span> <span class="pre">model</span></code>: code 1
+* <code class="docutils literal"><span class="pre">localdynamic</span></code>: code 2
+* <code class="docutils literal"><span class="pre">initialexec</span></code>: code 3
+* <code class="docutils literal"><span class="pre">localexec</span></code>: code 4</li>
 <li><em>unnamed_addr</em>: If present and non-zero, indicates that the variable has
-<tt class="docutils literal"><span class="pre">unnamed_addr</span></tt></li>
+<code class="docutils literal"><span class="pre">unnamed_addr</span></code></li>
 </ul>
 <ul class="simple" id="bcdllstorageclass">
 <li><em>dllstorageclass</em>: If present, an encoding of the DLL storage class of this variable:<ul>
-<li><tt class="docutils literal"><span class="pre">default</span></tt>: code 0</li>
-<li><tt class="docutils literal"><span class="pre">dllimport</span></tt>: code 1</li>
-<li><tt class="docutils literal"><span class="pre">dllexport</span></tt>: code 2</li>
+<li><code class="docutils literal"><span class="pre">default</span></code>: code 0</li>
+<li><code class="docutils literal"><span class="pre">dllimport</span></code>: code 1</li>
+<li><code class="docutils literal"><span class="pre">dllexport</span></code>: code 2</li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="module-code-function-record">
 <span id="function"></span><h4><a class="toc-backref" href="#id44">MODULE_CODE_FUNCTION Record</a><a class="headerlink" href="#module-code-function-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[FUNCTION,</span> <span class="pre">type,</span> <span class="pre">callingconv,</span> <span class="pre">isproto,</span> <span class="pre">linkage,</span> <span class="pre">paramattr,</span> <span class="pre">alignment,</span> <span class="pre">section,</span> <span class="pre">visibility,</span> <span class="pre">gc,</span> <span class="pre">prologuedata,</span> <span class="pre">dllstorageclass,</span> <span class="pre">comdat,</span> <span class="pre">prefixdata]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">FUNCTION</span></tt> record (code 8) marks the declaration or definition of a
+<p><code class="docutils literal"><span class="pre">[FUNCTION,</span> <span class="pre">type,</span> <span class="pre">callingconv,</span> <span class="pre">isproto,</span> <span class="pre">linkage,</span> <span class="pre">paramattr,</span> <span class="pre">alignment,</span> <span class="pre">section,</span> <span class="pre">visibility,</span> <span class="pre">gc,</span> <span class="pre">prologuedata,</span> <span class="pre">dllstorageclass,</span> <span class="pre">comdat,</span> <span class="pre">prefixdata]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">FUNCTION</span></code> record (code 8) marks the declaration or definition of a
 function. The operand fields are:</p>
 <ul class="simple">
 <li><em>type</em>: The type index of the function type describing this function</li>
 <li><em>callingconv</em>: The calling convention number:
-* <tt class="docutils literal"><span class="pre">ccc</span></tt>: code 0
-* <tt class="docutils literal"><span class="pre">fastcc</span></tt>: code 8
-* <tt class="docutils literal"><span class="pre">coldcc</span></tt>: code 9
-* <tt class="docutils literal"><span class="pre">webkit_jscc</span></tt>: code 12
-* <tt class="docutils literal"><span class="pre">anyregcc</span></tt>: code 13
-* <tt class="docutils literal"><span class="pre">preserve_mostcc</span></tt>: code 14
-* <tt class="docutils literal"><span class="pre">preserve_allcc</span></tt>: code 15
-* <tt class="docutils literal"><span class="pre">x86_stdcallcc</span></tt>: code 64
-* <tt class="docutils literal"><span class="pre">x86_fastcallcc</span></tt>: code 65
-* <tt class="docutils literal"><span class="pre">arm_apcscc</span></tt>: code 66
-* <tt class="docutils literal"><span class="pre">arm_aapcscc</span></tt>: code 67
-* <tt class="docutils literal"><span class="pre">arm_aapcs_vfpcc</span></tt>: code 68</li>
+* <code class="docutils literal"><span class="pre">ccc</span></code>: code 0
+* <code class="docutils literal"><span class="pre">fastcc</span></code>: code 8
+* <code class="docutils literal"><span class="pre">coldcc</span></code>: code 9
+* <code class="docutils literal"><span class="pre">webkit_jscc</span></code>: code 12
+* <code class="docutils literal"><span class="pre">anyregcc</span></code>: code 13
+* <code class="docutils literal"><span class="pre">preserve_mostcc</span></code>: code 14
+* <code class="docutils literal"><span class="pre">preserve_allcc</span></code>: code 15
+* <code class="docutils literal"><span class="pre">x86_stdcallcc</span></code>: code 64
+* <code class="docutils literal"><span class="pre">x86_fastcallcc</span></code>: code 65
+* <code class="docutils literal"><span class="pre">arm_apcscc</span></code>: code 66
+* <code class="docutils literal"><span class="pre">arm_aapcscc</span></code>: code 67
+* <code class="docutils literal"><span class="pre">arm_aapcs_vfpcc</span></code>: code 68</li>
 <li>isproto*: Non-zero if this entry represents a declaration rather than a
 definition</li>
 <li><em>linkage</em>: An encoding of the <a class="reference internal" href="#linkage-type">linkage type</a> for this function</li>
@@ -751,11 +751,11 @@ of <a class="reference internal" href="#paramattr-code-entry">PARAMATTR_CODE_ENT
 <li><em>gc</em>: If present and nonzero, the 1-based garbage collector index in the table
 of <a class="reference internal" href="#module-code-gcname">MODULE_CODE_GCNAME</a> entries.</li>
 <li><em>unnamed_addr</em>: If present and non-zero, indicates that the function has
-<tt class="docutils literal"><span class="pre">unnamed_addr</span></tt></li>
+<code class="docutils literal"><span class="pre">unnamed_addr</span></code></li>
 <li><em>prologuedata</em>: If non-zero, the value index of the prologue data for this function,
 plus 1.</li>
 <li><em>dllstorageclass</em>: An encoding of the
-<a class="reference internal" href="#bcdllstorageclass"><em>dllstorageclass</em></a> of this function</li>
+<a class="reference internal" href="#bcdllstorageclass"><span>dllstorageclass</span></a> of this function</li>
 <li><em>comdat</em>: An encoding of the COMDAT of this function</li>
 <li><em>prefixdata</em>: If non-zero, the value index of the prefix data for this function,
 plus 1.</li>
@@ -763,8 +763,8 @@ plus 1.</li>
 </div>
 <div class="section" id="module-code-alias-record">
 <h4><a class="toc-backref" href="#id45">MODULE_CODE_ALIAS Record</a><a class="headerlink" href="#module-code-alias-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[ALIAS,</span> <span class="pre">alias</span> <span class="pre">type,</span> <span class="pre">aliasee</span> <span class="pre">val#,</span> <span class="pre">linkage,</span> <span class="pre">visibility,</span> <span class="pre">dllstorageclass]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">ALIAS</span></tt> record (code 9) marks the definition of an alias. The operand
+<p><code class="docutils literal"><span class="pre">[ALIAS,</span> <span class="pre">alias</span> <span class="pre">type,</span> <span class="pre">aliasee</span> <span class="pre">val#,</span> <span class="pre">linkage,</span> <span class="pre">visibility,</span> <span class="pre">dllstorageclass]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">ALIAS</span></code> record (code 9) marks the definition of an alias. The operand
 fields are</p>
 <ul class="simple">
 <li><em>alias type</em>: The type index of the alias</li>
@@ -772,132 +772,132 @@ fields are</p>
 <li><em>linkage</em>: An encoding of the <a class="reference internal" href="#linkage-type">linkage type</a> for this alias</li>
 <li><em>visibility</em>: If present, an encoding of the <a class="reference internal" href="#visibility">visibility</a> of the alias</li>
 <li><em>dllstorageclass</em>: If present, an encoding of the
-<a class="reference internal" href="#bcdllstorageclass"><em>dllstorageclass</em></a> of the alias</li>
+<a class="reference internal" href="#bcdllstorageclass"><span>dllstorageclass</span></a> of the alias</li>
 </ul>
 </div>
 <div class="section" id="module-code-purgevals-record">
 <h4><a class="toc-backref" href="#id46">MODULE_CODE_PURGEVALS Record</a><a class="headerlink" href="#module-code-purgevals-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[PURGEVALS,</span> <span class="pre">numvals]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">PURGEVALS</span></tt> record (code 10) resets the module-level value list to the
+<p><code class="docutils literal"><span class="pre">[PURGEVALS,</span> <span class="pre">numvals]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">PURGEVALS</span></code> record (code 10) resets the module-level value list to the
 size given by the single operand value. Module-level value list items are added
-by <tt class="docutils literal"><span class="pre">GLOBALVAR</span></tt>, <tt class="docutils literal"><span class="pre">FUNCTION</span></tt>, and <tt class="docutils literal"><span class="pre">ALIAS</span></tt> records.  After a <tt class="docutils literal"><span class="pre">PURGEVALS</span></tt>
+by <code class="docutils literal"><span class="pre">GLOBALVAR</span></code>, <code class="docutils literal"><span class="pre">FUNCTION</span></code>, and <code class="docutils literal"><span class="pre">ALIAS</span></code> records.  After a <code class="docutils literal"><span class="pre">PURGEVALS</span></code>
 record is seen, new value indices will start from the given <em>numvals</em> value.</p>
 </div>
 <div class="section" id="module-code-gcname-record">
 <span id="module-code-gcname"></span><h4><a class="toc-backref" href="#id47">MODULE_CODE_GCNAME Record</a><a class="headerlink" href="#module-code-gcname-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[GCNAME,</span> <span class="pre">...string...]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">GCNAME</span></tt> record (code 11) contains a variable number of values
+<p><code class="docutils literal"><span class="pre">[GCNAME,</span> <span class="pre">...string...]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">GCNAME</span></code> record (code 11) contains a variable number of values
 representing the bytes of a single garbage collector name string. There should
-be one <tt class="docutils literal"><span class="pre">GCNAME</span></tt> record for each garbage collector name referenced in function
-<tt class="docutils literal"><span class="pre">gc</span></tt> attributes within the module. These records can be referenced by 1-based
-index in the <em>gc</em> fields of <tt class="docutils literal"><span class="pre">FUNCTION</span></tt> records.</p>
+be one <code class="docutils literal"><span class="pre">GCNAME</span></code> record for each garbage collector name referenced in function
+<code class="docutils literal"><span class="pre">gc</span></code> attributes within the module. These records can be referenced by 1-based
+index in the <em>gc</em> fields of <code class="docutils literal"><span class="pre">FUNCTION</span></code> records.</p>
 </div>
 </div>
 <div class="section" id="paramattr-block-contents">
 <span id="paramattr-block"></span><h3><a class="toc-backref" href="#id48">PARAMATTR_BLOCK Contents</a><a class="headerlink" href="#paramattr-block-contents" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">PARAMATTR_BLOCK</span></tt> block (id 9) contains a table of entries describing the
+<p>The <code class="docutils literal"><span class="pre">PARAMATTR_BLOCK</span></code> block (id 9) contains a table of entries describing the
 attributes of function parameters. These entries are referenced by 1-based index
 in the <em>paramattr</em> field of module block <a class="reference internal" href="#function">FUNCTION</a> records, or within the
-<em>attr</em> field of function block <tt class="docutils literal"><span class="pre">INST_INVOKE</span></tt> and <tt class="docutils literal"><span class="pre">INST_CALL</span></tt> records.</p>
-<p>Entries within <tt class="docutils literal"><span class="pre">PARAMATTR_BLOCK</span></tt> are constructed to ensure that each is unique
+<em>attr</em> field of function block <code class="docutils literal"><span class="pre">INST_INVOKE</span></code> and <code class="docutils literal"><span class="pre">INST_CALL</span></code> records.</p>
+<p>Entries within <code class="docutils literal"><span class="pre">PARAMATTR_BLOCK</span></code> are constructed to ensure that each is unique
 (i.e., no two indicies represent equivalent attribute lists).</p>
 <div class="section" id="paramattr-code-entry-record">
 <span id="paramattr-code-entry"></span><h4><a class="toc-backref" href="#id49">PARAMATTR_CODE_ENTRY Record</a><a class="headerlink" href="#paramattr-code-entry-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[ENTRY,</span> <span class="pre">paramidx0,</span> <span class="pre">attr0,</span> <span class="pre">paramidx1,</span> <span class="pre">attr1...]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">ENTRY</span></tt> record (code 1) contains an even number of values describing a
+<p><code class="docutils literal"><span class="pre">[ENTRY,</span> <span class="pre">paramidx0,</span> <span class="pre">attr0,</span> <span class="pre">paramidx1,</span> <span class="pre">attr1...]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">ENTRY</span></code> record (code 1) contains an even number of values describing a
 unique set of function parameter attributes. Each <em>paramidx</em> value indicates
 which set of attributes is represented, with 0 representing the return value
 attributes, 0xFFFFFFFF representing function attributes, and other values
 representing 1-based function parameters. Each <em>attr</em> value is a bitmap with the
 following interpretation:</p>
 <ul class="simple">
-<li>bit 0: <tt class="docutils literal"><span class="pre">zeroext</span></tt></li>
-<li>bit 1: <tt class="docutils literal"><span class="pre">signext</span></tt></li>
-<li>bit 2: <tt class="docutils literal"><span class="pre">noreturn</span></tt></li>
-<li>bit 3: <tt class="docutils literal"><span class="pre">inreg</span></tt></li>
-<li>bit 4: <tt class="docutils literal"><span class="pre">sret</span></tt></li>
-<li>bit 5: <tt class="docutils literal"><span class="pre">nounwind</span></tt></li>
-<li>bit 6: <tt class="docutils literal"><span class="pre">noalias</span></tt></li>
-<li>bit 7: <tt class="docutils literal"><span class="pre">byval</span></tt></li>
-<li>bit 8: <tt class="docutils literal"><span class="pre">nest</span></tt></li>
-<li>bit 9: <tt class="docutils literal"><span class="pre">readnone</span></tt></li>
-<li>bit 10: <tt class="docutils literal"><span class="pre">readonly</span></tt></li>
-<li>bit 11: <tt class="docutils literal"><span class="pre">noinline</span></tt></li>
-<li>bit 12: <tt class="docutils literal"><span class="pre">alwaysinline</span></tt></li>
-<li>bit 13: <tt class="docutils literal"><span class="pre">optsize</span></tt></li>
-<li>bit 14: <tt class="docutils literal"><span class="pre">ssp</span></tt></li>
-<li>bit 15: <tt class="docutils literal"><span class="pre">sspreq</span></tt></li>
-<li>bits 16-31: <tt class="docutils literal"><span class="pre">align</span> <span class="pre">n</span></tt></li>
-<li>bit 32: <tt class="docutils literal"><span class="pre">nocapture</span></tt></li>
-<li>bit 33: <tt class="docutils literal"><span class="pre">noredzone</span></tt></li>
-<li>bit 34: <tt class="docutils literal"><span class="pre">noimplicitfloat</span></tt></li>
-<li>bit 35: <tt class="docutils literal"><span class="pre">naked</span></tt></li>
-<li>bit 36: <tt class="docutils literal"><span class="pre">inlinehint</span></tt></li>
-<li>bits 37-39: <tt class="docutils literal"><span class="pre">alignstack</span> <span class="pre">n</span></tt>, represented as the logarithm
+<li>bit 0: <code class="docutils literal"><span class="pre">zeroext</span></code></li>
+<li>bit 1: <code class="docutils literal"><span class="pre">signext</span></code></li>
+<li>bit 2: <code class="docutils literal"><span class="pre">noreturn</span></code></li>
+<li>bit 3: <code class="docutils literal"><span class="pre">inreg</span></code></li>
+<li>bit 4: <code class="docutils literal"><span class="pre">sret</span></code></li>
+<li>bit 5: <code class="docutils literal"><span class="pre">nounwind</span></code></li>
+<li>bit 6: <code class="docutils literal"><span class="pre">noalias</span></code></li>
+<li>bit 7: <code class="docutils literal"><span class="pre">byval</span></code></li>
+<li>bit 8: <code class="docutils literal"><span class="pre">nest</span></code></li>
+<li>bit 9: <code class="docutils literal"><span class="pre">readnone</span></code></li>
+<li>bit 10: <code class="docutils literal"><span class="pre">readonly</span></code></li>
+<li>bit 11: <code class="docutils literal"><span class="pre">noinline</span></code></li>
+<li>bit 12: <code class="docutils literal"><span class="pre">alwaysinline</span></code></li>
+<li>bit 13: <code class="docutils literal"><span class="pre">optsize</span></code></li>
+<li>bit 14: <code class="docutils literal"><span class="pre">ssp</span></code></li>
+<li>bit 15: <code class="docutils literal"><span class="pre">sspreq</span></code></li>
+<li>bits 16-31: <code class="docutils literal"><span class="pre">align</span> <span class="pre">n</span></code></li>
+<li>bit 32: <code class="docutils literal"><span class="pre">nocapture</span></code></li>
+<li>bit 33: <code class="docutils literal"><span class="pre">noredzone</span></code></li>
+<li>bit 34: <code class="docutils literal"><span class="pre">noimplicitfloat</span></code></li>
+<li>bit 35: <code class="docutils literal"><span class="pre">naked</span></code></li>
+<li>bit 36: <code class="docutils literal"><span class="pre">inlinehint</span></code></li>
+<li>bits 37-39: <code class="docutils literal"><span class="pre">alignstack</span> <span class="pre">n</span></code>, represented as the logarithm
 base 2 of the requested alignment, plus 1</li>
 </ul>
 </div>
 </div>
 <div class="section" id="type-block-contents">
 <span id="type-block"></span><h3><a class="toc-backref" href="#id50">TYPE_BLOCK Contents</a><a class="headerlink" href="#type-block-contents" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">TYPE_BLOCK</span></tt> block (id 10) contains records which constitute a table of
+<p>The <code class="docutils literal"><span class="pre">TYPE_BLOCK</span></code> block (id 10) contains records which constitute a table of
 type operator entries used to represent types referenced within an LLVM
 module. Each record (with the exception of <a class="reference internal" href="#numentry">NUMENTRY</a>) generates a single type
 table entry, which may be referenced by 0-based index from instructions,
 constants, metadata, type symbol table entries, or other type operator records.</p>
-<p>Entries within <tt class="docutils literal"><span class="pre">TYPE_BLOCK</span></tt> are constructed to ensure that each entry is
+<p>Entries within <code class="docutils literal"><span class="pre">TYPE_BLOCK</span></code> are constructed to ensure that each entry is
 unique (i.e., no two indicies represent structurally equivalent types).</p>
 <div class="section" id="type-code-numentry-record">
 <span id="numentry"></span><span id="type-code-numentry"></span><h4><a class="toc-backref" href="#id51">TYPE_CODE_NUMENTRY Record</a><a class="headerlink" href="#type-code-numentry-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[NUMENTRY,</span> <span class="pre">numentries]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">NUMENTRY</span></tt> record (code 1) contains a single value which indicates the
+<p><code class="docutils literal"><span class="pre">[NUMENTRY,</span> <span class="pre">numentries]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">NUMENTRY</span></code> record (code 1) contains a single value which indicates the
 total number of type code entries in the type table of the module. If present,
-<tt class="docutils literal"><span class="pre">NUMENTRY</span></tt> should be the first record in the block.</p>
+<code class="docutils literal"><span class="pre">NUMENTRY</span></code> should be the first record in the block.</p>
 </div>
 <div class="section" id="type-code-void-record">
 <h4><a class="toc-backref" href="#id52">TYPE_CODE_VOID Record</a><a class="headerlink" href="#type-code-void-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[VOID]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">VOID</span></tt> record (code 2) adds a <tt class="docutils literal"><span class="pre">void</span></tt> type to the type table.</p>
+<p><code class="docutils literal"><span class="pre">[VOID]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">VOID</span></code> record (code 2) adds a <code class="docutils literal"><span class="pre">void</span></code> type to the type table.</p>
 </div>
 <div class="section" id="type-code-half-record">
 <h4><a class="toc-backref" href="#id53">TYPE_CODE_HALF Record</a><a class="headerlink" href="#type-code-half-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[HALF]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">HALF</span></tt> record (code 10) adds a <tt class="docutils literal"><span class="pre">half</span></tt> (16-bit floating point) type to
+<p><code class="docutils literal"><span class="pre">[HALF]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">HALF</span></code> record (code 10) adds a <code class="docutils literal"><span class="pre">half</span></code> (16-bit floating point) type to
 the type table.</p>
 </div>
 <div class="section" id="type-code-float-record">
 <h4><a class="toc-backref" href="#id54">TYPE_CODE_FLOAT Record</a><a class="headerlink" href="#type-code-float-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[FLOAT]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">FLOAT</span></tt> record (code 3) adds a <tt class="docutils literal"><span class="pre">float</span></tt> (32-bit floating point) type to
+<p><code class="docutils literal"><span class="pre">[FLOAT]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">FLOAT</span></code> record (code 3) adds a <code class="docutils literal"><span class="pre">float</span></code> (32-bit floating point) type to
 the type table.</p>
 </div>
 <div class="section" id="type-code-double-record">
 <h4><a class="toc-backref" href="#id55">TYPE_CODE_DOUBLE Record</a><a class="headerlink" href="#type-code-double-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[DOUBLE]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">DOUBLE</span></tt> record (code 4) adds a <tt class="docutils literal"><span class="pre">double</span></tt> (64-bit floating point) type to
+<p><code class="docutils literal"><span class="pre">[DOUBLE]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">DOUBLE</span></code> record (code 4) adds a <code class="docutils literal"><span class="pre">double</span></code> (64-bit floating point) type to
 the type table.</p>
 </div>
 <div class="section" id="type-code-label-record">
 <h4><a class="toc-backref" href="#id56">TYPE_CODE_LABEL Record</a><a class="headerlink" href="#type-code-label-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[LABEL]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">LABEL</span></tt> record (code 5) adds a <tt class="docutils literal"><span class="pre">label</span></tt> type to the type table.</p>
+<p><code class="docutils literal"><span class="pre">[LABEL]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">LABEL</span></code> record (code 5) adds a <code class="docutils literal"><span class="pre">label</span></code> type to the type table.</p>
 </div>
 <div class="section" id="type-code-opaque-record">
 <h4><a class="toc-backref" href="#id57">TYPE_CODE_OPAQUE Record</a><a class="headerlink" href="#type-code-opaque-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[OPAQUE]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">OPAQUE</span></tt> record (code 6) adds an <tt class="docutils literal"><span class="pre">opaque</span></tt> type to the type table. Note
-that distinct <tt class="docutils literal"><span class="pre">opaque</span></tt> types are not unified.</p>
+<p><code class="docutils literal"><span class="pre">[OPAQUE]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">OPAQUE</span></code> record (code 6) adds an <code class="docutils literal"><span class="pre">opaque</span></code> type to the type table. Note
+that distinct <code class="docutils literal"><span class="pre">opaque</span></code> types are not unified.</p>
 </div>
 <div class="section" id="type-code-integer-record">
 <h4><a class="toc-backref" href="#id58">TYPE_CODE_INTEGER Record</a><a class="headerlink" href="#type-code-integer-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[INTEGER,</span> <span class="pre">width]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">INTEGER</span></tt> record (code 7) adds an integer type to the type table. The
+<p><code class="docutils literal"><span class="pre">[INTEGER,</span> <span class="pre">width]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">INTEGER</span></code> record (code 7) adds an integer type to the type table. The
 single <em>width</em> field indicates the width of the integer type.</p>
 </div>
 <div class="section" id="type-code-pointer-record">
 <h4><a class="toc-backref" href="#id59">TYPE_CODE_POINTER Record</a><a class="headerlink" href="#type-code-pointer-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[POINTER,</span> <span class="pre">pointee</span> <span class="pre">type,</span> <span class="pre">address</span> <span class="pre">space]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">POINTER</span></tt> record (code 8) adds a pointer type to the type table. The
+<p><code class="docutils literal"><span class="pre">[POINTER,</span> <span class="pre">pointee</span> <span class="pre">type,</span> <span class="pre">address</span> <span class="pre">space]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">POINTER</span></code> record (code 8) adds a pointer type to the type table. The
 operand fields are</p>
 <ul class="simple">
 <li><em>pointee type</em>: The type index of the pointed-to type</li>
@@ -907,8 +907,8 @@ the pointed-to object resides. Otherwise, the default address space is zero.</li
 </div>
 <div class="section" id="type-code-function-record">
 <h4><a class="toc-backref" href="#id60">TYPE_CODE_FUNCTION Record</a><a class="headerlink" href="#type-code-function-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[FUNCTION,</span> <span class="pre">vararg,</span> <span class="pre">ignored,</span> <span class="pre">retty,</span> <span class="pre">...paramty...</span> <span class="pre">]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">FUNCTION</span></tt> record (code 9) adds a function type to the type table. The
+<p><code class="docutils literal"><span class="pre">[FUNCTION,</span> <span class="pre">vararg,</span> <span class="pre">ignored,</span> <span class="pre">retty,</span> <span class="pre">...paramty...</span> <span class="pre">]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">FUNCTION</span></code> record (code 9) adds a function type to the type table. The
 operand fields are</p>
 <ul class="simple">
 <li><em>vararg</em>: Non-zero if the type represents a varargs function</li>
@@ -921,8 +921,8 @@ function</li>
 </div>
 <div class="section" id="type-code-struct-record">
 <h4><a class="toc-backref" href="#id61">TYPE_CODE_STRUCT Record</a><a class="headerlink" href="#type-code-struct-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[STRUCT,</span> <span class="pre">ispacked,</span> <span class="pre">...eltty...]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">STRUCT</span></tt> record (code 10) adds a struct type to the type table. The
+<p><code class="docutils literal"><span class="pre">[STRUCT,</span> <span class="pre">ispacked,</span> <span class="pre">...eltty...]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">STRUCT</span></code> record (code 10) adds a struct type to the type table. The
 operand fields are</p>
 <ul class="simple">
 <li><em>ispacked</em>: Non-zero if the type represents a packed structure</li>
@@ -932,8 +932,8 @@ structure</li>
 </div>
 <div class="section" id="type-code-array-record">
 <h4><a class="toc-backref" href="#id62">TYPE_CODE_ARRAY Record</a><a class="headerlink" href="#type-code-array-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[ARRAY,</span> <span class="pre">numelts,</span> <span class="pre">eltty]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">ARRAY</span></tt> record (code 11) adds an array type to the type table.  The
+<p><code class="docutils literal"><span class="pre">[ARRAY,</span> <span class="pre">numelts,</span> <span class="pre">eltty]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">ARRAY</span></code> record (code 11) adds an array type to the type table.  The
 operand fields are</p>
 <ul class="simple">
 <li><em>numelts</em>: The number of elements in arrays of this type</li>
@@ -942,8 +942,8 @@ operand fields are</p>
 </div>
 <div class="section" id="type-code-vector-record">
 <h4><a class="toc-backref" href="#id63">TYPE_CODE_VECTOR Record</a><a class="headerlink" href="#type-code-vector-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[VECTOR,</span> <span class="pre">numelts,</span> <span class="pre">eltty]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">VECTOR</span></tt> record (code 12) adds a vector type to the type table.  The
+<p><code class="docutils literal"><span class="pre">[VECTOR,</span> <span class="pre">numelts,</span> <span class="pre">eltty]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">VECTOR</span></code> record (code 12) adds a vector type to the type table.  The
 operand fields are</p>
 <ul class="simple">
 <li><em>numelts</em>: The number of elements in vectors of this type</li>
@@ -952,36 +952,36 @@ operand fields are</p>
 </div>
 <div class="section" id="type-code-x86-fp80-record">
 <h4><a class="toc-backref" href="#id64">TYPE_CODE_X86_FP80 Record</a><a class="headerlink" href="#type-code-x86-fp80-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[X86_FP80]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">X86_FP80</span></tt> record (code 13) adds an <tt class="docutils literal"><span class="pre">x86_fp80</span></tt> (80-bit floating point)
+<p><code class="docutils literal"><span class="pre">[X86_FP80]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">X86_FP80</span></code> record (code 13) adds an <code class="docutils literal"><span class="pre">x86_fp80</span></code> (80-bit floating point)
 type to the type table.</p>
 </div>
 <div class="section" id="type-code-fp128-record">
 <h4><a class="toc-backref" href="#id65">TYPE_CODE_FP128 Record</a><a class="headerlink" href="#type-code-fp128-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[FP128]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">FP128</span></tt> record (code 14) adds an <tt class="docutils literal"><span class="pre">fp128</span></tt> (128-bit floating point) type
+<p><code class="docutils literal"><span class="pre">[FP128]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">FP128</span></code> record (code 14) adds an <code class="docutils literal"><span class="pre">fp128</span></code> (128-bit floating point) type
 to the type table.</p>
 </div>
 <div class="section" id="type-code-ppc-fp128-record">
 <h4><a class="toc-backref" href="#id66">TYPE_CODE_PPC_FP128 Record</a><a class="headerlink" href="#type-code-ppc-fp128-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[PPC_FP128]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">PPC_FP128</span></tt> record (code 15) adds a <tt class="docutils literal"><span class="pre">ppc_fp128</span></tt> (128-bit floating point)
+<p><code class="docutils literal"><span class="pre">[PPC_FP128]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">PPC_FP128</span></code> record (code 15) adds a <code class="docutils literal"><span class="pre">ppc_fp128</span></code> (128-bit floating point)
 type to the type table.</p>
 </div>
 <div class="section" id="type-code-metadata-record">
 <h4><a class="toc-backref" href="#id67">TYPE_CODE_METADATA Record</a><a class="headerlink" href="#type-code-metadata-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[METADATA]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">METADATA</span></tt> record (code 16) adds a <tt class="docutils literal"><span class="pre">metadata</span></tt> type to the type table.</p>
+<p><code class="docutils literal"><span class="pre">[METADATA]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">METADATA</span></code> record (code 16) adds a <code class="docutils literal"><span class="pre">metadata</span></code> type to the type table.</p>
 </div>
 </div>
 <div class="section" id="constants-block-contents">
 <span id="constants-block"></span><h3><a class="toc-backref" href="#id68">CONSTANTS_BLOCK Contents</a><a class="headerlink" href="#constants-block-contents" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">CONSTANTS_BLOCK</span></tt> block (id 11) ...</p>
+<p>The <code class="docutils literal"><span class="pre">CONSTANTS_BLOCK</span></code> block (id 11) ...</p>
 </div>
 <div class="section" id="function-block-contents">
 <span id="function-block"></span><h3><a class="toc-backref" href="#id69">FUNCTION_BLOCK Contents</a><a class="headerlink" href="#function-block-contents" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">FUNCTION_BLOCK</span></tt> block (id 12) ...</p>
-<p>In addition to the record types described below, a <tt class="docutils literal"><span class="pre">FUNCTION_BLOCK</span></tt> block may
+<p>The <code class="docutils literal"><span class="pre">FUNCTION_BLOCK</span></code> block (id 12) ...</p>
+<p>In addition to the record types described below, a <code class="docutils literal"><span class="pre">FUNCTION_BLOCK</span></code> block may
 contain the following sub-blocks:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#constants-block">CONSTANTS_BLOCK</a></li>
@@ -991,12 +991,12 @@ contain the following sub-blocks:</p>
 </div>
 <div class="section" id="type-symtab-block-contents">
 <span id="type-symtab-block"></span><h3><a class="toc-backref" href="#id70">TYPE_SYMTAB_BLOCK Contents</a><a class="headerlink" href="#type-symtab-block-contents" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">TYPE_SYMTAB_BLOCK</span></tt> block (id 13) contains entries which map between
+<p>The <code class="docutils literal"><span class="pre">TYPE_SYMTAB_BLOCK</span></code> block (id 13) contains entries which map between
 module-level named types and their corresponding type indices.</p>
 <div class="section" id="tst-code-entry-record">
 <span id="tst-code-entry"></span><h4><a class="toc-backref" href="#id71">TST_CODE_ENTRY Record</a><a class="headerlink" href="#tst-code-entry-record" title="Permalink to this headline">¶</a></h4>
-<p><tt class="docutils literal"><span class="pre">[ENTRY,</span> <span class="pre">typeid,</span> <span class="pre">...string...]</span></tt></p>
-<p>The <tt class="docutils literal"><span class="pre">ENTRY</span></tt> record (code 1) contains a variable number of values, with the
+<p><code class="docutils literal"><span class="pre">[ENTRY,</span> <span class="pre">typeid,</span> <span class="pre">...string...]</span></code></p>
+<p>The <code class="docutils literal"><span class="pre">ENTRY</span></code> record (code 1) contains a variable number of values, with the
 first giving the type index of the designated type, and the remaining values
 giving the character codes of the type name. Each entry corresponds to a single
 named type.</p>
@@ -1004,15 +1004,15 @@ named type.</p>
 </div>
 <div class="section" id="value-symtab-block-contents">
 <span id="value-symtab-block"></span><h3><a class="toc-backref" href="#id72">VALUE_SYMTAB_BLOCK Contents</a><a class="headerlink" href="#value-symtab-block-contents" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">VALUE_SYMTAB_BLOCK</span></tt> block (id 14) ...</p>
+<p>The <code class="docutils literal"><span class="pre">VALUE_SYMTAB_BLOCK</span></code> block (id 14) ...</p>
 </div>
 <div class="section" id="metadata-block-contents">
 <span id="metadata-block"></span><h3><a class="toc-backref" href="#id73">METADATA_BLOCK Contents</a><a class="headerlink" href="#metadata-block-contents" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">METADATA_BLOCK</span></tt> block (id 15) ...</p>
+<p>The <code class="docutils literal"><span class="pre">METADATA_BLOCK</span></code> block (id 15) ...</p>
 </div>
 <div class="section" id="metadata-attachment-contents">
 <span id="metadata-attachment"></span><h3><a class="toc-backref" href="#id74">METADATA_ATTACHMENT Contents</a><a class="headerlink" href="#metadata-attachment-contents" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">METADATA_ATTACHMENT</span></tt> block (id 16) ...</p>
+<p>The <code class="docutils literal"><span class="pre">METADATA_ATTACHMENT</span></code> block (id 16) ...</p>
 </div>
 </div>
 </div>
@@ -1022,7 +1022,7 @@ named type.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -1039,10 +1039,10 @@ named type.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

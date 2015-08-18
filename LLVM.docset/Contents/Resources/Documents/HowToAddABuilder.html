@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="how-to-add-your-build-configuration-to-llvm-buildbot-infrastructure">
 <h1>How To Add Your Build Configuration To LLVM Buildbot Infrastructure<a class="headerlink" href="#how-to-add-your-build-configuration-to-llvm-buildbot-infrastructure" title="Permalink to this headline">¶</a></h1>
@@ -131,8 +131,8 @@ to see if it works.</p>
 </li>
 <li><p class="first">Send a patch which adds your build slave and your builder to zorg.</p>
 <ul class="simple">
-<li>slaves are added to <tt class="docutils literal"><span class="pre">buildbot/osuosl/master/config/slaves.py</span></tt></li>
-<li>builders are added to <tt class="docutils literal"><span class="pre">buildbot/osuosl/master/config/builders.py</span></tt></li>
+<li>slaves are added to <code class="docutils literal"><span class="pre">buildbot/osuosl/master/config/slaves.py</span></code></li>
+<li>builders are added to <code class="docutils literal"><span class="pre">buildbot/osuosl/master/config/builders.py</span></code></li>
 </ul>
 </li>
 <li><p class="first">Send the buildslave access name and the access password directly to
@@ -141,7 +141,7 @@ will let you know that your changes are applied and buildmaster is
 reconfigured.</p>
 </li>
 <li><p class="first">Check the status of your buildslave on the <a class="reference external" href="http://lab.llvm.org:8011/waterfall">Waterfall Display</a> to make sure it is connected, and
-<tt class="docutils literal"><span class="pre">http://lab.llvm.org:8011/buildslaves/&lt;your-buildslave-name&gt;</span></tt> to see
+<code class="docutils literal"><span class="pre">http://lab.llvm.org:8011/buildslaves/&lt;your-buildslave-name&gt;</span></code> to see
 if administrator contact and slave information are correct.</p>
 </li>
 <li><p class="first">Wait for the first build to succeed and enjoy.</p>
@@ -155,7 +155,7 @@ if administrator contact and slave information are correct.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -172,10 +172,10 @@ if administrator contact and slave information are correct.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

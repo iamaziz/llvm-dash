@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvmbuild-guide">
 <h1>LLVMBuild Guide<a class="headerlink" href="#llvmbuild-guide" title="Permalink to this headline">¶</a></h1>
@@ -76,7 +76,7 @@
 </div>
 <div class="section" id="introduction">
 <h2><a class="toc-backref" href="#id1">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>This document describes the <tt class="docutils literal"><span class="pre">LLVMBuild</span></tt> organization and files which
+<p>This document describes the <code class="docutils literal"><span class="pre">LLVMBuild</span></code> organization and files which
 we use to describe parts of the LLVM ecosystem. For description of
 specific LLVMBuild related tools, please see the command guide.</p>
 <p>LLVM is designed to be a modular set of libraries which can be flexibly
@@ -86,7 +86,7 @@ on. Related projects in the LLVM system like Clang and LLDB also tend to
 follow this philosophy.</p>
 <p>In order to support this usage style, LLVM has a fairly strict structure
 as to how the source code and various components are organized. The
-<tt class="docutils literal"><span class="pre">LLVMBuild.txt</span></tt> files are the explicit specification of that
+<code class="docutils literal"><span class="pre">LLVMBuild.txt</span></code> files are the explicit specification of that
 structure, and are used by the build systems and other tools in order to
 develop the LLVM project.</p>
 </div>
@@ -99,12 +99,12 @@ projects may consist of many libraries, associated tools, build tools,
 or other utility tools (for example, testing tools).</p>
 <p>For the most part, the project contents are organized around defining
 one main component per each subdirectory. Each such directory contains
-an <tt class="docutils literal"><span class="pre">LLVMBuild.txt</span></tt> which contains the component definitions.</p>
+an <code class="docutils literal"><span class="pre">LLVMBuild.txt</span></code> which contains the component definitions.</p>
 <p>The component descriptions for the project as a whole are automatically
 gathered by the LLVMBuild tools. The tools automatically traverse the
 source directory structure to find all of the component description
 files. NOTE: For performance/sanity reasons, we only traverse into
-subdirectories when the parent itself contains an <tt class="docutils literal"><span class="pre">LLVMBuild.txt</span></tt>
+subdirectories when the parent itself contains an <code class="docutils literal"><span class="pre">LLVMBuild.txt</span></code>
 description file.</p>
 </div>
 <div class="section" id="build-integration">
@@ -118,11 +118,11 @@ LLVMBuild files and use that to drive the actual project build.
 Typically, the build system will only need to load this information at
 &#8220;configure&#8221; time, and use it to generative native information. Build
 systems will also handle automatically reconfiguring their information
-when the contents of the <tt class="docutils literal"><span class="pre">LLVMBuild.txt</span></tt> files change.</p>
+when the contents of the <code class="docutils literal"><span class="pre">LLVMBuild.txt</span></code> files change.</p>
 <p>Developers generally are not expected to need to be aware of the details
 of how the LLVMBuild system is integrated into their build. Ideally,
 LLVM developers who are not working on the build system would only ever
-need to modify the contents of the <tt class="docutils literal"><span class="pre">LLVMBuild.txt</span></tt> description files
+need to modify the contents of the <code class="docutils literal"><span class="pre">LLVMBuild.txt</span></code> description files
 (although we have not reached this goal yet).</p>
 <p>For more information on the utility tool we provide to help interfacing
 with the build system, please see the <a class="reference internal" href="CommandGuide/llvm-build.html"><em>llvm-build</em></a> documentation.</p>
@@ -148,7 +148,7 @@ to generate a variety of source files.</li>
 component libraries. Most LLVM tools are small and are primarily
 frontends to the library interfaces.</li>
 </ul>
-<p>Components are described using <tt class="docutils literal"><span class="pre">LLVMBuild.txt</span></tt> files in the directories
+<p>Components are described using <code class="docutils literal"><span class="pre">LLVMBuild.txt</span></code> files in the directories
 that define the component. See the <a class="reference internal" href="#llvmbuild-format-reference">LLVMBuild Format Reference</a> section
 for information on the exact format of these files.</p>
 </div>
@@ -185,22 +185,22 @@ component would look like the following example:</p>
 </div>
 <p>A full description of the exact sections and properties which are
 allowed follows.</p>
-<p>Each file may define exactly one common component, named <tt class="docutils literal"><span class="pre">common</span></tt>. The
+<p>Each file may define exactly one common component, named <code class="docutils literal"><span class="pre">common</span></code>. The
 common component may define the following properties:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">subdirectories</span></tt> <strong>[optional]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">subdirectories</span></code> <strong>[optional]</strong></p>
 <p>If given, a list of the names of the subdirectories from the current
 subpath to search for additional LLVMBuild files.</p>
 </li>
 </ul>
 <p>Each file may define multiple components. Each component is described by a
-section who name starts with <tt class="docutils literal"><span class="pre">component</span></tt>. The remainder of the section
+section who name starts with <code class="docutils literal"><span class="pre">component</span></code>. The remainder of the section
 name is ignored, but each section name must be unique. Typically components
 are just number in order for files with multiple components
-(<tt class="docutils literal"><span class="pre">component_0</span></tt>, <tt class="docutils literal"><span class="pre">component_1</span></tt>, and so on).</p>
+(<code class="docutils literal"><span class="pre">component_0</span></code>, <code class="docutils literal"><span class="pre">component_1</span></code>, and so on).</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Section names not matching this format (or the <tt class="docutils literal"><span class="pre">common</span></tt> section) are
+<p class="last">Section names not matching this format (or the <code class="docutils literal"><span class="pre">common</span></code> section) are
 currently unused and are disallowed.</p>
 </div>
 <p>Every component is defined by the properties in the section. The exact
@@ -209,34 +209,34 @@ Components <strong>may not</strong> define any properties other than those expec
 by the component type.</p>
 <p>Every component must define the following properties:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">type</span></tt> <strong>[required]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">type</span></code> <strong>[required]</strong></p>
 <p>The type of the component. Supported component types are detailed
 below. Most components will define additional properties which may be
 required or optional.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">name</span></tt> <strong>[required]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">name</span></code> <strong>[required]</strong></p>
 <p>The name of the component. Names are required to be unique across the
 entire project.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">parent</span></tt> <strong>[required]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">parent</span></code> <strong>[required]</strong></p>
 <p>The name of the logical parent of the component. Components are
 organized into a logical tree to make it easier to navigate and
 organize groups of components. The parents have no semantics as far
 as the project build is concerned, however. Typically, the parent
 will be the main component of the parent directory.</p>
-<p>Components may reference the root pseudo component using <tt class="docutils literal"><span class="pre">$ROOT</span></tt> to
+<p>Components may reference the root pseudo component using <code class="docutils literal"><span class="pre">$ROOT</span></code> to
 indicate they should logically be grouped at the top-level.</p>
 </li>
 </ul>
 <p>Components may define the following properties:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">dependencies</span></tt> <strong>[optional]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">dependencies</span></code> <strong>[optional]</strong></p>
 <p>If specified, a list of names of components which <em>must</em> be built
 prior to this one. This should only be exactly those components which
 produce some tool or source code required for building the component.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last"><tt class="docutils literal"><span class="pre">Group</span></tt> and <tt class="docutils literal"><span class="pre">LibraryGroup</span></tt> components have no semantics for the
+<p class="last"><code class="docutils literal"><span class="pre">Group</span></code> and <code class="docutils literal"><span class="pre">LibraryGroup</span></code> components have no semantics for the
 actual build, and are not allowed to specify dependencies.</p>
 </div>
 </li>
@@ -244,85 +244,85 @@ actual build, and are not allowed to specify dependencies.</p>
 <p>The following section lists the available component types, as well as
 the properties which are associated with that component.</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">Group</span></tt></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">Group</span></code></p>
 <p>Group components exist purely to allow additional arbitrary structuring
 of the logical components tree. For example, one might define a
-<tt class="docutils literal"><span class="pre">Libraries</span></tt> group to hold all of the root library components.</p>
-<p><tt class="docutils literal"><span class="pre">Group</span></tt> components have no additionally properties.</p>
+<code class="docutils literal"><span class="pre">Libraries</span></code> group to hold all of the root library components.</p>
+<p><code class="docutils literal"><span class="pre">Group</span></code> components have no additionally properties.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">Library</span></tt></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">Library</span></code></p>
 <p>Library components define an individual library which should be built
 from the source code in the component directory.</p>
 <p>Components with this type use the following properties:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">library_name</span></tt> <strong>[optional]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">library_name</span></code> <strong>[optional]</strong></p>
 <p>If given, the name to use for the actual library file on disk. If
 not given, the name is derived from the component name itself.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">required_libraries</span></tt> <strong>[optional]</strong></p>
-<p>If given, a list of the names of <tt class="docutils literal"><span class="pre">Library</span></tt> or <tt class="docutils literal"><span class="pre">LibraryGroup</span></tt>
+<li><p class="first"><code class="docutils literal"><span class="pre">required_libraries</span></code> <strong>[optional]</strong></p>
+<p>If given, a list of the names of <code class="docutils literal"><span class="pre">Library</span></code> or <code class="docutils literal"><span class="pre">LibraryGroup</span></code>
 components which must also be linked in whenever this library is
 used. That is, the link time dependencies for this component. When
 tools are built, the build system will include the transitive closure
-of all <tt class="docutils literal"><span class="pre">required_libraries</span></tt> for the components the tool needs.</p>
+of all <code class="docutils literal"><span class="pre">required_libraries</span></code> for the components the tool needs.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">add_to_library_groups</span></tt> <strong>[optional]</strong></p>
-<p>If given, a list of the names of <tt class="docutils literal"><span class="pre">LibraryGroup</span></tt> components which
+<li><p class="first"><code class="docutils literal"><span class="pre">add_to_library_groups</span></code> <strong>[optional]</strong></p>
+<p>If given, a list of the names of <code class="docutils literal"><span class="pre">LibraryGroup</span></code> components which
 this component is also part of. This allows nesting groups of
-components.  For example, the <tt class="docutils literal"><span class="pre">X86</span></tt> target might define a library
-group for all of the <tt class="docutils literal"><span class="pre">X86</span></tt> components. That library group might
-then be included in the <tt class="docutils literal"><span class="pre">all-targets</span></tt> library group.</p>
+components.  For example, the <code class="docutils literal"><span class="pre">X86</span></code> target might define a library
+group for all of the <code class="docutils literal"><span class="pre">X86</span></code> components. That library group might
+then be included in the <code class="docutils literal"><span class="pre">all-targets</span></code> library group.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">installed</span></tt> <strong>[optional]</strong> <strong>[boolean]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">installed</span></code> <strong>[optional]</strong> <strong>[boolean]</strong></p>
 <p>Whether this library is installed. Libraries that are not installed
-are only reported by <tt class="docutils literal"><span class="pre">llvm-config</span></tt> when it is run as part of a
+are only reported by <code class="docutils literal"><span class="pre">llvm-config</span></code> when it is run as part of a
 development directory.</p>
 </li>
 </ul>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">LibraryGroup</span></tt></p>
-<p><tt class="docutils literal"><span class="pre">LibraryGroup</span></tt> components are a mechanism to allow easy definition of
+<li><p class="first"><code class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">LibraryGroup</span></code></p>
+<p><code class="docutils literal"><span class="pre">LibraryGroup</span></code> components are a mechanism to allow easy definition of
 useful sets of related components. In particular, we use them to easily
 specify things like &#8220;all targets&#8221;, or &#8220;all assembly printers&#8221;.</p>
 <p>Components with this type use the following properties:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">required_libraries</span></tt> <strong>[optional]</strong></p>
-<p>See the <tt class="docutils literal"><span class="pre">Library</span></tt> type for a description of this property.</p>
+<li><p class="first"><code class="docutils literal"><span class="pre">required_libraries</span></code> <strong>[optional]</strong></p>
+<p>See the <code class="docutils literal"><span class="pre">Library</span></code> type for a description of this property.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">add_to_library_groups</span></tt> <strong>[optional]</strong></p>
-<p>See the <tt class="docutils literal"><span class="pre">Library</span></tt> type for a description of this property.</p>
+<li><p class="first"><code class="docutils literal"><span class="pre">add_to_library_groups</span></code> <strong>[optional]</strong></p>
+<p>See the <code class="docutils literal"><span class="pre">Library</span></code> type for a description of this property.</p>
 </li>
 </ul>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">TargetGroup</span></tt></p>
-<p><tt class="docutils literal"><span class="pre">TargetGroup</span></tt> components are an extension of <tt class="docutils literal"><span class="pre">LibraryGroup</span></tt>s,
+<li><p class="first"><code class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">TargetGroup</span></code></p>
+<p><code class="docutils literal"><span class="pre">TargetGroup</span></code> components are an extension of <code class="docutils literal"><span class="pre">LibraryGroup</span></code>s,
 specifically for defining LLVM targets (which are handled specially in a
 few places).</p>
 <p>The name of the component should always be the name of the target.</p>
-<p>Components with this type use the <tt class="docutils literal"><span class="pre">LibraryGroup</span></tt> properties in
+<p>Components with this type use the <code class="docutils literal"><span class="pre">LibraryGroup</span></code> properties in
 addition to:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">has_asmparser</span></tt> <strong>[optional]</strong> <strong>[boolean]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">has_asmparser</span></code> <strong>[optional]</strong> <strong>[boolean]</strong></p>
 <p>Whether this target defines an assembly parser.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">has_asmprinter</span></tt> <strong>[optional]</strong> <strong>[boolean]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">has_asmprinter</span></code> <strong>[optional]</strong> <strong>[boolean]</strong></p>
 <p>Whether this target defines an assembly printer.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">has_disassembler</span></tt> <strong>[optional]</strong> <strong>[boolean]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">has_disassembler</span></code> <strong>[optional]</strong> <strong>[boolean]</strong></p>
 <p>Whether this target defines a disassembler.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">has_jit</span></tt> <strong>[optional]</strong> <strong>[boolean]</strong></p>
+<li><p class="first"><code class="docutils literal"><span class="pre">has_jit</span></code> <strong>[optional]</strong> <strong>[boolean]</strong></p>
 <p>Whether this target supports JIT compilation.</p>
 </li>
 </ul>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">Tool</span></tt></p>
-<p><tt class="docutils literal"><span class="pre">Tool</span></tt> components define standalone command line tools which should be
+<li><p class="first"><code class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">Tool</span></code></p>
+<p><code class="docutils literal"><span class="pre">Tool</span></code> components define standalone command line tools which should be
 built from the source code in the component directory and linked.</p>
 <p>Components with this type use the following properties:</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">required_libraries</span></tt> <strong>[optional]</strong></p>
-<p>If given, a list of the names of <tt class="docutils literal"><span class="pre">Library</span></tt> or <tt class="docutils literal"><span class="pre">LibraryGroup</span></tt>
+<li><p class="first"><code class="docutils literal"><span class="pre">required_libraries</span></code> <strong>[optional]</strong></p>
+<p>If given, a list of the names of <code class="docutils literal"><span class="pre">Library</span></code> or <code class="docutils literal"><span class="pre">LibraryGroup</span></code>
 components which this tool is required to be linked with.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -331,21 +331,21 @@ match up with the actual library names on disk.</p>
 </div>
 <p>Build systems are expected to properly include all of the libraries
 required by the linked components (i.e., the transitive closure of
-<tt class="docutils literal"><span class="pre">required_libraries</span></tt>).</p>
+<code class="docutils literal"><span class="pre">required_libraries</span></code>).</p>
 <p>Build systems are also expected to understand that those library
 components must be built prior to linking &#8211; they do not also need
-to be listed under <tt class="docutils literal"><span class="pre">dependencies</span></tt>.</p>
+to be listed under <code class="docutils literal"><span class="pre">dependencies</span></code>.</p>
 </li>
 </ul>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">BuildTool</span></tt></p>
-<p><tt class="docutils literal"><span class="pre">BuildTool</span></tt> components are like <tt class="docutils literal"><span class="pre">Tool</span></tt> components, except that the
+<li><p class="first"><code class="docutils literal"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">BuildTool</span></code></p>
+<p><code class="docutils literal"><span class="pre">BuildTool</span></code> components are like <code class="docutils literal"><span class="pre">Tool</span></code> components, except that the
 tool is supposed to be built for the platform where the build is running
 (instead of that platform being targeted). Build systems are expected
 to handle the fact that required libraries may need to be built for
 multiple platforms in order to be able to link this tool.</p>
-<p><tt class="docutils literal"><span class="pre">BuildTool</span></tt> components currently use the exact same properties as
-<tt class="docutils literal"><span class="pre">Tool</span></tt> components, the type distinction is only used to differentiate
+<p><code class="docutils literal"><span class="pre">BuildTool</span></code> components currently use the exact same properties as
+<code class="docutils literal"><span class="pre">Tool</span></code> components, the type distinction is only used to differentiate
 what the tool is built for.</p>
 </li>
 </ul>
@@ -357,7 +357,7 @@ what the tool is built for.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -374,10 +374,10 @@ what the tool is built for.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

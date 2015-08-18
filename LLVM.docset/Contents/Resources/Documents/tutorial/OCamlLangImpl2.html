@@ -34,14 +34,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -56,14 +56,14 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
 
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-implementing-a-parser-and-ast">
 <h1>2. Kaleidoscope: Implementing a Parser and AST<a class="headerlink" href="#kaleidoscope-implementing-a-parser-and-ast" title="Permalink to this headline">¶</a></h1>
@@ -171,10 +171,10 @@ be generated with calls like this:</p>
 <span class="o">...</span>
 </pre></div>
 </div>
-<p>The error handling routines make use of the builtin <tt class="docutils literal"><span class="pre">Stream.Failure</span></tt>
-and <tt class="docutils literal"><span class="pre">Stream.Error``s.</span> <span class="pre">``Stream.Failure</span></tt> is raised when the parser is
+<p>The error handling routines make use of the builtin <code class="docutils literal"><span class="pre">Stream.Failure</span></code>
+and <code class="docutils literal"><span class="pre">Stream.Error``s.</span> <span class="pre">``Stream.Failure</span></code> is raised when the parser is
 unable to find any matching token in the first position of a pattern.
-<tt class="docutils literal"><span class="pre">Stream.Error</span></tt> is raised when the first token matches, but the rest do
+<code class="docutils literal"><span class="pre">Stream.Error</span></code> is raised when the first token matches, but the rest do
 not. The error recovery in our parser will not be the best and is not
 particular user-friendly, but it will be enough for our tutorial. These
 exceptions make it easier to handle errors in routines that have various
@@ -201,8 +201,8 @@ expression it is. For numeric literals, we have:</p>
 </pre></div>
 </div>
 <p>This routine is very simple: it expects to be called when the current
-token is a <tt class="docutils literal"><span class="pre">Token.Number</span></tt> token. It takes the current number value,
-creates a <tt class="docutils literal"><span class="pre">Ast.Number</span></tt> node, advances the lexer to the next token, and
+token is a <code class="docutils literal"><span class="pre">Token.Number</span></code> token. It takes the current number value,
+creates a <code class="docutils literal"><span class="pre">Ast.Number</span></code> node, advances the lexer to the next token, and
 finally returns.</p>
 <p>There are some interesting aspects to this. The most important one is
 that this routine eats all of the tokens that correspond to the
@@ -216,18 +216,18 @@ the parenthesis operator is defined like this:</p>
 </div>
 <p>This function illustrates a number of interesting things about the
 parser:</p>
-<p>1) It shows how we use the <tt class="docutils literal"><span class="pre">Stream.Error</span></tt> exception. When called, this
+<p>1) It shows how we use the <code class="docutils literal"><span class="pre">Stream.Error</span></code> exception. When called, this
 function expects that the current token is a &#8216;(&#8216; token, but after
 parsing the subexpression, it is possible that there is no &#8216;)&#8217; waiting.
 For example, if the user types in &#8220;(4 x&#8221; instead of &#8220;(4)&#8221;, the parser
 should emit an error. Because errors can occur, the parser needs a way
 to indicate that they happened. In our parser, we use the camlp4
-shortcut syntax <tt class="docutils literal"><span class="pre">token</span> <span class="pre">??</span> <span class="pre">&quot;parse</span> <span class="pre">error&quot;</span></tt>, where if the token before
-the <tt class="docutils literal"><span class="pre">??</span></tt> does not match, then <tt class="docutils literal"><span class="pre">Stream.Error</span> <span class="pre">&quot;parse</span> <span class="pre">error&quot;</span></tt> will be
+shortcut syntax <code class="docutils literal"><span class="pre">token</span> <span class="pre">??</span> <span class="pre">&quot;parse</span> <span class="pre">error&quot;</span></code>, where if the token before
+the <code class="docutils literal"><span class="pre">??</span></code> does not match, then <code class="docutils literal"><span class="pre">Stream.Error</span> <span class="pre">&quot;parse</span> <span class="pre">error&quot;</span></code> will be
 raised.</p>
 <p>2) Another interesting aspect of this function is that it uses recursion
-by calling <tt class="docutils literal"><span class="pre">Parser.parse_primary</span></tt> (we will soon see that
-<tt class="docutils literal"><span class="pre">Parser.parse_primary</span></tt> can call <tt class="docutils literal"><span class="pre">Parser.parse_primary</span></tt>). This is
+by calling <code class="docutils literal"><span class="pre">Parser.parse_primary</span></code> (we will soon see that
+<code class="docutils literal"><span class="pre">Parser.parse_primary</span></code> can call <code class="docutils literal"><span class="pre">Parser.parse_primary</span></code>). This is
 powerful because it allows us to handle recursive grammars, and keeps
 each production very simple. Note that parentheses do not cause
 construction of AST nodes themselves. While we could do it this way, the
@@ -262,12 +262,12 @@ function calls:</p>
 </pre></div>
 </div>
 <p>This routine follows the same style as the other routines. (It expects
-to be called if the current token is a <tt class="docutils literal"><span class="pre">Token.Ident</span></tt> token). It also
+to be called if the current token is a <code class="docutils literal"><span class="pre">Token.Ident</span></code> token). It also
 has recursion and error handling. One interesting aspect of this is that
 it uses <em>look-ahead</em> to determine if the current identifier is a stand
 alone variable reference or if it is a function call expression. It
 handles this by checking to see if the token after the identifier is a
-&#8216;(&#8216; token, constructing either a <tt class="docutils literal"><span class="pre">Ast.Variable</span></tt> or <tt class="docutils literal"><span class="pre">Ast.Call</span></tt> node
+&#8216;(&#8216; token, constructing either a <code class="docutils literal"><span class="pre">Ast.Variable</span></code> or <code class="docutils literal"><span class="pre">Ast.Call</span></code> node
 as appropriate.</p>
 <p>We finish up by raising an exception if we received a token we didn&#8217;t
 expect:</p>
@@ -310,12 +310,12 @@ recursion. To start with, we need a table of precedences:</p>
 </div>
 <p>For the basic form of Kaleidoscope, we will only support 4 binary
 operators (this can obviously be extended by you, our brave and intrepid
-reader). The <tt class="docutils literal"><span class="pre">Parser.precedence</span></tt> function returns the precedence for
+reader). The <code class="docutils literal"><span class="pre">Parser.precedence</span></code> function returns the precedence for
 the current token, or -1 if the token is not a binary operator. Having a
-<tt class="docutils literal"><span class="pre">Hashtbl.t</span></tt> makes it easy to add new operators and makes it clear that
+<code class="docutils literal"><span class="pre">Hashtbl.t</span></code> makes it easy to add new operators and makes it clear that
 the algorithm doesn&#8217;t depend on the specific operators involved, but it
-would be easy enough to eliminate the <tt class="docutils literal"><span class="pre">Hashtbl.t</span></tt> and do the
-comparisons in the <tt class="docutils literal"><span class="pre">Parser.precedence</span></tt> function. (Or just use a
+would be easy enough to eliminate the <code class="docutils literal"><span class="pre">Hashtbl.t</span></code> and do the
+comparisons in the <code class="docutils literal"><span class="pre">Parser.precedence</span></code> function. (Or just use a
 fixed-size array).</p>
 <p>With the helper above defined, we can now start parsing binary
 expressions. The basic idea of operator precedence parsing is to break
@@ -335,19 +335,19 @@ a sequence of [binop,primaryexpr] pairs:</p>
   <span class="o">|</span> <span class="o">[&lt;</span> <span class="n">lhs</span><span class="o">=</span><span class="n">parse_primary</span><span class="o">;</span> <span class="n">stream</span> <span class="o">&gt;]</span> <span class="o">-&gt;</span> <span class="n">parse_bin_rhs</span> <span class="mi">0</span> <span class="n">lhs</span> <span class="n">stream</span>
 </pre></div>
 </div>
-<p><tt class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></tt> is the function that parses the sequence of
+<p><code class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></code> is the function that parses the sequence of
 pairs for us. It takes a precedence and a pointer to an expression for
 the part that has been parsed so far. Note that &#8220;x&#8221; is a perfectly valid
 expression: As such, &#8220;binoprhs&#8221; is allowed to be empty, in which case it
 returns the expression that is passed into it. In our example above, the
-code passes the expression for &#8220;a&#8221; into <tt class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></tt> and the
+code passes the expression for &#8220;a&#8221; into <code class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></code> and the
 current token is &#8220;+&#8221;.</p>
-<p>The precedence value passed into <tt class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></tt> indicates the
+<p>The precedence value passed into <code class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></code> indicates the
 <em>minimal operator precedence</em> that the function is allowed to eat. For
 example, if the current pair stream is [+, x] and
-<tt class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></tt> is passed in a precedence of 40, it will not
+<code class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></code> is passed in a precedence of 40, it will not
 consume any tokens (because the precedence of &#8216;+&#8217; is only 20). With this
-in mind, <tt class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></tt> starts with:</p>
+in mind, <code class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></code> starts with:</p>
 <div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* binoprhs</span>
 <span class="c"> *   ::= (&#39;+&#39; primary)* *)</span>
 <span class="ow">and</span> <span class="n">parse_bin_rhs</span> <span class="n">expr_prec</span> <span class="n">lhs</span> <span class="n">stream</span> <span class="o">=</span>
@@ -441,7 +441,7 @@ above two blocks duplicated for context):</p>
 primary has higher precedence than the binop we are currently parsing.
 As such, we know that any sequence of pairs whose operators are all
 higher precedence than &#8220;+&#8221; should be parsed together and returned as
-&#8220;RHS&#8221;. To do this, we recursively invoke the <tt class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></tt>
+&#8220;RHS&#8221;. To do this, we recursively invoke the <code class="docutils literal"><span class="pre">Parser.parse_bin_rhs</span></code>
 function specifying &#8220;token_prec+1&#8221; as the minimum precedence required
 for it to continue. In our example above, this will cause it to return
 the AST node for &#8220;(c+d)*e*f&#8221; as RHS, which is then set as the RHS of
@@ -909,7 +909,7 @@ ocamlbuild toy.byte
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -924,13 +924,13 @@ ocamlbuild toy.byte
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

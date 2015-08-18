@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="the-llvm-gold-plugin">
 <h1>The LLVM gold plugin<a class="headerlink" href="#the-llvm-gold-plugin" title="Permalink to this headline">¶</a></h1>
@@ -72,15 +72,15 @@ the system linker. LTO support on Linux systems requires that you use the
 <a class="reference external" href="http://sourceware.org/binutils">gold linker</a> which supports LTO via plugins. This is the same mechanism
 used by the <a class="reference external" href="http://gcc.gnu.org/wiki/LinkTimeOptimization">GCC LTO</a> project.</p>
 <p>The LLVM gold plugin implements the gold plugin interface on top of
-<a class="reference internal" href="LinkTimeOptimization.html#liblto"><em>libLTO</em></a>.  The same plugin can also be used by other tools such as
-<tt class="docutils literal"><span class="pre">ar</span></tt> and <tt class="docutils literal"><span class="pre">nm</span></tt>.</p>
+<a class="reference internal" href="LinkTimeOptimization.html#liblto"><span>libLTO</span></a>.  The same plugin can also be used by other tools such as
+<code class="docutils literal"><span class="pre">ar</span></code> and <code class="docutils literal"><span class="pre">nm</span></code>.</p>
 </div>
 <div class="section" id="how-to-build-it">
 <span id="lto-how-to-build"></span><h2>How to build it<a class="headerlink" href="#how-to-build-it" title="Permalink to this headline">¶</a></h2>
 <p>You need to have gold with plugin support and build the LLVMgold plugin.
-Check whether you have gold running <tt class="docutils literal"><span class="pre">/usr/bin/ld</span> <span class="pre">-v</span></tt>. It will report &#8220;GNU
+Check whether you have gold running <code class="docutils literal"><span class="pre">/usr/bin/ld</span> <span class="pre">-v</span></code>. It will report &#8220;GNU
 gold&#8221; or else &#8220;GNU ld&#8221; if not. If you have gold, check for plugin support
-by running <tt class="docutils literal"><span class="pre">/usr/bin/ld</span> <span class="pre">-plugin</span></tt>. If it complains &#8220;missing argument&#8221; then
+by running <code class="docutils literal"><span class="pre">/usr/bin/ld</span> <span class="pre">-plugin</span></code>. If it complains &#8220;missing argument&#8221; then
 you have plugin support. If not, such as an &#8220;unknown option&#8221; error then you
 will either need to build gold or install a version with plugin support.</p>
 <ul>
@@ -92,36 +92,36 @@ will either need to build gold or install a version with plugin support.</p>
 <span class="nv">$ </span>make all-gold
 </pre></div>
 </div>
-<p>That should leave you with <tt class="docutils literal"><span class="pre">build/gold/ld-new</span></tt> which supports
-the <tt class="docutils literal"><span class="pre">-plugin</span></tt> option. Running <tt class="docutils literal"><span class="pre">make</span></tt> will additionally build
-<tt class="docutils literal"><span class="pre">build/binutils/ar</span></tt> and <tt class="docutils literal"><span class="pre">nm-new</span></tt> binaries supporting plugins.</p>
+<p>That should leave you with <code class="docutils literal"><span class="pre">build/gold/ld-new</span></code> which supports
+the <code class="docutils literal"><span class="pre">-plugin</span></code> option. Running <code class="docutils literal"><span class="pre">make</span></code> will additionally build
+<code class="docutils literal"><span class="pre">build/binutils/ar</span></code> and <code class="docutils literal"><span class="pre">nm-new</span></code> binaries supporting plugins.</p>
 </li>
 <li><p class="first">Build the LLVMgold plugin.  If building with autotools, run configure with
-<tt class="docutils literal"><span class="pre">--with-binutils-include=/path/to/binutils/include</span></tt> and run <tt class="docutils literal"><span class="pre">make</span></tt>.
+<code class="docutils literal"><span class="pre">--with-binutils-include=/path/to/binutils/include</span></code> and run <code class="docutils literal"><span class="pre">make</span></code>.
 If building with CMake, run cmake with
-<tt class="docutils literal"><span class="pre">-DLLVM_BINUTILS_INCDIR=/path/to/binutils/include</span></tt>.  The correct include
-path will contain the file <tt class="docutils literal"><span class="pre">plugin-api.h</span></tt>.</p>
+<code class="docutils literal"><span class="pre">-DLLVM_BINUTILS_INCDIR=/path/to/binutils/include</span></code>.  The correct include
+path will contain the file <code class="docutils literal"><span class="pre">plugin-api.h</span></code>.</p>
 </li>
 </ul>
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>The linker takes a <tt class="docutils literal"><span class="pre">-plugin</span></tt> option that points to the path of
-the plugin <tt class="docutils literal"><span class="pre">.so</span></tt> file. To find out what link command <tt class="docutils literal"><span class="pre">gcc</span></tt>
-would run in a given situation, run <tt class="docutils literal"><span class="pre">gcc</span> <span class="pre">-v</span> <span class="pre">[...]</span></tt> and
-look for the line where it runs <tt class="docutils literal"><span class="pre">collect2</span></tt>. Replace that with
-<tt class="docutils literal"><span class="pre">ld-new</span> <span class="pre">-plugin</span> <span class="pre">/path/to/LLVMgold.so</span></tt> to test it out. Once you&#8217;re
-ready to switch to using gold, backup your existing <tt class="docutils literal"><span class="pre">/usr/bin/ld</span></tt>
-then replace it with <tt class="docutils literal"><span class="pre">ld-new</span></tt>.</p>
-<p>You should produce bitcode files from <tt class="docutils literal"><span class="pre">clang</span></tt> with the option
-<tt class="docutils literal"><span class="pre">-flto</span></tt>. This flag will also cause <tt class="docutils literal"><span class="pre">clang</span></tt> to look for the gold plugin in
-the <tt class="docutils literal"><span class="pre">lib</span></tt> directory under its prefix and pass the <tt class="docutils literal"><span class="pre">-plugin</span></tt> option to
-<tt class="docutils literal"><span class="pre">ld</span></tt>. It will not look for an alternate linker, which is why you need
+<p>The linker takes a <code class="docutils literal"><span class="pre">-plugin</span></code> option that points to the path of
+the plugin <code class="docutils literal"><span class="pre">.so</span></code> file. To find out what link command <code class="docutils literal"><span class="pre">gcc</span></code>
+would run in a given situation, run <code class="docutils literal"><span class="pre">gcc</span> <span class="pre">-v</span> <span class="pre">[...]</span></code> and
+look for the line where it runs <code class="docutils literal"><span class="pre">collect2</span></code>. Replace that with
+<code class="docutils literal"><span class="pre">ld-new</span> <span class="pre">-plugin</span> <span class="pre">/path/to/LLVMgold.so</span></code> to test it out. Once you&#8217;re
+ready to switch to using gold, backup your existing <code class="docutils literal"><span class="pre">/usr/bin/ld</span></code>
+then replace it with <code class="docutils literal"><span class="pre">ld-new</span></code>.</p>
+<p>You should produce bitcode files from <code class="docutils literal"><span class="pre">clang</span></code> with the option
+<code class="docutils literal"><span class="pre">-flto</span></code>. This flag will also cause <code class="docutils literal"><span class="pre">clang</span></code> to look for the gold plugin in
+the <code class="docutils literal"><span class="pre">lib</span></code> directory under its prefix and pass the <code class="docutils literal"><span class="pre">-plugin</span></code> option to
+<code class="docutils literal"><span class="pre">ld</span></code>. It will not look for an alternate linker, which is why you need
 gold to be the installed system linker in your path.</p>
-<p><tt class="docutils literal"><span class="pre">ar</span></tt> and <tt class="docutils literal"><span class="pre">nm</span></tt> also accept the <tt class="docutils literal"><span class="pre">-plugin</span></tt> option and it&#8217;s possible to
-to install <tt class="docutils literal"><span class="pre">LLVMgold.so</span></tt> to <tt class="docutils literal"><span class="pre">/usr/lib/bfd-plugins</span></tt> for a seamless setup.
-If you built your own gold, be sure to install the <tt class="docutils literal"><span class="pre">ar</span></tt> and <tt class="docutils literal"><span class="pre">nm-new</span></tt> you
-built to <tt class="docutils literal"><span class="pre">/usr/bin</span></tt>.</p>
+<p><code class="docutils literal"><span class="pre">ar</span></code> and <code class="docutils literal"><span class="pre">nm</span></code> also accept the <code class="docutils literal"><span class="pre">-plugin</span></code> option and it&#8217;s possible to
+to install <code class="docutils literal"><span class="pre">LLVMgold.so</span></code> to <code class="docutils literal"><span class="pre">/usr/lib/bfd-plugins</span></code> for a seamless setup.
+If you built your own gold, be sure to install the <code class="docutils literal"><span class="pre">ar</span></code> and <code class="docutils literal"><span class="pre">nm-new</span></code> you
+built to <code class="docutils literal"><span class="pre">/usr/bin</span></code>.</p>
 <div class="section" id="example-of-link-time-optimization">
 <h3>Example of link time optimization<a class="headerlink" href="#example-of-link-time-optimization" title="Permalink to this headline">¶</a></h3>
 <p>The following example shows a worked example of the gold plugin mixing LLVM
@@ -166,22 +166,22 @@ bitcode and native code.</p>
 </pre></div>
 </div>
 <p>Gold informs the plugin that foo3 is never referenced outside the IR,
-leading LLVM to delete that function. However, unlike in the <a class="reference internal" href="LinkTimeOptimization.html#liblto-example"><em>libLTO
-example</em></a> gold does not currently eliminate foo4.</p>
+leading LLVM to delete that function. However, unlike in the <a class="reference internal" href="LinkTimeOptimization.html#liblto-example"><span>libLTO
+example</span></a> gold does not currently eliminate foo4.</p>
 </div>
 </div>
 <div class="section" id="quickstart-for-using-lto-with-autotooled-projects">
 <h2>Quickstart for using LTO with autotooled projects<a class="headerlink" href="#quickstart-for-using-lto-with-autotooled-projects" title="Permalink to this headline">¶</a></h2>
-<p>Once your system <tt class="docutils literal"><span class="pre">ld</span></tt>, <tt class="docutils literal"><span class="pre">ar</span></tt>, and <tt class="docutils literal"><span class="pre">nm</span></tt> all support LLVM bitcode,
+<p>Once your system <code class="docutils literal"><span class="pre">ld</span></code>, <code class="docutils literal"><span class="pre">ar</span></code>, and <code class="docutils literal"><span class="pre">nm</span></code> all support LLVM bitcode,
 everything is in place for an easy to use LTO build of autotooled projects:</p>
 <ul>
-<li><p class="first">Follow the instructions <a class="reference internal" href="#lto-how-to-build"><em>on how to build LLVMgold.so</em></a>.</p>
+<li><p class="first">Follow the instructions <a class="reference internal" href="#lto-how-to-build"><span>on how to build LLVMgold.so</span></a>.</p>
 </li>
-<li><p class="first">Install the newly built binutils to <tt class="docutils literal"><span class="pre">$PREFIX</span></tt></p>
+<li><p class="first">Install the newly built binutils to <code class="docutils literal"><span class="pre">$PREFIX</span></code></p>
 </li>
-<li><p class="first">Copy <tt class="docutils literal"><span class="pre">Release/lib/LLVMgold.so</span></tt> to <tt class="docutils literal"><span class="pre">$PREFIX/lib/bfd-plugins/</span></tt></p>
+<li><p class="first">Copy <code class="docutils literal"><span class="pre">Release/lib/LLVMgold.so</span></code> to <code class="docutils literal"><span class="pre">$PREFIX/lib/bfd-plugins/</span></code></p>
 </li>
-<li><p class="first">Set environment variables (<tt class="docutils literal"><span class="pre">$PREFIX</span></tt> is where you installed clang and
+<li><p class="first">Set environment variables (<code class="docutils literal"><span class="pre">$PREFIX</span></code> is where you installed clang and
 binutils):</p>
 <div class="highlight-bash"><div class="highlight"><pre><span class="nb">export </span><span class="nv">CC</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PREFIX</span><span class="s2">/bin/clang -flto&quot;</span>
 <span class="nb">export </span><span class="nv">CXX</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PREFIX</span><span class="s2">/bin/clang++ -flto&quot;</span>
@@ -206,12 +206,12 @@ binutils):</p>
 </li>
 </ul>
 <p>The environment variable settings may work for non-autotooled projects too,
-but you may need to set the <tt class="docutils literal"><span class="pre">LD</span></tt> environment variable as well.</p>
+but you may need to set the <code class="docutils literal"><span class="pre">LD</span></code> environment variable as well.</p>
 </div>
 <div class="section" id="licensing">
 <h2>Licensing<a class="headerlink" href="#licensing" title="Permalink to this headline">¶</a></h2>
 <p>Gold is licensed under the GPLv3. LLVMgold uses the interface file
-<tt class="docutils literal"><span class="pre">plugin-api.h</span></tt> from gold which means that the resulting <tt class="docutils literal"><span class="pre">LLVMgold.so</span></tt>
+<code class="docutils literal"><span class="pre">plugin-api.h</span></code> from gold which means that the resulting <code class="docutils literal"><span class="pre">LLVMgold.so</span></code>
 binary is also GPLv3. This can still be used to link non-GPLv3 programs
 just as much as gold could without the plugin.</p>
 </div>
@@ -222,7 +222,7 @@ just as much as gold could without the plugin.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -239,10 +239,10 @@ just as much as gold could without the plugin.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

@@ -33,14 +33,14 @@
 </style>
 
   </head>
-  <body>
+  <body role="document">
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
          alt="LLVM Logo" width="250" height="88"/></a>
 </div>
 
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -61,7 +61,7 @@
 
     <div class="document">
       <div class="documentwrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="llvm-extensions">
 <h1>LLVM Extensions<a class="headerlink" href="#llvm-extensions" title="Permalink to this headline">¶</a></h1>
@@ -75,8 +75,8 @@
 <li><a class="reference internal" href="#machine-specific-assembly-syntax" id="id4">Machine-specific Assembly Syntax</a><ul>
 <li><a class="reference internal" href="#x86-coff-dependent" id="id5">X86/COFF-Dependent</a><ul>
 <li><a class="reference internal" href="#relocations" id="id6">Relocations</a></li>
-<li><a class="reference internal" href="#linkonce-directive" id="id7"><tt class="docutils literal"><span class="pre">.linkonce</span></tt> Directive</a></li>
-<li><a class="reference internal" href="#section-directive" id="id8"><tt class="docutils literal"><span class="pre">.section</span></tt> Directive</a></li>
+<li><a class="reference internal" href="#linkonce-directive" id="id7"><code class="docutils literal"><span class="pre">.linkonce</span></code> Directive</a></li>
+<li><a class="reference internal" href="#section-directive" id="id8"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a></li>
 </ul>
 </li>
 </ul>
@@ -118,8 +118,8 @@ hexadecimal format instead of decimal if desired.</p>
 <h4><a class="toc-backref" href="#id6">Relocations</a><a class="headerlink" href="#relocations" title="Permalink to this headline">¶</a></h4>
 <p>The following additional relocation types are supported:</p>
 <p><strong>&#64;IMGREL</strong> (AT&amp;T syntax only) generates an image-relative relocation that
-corresponds to the COFF relocation types <tt class="docutils literal"><span class="pre">IMAGE_REL_I386_DIR32NB</span></tt> (32-bit) or
-<tt class="docutils literal"><span class="pre">IMAGE_REL_AMD64_ADDR32NB</span></tt> (64-bit).</p>
+corresponds to the COFF relocation types <code class="docutils literal"><span class="pre">IMAGE_REL_I386_DIR32NB</span></code> (32-bit) or
+<code class="docutils literal"><span class="pre">IMAGE_REL_AMD64_ADDR32NB</span></code> (64-bit).</p>
 <div class="highlight-gas"><div class="highlight"><pre>.text
 fun:
   mov foo@IMGREL(%ebx, %ecx, 4), %eax
@@ -131,10 +131,10 @@ fun:
 </pre></div>
 </div>
 <p><strong>.secrel32</strong> generates a relocation that corresponds to the COFF relocation
-types <tt class="docutils literal"><span class="pre">IMAGE_REL_I386_SECREL</span></tt> (32-bit) or <tt class="docutils literal"><span class="pre">IMAGE_REL_AMD64_SECREL</span></tt> (64-bit).</p>
+types <code class="docutils literal"><span class="pre">IMAGE_REL_I386_SECREL</span></code> (32-bit) or <code class="docutils literal"><span class="pre">IMAGE_REL_AMD64_SECREL</span></code> (64-bit).</p>
 <p><strong>.secidx</strong> relocation generates an index of the section that contains
 the target.  It corresponds to the COFF relocation types
-<tt class="docutils literal"><span class="pre">IMAGE_REL_I386_SECTION</span></tt> (32-bit) or <tt class="docutils literal"><span class="pre">IMAGE_REL_AMD64_SECTION</span></tt> (64-bit).</p>
+<code class="docutils literal"><span class="pre">IMAGE_REL_I386_SECTION</span></code> (32-bit) or <code class="docutils literal"><span class="pre">IMAGE_REL_AMD64_SECTION</span></code> (64-bit).</p>
 <div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span> <span class="no">.debug$S</span><span class="p">,</span><span class="s">&quot;rn&quot;</span>
   <span class="na">.long</span> <span class="mi">4</span>
   <span class="na">.long</span> <span class="mi">242</span>
@@ -146,26 +146,26 @@ the target.  It corresponds to the COFF relocation types
 </div>
 </div>
 <div class="section" id="linkonce-directive">
-<h4><a class="toc-backref" href="#id7"><tt class="docutils literal"><span class="pre">.linkonce</span></tt> Directive</a><a class="headerlink" href="#linkonce-directive" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id7"><code class="docutils literal"><span class="pre">.linkonce</span></code> Directive</a><a class="headerlink" href="#linkonce-directive" title="Permalink to this headline">¶</a></h4>
 <p>Syntax:</p>
 <blockquote>
-<div><tt class="docutils literal"><span class="pre">.linkonce</span> <span class="pre">[</span> <span class="pre">comdat</span> <span class="pre">type</span> <span class="pre">]</span></tt></div></blockquote>
+<div><code class="docutils literal"><span class="pre">.linkonce</span> <span class="pre">[</span> <span class="pre">comdat</span> <span class="pre">type</span> <span class="pre">]</span></code></div></blockquote>
 <p>Supported COMDAT types:</p>
 <dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">discard</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">discard</span></code></dt>
 <dd>Discards duplicate sections with the same COMDAT symbol. This is the default
 if no type is specified.</dd>
-<dt><tt class="docutils literal"><span class="pre">one_only</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">one_only</span></code></dt>
 <dd>If the symbol is defined multiple times, the linker issues an error.</dd>
-<dt><tt class="docutils literal"><span class="pre">same_size</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">same_size</span></code></dt>
 <dd>Duplicates are discarded, but the linker issues an error if any have
 different sizes.</dd>
-<dt><tt class="docutils literal"><span class="pre">same_contents</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">same_contents</span></code></dt>
 <dd>Duplicates are discarded, but the linker issues an error if any duplicates
 do not have exactly the same content.</dd>
-<dt><tt class="docutils literal"><span class="pre">largest</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">largest</span></code></dt>
 <dd>Links the largest section from among the duplicates.</dd>
-<dt><tt class="docutils literal"><span class="pre">newest</span></tt></dt>
+<dt><code class="docutils literal"><span class="pre">newest</span></code></dt>
 <dd>Links the newest section from among the duplicates.</dd>
 </dl>
 <div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span> <span class="no">.text$foo</span>
@@ -175,9 +175,9 @@ do not have exactly the same content.</dd>
 </div>
 </div>
 <div class="section" id="section-directive">
-<h4><a class="toc-backref" href="#id8"><tt class="docutils literal"><span class="pre">.section</span></tt> Directive</a><a class="headerlink" href="#section-directive" title="Permalink to this headline">¶</a></h4>
-<p>MC supports passing the information in <tt class="docutils literal"><span class="pre">.linkonce</span></tt> at the end of
-<tt class="docutils literal"><span class="pre">.section</span></tt>. For example,  these two codes are equivalent</p>
+<h4><a class="toc-backref" href="#id8"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a><a class="headerlink" href="#section-directive" title="Permalink to this headline">¶</a></h4>
+<p>MC supports passing the information in <code class="docutils literal"><span class="pre">.linkonce</span></code> at the end of
+<code class="docutils literal"><span class="pre">.section</span></code>. For example,  these two codes are equivalent</p>
 <div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span> <span class="no">secName</span><span class="p">,</span> <span class="s">&quot;dr&quot;</span><span class="p">,</span> <span class="no">discard</span><span class="p">,</span> <span class="s">&quot;Symbol1&quot;</span>
 <span class="na">.globl</span> <span class="no">Symbol1</span>
 <span class="nl">Symbol1:</span>
@@ -205,8 +205,8 @@ different COMDATs:</p>
 <span class="na">.long</span> <span class="mi">1</span>
 </pre></div>
 </div>
-<p>In addition to the types allowed with <tt class="docutils literal"><span class="pre">.linkonce</span></tt>, <tt class="docutils literal"><span class="pre">.section</span></tt> also accepts
-<tt class="docutils literal"><span class="pre">associative</span></tt>. The meaning is that the section is linked  if a certain other
+<p>In addition to the types allowed with <code class="docutils literal"><span class="pre">.linkonce</span></code>, <code class="docutils literal"><span class="pre">.section</span></code> also accepts
+<code class="docutils literal"><span class="pre">associative</span></code>. The meaning is that the section is linked  if a certain other
 COMDAT section is linked. This other section is indicated by the comdat symbol
 in this directive. It can be any symbol defined in the associated section, but
 is usually the associated section&#8217;s comdat.</p>
@@ -217,8 +217,8 @@ is usually the associated section&#8217;s comdat.</p>
 <li>It cannot be another associative COMDAT section.</li>
 </ol>
 </div></blockquote>
-<p>In the following example the symobl <tt class="docutils literal"><span class="pre">sym</span></tt> is the comdat symbol of <tt class="docutils literal"><span class="pre">.foo</span></tt>
-and <tt class="docutils literal"><span class="pre">.bar</span></tt> is associated to <tt class="docutils literal"><span class="pre">.foo</span></tt>.</p>
+<p>In the following example the symobl <code class="docutils literal"><span class="pre">sym</span></code> is the comdat symbol of <code class="docutils literal"><span class="pre">.foo</span></code>
+and <code class="docutils literal"><span class="pre">.bar</span></code> is associated to <code class="docutils literal"><span class="pre">.foo</span></code>.</p>
 <div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span>        <span class="no">.foo</span><span class="p">,</span><span class="s">&quot;bw&quot;</span><span class="p">,</span><span class="no">discard</span><span class="p">,</span> <span class="s">&quot;sym&quot;</span>
 <span class="na">.section</span>        <span class="no">.bar</span><span class="p">,</span><span class="s">&quot;rd&quot;</span><span class="p">,</span><span class="no">associative</span><span class="p">,</span> <span class="s">&quot;sym&quot;</span>
 </pre></div>
@@ -240,7 +240,7 @@ in the following fashion:</p>
 </pre></div>
 </div>
 <p>However, this has the limitation of 32 MiB (±16MiB).  In order to accommodate
-larger binaries, LLVM supports the use of <tt class="docutils literal"><span class="pre">-mcode-model=large</span></tt> to allow a 4GiB
+larger binaries, LLVM supports the use of <code class="docutils literal"><span class="pre">-mcode-model=large</span></code> to allow a 4GiB
 range via a slight deviation.  It will generate an indirect jump as follows:</p>
 <div class="highlight-gas"><div class="highlight"><pre><span class="nf">movw</span> <span class="no">r4</span><span class="p">,</span> <span class="c">#constant</span>
 <span class="nf">movw</span> <span class="no">r12</span><span class="p">,</span> <span class="p">:</span><span class="no">lower16</span><span class="p">:</span><span class="no">__chkstk</span>
@@ -256,7 +256,7 @@ range via a slight deviation.  It will generate an indirect jump as follows:</p>
 emission of Variable Length Arrays (VLAs).</p>
 <p>The Windows ARM Itanium ABI extends the base ABI by adding support for emitting
 a dynamic stack allocation.  When emitting a variable stack allocation, a call
-to <tt class="docutils literal"><span class="pre">__chkstk</span></tt> is emitted unconditionally to ensure that guard pages are setup
+to <code class="docutils literal"><span class="pre">__chkstk</span></code> is emitted unconditionally to ensure that guard pages are setup
 properly.  The emission of this stack probe emission is handled similar to the
 standard stack probe emission.</p>
 <p>The MSVC environment does not emit code for VLAs currently.</p>
@@ -270,7 +270,7 @@ standard stack probe emission.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -287,10 +287,10 @@ standard stack probe emission.</p>
  
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-03-05.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on 2015-08-18.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>
