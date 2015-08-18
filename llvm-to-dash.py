@@ -98,7 +98,7 @@ def add_infoplist():
          "    <string>{3}</string>" \
          "</dict>" \
          "</plist>".format(name, name, name, 'index.html')
-  open(docset_name + '/Contents/info.plist', 'wb').write(info)
+  open(docset_name + '/Contents/Info.plist', 'wb').write(info)
 
 # create and open SQLite db
 db = sqlite3.connect(docset_name + '/Contents/Resources/docSet.dsidx')
