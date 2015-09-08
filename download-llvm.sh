@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-LLVM_SRC="llvm-3.6.2.src"
-LLVM_SRC_TARBALL="llvm-3.6.2.src.tar.xz"
-LLVM_SRC_URL="http://llvm.org/releases/3.6.2/${LLVM_SRC_TARBALL}"
+LLVM_SRC="llvm-3.7.0.src"
+LLVM_SRC_TARBALL="llvm-3.7.0.src.tar.xz"
+LLVM_SRC_URL="http://llvm.org/releases/3.7.0/${LLVM_SRC_TARBALL}"
 set -e
 set -x
 
