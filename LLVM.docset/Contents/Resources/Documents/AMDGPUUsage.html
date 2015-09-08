@@ -1,0 +1,252 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>User Guide for AMDGPU Back-end &mdash; LLVM 3.7 documentation</title>
+    
+    <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.7',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="next" title="Stack maps and patch points in LLVM" href="StackMaps.html" />
+    <link rel="prev" title="User Guide for NVPTX Back-end" href="NVPTXUsage.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head>
+  <body role="document">
+<div class="logo">
+  <a href="index.html">
+    <img src="_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="StackMaps.html" title="Stack maps and patch points in LLVM"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="NVPTXUsage.html" title="User Guide for NVPTX Back-end"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="user-guide-for-amdgpu-back-end">
+<h1>User Guide for AMDGPU Back-end<a class="headerlink" href="#user-guide-for-amdgpu-back-end" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The AMDGPU back-end provides ISA code generation for AMD GPUs, starting with
+the R600 family up until the current Volcanic Islands (GCN Gen 3).</p>
+</div>
+<div class="section" id="assembler">
+<h2>Assembler<a class="headerlink" href="#assembler" title="Permalink to this headline">¶</a></h2>
+<p>The assembler is currently considered experimental.</p>
+<p>For syntax examples look in test/MC/AMDGPU.</p>
+<p>Below some of the currently supported features (modulo bugs).  These
+all apply to the Southern Islands ISA, Sea Islands and Volcanic Islands
+are also supported but may be missing some instructions and have more bugs:</p>
+<div class="section" id="ds-instructions">
+<h3>DS Instructions<a class="headerlink" href="#ds-instructions" title="Permalink to this headline">¶</a></h3>
+<p>All DS instructions are supported.</p>
+</div>
+<div class="section" id="flat-instructions">
+<h3>FLAT Instructions<a class="headerlink" href="#flat-instructions" title="Permalink to this headline">¶</a></h3>
+<p>These instructions are only present in the Sea Islands and Volcanic Islands
+instruction set.  All FLAT instructions are supported for these architectures</p>
+</div>
+<div class="section" id="mubuf-instructions">
+<h3>MUBUF Instructions<a class="headerlink" href="#mubuf-instructions" title="Permalink to this headline">¶</a></h3>
+<p>All non-atomic MUBUF instructions are supported.</p>
+</div>
+<div class="section" id="smrd-instructions">
+<h3>SMRD Instructions<a class="headerlink" href="#smrd-instructions" title="Permalink to this headline">¶</a></h3>
+<p>Only the s_load_dword* SMRD instructions are supported.</p>
+</div>
+<div class="section" id="sop1-instructions">
+<h3>SOP1 Instructions<a class="headerlink" href="#sop1-instructions" title="Permalink to this headline">¶</a></h3>
+<p>All SOP1 instructions are supported.</p>
+</div>
+<div class="section" id="sop2-instructions">
+<h3>SOP2 Instructions<a class="headerlink" href="#sop2-instructions" title="Permalink to this headline">¶</a></h3>
+<p>All SOP2 instructions are supported.</p>
+</div>
+<div class="section" id="sopc-instructions">
+<h3>SOPC Instructions<a class="headerlink" href="#sopc-instructions" title="Permalink to this headline">¶</a></h3>
+<p>All SOPC instructions are supported.</p>
+</div>
+<div class="section" id="sopp-instructions">
+<h3>SOPP Instructions<a class="headerlink" href="#sopp-instructions" title="Permalink to this headline">¶</a></h3>
+<p>Unless otherwise mentioned, all SOPP instructions that have one or more
+operands accept integer operands only.  No verification is performed
+on the operands, so it is up to the programmer to be familiar with the
+range or acceptable values.</p>
+<div class="section" id="s-waitcnt">
+<h4>s_waitcnt<a class="headerlink" href="#s-waitcnt" title="Permalink to this headline">¶</a></h4>
+<p>s_waitcnt accepts named arguments to specify which memory counter(s) to
+wait for.</p>
+<div class="highlight-nasm"><div class="highlight"><pre>// Wait for all counters to be 0
+s_waitcnt 0
+
+// Equivalent to s_waitcnt 0.  Counter names can also be delimited by
+// &#39;&amp;&#39; or &#39;,&#39;.
+s_waitcnt vmcnt(0) expcnt(0) lgkcmt(0)
+
+// Wait for vmcnt counter to be 1.
+s_waitcnt vmcnt(1)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="vop1-vop2-vop3-vopc-instructions">
+<h3>VOP1, VOP2, VOP3, VOPC Instructions<a class="headerlink" href="#vop1-vop2-vop3-vopc-instructions" title="Permalink to this headline">¶</a></h3>
+<p>All 32-bit and 64-bit encodings should work.</p>
+<p>The assembler will automatically detect which encoding size to use for
+VOP1, VOP2, and VOPC instructions based on the operands.  If you want to force
+a specific encoding size, you can add an _e32 (for 32-bit encoding) or
+_e64 (for 64-bit encoding) suffix to the instruction.  Most, but not all
+instructions support an explicit suffix.  These are all valid assembly
+strings:</p>
+<div class="highlight-nasm"><div class="highlight"><pre><span class="nf">v_mul_i32_i24</span> <span class="nv">v1</span><span class="p">,</span> <span class="nv">v2</span><span class="p">,</span> <span class="nv">v3</span>
+<span class="nf">v_mul_i32_i24_e32</span> <span class="nv">v1</span><span class="p">,</span> <span class="nv">v2</span><span class="p">,</span> <span class="nv">v3</span>
+<span class="nf">v_mul_i32_i24_e64</span> <span class="nv">v1</span><span class="p">,</span> <span class="nv">v2</span><span class="p">,</span> <span class="nv">v3</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="assembler-directives">
+<h3>Assembler Directives<a class="headerlink" href="#assembler-directives" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="hsa-code-object-version-major-minor">
+<h4>.hsa_code_object_version major, minor<a class="headerlink" href="#hsa-code-object-version-major-minor" title="Permalink to this headline">¶</a></h4>
+<p><em>major</em> and <em>minor</em> are integers that specify the version of the HSA code
+object that will be generated by the assembler.  This value will be stored
+in an entry of the .note section.</p>
+</div>
+<div class="section" id="hsa-code-object-isa-major-minor-stepping-vendor-arch">
+<h4>.hsa_code_object_isa [major, minor, stepping, vendor, arch]<a class="headerlink" href="#hsa-code-object-isa-major-minor-stepping-vendor-arch" title="Permalink to this headline">¶</a></h4>
+<p><em>major</em>, <em>minor</em>, and <em>stepping</em> are all integers that describe the instruction
+set architecture (ISA) version of the assembly program.</p>
+<p><em>vendor</em> and <em>arch</em> are quoted strings.  <em>vendor</em> should always be equal to
+&#8220;AMD&#8221; and <em>arch</em> should always be equal to &#8220;AMDGPU&#8221;.</p>
+<p>If no arguments are specified, then the assembler will derive the ISA version,
+<em>vendor</em>, and <em>arch</em> from the value of the -mcpu option that is passed to the
+assembler.</p>
+<p>ISA version, <em>vendor</em>, and <em>arch</em> will all be stored in a single entry of the
+.note section.</p>
+</div>
+<div class="section" id="amd-kernel-code-t">
+<h4>.amd_kernel_code_t<a class="headerlink" href="#amd-kernel-code-t" title="Permalink to this headline">¶</a></h4>
+<p>This directive marks the beginning of a list of key / value pairs that are used
+to specify the amd_kernel_code_t object that will be emitted by the assembler.
+The list must be terminated by the <em>.end_amd_kernel_code_t</em> directive.  For
+any amd_kernel_code_t values that are unspecified a default value will be
+used.  The default value for all keys is 0, with the following exceptions:</p>
+<ul class="simple">
+<li><em>kernel_code_version_major</em> defaults to 1.</li>
+<li><em>machine_kind</em> defaults to 1.</li>
+<li><em>machine_version_major</em>, <em>machine_version_minor</em>, and
+<em>machine_version_stepping</em> are derived from the value of the -mcpu option
+that is passed to the assembler.</li>
+<li><em>kernel_code_entry_byte_offset</em> defaults to 256.</li>
+<li><em>wavefront_size</em> defaults to 6.</li>
+<li><em>kernarg_segment_alignment</em>, <em>group_segment_alignment</em>, and
+<em>private_segment_alignment</em> default to 4.  Note that alignments are specified
+as a power of two, so a value of <strong>n</strong> means an alignment of 2^ <strong>n</strong>.</li>
+</ul>
+<p>The <em>.amd_kernel_code_t</em> directive must be placed immediately after the
+function label and before any instructions.</p>
+<p>For a full list of amd_kernel_code_t keys, see the examples in
+test/CodeGen/AMDGPU/hsa.s.  For an explanation of the meanings of the different
+keys, see the comments in lib/Target/AMDGPU/AmdKernelCodeT.h</p>
+<p>Here is an example of a minimal amd_kernel_code_t specification:</p>
+<div class="highlight-nasm"><div class="highlight"><pre>.hsa_code_object_version 1,0
+.hsa_code_object_isa
+
+.text
+
+hello_world:
+
+   .amd_kernel_code_t
+      enable_sgpr_kernarg_segment_ptr = 1
+      is_ptr64 = 1
+      compute_pgm_rsrc1_vgprs = 0
+      compute_pgm_rsrc1_sgprs = 0
+      compute_pgm_rsrc2_user_sgpr = 2
+      kernarg_segment_byte_size = 8
+      wavefront_sgpr_count = 2
+      workitem_vgpr_count = 3
+  .end_amd_kernel_code_t
+
+  s_load_dwordx2 s[0:1], s[0:1] 0x0
+  v_mov_b32 v0, 3.14159
+  s_waitcnt lgkmcnt(0)
+  v_mov_b32 v1, s0
+  v_mov_b32 v2, s1
+  flat_store_dword v0, v[1:2]
+  s_endpgm
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="StackMaps.html" title="Stack maps and patch points in LLVM"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="NVPTXUsage.html" title="User Guide for NVPTX Back-end"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

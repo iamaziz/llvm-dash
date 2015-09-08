@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Overview &mdash; LLVM 3.6 documentation</title>
+    <title>Overview &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="#" />
+    <link rel="top" title="LLVM 3.7 documentation" href="#" />
     <link rel="next" title="LLVM Language Reference Manual" href="LangRef.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
@@ -112,6 +112,9 @@ build system</a>.</dd>
 <dt><a class="reference internal" href="GettingStartedVS.html"><em>Getting Started with the LLVM System using Microsoft Visual Studio</em></a></dt>
 <dd>An addendum to the main Getting Started guide for those using Visual Studio
 on Windows.</dd>
+<dt><a class="reference internal" href="BuildingLLVMWithAutotools.html"><em>Building LLVM With Autotools</em></a></dt>
+<dd>An addendum to the Getting Started guide with instructions for building LLVM
+with the Autotools build system.</dd>
 <dt><a class="reference internal" href="tutorial/index.html"><em>LLVM Tutorial: Table of Contents</em></a></dt>
 <dd>Tutorials about using LLVM. Includes a tutorial about making a custom
 language with LLVM.</dd>
@@ -143,6 +146,9 @@ to be read in source form.</dd>
 <dt><a class="reference internal" href="GetElementPtr.html"><em>The Often Misunderstood GEP Instruction</em></a></dt>
 <dd>Answers to some very frequent questions about LLVM&#8217;s most frequently
 misunderstood instruction.</dd>
+<dt><a class="reference internal" href="Frontend/PerformanceTips.html"><em>Performance Tips for Frontend Authors</em></a></dt>
+<dd>A collection of tips for frontend authors on how to generate IR
+which LLVM is able to effectively optimize.</dd>
 </dl>
 </div>
 <div class="section" id="programming-documentation">
@@ -181,6 +187,8 @@ class hierarchy.</dd>
 <dd></dd>
 <dt><a class="reference internal" href="CompilerWriterInfo.html"><em>Architecture &amp; Platform Information for Compiler Writers</em></a></dt>
 <dd>A list of helpful links for compiler writers.</dd>
+<dt><a class="reference internal" href="LibFuzzer.html"><em>LibFuzzer &#8211; a library for coverage-guided fuzz testing.</em></a></dt>
+<dd>A library for writing in-process guided fuzzers.</dd>
 </dl>
 </div>
 <div class="section" id="subsystem-documentation">
@@ -203,7 +211,7 @@ generator.</dd>
 <dt><a class="reference internal" href="AliasAnalysis.html"><em>LLVM Alias Analysis Infrastructure</em></a></dt>
 <dd>Information on how to write a new alias analysis implementation or how to
 use existing analyses.</dd>
-<dt><a class="reference internal" href="GarbageCollection.html"><em>Accurate Garbage Collection with LLVM</em></a></dt>
+<dt><a class="reference internal" href="GarbageCollection.html"><em>Garbage Collection with LLVM</em></a></dt>
 <dd>The interfaces source-language compilers should use for compiling GC&#8217;d
 programs.</dd>
 <dt><a class="reference internal" href="SourceLevelDebugging.html"><em>Source Level Debugging with LLVM</em></a></dt>
@@ -244,8 +252,8 @@ analysis pass.</dd>
 <dd>Answers some questions about the new Attributes infrastructure.</dd>
 <dt><a class="reference internal" href="NVPTXUsage.html"><em>User Guide for NVPTX Back-end</em></a></dt>
 <dd>This document describes using the NVPTX back-end to compile GPU kernels.</dd>
-<dt><a class="reference internal" href="R600Usage.html"><em>User Guide for R600 Back-end</em></a></dt>
-<dd>This document describes how to use the R600 back-end.</dd>
+<dt><a class="reference internal" href="AMDGPUUsage.html"><em>User Guide for AMDGPU Back-end</em></a></dt>
+<dd>This document describes how to use the AMDGPU back-end.</dd>
 <dt><a class="reference internal" href="StackMaps.html"><em>Stack maps and patch points in LLVM</em></a></dt>
 <dd>LLVM support for mapping instruction addresses to the location of
 values and allowing code to be patched.</dd>
@@ -259,6 +267,10 @@ somewhat nonintuitive. This document explains the implementation and rationale.<
 collection support.</dd>
 <dt><a class="reference internal" href="MergeFunctions.html"><em>MergeFunctions pass, how it works</em></a></dt>
 <dd>Describes functions merging optimization.</dd>
+<dt><a class="reference internal" href="InAlloca.html"><em>Design and Usage of the InAlloca Attribute</em></a></dt>
+<dd>Description of the <code class="docutils literal"><span class="pre">inalloca</span></code> argument attribute.</dd>
+<dt><a class="reference internal" href="FaultMaps.html"><em>FaultMaps and implicit checks</em></a></dt>
+<dd>LLVM support for folding control flow into faulting machine instructions.</dd>
 </dl>
 </div>
 <div class="section" id="development-process-documentation">
@@ -300,24 +312,24 @@ lists and IRC.</p>
 <p>If you can&#8217;t find what you need in these docs, try consulting the mailing
 lists.</p>
 <dl class="docutils">
-<dt><a class="reference external" href="http://lists.cs.uiuc.edu/mailman/listinfo/llvmdev">Developer&#8217;s List (llvmdev)</a></dt>
+<dt><a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">Developer&#8217;s List (llvm-dev)</a></dt>
 <dd>This list is for people who want to be included in technical discussions of
 LLVM. People post to this list when they have questions about writing code
 for or using the LLVM tools. It is relatively low volume.</dd>
-<dt><a class="reference external" href="http://lists.cs.uiuc.edu/pipermail/llvm-commits/">Commits Archive (llvm-commits)</a></dt>
+<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/">Commits Archive (llvm-commits)</a></dt>
 <dd>This list contains all commit messages that are made when LLVM developers
 commit code changes to the repository. It also serves as a forum for
 patch review (i.e. send patches here). It is useful for those who want to
 stay on the bleeding edge of LLVM development. This list is very high
 volume.</dd>
-<dt><a class="reference external" href="http://lists.cs.uiuc.edu/pipermail/llvmbugs/">Bugs &amp; Patches Archive (llvmbugs)</a></dt>
+<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-bugs/">Bugs &amp; Patches Archive (llvm-bugs)</a></dt>
 <dd>This list gets emailed every time a bug is opened and closed. It is
-higher volume than the LLVMdev list.</dd>
-<dt><a class="reference external" href="http://lists.cs.uiuc.edu/pipermail/llvm-testresults/">Test Results Archive (llvm-testresults)</a></dt>
+higher volume than the LLVM-dev list.</dd>
+<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-testresults/">Test Results Archive (llvm-testresults)</a></dt>
 <dd>A message is automatically sent to this list by every active nightly tester
 when it completes.  As such, this list gets email several times each day,
 making it a high volume list.</dd>
-<dt><a class="reference external" href="http://lists.cs.uiuc.edu/mailman/listinfo/llvm-announce">LLVM Announcements List (llvm-announce)</a></dt>
+<dt><a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-announce">LLVM Announcements List (llvm-announce)</a></dt>
 <dd>This is a low volume list that provides important announcements regarding
 LLVM.  It gets email about once a month.</dd>
 </dl>
@@ -369,8 +381,8 @@ near-trunk clang instead of gcc.</li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

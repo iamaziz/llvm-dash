@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The LLVM Lexicon &mdash; LLVM 3.6 documentation</title>
+    <title>The LLVM Lexicon &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
     <link rel="next" title="How To Add Your Build Configuration To LLVM Buildbot Infrastructure" href="HowToAddABuilder.html" />
     <link rel="prev" title="Frequently Asked Questions (FAQ)" href="FAQ.html" />
 <style type="text/css">
@@ -104,6 +104,13 @@ generation.  An example is the <a class="reference external" href="http://www.pr
 <div class="section" id="c">
 <h3>C<a class="headerlink" href="#c" title="Permalink to this headline">¶</a></h3>
 <dl class="docutils">
+<dt><strong>CFI</strong></dt>
+<dd>Call Frame Information. Used in DWARF debug info and in C++ unwind info
+to show how the function prolog lays out the stack frame.</dd>
+<dt><strong>CIE</strong></dt>
+<dd>Common Information Entry.  A kind of CFI used to reduce the size of FDEs.
+The compiler creates a CIE which contains the information common across all
+the FDEs.  Each FDE then points to its CIE.</dd>
 <dt><strong>CSE</strong></dt>
 <dd>Common Subexpression Elimination. An optimization that removes common
 subexpression compuation. For example <code class="docutils literal"><span class="pre">(a+b)*(a+b)</span></code> has two subexpressions
@@ -137,6 +144,9 @@ any <a class="reference internal" href="#safe-point">safe point</a>. This term i
 <dl class="docutils">
 <dt><strong>FCA</strong></dt>
 <dd>First Class Aggregate</dd>
+<dt><strong>FDE</strong></dt>
+<dd>Frame Description Entry. A kind of CFI used to describe the stack frame of
+one function.</dd>
 </dl>
 </div>
 <div class="section" id="g">
@@ -173,8 +183,18 @@ that occurs between procedures, functions or compilation units (modules).</dd>
 <dl class="docutils">
 <dt><strong>LCSSA</strong></dt>
 <dd>Loop-Closed Static Single Assignment Form</dd>
+<dt><strong>LGTM</strong></dt>
+<dd>&#8220;Looks Good To Me&#8221;. In a review thread, this indicates that the
+reviewer thinks that the patch is okay to commit.</dd>
 <dt><strong>LICM</strong></dt>
 <dd>Loop Invariant Code Motion</dd>
+<dt><strong>LSDA</strong></dt>
+<dd>Language Specific Data Area.  C++ &#8220;zero cost&#8221; unwinding is built on top a
+generic unwinding mechanism.  As the unwinder walks each frame, it calls
+a &#8220;personality&#8221; function to do language specific analysis.  Each function&#8217;s
+FDE points to an optional LSDA which is passed to the personality function.
+For C++, the LSDA contain info about the type and location of catch
+statements in that function.</dd>
 <dt><strong>Load-VN</strong></dt>
 <dd>Load Value Numbering</dd>
 <dt><strong>LTO</strong></dt>
@@ -300,8 +320,8 @@ identifies <a class="reference internal" href="#roots">roots</a> within the stac
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

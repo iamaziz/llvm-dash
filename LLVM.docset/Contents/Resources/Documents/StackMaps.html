@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Stack maps and patch points in LLVM &mdash; LLVM 3.6 documentation</title>
+    <title>Stack maps and patch points in LLVM &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
     <link rel="next" title="Design and Usage of the InAlloca Attribute" href="InAlloca.html" />
-    <link rel="prev" title="User Guide for R600 Back-end" href="R600Usage.html" />
+    <link rel="prev" title="User Guide for AMDGPU Back-end" href="AMDGPUUsage.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
@@ -50,7 +50,7 @@
           <a href="InAlloca.html" title="Design and Usage of the InAlloca Attribute"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="R600Usage.html" title="User Guide for R600 Back-end"
+          <a href="AMDGPUUsage.html" title="User Guide for AMDGPU Back-end"
              accesskey="P">previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">Documentation</a>&raquo;</li>
@@ -268,11 +268,10 @@ is not a constant null. The function call and its arguments are
 lowered according to the calling convention specified at the
 intrinsic&#8217;s callsite. Variants of the intrinsic with non-void return
 type also return a value according to calling convention.</p>
-<p>On PowerPC, note that the <code class="docutils literal"><span class="pre">&lt;target&gt;</span></code> must be the actual intended target of
-the indirect call, not the function-descriptor address normally used as the
-C/C++ function-pointer representation. As a result, the call target must be
-local because no adjustment or restoration of the TOC pointer (in register r2)
-will be performed.</p>
+<p>On PowerPC, note that <code class="docutils literal"><span class="pre">&lt;target&gt;</span></code> must be the ABI function pointer for the
+intended target of the indirect call. Specifically, when compiling for the
+ELF V1 ABI, <code class="docutils literal"><span class="pre">&lt;target&gt;</span></code> is the function-descriptor address normally used as
+the C/C++ function-pointer representation.</p>
 <p>Requesting zero patch point arguments is valid. In this case, all
 variable operands are handled just like
 <code class="docutils literal"><span class="pre">llvm.experimental.stackmap.*</span></code>. The difference is that space will
@@ -559,7 +558,7 @@ stack map&#8217;s location is a Direct location type.</p>
           <a href="InAlloca.html" title="Design and Usage of the InAlloca Attribute"
              >next</a> |</li>
         <li class="right" >
-          <a href="R600Usage.html" title="User Guide for R600 Back-end"
+          <a href="AMDGPUUsage.html" title="User Guide for AMDGPU Back-end"
              >previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">Documentation</a>&raquo;</li>
@@ -567,8 +566,8 @@ stack map&#8217;s location is a Direct location type.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

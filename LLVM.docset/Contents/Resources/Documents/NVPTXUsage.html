@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>User Guide for NVPTX Back-end &mdash; LLVM 3.6 documentation</title>
+    <title>User Guide for NVPTX Back-end &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
-    <link rel="next" title="User Guide for R600 Back-end" href="R600Usage.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="next" title="User Guide for AMDGPU Back-end" href="AMDGPUUsage.html" />
     <link rel="prev" title="How To Use Attributes" href="HowToUseAttributes.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
@@ -47,7 +47,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="R600Usage.html" title="User Guide for R600 Back-end"
+          <a href="AMDGPUUsage.html" title="User Guide for AMDGPU Back-end"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="HowToUseAttributes.html" title="How To Use Attributes"
@@ -261,10 +261,10 @@ pointer.</p>
 <div class="section" id="id3">
 <h5>Syntax:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h5>
 <p>These are overloaded intrinsics.  You can use these on any pointer types.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">declare</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.global.p1i8.p0i8</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*)</span>
-<span class="k">declare</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.shared.p3i8.p0i8</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">3</span><span class="p">)*)</span>
-<span class="k">declare</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.constant.p4i8.p0i8</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">4</span><span class="p">)*)</span>
-<span class="k">declare</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.local.p5i8.p0i8</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">5</span><span class="p">)*)</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span class="k">declare</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.global.p1i8.p0i8</span><span class="p">(</span><span class="k">i8</span><span class="p">*)</span>
+<span class="k">declare</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">3</span><span class="p">)*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.shared.p3i8.p0i8</span><span class="p">(</span><span class="k">i8</span><span class="p">*)</span>
+<span class="k">declare</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">4</span><span class="p">)*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.constant.p4i8.p0i8</span><span class="p">(</span><span class="k">i8</span><span class="p">*)</span>
+<span class="k">declare</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">5</span><span class="p">)*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.local.p5i8.p0i8</span><span class="p">(</span><span class="k">i8</span><span class="p">*)</span>
 </pre></div>
 </div>
 </div>
@@ -1045,7 +1045,7 @@ BB0_30:                                 // %__nv_powf.exit
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="R600Usage.html" title="User Guide for R600 Back-end"
+          <a href="AMDGPUUsage.html" title="User Guide for AMDGPU Back-end"
              >next</a> |</li>
         <li class="right" >
           <a href="HowToUseAttributes.html" title="How To Use Attributes"
@@ -1056,8 +1056,8 @@ BB0_30:                                 // %__nv_powf.exit
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

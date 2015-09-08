@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LLVM bugpoint tool: design and usage &mdash; LLVM 3.6 documentation</title>
+    <title>LLVM bugpoint tool: design and usage &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
     <link rel="next" title="The LLVM Target-Independent Code Generator" href="CodeGenerator.html" />
     <link rel="prev" title="LLVM Branch Weight Metadata" href="BranchWeightMetadata.html" />
 <style type="text/css">
@@ -254,7 +254,7 @@ calls 212 and 217. This is from an actual test case and raises an important
 point&#8212;a simple binary search may not be sufficient, as transformations that
 interact may require isolating more than one call.  In TargetLowering, use
 <code class="docutils literal"><span class="pre">return</span> <span class="pre">SDNode();</span></code> instead of <code class="docutils literal"><span class="pre">return</span> <span class="pre">false;</span></code>.</p>
-<p>Now that that the number of transformations is down to a manageable number, try
+<p>Now that the number of transformations is down to a manageable number, try
 examining the output to see if you can figure out which transformations are
 being done.  If that can be figured out, then do the usual debugging.  If which
 code corresponds to the transformation being performed isn&#8217;t obvious, set a
@@ -286,8 +286,8 @@ Alternatively, you can use &#8220;<code class="docutils literal"><span class="pr
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

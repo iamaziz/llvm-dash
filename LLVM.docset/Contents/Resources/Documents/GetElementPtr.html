@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The Often Misunderstood GEP Instruction &mdash; LLVM 3.6 documentation</title>
+    <title>The Often Misunderstood GEP Instruction &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
-    <link rel="next" title="MCJIT Design and Implementation" href="MCJITDesignAndImplementation.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <link rel="next" title="Performance Tips for Frontend Authors" href="Frontend/PerformanceTips.html" />
     <link rel="prev" title="YAML I/O" href="YamlIO.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
@@ -47,7 +47,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="MCJITDesignAndImplementation.html" title="MCJIT Design and Implementation"
+          <a href="Frontend/PerformanceTips.html" title="Performance Tips for Frontend Authors"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="YamlIO.html" title="YAML I/O"
@@ -169,12 +169,12 @@ either the <code class="docutils literal"><span class="pre">f1</span></code> or 
 looks like:</p>
 <div class="highlight-llvm"><div class="highlight"><pre><span class="kt">void</span> <span class="nv">%munge</span><span class="p">(</span><span class="nv">%struct.munger_struct</span><span class="p">*</span> <span class="nv">%P</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
-  <span class="nv">%tmp</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="nv">%struct.munger_struct</span><span class="p">*</span> <span class="nv">%P</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span>
+  <span class="nv">%tmp</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="nv">%struct.munger_struct</span><span class="p">,</span> <span class="nv">%struct.munger_struct</span><span class="p">*</span> <span class="nv">%P</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span>
   <span class="nv">%tmp</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%tmp</span>
-  <span class="nv">%tmp6</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="nv">%struct.munger_struct</span><span class="p">*</span> <span class="nv">%P</span><span class="p">,</span> <span class="k">i32</span> <span class="m">2</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span>
+  <span class="nv">%tmp6</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="nv">%struct.munger_struct</span><span class="p">,</span> <span class="nv">%struct.munger_struct</span><span class="p">*</span> <span class="nv">%P</span><span class="p">,</span> <span class="k">i32</span> <span class="m">2</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span>
   <span class="nv">%tmp7</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%tmp6</span>
   <span class="nv">%tmp8</span> <span class="p">=</span> <span class="k">add</span> <span class="k">i32</span> <span class="nv">%tmp7</span><span class="p">,</span> <span class="nv">%tmp</span>
-  <span class="nv">%tmp9</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="nv">%struct.munger_struct</span><span class="p">*</span> <span class="nv">%P</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span>
+  <span class="nv">%tmp9</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="nv">%struct.munger_struct</span><span class="p">,</span> <span class="nv">%struct.munger_struct</span><span class="p">*</span> <span class="nv">%P</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span>
   <span class="k">store</span> <span class="k">i32</span> <span class="nv">%tmp8</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%tmp9</span>
   <span class="k">ret</span> <span class="kt">void</span>
 <span class="p">}</span>
@@ -186,9 +186,9 @@ memory, or a global variable.</p>
 <p>To make this clear, let&#8217;s consider a more obtuse example:</p>
 <div class="highlight-llvm"><div class="highlight"><pre>%MyVar = uninitialized global i32
 ...
-%idx1 = getelementptr i32* %MyVar, i64 0
-%idx2 = getelementptr i32* %MyVar, i64 1
-%idx3 = getelementptr i32* %MyVar, i64 2
+%idx1 = getelementptr i32, i32* %MyVar, i64 0
+%idx2 = getelementptr i32, i32* %MyVar, i64 1
+%idx3 = getelementptr i32, i32* %MyVar, i64 2
 </pre></div>
 </div>
 <p>These GEP instructions are simply making address computations from the base
@@ -216,7 +216,7 @@ results.</p>
 variable which is always a pointer type. For example, consider this:</p>
 <div class="highlight-llvm"><div class="highlight"><pre>%MyStruct = uninitialized global { float*, i32 }
 ...
-%idx = getelementptr { float*, i32 }* %MyStruct, i64 0, i32 1
+%idx = getelementptr { float*, i32 }, { float*, i32 }* %MyStruct, i64 0, i32 1
 </pre></div>
 </div>
 <p>The GEP above yields an <code class="docutils literal"><span class="pre">i32*</span></code> by indexing the <code class="docutils literal"><span class="pre">i32</span></code> typed field of the
@@ -246,7 +246,7 @@ memory in any way. That&#8217;s what the Load and Store instructions are for.  G
 only involved in the computation of addresses. For example, consider this:</p>
 <div class="highlight-llvm"><div class="highlight"><pre>%MyVar = uninitialized global { [40 x i32 ]* }
 ...
-%idx = getelementptr { [40 x i32]* }* %MyVar, i64 0, i32 0, i64 0, i64 17
+%idx = getelementptr { [40 x i32]* }, { [40 x i32]* }* %MyVar, i64 0, i32 0, i64 0, i64 17
 </pre></div>
 </div>
 <p>In this example, we have a global variable, <code class="docutils literal"><span class="pre">%MyVar</span></code> that is a pointer to a
@@ -258,16 +258,16 @@ array of 40 ints. Since the GEP instruction never accesses memory, it is
 illegal.</p>
 <p>In order to access the 18th integer in the array, you would need to do the
 following:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>%idx = getelementptr { [40 x i32]* }* %, i64 0, i32 0
+<div class="highlight-llvm"><div class="highlight"><pre>%idx = getelementptr { [40 x i32]* }, { [40 x i32]* }* %, i64 0, i32 0
 %arr = load [40 x i32]** %idx
-%idx = getelementptr [40 x i32]* %arr, i64 0, i64 17
+%idx = getelementptr [40 x i32], [40 x i32]* %arr, i64 0, i64 17
 </pre></div>
 </div>
 <p>In this case, we have to load the pointer in the structure with a load
 instruction before we can index into the array. If the example was changed to:</p>
 <div class="highlight-llvm"><div class="highlight"><pre>%MyVar = uninitialized global { [40 x i32 ] }
 ...
-%idx = getelementptr { [40 x i32] }*, i64 0, i32 0, i64 17
+%idx = getelementptr { [40 x i32] }, { [40 x i32] }*, i64 0, i32 0, i64 17
 </pre></div>
 </div>
 <p>then everything works fine. In this case, the structure does not contain a
@@ -280,9 +280,9 @@ first field of the structure and access the 18th <code class="docutils literal">
 <p>If you look at the first indices in these GEP instructions you find that they
 are different (0 and 1), therefore the address computation diverges with that
 index. Consider this example:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="nv">%MyVar</span> <span class="p">=</span> <span class="k">global</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span> <span class="p">]</span> <span class="p">}</span>
-<span class="nv">%idx1</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span> <span class="p">]</span> <span class="p">}*</span> <span class="nv">%MyVar</span><span class="p">,</span> <span class="k">i64</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span>
-<span class="nv">%idx2</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span> <span class="p">]</span> <span class="p">}*</span> <span class="nv">%MyVar</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span class="nv">%MyVar</span> <span class="p">=</span> <span class="k">global</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">}</span>
+<span class="nv">%idx1</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">},</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">}*</span> <span class="nv">%MyVar</span><span class="p">,</span> <span class="k">i64</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span>
+<span class="nv">%idx2</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">},</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">}*</span> <span class="nv">%MyVar</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span>
 </pre></div>
 </div>
 <p>In this example, <code class="docutils literal"><span class="pre">idx1</span></code> computes the address of the second integer in the
@@ -299,9 +299,9 @@ alias.</p>
 <p>These two GEP instructions will compute the same address because indexing
 through the 0th element does not change the address. However, it does change the
 type. Consider this example:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="nv">%MyVar</span> <span class="p">=</span> <span class="k">global</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span> <span class="p">]</span> <span class="p">}</span>
-<span class="nv">%idx1</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span> <span class="p">]</span> <span class="p">}*</span> <span class="nv">%MyVar</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i64</span> <span class="m">0</span>
-<span class="nv">%idx2</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span> <span class="p">]</span> <span class="p">}*</span> <span class="nv">%MyVar</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span>
+<div class="highlight-llvm"><div class="highlight"><pre><span class="nv">%MyVar</span> <span class="p">=</span> <span class="k">global</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">}</span>
+<span class="nv">%idx1</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">},</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">}*</span> <span class="nv">%MyVar</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i64</span> <span class="m">0</span>
+<span class="nv">%idx2</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">},</span> <span class="p">{</span> <span class="p">[</span><span class="m">10</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">}*</span> <span class="nv">%MyVar</span><span class="p">,</span> <span class="k">i64</span> <span class="m">1</span>
 </pre></div>
 </div>
 <p>In this example, the value of <code class="docutils literal"><span class="pre">%idx1</span></code> is <code class="docutils literal"><span class="pre">%MyVar+40</span></code> and its type is
@@ -550,7 +550,7 @@ of the pointers.</li>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="MCJITDesignAndImplementation.html" title="MCJIT Design and Implementation"
+          <a href="Frontend/PerformanceTips.html" title="Performance Tips for Frontend Authors"
              >next</a> |</li>
         <li class="right" >
           <a href="YamlIO.html" title="YAML I/O"
@@ -561,8 +561,8 @@ of the pointers.</li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
