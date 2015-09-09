@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>TableGen Language Introduction &mdash; LLVM 3.6 documentation</title>
+    <title>TableGen Language Introduction &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="../index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
     <link rel="up" title="TableGen" href="index.html" />
     <link rel="next" title="TableGen Deficiencies" href="Deficiencies.html" />
     <link rel="prev" title="TableGen Language Reference" href="LangRef.html" />
@@ -98,7 +98,7 @@
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">This document is extremely rough. If you find something lacking, please
-fix it, file a documentation bug, or ask about it on llvmdev.</p>
+fix it, file a documentation bug, or ask about it on llvm-dev.</p>
 </div>
 <div class="section" id="introduction">
 <h2><a class="toc-backref" href="#id4">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
@@ -241,7 +241,7 @@ object defined by a &#8216;def&#8217; construct.</dd>
 <dd>If &#8216;a&#8217; and &#8216;b&#8217; are of string type or are symbol references, substitute &#8216;b&#8217;
 for &#8216;a&#8217; in &#8216;c.&#8217;  This operation is analogous to $(subst) in GNU make.</dd>
 <dt><code class="docutils literal"><span class="pre">!foreach(a,</span> <span class="pre">b,</span> <span class="pre">c)</span></code></dt>
-<dd>For each member &#8216;b&#8217; of dag or list &#8216;a&#8217; apply operator &#8216;c.&#8217;  &#8216;b&#8217; is a dummy
+<dd>For each member of dag or list &#8216;b&#8217; apply operator &#8216;c.&#8217;  &#8216;a&#8217; is a dummy
 variable that should be declared as a member variable of an instantiated
 class.  This operation is analogous to $(foreach) in GNU make.</dd>
 <dt><code class="docutils literal"><span class="pre">!head(a)</span></code></dt>
@@ -639,8 +639,8 @@ physical register definitions.</dd>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

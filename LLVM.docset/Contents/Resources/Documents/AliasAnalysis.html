@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LLVM Alias Analysis Infrastructure &mdash; LLVM 3.6 documentation</title>
+    <title>LLVM Alias Analysis Infrastructure &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
     <link rel="next" title="LLVM Bitcode File Format" href="BitCodeFormat.html" />
-    <link rel="prev" title="LLVM Extensions" href="Extensions.html" />
+    <link rel="prev" title="LibFuzzer – a library for coverage-guided fuzz testing." href="LibFuzzer.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
@@ -50,7 +50,7 @@
           <a href="BitCodeFormat.html" title="LLVM Bitcode File Format"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Extensions.html" title="LLVM Extensions"
+          <a href="LibFuzzer.html" title="LibFuzzer – a library for coverage-guided fuzz testing."
              accesskey="P">previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">Documentation</a>&raquo;</li>
@@ -368,8 +368,8 @@ benefit from both alias analyses).  The alias analysis class automatically
 takes care of most of this for methods that you don&#8217;t override.  For methods
 that you do override, in code paths that return a conservative MayAlias or
 Mod/Ref result, simply return whatever the superclass computes.  For example:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">AliasAnalysis</span><span class="o">::</span><span class="n">AliasResult</span> <span class="n">alias</span><span class="p">(</span><span class="k">const</span> <span class="n">Value</span> <span class="o">*</span><span class="n">V1</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">V1Size</span><span class="p">,</span>
-                                 <span class="k">const</span> <span class="n">Value</span> <span class="o">*</span><span class="n">V2</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">V2Size</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">AliasResult</span> <span class="nf">alias</span><span class="p">(</span><span class="k">const</span> <span class="n">Value</span> <span class="o">*</span><span class="n">V1</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">V1Size</span><span class="p">,</span>
+                  <span class="k">const</span> <span class="n">Value</span> <span class="o">*</span><span class="n">V2</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="n">V2Size</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(...)</span>
     <span class="k">return</span> <span class="n">NoAlias</span><span class="p">;</span>
   <span class="p">...</span>
@@ -750,7 +750,7 @@ directly.</p>
           <a href="BitCodeFormat.html" title="LLVM Bitcode File Format"
              >next</a> |</li>
         <li class="right" >
-          <a href="Extensions.html" title="LLVM Extensions"
+          <a href="LibFuzzer.html" title="LibFuzzer – a library for coverage-guided fuzz testing."
              >previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">Documentation</a>&raquo;</li>
@@ -758,8 +758,8 @@ directly.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LLVM’s Analysis and Transform Passes &mdash; LLVM 3.6 documentation</title>
+    <title>LLVM’s Analysis and Transform Passes &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
     <link rel="next" title="YAML I/O" href="YamlIO.html" />
-    <link rel="prev" title="LLVM 3.6 Release Notes" href="ReleaseNotes.html" />
+    <link rel="prev" title="LLVM 3.7 Release Notes" href="ReleaseNotes.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
@@ -50,7 +50,7 @@
           <a href="YamlIO.html" title="YAML I/O"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ReleaseNotes.html" title="LLVM 3.6 Release Notes"
+          <a href="ReleaseNotes.html" title="LLVM 3.7 Release Notes"
              accesskey="P">previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">Documentation</a>&raquo;</li>
@@ -175,14 +175,13 @@
 <li><a class="reference internal" href="#deadarghax0r-dead-argument-hacking-bugpoint-use-only-do-not-use" id="id102"><code class="docutils literal"><span class="pre">-deadarghaX0r</span></code>: Dead Argument Hacking (BUGPOINT USE ONLY; DO NOT USE)</a></li>
 <li><a class="reference internal" href="#extract-blocks-extract-basic-blocks-from-module-for-bugpoint-use" id="id103"><code class="docutils literal"><span class="pre">-extract-blocks</span></code>: Extract Basic Blocks From Module (for bugpoint use)</a></li>
 <li><a class="reference internal" href="#instnamer-assign-names-to-anonymous-instructions" id="id104"><code class="docutils literal"><span class="pre">-instnamer</span></code>: Assign names to anonymous instructions</a></li>
-<li><a class="reference internal" href="#preverify-preliminary-module-verification" id="id105"><code class="docutils literal"><span class="pre">-preverify</span></code>: Preliminary module verification</a></li>
-<li><a class="reference internal" href="#verify-module-verifier" id="id106"><code class="docutils literal"><span class="pre">-verify</span></code>: Module Verifier</a></li>
-<li><a class="reference internal" href="#view-cfg-view-cfg-of-function" id="id107"><code class="docutils literal"><span class="pre">-view-cfg</span></code>: View CFG of function</a></li>
-<li><a class="reference internal" href="#view-cfg-only-view-cfg-of-function-with-no-function-bodies" id="id108"><code class="docutils literal"><span class="pre">-view-cfg-only</span></code>: View CFG of function (with no function bodies)</a></li>
-<li><a class="reference internal" href="#view-dom-view-dominance-tree-of-function" id="id109"><code class="docutils literal"><span class="pre">-view-dom</span></code>: View dominance tree of function</a></li>
-<li><a class="reference internal" href="#view-dom-only-view-dominance-tree-of-function-with-no-function-bodies" id="id110"><code class="docutils literal"><span class="pre">-view-dom-only</span></code>: View dominance tree of function (with no function bodies)</a></li>
-<li><a class="reference internal" href="#view-postdom-view-postdominance-tree-of-function" id="id111"><code class="docutils literal"><span class="pre">-view-postdom</span></code>: View postdominance tree of function</a></li>
-<li><a class="reference internal" href="#view-postdom-only-view-postdominance-tree-of-function-with-no-function-bodies" id="id112"><code class="docutils literal"><span class="pre">-view-postdom-only</span></code>: View postdominance tree of function (with no function bodies)</a></li>
+<li><a class="reference internal" href="#verify-module-verifier" id="id105"><code class="docutils literal"><span class="pre">-verify</span></code>: Module Verifier</a></li>
+<li><a class="reference internal" href="#view-cfg-view-cfg-of-function" id="id106"><code class="docutils literal"><span class="pre">-view-cfg</span></code>: View CFG of function</a></li>
+<li><a class="reference internal" href="#view-cfg-only-view-cfg-of-function-with-no-function-bodies" id="id107"><code class="docutils literal"><span class="pre">-view-cfg-only</span></code>: View CFG of function (with no function bodies)</a></li>
+<li><a class="reference internal" href="#view-dom-view-dominance-tree-of-function" id="id108"><code class="docutils literal"><span class="pre">-view-dom</span></code>: View dominance tree of function</a></li>
+<li><a class="reference internal" href="#view-dom-only-view-dominance-tree-of-function-with-no-function-bodies" id="id109"><code class="docutils literal"><span class="pre">-view-dom-only</span></code>: View dominance tree of function (with no function bodies)</a></li>
+<li><a class="reference internal" href="#view-postdom-view-postdominance-tree-of-function" id="id110"><code class="docutils literal"><span class="pre">-view-postdom</span></code>: View postdominance tree of function</a></li>
+<li><a class="reference internal" href="#view-postdom-only-view-postdominance-tree-of-function-with-no-function-bodies" id="id111"><code class="docutils literal"><span class="pre">-view-postdom-only</span></code>: View postdominance tree of function (with no function bodies)</a></li>
 </ul>
 </li>
 </ul>
@@ -1088,13 +1087,8 @@ useful when diffing the effect of an optimization because deleting an unnamed
 instruction can change all other instruction numbering, making the diff very
 noisy.</p>
 </div>
-<div class="section" id="preverify-preliminary-module-verification">
-<h3><a class="toc-backref" href="#id105"><code class="docutils literal"><span class="pre">-preverify</span></code>: Preliminary module verification</a><a class="headerlink" href="#preverify-preliminary-module-verification" title="Permalink to this headline">¶</a></h3>
-<p>Ensures that the module is in the form required by the <a class="reference internal" href="#passes-verify"><span>Module Verifier</span></a> pass.  Running the verifier runs this pass automatically, so
-there should be no need to use it directly.</p>
-</div>
 <div class="section" id="verify-module-verifier">
-<span id="passes-verify"></span><h3><a class="toc-backref" href="#id106"><code class="docutils literal"><span class="pre">-verify</span></code>: Module Verifier</a><a class="headerlink" href="#verify-module-verifier" title="Permalink to this headline">¶</a></h3>
+<span id="passes-verify"></span><h3><a class="toc-backref" href="#id105"><code class="docutils literal"><span class="pre">-verify</span></code>: Module Verifier</a><a class="headerlink" href="#verify-module-verifier" title="Permalink to this headline">¶</a></h3>
 <p>Verifies an LLVM IR code.  This is useful to run after an optimization which is
 undergoing testing.  Note that llvm-as verifies its input before emitting
 bitcode, and also that malformed bitcode is likely to make LLVM crash.  All
@@ -1130,29 +1124,29 @@ not agree with the function return value type.</li>
 instead just tries to ensure that code is well-formed.</p>
 </div>
 <div class="section" id="view-cfg-view-cfg-of-function">
-<h3><a class="toc-backref" href="#id107"><code class="docutils literal"><span class="pre">-view-cfg</span></code>: View CFG of function</a><a class="headerlink" href="#view-cfg-view-cfg-of-function" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id106"><code class="docutils literal"><span class="pre">-view-cfg</span></code>: View CFG of function</a><a class="headerlink" href="#view-cfg-view-cfg-of-function" title="Permalink to this headline">¶</a></h3>
 <p>Displays the control flow graph using the GraphViz tool.</p>
 </div>
 <div class="section" id="view-cfg-only-view-cfg-of-function-with-no-function-bodies">
-<h3><a class="toc-backref" href="#id108"><code class="docutils literal"><span class="pre">-view-cfg-only</span></code>: View CFG of function (with no function bodies)</a><a class="headerlink" href="#view-cfg-only-view-cfg-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id107"><code class="docutils literal"><span class="pre">-view-cfg-only</span></code>: View CFG of function (with no function bodies)</a><a class="headerlink" href="#view-cfg-only-view-cfg-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
 <p>Displays the control flow graph using the GraphViz tool, but omitting function
 bodies.</p>
 </div>
 <div class="section" id="view-dom-view-dominance-tree-of-function">
-<h3><a class="toc-backref" href="#id109"><code class="docutils literal"><span class="pre">-view-dom</span></code>: View dominance tree of function</a><a class="headerlink" href="#view-dom-view-dominance-tree-of-function" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id108"><code class="docutils literal"><span class="pre">-view-dom</span></code>: View dominance tree of function</a><a class="headerlink" href="#view-dom-view-dominance-tree-of-function" title="Permalink to this headline">¶</a></h3>
 <p>Displays the dominator tree using the GraphViz tool.</p>
 </div>
 <div class="section" id="view-dom-only-view-dominance-tree-of-function-with-no-function-bodies">
-<h3><a class="toc-backref" href="#id110"><code class="docutils literal"><span class="pre">-view-dom-only</span></code>: View dominance tree of function (with no function bodies)</a><a class="headerlink" href="#view-dom-only-view-dominance-tree-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id109"><code class="docutils literal"><span class="pre">-view-dom-only</span></code>: View dominance tree of function (with no function bodies)</a><a class="headerlink" href="#view-dom-only-view-dominance-tree-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
 <p>Displays the dominator tree using the GraphViz tool, but omitting function
 bodies.</p>
 </div>
 <div class="section" id="view-postdom-view-postdominance-tree-of-function">
-<h3><a class="toc-backref" href="#id111"><code class="docutils literal"><span class="pre">-view-postdom</span></code>: View postdominance tree of function</a><a class="headerlink" href="#view-postdom-view-postdominance-tree-of-function" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id110"><code class="docutils literal"><span class="pre">-view-postdom</span></code>: View postdominance tree of function</a><a class="headerlink" href="#view-postdom-view-postdominance-tree-of-function" title="Permalink to this headline">¶</a></h3>
 <p>Displays the post dominator tree using the GraphViz tool.</p>
 </div>
 <div class="section" id="view-postdom-only-view-postdominance-tree-of-function-with-no-function-bodies">
-<h3><a class="toc-backref" href="#id112"><code class="docutils literal"><span class="pre">-view-postdom-only</span></code>: View postdominance tree of function (with no function bodies)</a><a class="headerlink" href="#view-postdom-only-view-postdominance-tree-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id111"><code class="docutils literal"><span class="pre">-view-postdom-only</span></code>: View postdominance tree of function (with no function bodies)</a><a class="headerlink" href="#view-postdom-only-view-postdominance-tree-of-function-with-no-function-bodies" title="Permalink to this headline">¶</a></h3>
 <p>Displays the post dominator tree using the GraphViz tool, but omitting function
 bodies.</p>
 </div>
@@ -1174,7 +1168,7 @@ bodies.</p>
           <a href="YamlIO.html" title="YAML I/O"
              >next</a> |</li>
         <li class="right" >
-          <a href="ReleaseNotes.html" title="LLVM 3.6 Release Notes"
+          <a href="ReleaseNotes.html" title="LLVM 3.7 Release Notes"
              >previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="index.html">Documentation</a>&raquo;</li>
@@ -1182,8 +1176,8 @@ bodies.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

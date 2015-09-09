@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Building LLVM with CMake &mdash; LLVM 3.6 documentation</title>
+    <title>Building LLVM with CMake &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
     <link rel="next" title="How To Build On ARM" href="HowToBuildOnARM.html" />
     <link rel="prev" title="LLVM Language Reference Manual" href="LangRef.html" />
 <style type="text/css">
@@ -103,7 +103,7 @@ you already have experience with CMake, this is the recommended starting point.<
 <p>We use here the command-line, non-interactive CMake interface.</p>
 <ol class="arabic">
 <li><p class="first"><a class="reference external" href="http://www.cmake.org/cmake/resources/software.html">Download</a> and install
-CMake. Version 2.8 is the minimum required.</p>
+CMake. Version 2.8.8 is the minimum required.</p>
 </li>
 <li><p class="first">Open a shell. Your development tools must be reachable from this shell
 through the PATH environment variable.</p>
@@ -131,6 +131,29 @@ itself is the correct one for you development environment. CMake will refuse
 to build MinGW makefiles if you have a POSIX shell reachable through the PATH
 environment variable, for instance. You can force CMake to use a given build
 tool, see the <a class="reference internal" href="#usage">Usage</a> section.</p>
+</li>
+<li><p class="first">After CMake has finished running, proceed to use IDE project files or start
+the build from the build directory:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> cmake --build .
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">--build</span></code> option tells <code class="docutils literal"><span class="pre">cmake</span></code> to invoke the underlying build
+tool (<code class="docutils literal"><span class="pre">make</span></code>, <code class="docutils literal"><span class="pre">ninja</span></code>, <code class="docutils literal"><span class="pre">xcodebuild</span></code>, <code class="docutils literal"><span class="pre">msbuild</span></code>, etc).</p>
+<p>The underlying build tool can be invoked directly either of course, but
+the <code class="docutils literal"><span class="pre">--build</span></code> option is portable.</p>
+</li>
+<li><p class="first">After LLVM has finished building, install it from the build directory:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> cmake --build . --target install
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">--target</span></code> option with <code class="docutils literal"><span class="pre">install</span></code> parameter in addition to
+the <code class="docutils literal"><span class="pre">--build</span></code> option tells <code class="docutils literal"><span class="pre">cmake</span></code> to build the <code class="docutils literal"><span class="pre">install</span></code> target.</p>
+<p>It is possible to set a different install prefix at installation time
+by invoking the <code class="docutils literal"><span class="pre">cmake_install.cmake</span></code> script generated in the
+build directory:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> cmake -DCMAKE_INSTALL_PREFIX<span class="o">=</span>/tmp/llvm -P cmake_install.cmake
+</pre></div>
+</div>
 </li>
 </ol>
 </div>
@@ -249,8 +272,8 @@ cmake must be invoked before the build. Defaults to OFF.</dd>
 <dt><strong>LLVM_ENABLE_CXX1Y</strong>:BOOL</dt>
 <dd>Build in C++1y mode, if available. Defaults to OFF.</dd>
 <dt><strong>LLVM_ENABLE_ASSERTIONS</strong>:BOOL</dt>
-<dd>Enables code assertions. Defaults to OFF if and only if <code class="docutils literal"><span class="pre">CMAKE_BUILD_TYPE</span></code>
-is <em>Release</em>.</dd>
+<dd>Enables code assertions. Defaults to ON if and only if <code class="docutils literal"><span class="pre">CMAKE_BUILD_TYPE</span></code>
+is <em>Debug</em>.</dd>
 <dt><strong>LLVM_ENABLE_EH</strong>:BOOL</dt>
 <dd>Build LLVM with exception handling support. This is necessary if you wish to
 link against LLVM libraries and make use of C++ exceptions in your own code
@@ -267,6 +290,14 @@ this flag. Some systems, like Windows, do not need this flag. Defaults to ON.</d
 possible. Defaults to ON.</dd>
 <dt><strong>LLVM_ENABLE_WERROR</strong>:BOOL</dt>
 <dd>Stop and fail build, if a compiler warning is triggered. Defaults to OFF.</dd>
+<dt><strong>LLVM_ABI_BREAKING_CHECKS</strong>:STRING</dt>
+<dd>Used to decide if LLVM should be built with ABI breaking checks or
+not.  Allowed values are <cite>WITH_ASSERTS</cite> (default), <cite>FORCE_ON</cite> and
+<cite>FORCE_OFF</cite>.  <cite>WITH_ASSERTS</cite> turns on ABI breaking checks in an
+assertion enabled build.  <cite>FORCE_ON</cite> (<cite>FORCE_OFF</cite>) turns them on
+(off) irrespective of whether normal (<cite>NDEBUG</cite> based) assertions are
+enabled or not.  A version of LLVM built with ABI breaking checks
+is not ABI compatible with a version built without it.</dd>
 <dt><strong>LLVM_BUILD_32_BITS</strong>:BOOL</dt>
 <dd>Build 32-bits executables and libraries on 64-bits systems. This option is
 available only on some 64-bits unix systems. Defaults to OFF.</dd>
@@ -305,8 +336,8 @@ is empty or it does not point to a valid path.</dd>
 Defaults to ON.</dd>
 <dt><strong>LLVM_USE_SANITIZER</strong>:STRING</dt>
 <dd>Define the sanitizer used to build LLVM binaries and tests. Possible values
-are <code class="docutils literal"><span class="pre">Address</span></code>, <code class="docutils literal"><span class="pre">Memory</span></code>, <code class="docutils literal"><span class="pre">MemoryWithOrigins</span></code> and <code class="docutils literal"><span class="pre">Undefined</span></code>.
-Defaults to empty string.</dd>
+are <code class="docutils literal"><span class="pre">Address</span></code>, <code class="docutils literal"><span class="pre">Memory</span></code>, <code class="docutils literal"><span class="pre">MemoryWithOrigins</span></code>, <code class="docutils literal"><span class="pre">Undefined</span></code>, <code class="docutils literal"><span class="pre">Thread</span></code>,
+and <code class="docutils literal"><span class="pre">Address;Undefined</span></code>. Defaults to empty string.</dd>
 <dt><strong>LLVM_PARALLEL_COMPILE_JOBS</strong>:STRING</dt>
 <dd>Define the maximum number of concurrent compilation jobs.</dd>
 <dt><strong>LLVM_PARALLEL_LINK_JOBS</strong>:STRING</dt>
@@ -327,7 +358,7 @@ named <code class="docutils literal"><span class="pre">org.llvm.qch</span></code
 This option is only useful in combination with <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN=ON</span></code>;
 otherwise this has no effect.</dd>
 <dt><strong>LLVM_DOXYGEN_QCH_FILENAME</strong>:STRING</dt>
-<dd>The filename of the Qt Compressed Help file that will be genrated when
+<dd>The filename of the Qt Compressed Help file that will be generated when
 <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN=ON</span></code> and
 <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN_QT_HELP=ON</span></code> are given. Defaults to
 <code class="docutils literal"><span class="pre">org.llvm.qch</span></code>.
@@ -355,6 +386,9 @@ otherwise this has no effect.</dd>
 <code class="docutils literal"><span class="pre">find_program()</span></code> can find. This option is only useful in combination with
 <code class="docutils literal"><span class="pre">-DLLVM_ENABLE_DOXYGEN_QT_HELP=ON</span></code>; otherwise this has no
 effect.</dd>
+<dt><strong>LLVM_DOXYGEN_SVG</strong>:BOOL</dt>
+<dd>Uses .svg files instead of .png files for graphs in the Doxygen output.
+Defaults to OFF.</dd>
 <dt><strong>LLVM_ENABLE_SPHINX</strong>:BOOL</dt>
 <dd>If enabled CMake will search for the <code class="docutils literal"><span class="pre">sphinx-build</span></code> executable and will make
 the <code class="docutils literal"><span class="pre">SPHINX_OUTPUT_HTML</span></code> and <code class="docutils literal"><span class="pre">SPHINX_OUTPUT_MAN</span></code> CMake options available.
@@ -423,7 +457,7 @@ and uses them to build a simple application <code class="docutils literal"><span
 <span class="nb">add_definitions</span><span class="p">(</span><span class="o">${</span><span class="nv">LLVM_DEFINITIONS</span><span class="o">}</span><span class="p">)</span>
 
 <span class="c"># Now build our tools</span>
-<span class="nb">add_excutable</span><span class="p">(</span><span class="s">simple-tool</span> <span class="s">tool.cpp</span><span class="p">)</span>
+<span class="nb">add_executable</span><span class="p">(</span><span class="s">simple-tool</span> <span class="s">tool.cpp</span><span class="p">)</span>
 
 <span class="c"># Find the libraries that correspond to the LLVM components</span>
 <span class="c"># that we wish to use</span>
@@ -573,8 +607,8 @@ Studio 2010 CMake generator. 0 means use all processors. Default is 0.</dd>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

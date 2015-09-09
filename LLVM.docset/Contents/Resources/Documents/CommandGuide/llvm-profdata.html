@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>llvm-profdata - Profile data tool &mdash; LLVM 3.6 documentation</title>
+    <title>llvm-profdata - Profile data tool &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="../index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
     <link rel="up" title="LLVM Command Guide" href="index.html" />
     <link rel="next" title="llvm-stress - generate random .ll files" href="llvm-stress.html" />
     <link rel="prev" title="llvm-cov - emit coverage information" href="llvm-cov.html" />
@@ -79,8 +79,8 @@ data files.</p>
 <div class="section" id="commands">
 <h2>COMMANDS<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="#profdata-merge">merge</a></li>
-<li><a class="reference internal" href="#profdata-show">show</a></li>
+<li><a class="reference internal" href="#profdata-merge"><span>merge</span></a></li>
+<li><a class="reference internal" href="#profdata-show"><span>show</span></a></li>
 </ul>
 </div>
 <div class="section" id="merge">
@@ -108,6 +108,38 @@ indexed profile data file.</p>
 <span id="cmdoption-llvm-profdata-merge-o"></span><code class="descname">-output</code><code class="descclassname">=output</code><code class="descclassname">, </code><code class="descname">-o</code><code class="descclassname">=output</code><a class="headerlink" href="#cmdoption-llvm-profdata-merge-output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specify the output file name.  <em>Output</em> cannot be <code class="docutils literal"><span class="pre">-</span></code> as the resulting
 indexed profile data can&#8217;t be written to standard output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-profdata-merge-instr">
+<code class="descname">-instr</code><code class="descclassname"> (default)</code><a class="headerlink" href="#cmdoption-llvm-profdata-merge-instr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify that the input profile is an instrumentation-based profile.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-profdata-merge-sample">
+<code class="descname">-sample</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-profdata-merge-sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify that the input profile is a sample-based profile. When using
+sample-based profiles, the format of the generated file can be generated
+in one of three ways:</p>
+<dl class="option">
+<dt id="cmdoption-llvm-profdata-merge-binary">
+<code class="descname">-binary</code><code class="descclassname"> (default)</code><a class="headerlink" href="#cmdoption-llvm-profdata-merge-binary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Emit the profile using a binary encoding.</p>
+<dl class="option">
+<dt id="cmdoption-llvm-profdata-merge-text">
+<code class="descname">-text</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-profdata-merge-text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Emit the profile in text mode.</p>
+<dl class="option">
+<dt id="cmdoption-llvm-profdata-merge-gcc">
+<code class="descname">-gcc</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-profdata-merge-gcc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>Emit the profile using GCC&#8217;s gcov format (Not yet supported).</p>
 </dd></dl>
 
 </div>
@@ -159,6 +191,18 @@ input from standard input.</p>
 then the output is sent to standard output.</p>
 </dd></dl>
 
+<dl class="option">
+<dt id="cmdoption-llvm-profdata-show-instr">
+<code class="descname">-instr</code><code class="descclassname"> (default)</code><a class="headerlink" href="#cmdoption-llvm-profdata-show-instr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify that the input profile is an instrumentation-based profile.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-profdata-show-sample">
+<code class="descname">-sample</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-profdata-show-sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify that the input profile is a sample-based profile.</p>
+</dd></dl>
+
 </div>
 </div>
 <div class="section" id="exit-status">
@@ -192,8 +236,8 @@ if it cannot read input files, or if there is a mismatch between their data.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

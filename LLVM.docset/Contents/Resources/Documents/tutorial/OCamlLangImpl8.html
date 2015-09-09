@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8. Kaleidoscope: Conclusion and other useful LLVM tidbits &mdash; LLVM 3.6 documentation</title>
+    <title>8. Kaleidoscope: Conclusion and other useful LLVM tidbits &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="../index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
     <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
-    <link rel="next" title="LLVM 3.6 Release Notes" href="../ReleaseNotes.html" />
+    <link rel="next" title="LLVM 3.7 Release Notes" href="../ReleaseNotes.html" />
     <link rel="prev" title="7. Kaleidoscope: Extending the Language: Mutable Variables" href="OCamlLangImpl7.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
@@ -48,7 +48,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../ReleaseNotes.html" title="LLVM 3.6 Release Notes"
+          <a href="../ReleaseNotes.html" title="LLVM 3.7 Release Notes"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="OCamlLangImpl7.html" title="7. Kaleidoscope: Extending the Language: Mutable Variables"
@@ -169,7 +169,7 @@ expression interpreter into native code with LLVM?</li>
 <p>Have fun - try doing something crazy and unusual. Building a language
 like everyone else always has, is much less fun than trying something a
 little crazy or off the wall and seeing how it turns out. If you get
-stuck or want to talk about it, feel free to email the <a class="reference external" href="http://lists.cs.uiuc.edu/mailman/listinfo/llvmdev">llvmdev mailing
+stuck or want to talk about it, feel free to email the <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">llvm-dev mailing
 list</a>: it has lots
 of people who are interested in languages and are often willing to help
 out.</p>
@@ -236,7 +236,7 @@ support, and often operating system support.</p>
 IR does not itself guarantee safety. The LLVM IR allows unsafe pointer
 casts, use after free bugs, buffer over-runs, and a variety of other
 problems. Safety needs to be implemented as a layer on top of LLVM and,
-conveniently, several groups have investigated this. Ask on the <a class="reference external" href="http://lists.cs.uiuc.edu/mailman/listinfo/llvmdev">llvmdev
+conveniently, several groups have investigated this. Ask on the <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">llvm-dev
 mailing list</a> if
 you are interested in more details.</p>
 </div>
@@ -281,7 +281,7 @@ safe to optimize that into &#8220;return 0;&#8221; because C specifies what the
 <p>In addition to simple library knowledge, it is possible to embed a
 variety of other language-specific information into the LLVM IR. If you
 have a specific need and run into a wall, please bring the topic up on
-the llvmdev list. At the very worst, you can always treat LLVM as if it
+the llvm-dev list. At the very worst, you can always treat LLVM as if it
 were a &#8220;dumb code generator&#8221; and implement the high-level optimizations
 you desire in your front-end, on the language-specific AST.</p>
 </div>
@@ -332,7 +332,7 @@ the use of tail calls (which LLVM also supports).</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../ReleaseNotes.html" title="LLVM 3.6 Release Notes"
+          <a href="../ReleaseNotes.html" title="LLVM 3.7 Release Notes"
              >next</a> |</li>
         <li class="right" >
           <a href="OCamlLangImpl7.html" title="7. Kaleidoscope: Extending the Language: Mutable Variables"
@@ -344,8 +344,8 @@ the use of tail calls (which LLVM also supports).</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

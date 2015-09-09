@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8. Kaleidoscope: Extending the Language: Debug Information &mdash; LLVM 3.6 documentation</title>
+    <title>8. Kaleidoscope: Adding Debug Information &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="../index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
     <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
     <link rel="next" title="9. Kaleidoscope: Conclusion and other useful LLVM tidbits" href="LangImpl9.html" />
     <link rel="prev" title="7. Kaleidoscope: Extending the Language: Mutable Variables" href="LangImpl7.html" />
@@ -65,8 +65,8 @@
       <div class="documentwrapper">
           <div class="body" role="main">
             
-  <div class="section" id="kaleidoscope-extending-the-language-debug-information">
-<h1>8. Kaleidoscope: Extending the Language: Debug Information<a class="headerlink" href="#kaleidoscope-extending-the-language-debug-information" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="kaleidoscope-adding-debug-information">
+<h1>8. Kaleidoscope: Adding Debug Information<a class="headerlink" href="#kaleidoscope-adding-debug-information" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><a class="reference internal" href="#chapter-8-introduction" id="id1">Chapter 8 Introduction</a></li>
@@ -237,13 +237,13 @@ expressions:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="k">static</span> <span class="n">DIBuilder</span> <span class="o">*</span><span class="n">DBuilder</span><span class="p">;</span>
 
 <span class="k">struct</span> <span class="n">DebugInfo</span> <span class="p">{</span>
-  <span class="n">DICompileUnit</span> <span class="n">TheCU</span><span class="p">;</span>
-  <span class="n">DIType</span> <span class="n">DblTy</span><span class="p">;</span>
+  <span class="n">DICompileUnit</span> <span class="o">*</span><span class="n">TheCU</span><span class="p">;</span>
+  <span class="n">DIType</span> <span class="o">*</span><span class="n">DblTy</span><span class="p">;</span>
 
-  <span class="n">DIType</span> <span class="nf">getDoubleTy</span><span class="p">();</span>
+  <span class="n">DIType</span> <span class="o">*</span><span class="nf">getDoubleTy</span><span class="p">();</span>
 <span class="p">}</span> <span class="n">KSDbgInfo</span><span class="p">;</span>
 
-<span class="n">DIType</span> <span class="n">DebugInfo</span><span class="o">::</span><span class="n">getDoubleTy</span><span class="p">()</span> <span class="p">{</span>
+<span class="n">DIType</span> <span class="o">*</span><span class="n">DebugInfo</span><span class="o">::</span><span class="n">getDoubleTy</span><span class="p">()</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">DblTy</span><span class="p">.</span><span class="n">isValid</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">DblTy</span><span class="p">;</span>
 
@@ -286,25 +286,25 @@ function definitions to the debug info. So in <code class="docutils literal"><sp
 add a few lines of code to describe a context for our subprogram, in this
 case the &#8220;File&#8221;, and the actual definition of the function itself.</p>
 <p>So the context:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">DIFile</span> <span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getFilename</span><span class="p">(),</span>
-                                   <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getDirectory</span><span class="p">());</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">DIFile</span> <span class="o">*</span><span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getFilename</span><span class="p">(),</span>
+                                    <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getDirectory</span><span class="p">());</span>
 </pre></div>
 </div>
-<p>giving us a DIFile and asking the <code class="docutils literal"><span class="pre">Compile</span> <span class="pre">Unit</span></code> we created above for the
+<p>giving us an DIFile and asking the <code class="docutils literal"><span class="pre">Compile</span> <span class="pre">Unit</span></code> we created above for the
 directory and filename where we are currently. Then, for now, we use some
 source locations of 0 (since our AST doesn&#8217;t currently have source location
 information) and construct our function definition:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">DIDescriptor</span> <span class="nf">FContext</span><span class="p">(</span><span class="n">Unit</span><span class="p">);</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="n">DIScope</span> <span class="o">*</span><span class="n">FContext</span> <span class="o">=</span> <span class="n">Unit</span><span class="p">;</span>
 <span class="kt">unsigned</span> <span class="n">LineNo</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 <span class="kt">unsigned</span> <span class="n">ScopeLine</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">DISubprogram</span> <span class="n">SP</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFunction</span><span class="p">(</span>
+<span class="n">DISubprogram</span> <span class="o">*</span><span class="n">SP</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFunction</span><span class="p">(</span>
     <span class="n">FContext</span><span class="p">,</span> <span class="n">Name</span><span class="p">,</span> <span class="n">StringRef</span><span class="p">(),</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">LineNo</span><span class="p">,</span>
     <span class="n">CreateFunctionType</span><span class="p">(</span><span class="n">Args</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">Unit</span><span class="p">),</span> <span class="nb">false</span> <span class="cm">/* internal linkage */</span><span class="p">,</span>
-    <span class="nb">true</span> <span class="cm">/* definition */</span><span class="p">,</span> <span class="n">ScopeLine</span><span class="p">,</span> <span class="n">DIDescriptor</span><span class="o">::</span><span class="n">FlagPrototyped</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
+    <span class="nb">true</span> <span class="cm">/* definition */</span><span class="p">,</span> <span class="n">ScopeLine</span><span class="p">,</span> <span class="n">DINode</span><span class="o">::</span><span class="n">FlagPrototyped</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>and we now have a DISubprogram that contains a reference to all of our metadata
-for the function.</p>
+<p>and we now have an DISubprogram that contains a reference to all of our
+metadata for the function.</p>
 </div>
 <div class="section" id="source-locations">
 <h2><a class="toc-backref" href="#id7">8.7. Source Locations</a><a class="headerlink" href="#source-locations" title="Permalink to this headline">¶</a></h2>
@@ -361,11 +361,11 @@ by constructing another small function:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="kt">void</span> <span class="n">DebugInfo</span><span class="o">::</span><span class="n">emitLocation</span><span class="p">(</span><span class="n">ExprAST</span> <span class="o">*</span><span class="n">AST</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">DIScope</span> <span class="o">*</span><span class="n">Scope</span><span class="p">;</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">LexicalBlocks</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
-    <span class="n">Scope</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">TheCU</span><span class="p">;</span>
+    <span class="n">Scope</span> <span class="o">=</span> <span class="n">TheCU</span><span class="p">;</span>
   <span class="k">else</span>
     <span class="n">Scope</span> <span class="o">=</span> <span class="n">LexicalBlocks</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
   <span class="n">Builder</span><span class="p">.</span><span class="n">SetCurrentDebugLocation</span><span class="p">(</span>
-      <span class="n">DebugLoc</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="n">AST</span><span class="o">-&gt;</span><span class="n">getLine</span><span class="p">(),</span> <span class="n">AST</span><span class="o">-&gt;</span><span class="n">getCol</span><span class="p">(),</span> <span class="n">DIScope</span><span class="p">(</span><span class="o">*</span><span class="n">Scope</span><span class="p">)));</span>
+      <span class="n">DebugLoc</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="n">AST</span><span class="o">-&gt;</span><span class="n">getLine</span><span class="p">(),</span> <span class="n">AST</span><span class="o">-&gt;</span><span class="n">getCol</span><span class="p">(),</span> <span class="n">Scope</span><span class="p">));</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -375,11 +375,11 @@ the main file scope (like when we created our function), or now we can be
 in the function scope we just created. To represent this we create a stack
 of scopes:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">DIScope</span> <span class="o">*&gt;</span> <span class="n">LexicalBlocks</span><span class="p">;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">PrototypeAST</span> <span class="o">*</span><span class="p">,</span> <span class="n">DIScope</span><span class="o">&gt;</span> <span class="n">FnScopeMap</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">PrototypeAST</span> <span class="o">*</span><span class="p">,</span> <span class="n">DIScope</span> <span class="o">*&gt;</span> <span class="n">FnScopeMap</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>and keep a map of each function to the scope that it represents (a DISubprogram
-is also a DIScope).</p>
+<p>and keep a map of each function to the scope that it represents (an
+DISubprogram is also an DIScope).</p>
 <p>Then we make sure to:</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">emitLocation</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
 </pre></div>
@@ -409,15 +409,15 @@ decent backtraces and see how our functions are being called. It isn&#8217;t
 a lot of code, and we generally handle it when we&#8217;re creating the
 argument allocas in <code class="docutils literal"><span class="pre">PrototypeAST::CreateArgumentAllocas</span></code>.</p>
 <div class="highlight-c++"><div class="highlight"><pre><span class="n">DIScope</span> <span class="o">*</span><span class="n">Scope</span> <span class="o">=</span> <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">LexicalBlocks</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
-<span class="n">DIFile</span> <span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getFilename</span><span class="p">(),</span>
-                                   <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getDirectory</span><span class="p">());</span>
-<span class="n">DIVariable</span> <span class="n">D</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createLocalVariable</span><span class="p">(</span><span class="n">dwarf</span><span class="o">::</span><span class="n">DW_TAG_arg_variable</span><span class="p">,</span>
-                                             <span class="o">*</span><span class="n">Scope</span><span class="p">,</span> <span class="n">Args</span><span class="p">[</span><span class="n">Idx</span><span class="p">],</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span>
-                                             <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">getDoubleTy</span><span class="p">(),</span> <span class="n">Idx</span><span class="p">);</span>
+<span class="n">DIFile</span> <span class="o">*</span><span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getFilename</span><span class="p">(),</span>
+                                    <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getDirectory</span><span class="p">());</span>
+<span class="n">DILocalVariable</span> <span class="n">D</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createLocalVariable</span><span class="p">(</span>
+    <span class="n">dwarf</span><span class="o">::</span><span class="n">DW_TAG_arg_variable</span><span class="p">,</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">Args</span><span class="p">[</span><span class="n">Idx</span><span class="p">],</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span>
+    <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">getDoubleTy</span><span class="p">(),</span> <span class="n">Idx</span><span class="p">);</span>
 
 <span class="n">Instruction</span> <span class="o">*</span><span class="n">Call</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">insertDeclare</span><span class="p">(</span>
     <span class="n">Alloca</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createExpression</span><span class="p">(),</span> <span class="n">Builder</span><span class="p">.</span><span class="n">GetInsertBlock</span><span class="p">());</span>
-<span class="n">Call</span><span class="o">-&gt;</span><span class="n">setDebugLoc</span><span class="p">(</span><span class="n">DebugLoc</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="n">Line</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">Scope</span><span class="p">));</span>
+<span class="n">Call</span><span class="o">-&gt;</span><span class="n">setDebugLoc</span><span class="p">(</span><span class="n">DebugLoc</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="n">Line</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Scope</span><span class="p">));</span>
 </pre></div>
 </div>
 <p>Here we&#8217;re doing a few things. First, we&#8217;re grabbing our current scope
@@ -460,28 +460,29 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 </pre></div>
 </div>
 <p>Here is the code:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;llvm/ADT/Triple.h&quot;</span>
+<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &quot;llvm/ADT/STLExtras.h&quot;</span>
+<span class="cp">#include &quot;llvm/ADT/Triple.h&quot;</span>
 <span class="cp">#include &quot;llvm/Analysis/Passes.h&quot;</span>
 <span class="cp">#include &quot;llvm/ExecutionEngine/ExecutionEngine.h&quot;</span>
 <span class="cp">#include &quot;llvm/ExecutionEngine/MCJIT.h&quot;</span>
 <span class="cp">#include &quot;llvm/ExecutionEngine/SectionMemoryManager.h&quot;</span>
+<span class="cp">#include &quot;llvm/IR/DIBuilder.h&quot;</span>
 <span class="cp">#include &quot;llvm/IR/DataLayout.h&quot;</span>
 <span class="cp">#include &quot;llvm/IR/DerivedTypes.h&quot;</span>
-<span class="cp">#include &quot;llvm/IR/DIBuilder.h&quot;</span>
 <span class="cp">#include &quot;llvm/IR/IRBuilder.h&quot;</span>
 <span class="cp">#include &quot;llvm/IR/LLVMContext.h&quot;</span>
+<span class="cp">#include &quot;llvm/IR/LegacyPassManager.h&quot;</span>
 <span class="cp">#include &quot;llvm/IR/Module.h&quot;</span>
 <span class="cp">#include &quot;llvm/IR/Verifier.h&quot;</span>
-<span class="cp">#include &quot;llvm/PassManager.h&quot;</span>
 <span class="cp">#include &quot;llvm/Support/Host.h&quot;</span>
 <span class="cp">#include &quot;llvm/Support/TargetSelect.h&quot;</span>
 <span class="cp">#include &quot;llvm/Transforms/Scalar.h&quot;</span>
 <span class="cp">#include &lt;cctype&gt;</span>
 <span class="cp">#include &lt;cstdio&gt;</span>
+<span class="cp">#include &lt;iostream&gt;</span>
 <span class="cp">#include &lt;map&gt;</span>
 <span class="cp">#include &lt;string&gt;</span>
 <span class="cp">#include &lt;vector&gt;</span>
-<span class="cp">#include &lt;iostream&gt;</span>
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">llvm</span><span class="p">;</span>
 
 <span class="c1">//===----------------------------------------------------------------------===//</span>
@@ -554,13 +555,13 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 <span class="p">}</span>
 <span class="k">static</span> <span class="n">IRBuilder</span><span class="o">&lt;&gt;</span> <span class="n">Builder</span><span class="p">(</span><span class="n">getGlobalContext</span><span class="p">());</span>
 <span class="k">struct</span> <span class="n">DebugInfo</span> <span class="p">{</span>
-  <span class="n">DICompileUnit</span> <span class="n">TheCU</span><span class="p">;</span>
-  <span class="n">DIType</span> <span class="n">DblTy</span><span class="p">;</span>
+  <span class="n">DICompileUnit</span> <span class="o">*</span><span class="n">TheCU</span><span class="p">;</span>
+  <span class="n">DIType</span> <span class="o">*</span><span class="n">DblTy</span><span class="p">;</span>
   <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">DIScope</span> <span class="o">*&gt;</span> <span class="n">LexicalBlocks</span><span class="p">;</span>
-  <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">PrototypeAST</span> <span class="o">*</span><span class="p">,</span> <span class="n">DIScope</span><span class="o">&gt;</span> <span class="n">FnScopeMap</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">PrototypeAST</span> <span class="o">*</span><span class="p">,</span> <span class="n">DIScope</span> <span class="o">*&gt;</span> <span class="n">FnScopeMap</span><span class="p">;</span>
 
   <span class="kt">void</span> <span class="nf">emitLocation</span><span class="p">(</span><span class="n">ExprAST</span> <span class="o">*</span><span class="n">AST</span><span class="p">);</span>
-  <span class="n">DIType</span> <span class="nf">getDoubleTy</span><span class="p">();</span>
+  <span class="n">DIType</span> <span class="o">*</span><span class="nf">getDoubleTy</span><span class="p">();</span>
 <span class="p">}</span> <span class="n">KSDbgInfo</span><span class="p">;</span>
 
 <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">IdentifierStr</span><span class="p">;</span> <span class="c1">// Filled in if tok_identifier</span>
@@ -682,10 +683,10 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 
 <span class="k">public</span><span class="o">:</span>
   <span class="n">NumberExprAST</span><span class="p">(</span><span class="kt">double</span> <span class="n">val</span><span class="p">)</span> <span class="o">:</span> <span class="n">Val</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="p">{}</span>
-  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">ExprAST</span><span class="o">::</span><span class="n">dump</span><span class="p">(</span><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">Val</span><span class="p">,</span> <span class="n">ind</span><span class="p">);</span>
   <span class="p">}</span>
-  <span class="k">virtual</span> <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">();</span>
+  <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="c1">/// VariableExprAST - Expression class for referencing a variable, like &quot;a&quot;.</span>
@@ -696,10 +697,10 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <span class="n">VariableExprAST</span><span class="p">(</span><span class="n">SourceLocation</span> <span class="n">Loc</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">)</span>
       <span class="o">:</span> <span class="n">ExprAST</span><span class="p">(</span><span class="n">Loc</span><span class="p">),</span> <span class="n">Name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{}</span>
   <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">getName</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">Name</span><span class="p">;</span> <span class="p">}</span>
-  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
     <span class="k">return</span> <span class="n">ExprAST</span><span class="o">::</span><span class="n">dump</span><span class="p">(</span><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="n">Name</span><span class="p">,</span> <span class="n">ind</span><span class="p">);</span>
   <span class="p">}</span>
-  <span class="k">virtual</span> <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">();</span>
+  <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="c1">/// UnaryExprAST - Expression class for a unary operator.</span>
@@ -710,12 +711,12 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 <span class="k">public</span><span class="o">:</span>
   <span class="n">UnaryExprAST</span><span class="p">(</span><span class="kt">char</span> <span class="n">opcode</span><span class="p">,</span> <span class="n">ExprAST</span> <span class="o">*</span><span class="n">operand</span><span class="p">)</span>
       <span class="o">:</span> <span class="n">Opcode</span><span class="p">(</span><span class="n">opcode</span><span class="p">),</span> <span class="n">Operand</span><span class="p">(</span><span class="n">operand</span><span class="p">)</span> <span class="p">{}</span>
-  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
     <span class="n">ExprAST</span><span class="o">::</span><span class="n">dump</span><span class="p">(</span><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;unary&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">Opcode</span><span class="p">,</span> <span class="n">ind</span><span class="p">);</span>
     <span class="n">Operand</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="k">virtual</span> <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">();</span>
+  <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="c1">/// BinaryExprAST - Expression class for a binary operator.</span>
@@ -726,13 +727,13 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 <span class="k">public</span><span class="o">:</span>
   <span class="n">BinaryExprAST</span><span class="p">(</span><span class="n">SourceLocation</span> <span class="n">Loc</span><span class="p">,</span> <span class="kt">char</span> <span class="n">op</span><span class="p">,</span> <span class="n">ExprAST</span> <span class="o">*</span><span class="n">lhs</span><span class="p">,</span> <span class="n">ExprAST</span> <span class="o">*</span><span class="n">rhs</span><span class="p">)</span>
       <span class="o">:</span> <span class="n">ExprAST</span><span class="p">(</span><span class="n">Loc</span><span class="p">),</span> <span class="n">Op</span><span class="p">(</span><span class="n">op</span><span class="p">),</span> <span class="n">LHS</span><span class="p">(</span><span class="n">lhs</span><span class="p">),</span> <span class="n">RHS</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span> <span class="p">{}</span>
-  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
     <span class="n">ExprAST</span><span class="o">::</span><span class="n">dump</span><span class="p">(</span><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;binary&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">Op</span><span class="p">,</span> <span class="n">ind</span><span class="p">);</span>
     <span class="n">LHS</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;LHS:&quot;</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="n">RHS</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;RHS:&quot;</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="k">virtual</span> <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">();</span>
+  <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="c1">/// CallExprAST - Expression class for function calls.</span>
@@ -744,13 +745,13 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <span class="n">CallExprAST</span><span class="p">(</span><span class="n">SourceLocation</span> <span class="n">Loc</span><span class="p">,</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">callee</span><span class="p">,</span>
               <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ExprAST</span> <span class="o">*&gt;</span> <span class="o">&amp;</span><span class="n">args</span><span class="p">)</span>
       <span class="o">:</span> <span class="n">ExprAST</span><span class="p">(</span><span class="n">Loc</span><span class="p">),</span> <span class="n">Callee</span><span class="p">(</span><span class="n">callee</span><span class="p">),</span> <span class="n">Args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="p">{}</span>
-  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
     <span class="n">ExprAST</span><span class="o">::</span><span class="n">dump</span><span class="p">(</span><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;call &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">Callee</span><span class="p">,</span> <span class="n">ind</span><span class="p">);</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">ExprAST</span> <span class="o">*</span><span class="nl">Arg</span> <span class="p">:</span> <span class="n">Args</span><span class="p">)</span>
       <span class="n">Arg</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="k">virtual</span> <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">();</span>
+  <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="c1">/// IfExprAST - Expression class for if/then/else.</span>
@@ -760,14 +761,14 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 <span class="k">public</span><span class="o">:</span>
   <span class="n">IfExprAST</span><span class="p">(</span><span class="n">SourceLocation</span> <span class="n">Loc</span><span class="p">,</span> <span class="n">ExprAST</span> <span class="o">*</span><span class="n">cond</span><span class="p">,</span> <span class="n">ExprAST</span> <span class="o">*</span><span class="n">then</span><span class="p">,</span> <span class="n">ExprAST</span> <span class="o">*</span><span class="n">_else</span><span class="p">)</span>
       <span class="o">:</span> <span class="n">ExprAST</span><span class="p">(</span><span class="n">Loc</span><span class="p">),</span> <span class="n">Cond</span><span class="p">(</span><span class="n">cond</span><span class="p">),</span> <span class="n">Then</span><span class="p">(</span><span class="n">then</span><span class="p">),</span> <span class="n">Else</span><span class="p">(</span><span class="n">_else</span><span class="p">)</span> <span class="p">{}</span>
-  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
     <span class="n">ExprAST</span><span class="o">::</span><span class="n">dump</span><span class="p">(</span><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;if&quot;</span><span class="p">,</span> <span class="n">ind</span><span class="p">);</span>
     <span class="n">Cond</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Cond:&quot;</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="n">Then</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Then:&quot;</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="n">Else</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Else:&quot;</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="k">virtual</span> <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">();</span>
+  <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="c1">/// ForExprAST - Expression class for for/in.</span>
@@ -779,7 +780,7 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <span class="n">ForExprAST</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">varname</span><span class="p">,</span> <span class="n">ExprAST</span> <span class="o">*</span><span class="n">start</span><span class="p">,</span> <span class="n">ExprAST</span> <span class="o">*</span><span class="n">end</span><span class="p">,</span>
              <span class="n">ExprAST</span> <span class="o">*</span><span class="n">step</span><span class="p">,</span> <span class="n">ExprAST</span> <span class="o">*</span><span class="n">body</span><span class="p">)</span>
       <span class="o">:</span> <span class="n">VarName</span><span class="p">(</span><span class="n">varname</span><span class="p">),</span> <span class="n">Start</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="n">End</span><span class="p">(</span><span class="n">end</span><span class="p">),</span> <span class="n">Step</span><span class="p">(</span><span class="n">step</span><span class="p">),</span> <span class="n">Body</span><span class="p">(</span><span class="n">body</span><span class="p">)</span> <span class="p">{}</span>
-  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
     <span class="n">ExprAST</span><span class="o">::</span><span class="n">dump</span><span class="p">(</span><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;for&quot;</span><span class="p">,</span> <span class="n">ind</span><span class="p">);</span>
     <span class="n">Start</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Cond:&quot;</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="n">End</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;End:&quot;</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
@@ -787,7 +788,7 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
     <span class="n">Body</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Body:&quot;</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="k">virtual</span> <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">();</span>
+  <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="c1">/// VarExprAST - Expression class for var/in</span>
@@ -800,14 +801,14 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
              <span class="n">ExprAST</span> <span class="o">*</span><span class="n">body</span><span class="p">)</span>
       <span class="o">:</span> <span class="n">VarNames</span><span class="p">(</span><span class="n">varnames</span><span class="p">),</span> <span class="n">Body</span><span class="p">(</span><span class="n">body</span><span class="p">)</span> <span class="p">{}</span>
 
-  <span class="k">virtual</span> <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">dump</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ind</span><span class="p">)</span> <span class="k">override</span> <span class="p">{</span>
     <span class="n">ExprAST</span><span class="o">::</span><span class="n">dump</span><span class="p">(</span><span class="n">out</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;var&quot;</span><span class="p">,</span> <span class="n">ind</span><span class="p">);</span>
     <span class="k">for</span> <span class="p">(</span><span class="k">const</span> <span class="k">auto</span> <span class="o">&amp;</span><span class="nl">NamedVar</span> <span class="p">:</span> <span class="n">VarNames</span><span class="p">)</span>
       <span class="n">NamedVar</span><span class="p">.</span><span class="n">second</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">NamedVar</span><span class="p">.</span><span class="n">first</span> <span class="o">&lt;&lt;</span> <span class="sc">&#39;:&#39;</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="n">Body</span><span class="o">-&gt;</span><span class="n">dump</span><span class="p">(</span><span class="n">indent</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">ind</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Body:&quot;</span><span class="p">,</span> <span class="n">ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
   <span class="p">}</span>
-  <span class="k">virtual</span> <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">();</span>
+  <span class="n">Value</span> <span class="o">*</span><span class="n">Codegen</span><span class="p">()</span> <span class="k">override</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="c1">/// PrototypeAST - This class represents the &quot;prototype&quot; for a function,</span>
@@ -1277,8 +1278,8 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 
 <span class="k">static</span> <span class="n">DIBuilder</span> <span class="o">*</span><span class="n">DBuilder</span><span class="p">;</span>
 
-<span class="n">DIType</span> <span class="n">DebugInfo</span><span class="o">::</span><span class="n">getDoubleTy</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">if</span> <span class="p">(</span><span class="n">DblTy</span><span class="p">.</span><span class="n">isValid</span><span class="p">())</span>
+<span class="n">DIType</span> <span class="o">*</span><span class="n">DebugInfo</span><span class="o">::</span><span class="n">getDoubleTy</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">DblTy</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">DblTy</span><span class="p">;</span>
 
   <span class="n">DblTy</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createBasicType</span><span class="p">(</span><span class="s">&quot;double&quot;</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">dwarf</span><span class="o">::</span><span class="n">DW_ATE_float</span><span class="p">);</span>
@@ -1290,16 +1291,16 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
     <span class="k">return</span> <span class="n">Builder</span><span class="p">.</span><span class="n">SetCurrentDebugLocation</span><span class="p">(</span><span class="n">DebugLoc</span><span class="p">());</span>
   <span class="n">DIScope</span> <span class="o">*</span><span class="n">Scope</span><span class="p">;</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">LexicalBlocks</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span>
-    <span class="n">Scope</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">TheCU</span><span class="p">;</span>
+    <span class="n">Scope</span> <span class="o">=</span> <span class="n">TheCU</span><span class="p">;</span>
   <span class="k">else</span>
     <span class="n">Scope</span> <span class="o">=</span> <span class="n">LexicalBlocks</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
   <span class="n">Builder</span><span class="p">.</span><span class="n">SetCurrentDebugLocation</span><span class="p">(</span>
-      <span class="n">DebugLoc</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="n">AST</span><span class="o">-&gt;</span><span class="n">getLine</span><span class="p">(),</span> <span class="n">AST</span><span class="o">-&gt;</span><span class="n">getCol</span><span class="p">(),</span> <span class="n">DIScope</span><span class="p">(</span><span class="o">*</span><span class="n">Scope</span><span class="p">)));</span>
+      <span class="n">DebugLoc</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="n">AST</span><span class="o">-&gt;</span><span class="n">getLine</span><span class="p">(),</span> <span class="n">AST</span><span class="o">-&gt;</span><span class="n">getCol</span><span class="p">(),</span> <span class="n">Scope</span><span class="p">));</span>
 <span class="p">}</span>
 
-<span class="k">static</span> <span class="n">DICompositeType</span> <span class="n">CreateFunctionType</span><span class="p">(</span><span class="kt">unsigned</span> <span class="n">NumArgs</span><span class="p">,</span> <span class="n">DIFile</span> <span class="n">Unit</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">static</span> <span class="n">DISubroutineType</span> <span class="o">*</span><span class="n">CreateFunctionType</span><span class="p">(</span><span class="kt">unsigned</span> <span class="n">NumArgs</span><span class="p">,</span> <span class="n">DIFile</span> <span class="o">*</span><span class="n">Unit</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">SmallVector</span><span class="o">&lt;</span><span class="n">Metadata</span> <span class="o">*</span><span class="p">,</span> <span class="mi">8</span><span class="o">&gt;</span> <span class="n">EltTys</span><span class="p">;</span>
-  <span class="n">DIType</span> <span class="n">DblTy</span> <span class="o">=</span> <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">getDoubleTy</span><span class="p">();</span>
+  <span class="n">DIType</span> <span class="o">*</span><span class="n">DblTy</span> <span class="o">=</span> <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">getDoubleTy</span><span class="p">();</span>
 
   <span class="c1">// Add the result type.</span>
   <span class="n">EltTys</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">DblTy</span><span class="p">);</span>
@@ -1307,8 +1308,8 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <span class="k">for</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">NumArgs</span><span class="p">;</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">e</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span>
     <span class="n">EltTys</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">DblTy</span><span class="p">);</span>
 
-  <span class="n">DITypeArray</span> <span class="n">EltTypeArray</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">getOrCreateTypeArray</span><span class="p">(</span><span class="n">EltTys</span><span class="p">);</span>
-  <span class="k">return</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createSubroutineType</span><span class="p">(</span><span class="n">Unit</span><span class="p">,</span> <span class="n">EltTypeArray</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createSubroutineType</span><span class="p">(</span><span class="n">Unit</span><span class="p">,</span>
+                                        <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">getOrCreateTypeArray</span><span class="p">(</span><span class="n">EltTys</span><span class="p">));</span>
 <span class="p">}</span>
 
 <span class="c1">//===----------------------------------------------------------------------===//</span>
@@ -1317,7 +1318,7 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 
 <span class="k">static</span> <span class="n">Module</span> <span class="o">*</span><span class="n">TheModule</span><span class="p">;</span>
 <span class="k">static</span> <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">AllocaInst</span> <span class="o">*&gt;</span> <span class="n">NamedValues</span><span class="p">;</span>
-<span class="k">static</span> <span class="n">FunctionPassManager</span> <span class="o">*</span><span class="n">TheFPM</span><span class="p">;</span>
+<span class="k">static</span> <span class="n">legacy</span><span class="o">::</span><span class="n">FunctionPassManager</span> <span class="o">*</span><span class="n">TheFPM</span><span class="p">;</span>
 
 <span class="n">Value</span> <span class="o">*</span><span class="nf">ErrorV</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">Str</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">Error</span><span class="p">(</span><span class="n">Str</span><span class="p">);</span>
@@ -1369,7 +1370,10 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
   <span class="c1">// Special case &#39;=&#39; because we don&#39;t want to emit the LHS as an expression.</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">Op</span> <span class="o">==</span> <span class="sc">&#39;=&#39;</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Assignment requires the LHS to be an identifier.</span>
-    <span class="n">VariableExprAST</span> <span class="o">*</span><span class="n">LHSE</span> <span class="o">=</span> <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">VariableExprAST</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">LHS</span><span class="p">);</span>
+    <span class="c1">// This assume we&#39;re building without RTTI because LLVM builds that way by</span>
+    <span class="c1">// default.  If you build LLVM with RTTI this can be changed to a</span>
+    <span class="c1">// dynamic_cast for automatic error checking.</span>
+    <span class="n">VariableExprAST</span> <span class="o">*</span><span class="n">LHSE</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">VariableExprAST</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">LHS</span><span class="p">);</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">LHSE</span><span class="p">)</span>
       <span class="k">return</span> <span class="n">ErrorV</span><span class="p">(</span><span class="s">&quot;destination of &#39;=&#39; must be a variable&quot;</span><span class="p">);</span>
     <span class="c1">// Codegen the RHS.</span>
@@ -1685,15 +1689,15 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
     <span class="n">AI</span><span class="o">-&gt;</span><span class="n">setName</span><span class="p">(</span><span class="n">Args</span><span class="p">[</span><span class="n">Idx</span><span class="p">]);</span>
 
   <span class="c1">// Create a subprogram DIE for this function.</span>
-  <span class="n">DIFile</span> <span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getFilename</span><span class="p">(),</span>
-                                     <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getDirectory</span><span class="p">());</span>
-  <span class="n">DIDescriptor</span> <span class="nf">FContext</span><span class="p">(</span><span class="n">Unit</span><span class="p">);</span>
+  <span class="n">DIFile</span> <span class="o">*</span><span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="o">-&gt;</span><span class="n">getFilename</span><span class="p">(),</span>
+                                      <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="o">-&gt;</span><span class="n">getDirectory</span><span class="p">());</span>
+  <span class="n">DIScope</span> <span class="o">*</span><span class="n">FContext</span> <span class="o">=</span> <span class="n">Unit</span><span class="p">;</span>
   <span class="kt">unsigned</span> <span class="n">LineNo</span> <span class="o">=</span> <span class="n">Line</span><span class="p">;</span>
   <span class="kt">unsigned</span> <span class="n">ScopeLine</span> <span class="o">=</span> <span class="n">Line</span><span class="p">;</span>
-  <span class="n">DISubprogram</span> <span class="n">SP</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFunction</span><span class="p">(</span>
+  <span class="n">DISubprogram</span> <span class="o">*</span><span class="n">SP</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFunction</span><span class="p">(</span>
       <span class="n">FContext</span><span class="p">,</span> <span class="n">Name</span><span class="p">,</span> <span class="n">StringRef</span><span class="p">(),</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">LineNo</span><span class="p">,</span>
       <span class="n">CreateFunctionType</span><span class="p">(</span><span class="n">Args</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">Unit</span><span class="p">),</span> <span class="nb">false</span> <span class="cm">/* internal linkage */</span><span class="p">,</span>
-      <span class="nb">true</span> <span class="cm">/* definition */</span><span class="p">,</span> <span class="n">ScopeLine</span><span class="p">,</span> <span class="n">DIDescriptor</span><span class="o">::</span><span class="n">FlagPrototyped</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
+      <span class="nb">true</span> <span class="cm">/* definition */</span><span class="p">,</span> <span class="n">ScopeLine</span><span class="p">,</span> <span class="n">DINode</span><span class="o">::</span><span class="n">FlagPrototyped</span><span class="p">,</span> <span class="nb">false</span><span class="p">,</span> <span class="n">F</span><span class="p">);</span>
 
   <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">FnScopeMap</span><span class="p">[</span><span class="k">this</span><span class="p">]</span> <span class="o">=</span> <span class="n">SP</span><span class="p">;</span>
   <span class="k">return</span> <span class="n">F</span><span class="p">;</span>
@@ -1709,15 +1713,15 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
 
     <span class="c1">// Create a debug descriptor for the variable.</span>
     <span class="n">DIScope</span> <span class="o">*</span><span class="n">Scope</span> <span class="o">=</span> <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">LexicalBlocks</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
-    <span class="n">DIFile</span> <span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getFilename</span><span class="p">(),</span>
-                                       <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="p">.</span><span class="n">getDirectory</span><span class="p">());</span>
-    <span class="n">DIVariable</span> <span class="n">D</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createLocalVariable</span><span class="p">(</span><span class="n">dwarf</span><span class="o">::</span><span class="n">DW_TAG_arg_variable</span><span class="p">,</span>
-                                                 <span class="o">*</span><span class="n">Scope</span><span class="p">,</span> <span class="n">Args</span><span class="p">[</span><span class="n">Idx</span><span class="p">],</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span>
-                                                 <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">getDoubleTy</span><span class="p">(),</span> <span class="n">Idx</span><span class="p">);</span>
+    <span class="n">DIFile</span> <span class="o">*</span><span class="n">Unit</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createFile</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="o">-&gt;</span><span class="n">getFilename</span><span class="p">(),</span>
+                                        <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">TheCU</span><span class="o">-&gt;</span><span class="n">getDirectory</span><span class="p">());</span>
+    <span class="n">DILocalVariable</span> <span class="o">*</span><span class="n">D</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createLocalVariable</span><span class="p">(</span>
+        <span class="n">dwarf</span><span class="o">::</span><span class="n">DW_TAG_arg_variable</span><span class="p">,</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">Args</span><span class="p">[</span><span class="n">Idx</span><span class="p">],</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">Line</span><span class="p">,</span>
+        <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">getDoubleTy</span><span class="p">(),</span> <span class="n">Idx</span><span class="p">);</span>
 
-    <span class="n">Instruction</span> <span class="o">*</span><span class="n">Call</span> <span class="o">=</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">insertDeclare</span><span class="p">(</span>
-        <span class="n">Alloca</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createExpression</span><span class="p">(),</span> <span class="n">Builder</span><span class="p">.</span><span class="n">GetInsertBlock</span><span class="p">());</span>
-    <span class="n">Call</span><span class="o">-&gt;</span><span class="n">setDebugLoc</span><span class="p">(</span><span class="n">DebugLoc</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="n">Line</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">Scope</span><span class="p">));</span>
+    <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">insertDeclare</span><span class="p">(</span><span class="n">Alloca</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">DBuilder</span><span class="o">-&gt;</span><span class="n">createExpression</span><span class="p">(),</span>
+                            <span class="n">DebugLoc</span><span class="o">::</span><span class="n">get</span><span class="p">(</span><span class="n">Line</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Scope</span><span class="p">),</span>
+                            <span class="n">Builder</span><span class="p">.</span><span class="n">GetInsertBlock</span><span class="p">());</span>
 
     <span class="c1">// Store the initial value into the alloca.</span>
     <span class="n">Builder</span><span class="p">.</span><span class="n">CreateStore</span><span class="p">(</span><span class="n">AI</span><span class="p">,</span> <span class="n">Alloca</span><span class="p">);</span>
@@ -1735,7 +1739,7 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
 
   <span class="c1">// Push the current scope.</span>
-  <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">LexicalBlocks</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="o">&amp;</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">FnScopeMap</span><span class="p">[</span><span class="n">Proto</span><span class="p">]);</span>
+  <span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">LexicalBlocks</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">KSDbgInfo</span><span class="p">.</span><span class="n">FnScopeMap</span><span class="p">[</span><span class="n">Proto</span><span class="p">]);</span>
 
   <span class="c1">// Unset the location for the prologue emission (leading instructions with no</span>
   <span class="c1">// location in a function are considered part of the prologue and the debugger</span>
@@ -1916,12 +1920,11 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
     <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
   <span class="p">}</span>
 
-  <span class="n">FunctionPassManager</span> <span class="n">OurFPM</span><span class="p">(</span><span class="n">TheModule</span><span class="p">);</span>
+  <span class="n">legacy</span><span class="o">::</span><span class="n">FunctionPassManager</span> <span class="n">OurFPM</span><span class="p">(</span><span class="n">TheModule</span><span class="p">);</span>
 
   <span class="c1">// Set up the optimizer pipeline.  Start with registering info about how the</span>
   <span class="c1">// target lays out data structures.</span>
-  <span class="n">TheModule</span><span class="o">-&gt;</span><span class="n">setDataLayout</span><span class="p">(</span><span class="n">TheExecutionEngine</span><span class="o">-&gt;</span><span class="n">getDataLayout</span><span class="p">());</span>
-  <span class="n">OurFPM</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="k">new</span> <span class="n">DataLayoutPass</span><span class="p">());</span>
+  <span class="n">TheModule</span><span class="o">-&gt;</span><span class="n">setDataLayout</span><span class="p">(</span><span class="o">*</span><span class="n">TheExecutionEngine</span><span class="o">-&gt;</span><span class="n">getDataLayout</span><span class="p">());</span>
 <span class="cp">#if 0</span><span class="c"></span>
 <span class="c">  // Provide basic AliasAnalysis support for GVN.</span>
 <span class="c">  OurFPM.add(createBasicAliasAnalysisPass());</span>
@@ -1984,8 +1987,8 @@ clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --s
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

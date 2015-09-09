@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>The LLVM Target-Independent Code Generator &mdash; LLVM 3.6 documentation</title>
+    <title>The LLVM Target-Independent Code Generator &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
     <link rel="next" title="Exception Handling in LLVM" href="ExceptionHandling.html" />
     <link rel="prev" title="LLVM bugpoint tool: design and usage" href="Bugpoint.html" />
 <style type="text/css">
@@ -193,6 +193,15 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#the-nvptx-backend" id="id93">The NVPTX backend</a></li>
+<li><a class="reference internal" href="#the-extended-berkeley-packet-filter-ebpf-backend" id="id94">The extended Berkeley Packet Filter (eBPF) backend</a><ul>
+<li><a class="reference internal" href="#instruction-encoding-arithmetic-and-jump" id="id95">Instruction encoding (arithmetic and jump)</a></li>
+<li><a class="reference internal" href="#instruction-encoding-load-store" id="id96">Instruction encoding (load, store)</a></li>
+<li><a class="reference internal" href="#packet-data-access-bpf-abs-bpf-ind" id="id97">Packet data access (BPF_ABS, BPF_IND)</a></li>
+<li><a class="reference internal" href="#ebpf-maps" id="id98">eBPF maps</a></li>
+<li><a class="reference internal" href="#function-calls" id="id99">Function calls</a></li>
+<li><a class="reference internal" href="#program-start" id="id100">Program start</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -796,7 +805,7 @@ efficiently supported by the target.</p>
 <code class="docutils literal"><span class="pre">SDNode</span></code> class.  The primary payload of the <code class="docutils literal"><span class="pre">SDNode</span></code> is its operation code
 (Opcode) that indicates what operation the node performs and the operands to the
 operation.  The various operation node types are described at the top of the
-<code class="docutils literal"><span class="pre">include/llvm/CodeGen/SelectionDAGNodes.h</span></code> file.</p>
+<code class="docutils literal"><span class="pre">include/llvm/CodeGen/ISDOpcodes.h</span></code> file.</p>
 <p>Although most operations define a single value, each node in the graph may
 define multiple values.  For example, a combined div/rem operation will define
 both the dividend and the remainder. Many other situations require multiple
@@ -860,7 +869,7 @@ rest of the code generation passes are run.</p>
 <p>One great way to visualize what is going on here is to take advantage of a few
 LLC command line options.  The following options pop up a window displaying the
 SelectionDAG at specific times (if you only get errors printed to the console
-while using this, you probably <a class="reference external" href="ProgrammersManual.html#ViewGraph">need to configure your
+while using this, you probably <a class="reference external" href="ProgrammersManual.html#viewing-graphs-while-debugging-code">need to configure your
 system</a> to add support for it).</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">-view-dag-combine1-dags</span></code> displays the DAG after being built, before the
@@ -1290,7 +1299,7 @@ found before being stored or after being reloaded.</p>
 <p>If the indirect strategy is used, after all the virtual registers have been
 mapped to physical registers or stack slots, it is necessary to use a spiller
 object to place load and store instructions in the code. Every virtual that has
-been mapped to a stack slot will be stored to memory after been defined and will
+been mapped to a stack slot will be stored to memory after being defined and will
 be loaded before being used. The implementation of the spiller tries to recycle
 load/store instructions, avoiding unnecessary instructions. For an example of
 how to invoke the spiller, see <code class="docutils literal"><span class="pre">RegAllocLinearScan::runOnMachineFunction</span></code> in
@@ -1302,7 +1311,7 @@ how to invoke the spiller, see <code class="docutils literal"><span class="pre">
 instructions are three address instructions. That is, each instruction is
 expected to define at most one register, and to use at most two registers.
 However, some architectures use two address instructions. In this case, the
-defined register is also one of the used register. For instance, an instruction
+defined register is also one of the used registers. For instance, an instruction
 such as <code class="docutils literal"><span class="pre">ADD</span> <span class="pre">%EAX,</span> <span class="pre">%EBX</span></code>, in X86 is actually equivalent to <code class="docutils literal"><span class="pre">%EAX</span> <span class="pre">=</span> <span class="pre">%EAX</span> <span class="pre">+</span>
 <span class="pre">%EBX</span></code>.</p>
 <p>In order to produce correct code, LLVM must convert three address instructions
@@ -1528,7 +1537,7 @@ ops used by the code generator into the actual machine instructions they
 correspond to. The MCInsts that are generated by this are fed into the
 instruction printer or the encoder.</li>
 </ol>
-<p>Finally, at your choosing, you can also implement an subclass of MCCodeEmitter
+<p>Finally, at your choosing, you can also implement a subclass of MCCodeEmitter
 which lowers MCInst&#8217;s into machine code bytes and relocations.  This is
 important if you want to support direct .o file emission, or would like to
 implement an assembler for your target.</p>
@@ -1733,6 +1742,7 @@ the key:</p>
 <span class="raw-html"><th>SystemZ</th></span>
 <span class="raw-html"><th>X86</th></span>
 <span class="raw-html"><th>XCore</th></span>
+<span class="raw-html"><th>eBPF</th></span>
 <span class="raw-html"></tr></span></p>
 <p><span class="raw-html"><tr></span>
 <span class="raw-html"><td><a href="#feat_reliable">is generally reliable</a></td></span>
@@ -1746,6 +1756,7 @@ the key:</p>
 <span class="raw-html"><td class="yes"></td> <!-- SystemZ --></span>
 <span class="raw-html"><td class="yes"></td> <!-- X86 --></span>
 <span class="raw-html"><td class="yes"></td> <!-- XCore --></span>
+<span class="raw-html"><td class="yes"></td> <!-- eBPF --></span>
 <span class="raw-html"></tr></span></p>
 <p><span class="raw-html"><tr></span>
 <span class="raw-html"><td><a href="#feat_asmparser">assembly parser</a></td></span>
@@ -1759,6 +1770,7 @@ the key:</p>
 <span class="raw-html"><td class="yes"></td> <!-- SystemZ --></span>
 <span class="raw-html"><td class="yes"></td> <!-- X86 --></span>
 <span class="raw-html"><td class="no"></td> <!-- XCore --></span>
+<span class="raw-html"><td class="no"></td> <!-- eBPF --></span>
 <span class="raw-html"></tr></span></p>
 <p><span class="raw-html"><tr></span>
 <span class="raw-html"><td><a href="#feat_disassembler">disassembler</a></td></span>
@@ -1772,6 +1784,7 @@ the key:</p>
 <span class="raw-html"><td class="no"></td> <!-- Sparc --></span>
 <span class="raw-html"><td class="yes"></td> <!-- X86 --></span>
 <span class="raw-html"><td class="yes"></td> <!-- XCore --></span>
+<span class="raw-html"><td class="yes"></td> <!-- eBPF --></span>
 <span class="raw-html"></tr></span></p>
 <p><span class="raw-html"><tr></span>
 <span class="raw-html"><td><a href="#feat_inlineasm">inline asm</a></td></span>
@@ -1785,6 +1798,7 @@ the key:</p>
 <span class="raw-html"><td class="yes"></td> <!-- SystemZ --></span>
 <span class="raw-html"><td class="yes"></td> <!-- X86 --></span>
 <span class="raw-html"><td class="yes"></td> <!-- XCore --></span>
+<span class="raw-html"><td class="no"></td> <!-- eBPF --></span>
 <span class="raw-html"></tr></span></p>
 <p><span class="raw-html"><tr></span>
 <span class="raw-html"><td><a href="#feat_jit">jit</a></td></span>
@@ -1798,6 +1812,7 @@ the key:</p>
 <span class="raw-html"><td class="yes"></td> <!-- SystemZ --></span>
 <span class="raw-html"><td class="yes"></td> <!-- X86 --></span>
 <span class="raw-html"><td class="no"></td> <!-- XCore --></span>
+<span class="raw-html"><td class="yes"></td> <!-- eBPF --></span>
 <span class="raw-html"></tr></span></p>
 <p><span class="raw-html"><tr></span>
 <span class="raw-html"><td><a href="#feat_objectwrite">.o&nbsp;file writing</a></td></span>
@@ -1811,6 +1826,7 @@ the key:</p>
 <span class="raw-html"><td class="yes"></td> <!-- SystemZ --></span>
 <span class="raw-html"><td class="yes"></td> <!-- X86 --></span>
 <span class="raw-html"><td class="no"></td> <!-- XCore --></span>
+<span class="raw-html"><td class="yes"></td> <!-- eBPF --></span>
 <span class="raw-html"></tr></span></p>
 <p><span class="raw-html"><tr></span>
 <span class="raw-html"><td><a hr:raw-html:`ef="#feat_tailcall">tail calls</a></td></span>
@@ -1824,6 +1840,7 @@ the key:</p>
 <span class="raw-html"><td class="no"></td> <!-- SystemZ --></span>
 <span class="raw-html"><td class="yes"></td> <!-- X86 --></span>
 <span class="raw-html"><td class="no"></td> <!-- XCore --></span>
+<span class="raw-html"><td class="no"></td> <!-- eBPF --></span>
 <span class="raw-html"></tr></span></p>
 <p><span class="raw-html"><tr></span>
 <span class="raw-html"><td><a href="#feat_segstacks">segmented stacks</a></td></span>
@@ -1837,6 +1854,7 @@ the key:</p>
 <span class="raw-html"><td class="no"></td> <!-- SystemZ --></span>
 <span class="raw-html"><td class="partial"><a href="#feat_segstacks_x86">*</a></td> <!-- X86 --></span>
 <span class="raw-html"><td class="no"></td> <!-- XCore --></span>
+<span class="raw-html"><td class="no"></td> <!-- eBPF --></span>
 <span class="raw-html"></tr></span></p>
 <p><span class="raw-html"></table></span></p>
 <div class="section" id="is-generally-reliable">
@@ -2263,6 +2281,173 @@ the official NVIDIA toolchain.</p>
 <span class="raw-html"></tr></span>
 <span class="raw-html"></table></span></p>
 </div>
+<div class="section" id="the-extended-berkeley-packet-filter-ebpf-backend">
+<h3><a class="toc-backref" href="#id94">The extended Berkeley Packet Filter (eBPF) backend</a><a class="headerlink" href="#the-extended-berkeley-packet-filter-ebpf-backend" title="Permalink to this headline">¶</a></h3>
+<p>Extended BPF (or eBPF) is similar to the original (&#8220;classic&#8221;) BPF (cBPF) used
+to filter network packets.  The
+<a class="reference external" href="http://man7.org/linux/man-pages/man2/bpf.2.html">bpf() system call</a>
+performs a range of operations related to eBPF.  For both cBPF and eBPF
+programs, the Linux kernel statically analyzes the programs before loading
+them, in order to ensure that they cannot harm the running system.  eBPF is
+a 64-bit RISC instruction set designed for one to one mapping to 64-bit CPUs.
+Opcodes are 8-bit encoded, and 87 instructions are defined.  There are 10
+registers, grouped by function as outlined below.</p>
+<div class="highlight-python"><div class="highlight"><pre>R0        return value from in-kernel functions; exit value for eBPF program
+R1 - R5   function call arguments to in-kernel functions
+R6 - R9   callee-saved registers preserved by in-kernel functions
+R10       stack frame pointer (read only)
+</pre></div>
+</div>
+<div class="section" id="instruction-encoding-arithmetic-and-jump">
+<h4><a class="toc-backref" href="#id95">Instruction encoding (arithmetic and jump)</a><a class="headerlink" href="#instruction-encoding-arithmetic-and-jump" title="Permalink to this headline">¶</a></h4>
+<p>eBPF is reusing most of the opcode encoding from classic to simplify conversion
+of classic BPF to eBPF.  For arithmetic and jump instructions the 8-bit &#8216;code&#8217;
+field is divided into three parts:</p>
+<div class="highlight-python"><div class="highlight"><pre>+----------------+--------+--------------------+
+|   4 bits       |  1 bit |   3 bits           |
+| operation code | source | instruction class  |
++----------------+--------+--------------------+
+(MSB)                                      (LSB)
+</pre></div>
+</div>
+<p>Three LSB bits store instruction class which is one of:</p>
+<div class="highlight-python"><div class="highlight"><pre>BPF_LD     0x0
+BPF_LDX    0x1
+BPF_ST     0x2
+BPF_STX    0x3
+BPF_ALU    0x4
+BPF_JMP    0x5
+(unused)   0x6
+BPF_ALU64  0x7
+</pre></div>
+</div>
+<p>When BPF_CLASS(code) == BPF_ALU or BPF_ALU64 or BPF_JMP,
+4th bit encodes source operand</p>
+<div class="highlight-python"><div class="highlight"><pre>BPF_X     0x0  use src_reg register as source operand
+BPF_K     0x1  use 32 bit immediate as source operand
+</pre></div>
+</div>
+<p>and four MSB bits store operation code</p>
+<div class="highlight-python"><div class="highlight"><pre>BPF_ADD   0x0  add
+BPF_SUB   0x1  subtract
+BPF_MUL   0x2  multiply
+BPF_DIV   0x3  divide
+BPF_OR    0x4  bitwise logical OR
+BPF_AND   0x5  bitwise logical AND
+BPF_LSH   0x6  left shift
+BPF_RSH   0x7  right shift (zero extended)
+BPF_NEG   0x8  arithmetic negation
+BPF_MOD   0x9  modulo
+BPF_XOR   0xa  bitwise logical XOR
+BPF_MOV   0xb  move register to register
+BPF_ARSH  0xc  right shift (sign extended)
+BPF_END   0xd  endianness conversion
+</pre></div>
+</div>
+<p>If BPF_CLASS(code) == BPF_JMP, BPF_OP(code) is one of</p>
+<div class="highlight-python"><div class="highlight"><pre>BPF_JA    0x0  unconditional jump
+BPF_JEQ   0x1  jump ==
+BPF_JGT   0x2  jump &gt;
+BPF_JGE   0x3  jump &gt;=
+BPF_JSET  0x4  jump if (DST &amp; SRC)
+BPF_JNE   0x5  jump !=
+BPF_JSGT  0x6  jump signed &gt;
+BPF_JSGE  0x7  jump signed &gt;=
+BPF_CALL  0x8  function call
+BPF_EXIT  0x9  function return
+</pre></div>
+</div>
+</div>
+<div class="section" id="instruction-encoding-load-store">
+<h4><a class="toc-backref" href="#id96">Instruction encoding (load, store)</a><a class="headerlink" href="#instruction-encoding-load-store" title="Permalink to this headline">¶</a></h4>
+<p>For load and store instructions the 8-bit &#8216;code&#8217; field is divided as:</p>
+<div class="highlight-python"><div class="highlight"><pre>+--------+--------+-------------------+
+| 3 bits | 2 bits |   3 bits          |
+|  mode  |  size  | instruction class |
++--------+--------+-------------------+
+(MSB)                             (LSB)
+</pre></div>
+</div>
+<p>Size modifier is one of</p>
+<div class="highlight-python"><div class="highlight"><pre>BPF_W       0x0  word
+BPF_H       0x1  half word
+BPF_B       0x2  byte
+BPF_DW      0x3  double word
+</pre></div>
+</div>
+<p>Mode modifier is one of</p>
+<div class="highlight-python"><div class="highlight"><pre>BPF_IMM     0x0  immediate
+BPF_ABS     0x1  used to access packet data
+BPF_IND     0x2  used to access packet data
+BPF_MEM     0x3  memory
+(reserved)  0x4
+(reserved)  0x5
+BPF_XADD    0x6  exclusive add
+</pre></div>
+</div>
+</div>
+<div class="section" id="packet-data-access-bpf-abs-bpf-ind">
+<h4><a class="toc-backref" href="#id97">Packet data access (BPF_ABS, BPF_IND)</a><a class="headerlink" href="#packet-data-access-bpf-abs-bpf-ind" title="Permalink to this headline">¶</a></h4>
+<p>Two non-generic instructions: (BPF_ABS | &lt;size&gt; | BPF_LD) and
+(BPF_IND | &lt;size&gt; | BPF_LD) which are used to access packet data.
+Register R6 is an implicit input that must contain pointer to sk_buff.
+Register R0 is an implicit output which contains the data fetched
+from the packet.  Registers R1-R5 are scratch registers and must not
+be used to store the data across BPF_ABS | BPF_LD or BPF_IND | BPF_LD
+instructions.  These instructions have implicit program exit condition
+as well.  When eBPF program is trying to access the data beyond
+the packet boundary, the interpreter will abort the execution of the program.</p>
+<dl class="docutils">
+<dt>BPF_IND | BPF_W | BPF_LD is equivalent to:</dt>
+<dd>R0 = ntohl(*(u32 *) (((struct sk_buff *) R6)-&gt;data + src_reg + imm32))</dd>
+</dl>
+</div>
+<div class="section" id="ebpf-maps">
+<h4><a class="toc-backref" href="#id98">eBPF maps</a><a class="headerlink" href="#ebpf-maps" title="Permalink to this headline">¶</a></h4>
+<p>eBPF maps are provided for sharing data between kernel and user-space.
+Currently implemented types are hash and array, with potential extension to
+support bloom filters, radix trees, etc.  A map is defined by its type,
+maximum number of elements, key size and value size in bytes.  eBPF syscall
+supports create, update, find and delete functions on maps.</p>
+</div>
+<div class="section" id="function-calls">
+<h4><a class="toc-backref" href="#id99">Function calls</a><a class="headerlink" href="#function-calls" title="Permalink to this headline">¶</a></h4>
+<p>Function call arguments are passed using up to five registers (R1 - R5).
+The return value is passed in a dedicated register (R0).  Four additional
+registers (R6 - R9) are callee-saved, and the values in these registers
+are preserved within kernel functions.  R0 - R5 are scratch registers within
+kernel functions, and eBPF programs must therefor store/restore values in
+these registers if needed across function calls.  The stack can be accessed
+using the read-only frame pointer R10.  eBPF registers map 1:1 to hardware
+registers on x86_64 and other 64-bit architectures.  For example, x86_64
+in-kernel JIT maps them as</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">R0</span> <span class="o">-</span> <span class="n">rax</span>
+<span class="n">R1</span> <span class="o">-</span> <span class="n">rdi</span>
+<span class="n">R2</span> <span class="o">-</span> <span class="n">rsi</span>
+<span class="n">R3</span> <span class="o">-</span> <span class="n">rdx</span>
+<span class="n">R4</span> <span class="o">-</span> <span class="n">rcx</span>
+<span class="n">R5</span> <span class="o">-</span> <span class="n">r8</span>
+<span class="n">R6</span> <span class="o">-</span> <span class="n">rbx</span>
+<span class="n">R7</span> <span class="o">-</span> <span class="n">r13</span>
+<span class="n">R8</span> <span class="o">-</span> <span class="n">r14</span>
+<span class="n">R9</span> <span class="o">-</span> <span class="n">r15</span>
+<span class="n">R10</span> <span class="o">-</span> <span class="n">rbp</span>
+</pre></div>
+</div>
+<p>since x86_64 ABI mandates rdi, rsi, rdx, rcx, r8, r9 for argument passing
+and rbx, r12 - r15 are callee saved.</p>
+</div>
+<div class="section" id="program-start">
+<h4><a class="toc-backref" href="#id100">Program start</a><a class="headerlink" href="#program-start" title="Permalink to this headline">¶</a></h4>
+<p>An eBPF program receives a single argument and contains
+a single eBPF main routine; the program does not contain eBPF functions.
+Function calls are limited to a predefined set of kernel functions.  The size
+of a program is limited to 4K instructions:  this ensures fast termination and
+a limited number of kernel function calls.  Prior to running an eBPF program,
+a verifier performs static analysis to prevent loops in the code and
+to ensure valid register usage and operand types.</p>
+</div>
+</div>
 </div>
 </div>
 
@@ -2289,8 +2474,8 @@ the official NVIDIA toolchain.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

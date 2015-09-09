@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LLVM Bitcode File Format &mdash; LLVM 3.6 documentation</title>
+    <title>LLVM Bitcode File Format &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
     <link rel="next" title="LLVM Block Frequency Terminology" href="BlockFrequencyTerminology.html" />
     <link rel="prev" title="LLVM Alias Analysis Infrastructure" href="AliasAnalysis.html" />
 <style type="text/css">
@@ -662,7 +662,7 @@ for each library name referenced.</p>
 </div>
 <div class="section" id="module-code-globalvar-record">
 <h4><a class="toc-backref" href="#id43">MODULE_CODE_GLOBALVAR Record</a><a class="headerlink" href="#module-code-globalvar-record" title="Permalink to this headline">¶</a></h4>
-<p><code class="docutils literal"><span class="pre">[GLOBALVAR,</span> <span class="pre">pointer</span> <span class="pre">type,</span> <span class="pre">isconst,</span> <span class="pre">initid,</span> <span class="pre">linkage,</span> <span class="pre">alignment,</span> <span class="pre">section,</span> <span class="pre">visibility,</span> <span class="pre">threadlocal,</span> <span class="pre">unnamed_addr,</span> <span class="pre">dllstorageclass]</span></code></p>
+<p><code class="docutils literal"><span class="pre">[GLOBALVAR,</span> <span class="pre">pointer</span> <span class="pre">type,</span> <span class="pre">isconst,</span> <span class="pre">initid,</span> <span class="pre">linkage,</span> <span class="pre">alignment,</span> <span class="pre">section,</span> <span class="pre">visibility,</span> <span class="pre">threadlocal,</span> <span class="pre">unnamed_addr,</span> <span class="pre">externally_initialized,</span> <span class="pre">dllstorageclass,</span> <span class="pre">comdat]</span></code></p>
 <p>The <code class="docutils literal"><span class="pre">GLOBALVAR</span></code> record (code 7) marks the declaration or definition of a
 global variable. The operand fields are:</p>
 <ul class="simple">
@@ -720,7 +720,7 @@ variable:
 </div>
 <div class="section" id="module-code-function-record">
 <span id="function"></span><h4><a class="toc-backref" href="#id44">MODULE_CODE_FUNCTION Record</a><a class="headerlink" href="#module-code-function-record" title="Permalink to this headline">¶</a></h4>
-<p><code class="docutils literal"><span class="pre">[FUNCTION,</span> <span class="pre">type,</span> <span class="pre">callingconv,</span> <span class="pre">isproto,</span> <span class="pre">linkage,</span> <span class="pre">paramattr,</span> <span class="pre">alignment,</span> <span class="pre">section,</span> <span class="pre">visibility,</span> <span class="pre">gc,</span> <span class="pre">prologuedata,</span> <span class="pre">dllstorageclass,</span> <span class="pre">comdat,</span> <span class="pre">prefixdata]</span></code></p>
+<p><code class="docutils literal"><span class="pre">[FUNCTION,</span> <span class="pre">type,</span> <span class="pre">callingconv,</span> <span class="pre">isproto,</span> <span class="pre">linkage,</span> <span class="pre">paramattr,</span> <span class="pre">alignment,</span> <span class="pre">section,</span> <span class="pre">visibility,</span> <span class="pre">gc,</span> <span class="pre">prologuedata,</span> <span class="pre">dllstorageclass,</span> <span class="pre">comdat,</span> <span class="pre">prefixdata,</span> <span class="pre">personalityfn]</span></code></p>
 <p>The <code class="docutils literal"><span class="pre">FUNCTION</span></code> record (code 8) marks the declaration or definition of a
 function. The operand fields are:</p>
 <ul class="simple">
@@ -758,6 +758,8 @@ plus 1.</li>
 <a class="reference internal" href="#bcdllstorageclass"><span>dllstorageclass</span></a> of this function</li>
 <li><em>comdat</em>: An encoding of the COMDAT of this function</li>
 <li><em>prefixdata</em>: If non-zero, the value index of the prefix data for this function,
+plus 1.</li>
+<li><em>personalityfn</em>: If non-zero, the value index of the personality function for this function,
 plus 1.</li>
 </ul>
 </div>
@@ -1040,8 +1042,8 @@ named type.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

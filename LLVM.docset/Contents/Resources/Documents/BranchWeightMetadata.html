@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LLVM Branch Weight Metadata &mdash; LLVM 3.6 documentation</title>
+    <title>LLVM Branch Weight Metadata &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
     <link rel="next" title="LLVM bugpoint tool: design and usage" href="Bugpoint.html" />
     <link rel="prev" title="LLVM Block Frequency Terminology" href="BlockFrequencyTerminology.html" />
 <style type="text/css">
@@ -81,6 +81,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#cfg-modifications" id="id10">CFG Modifications</a></li>
+<li><a class="reference internal" href="#function-entry-counts" id="id11">Function Entry Counts</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
@@ -175,6 +176,25 @@ case is assumed to be likely taken.</p>
 are changed some action should be taken. In other case some misoptimizations may
 occur due to incorrent branch prediction information.</p>
 </div>
+<div class="section" id="function-entry-counts">
+<h2><a class="toc-backref" href="#id11">Function Entry Counts</a><a class="headerlink" href="#function-entry-counts" title="Permalink to this headline">¶</a></h2>
+<p>To allow comparing different functions durint inter-procedural analysis and
+optimization, <code class="docutils literal"><span class="pre">MD_prof</span></code> nodes can also be assigned to a function definition.
+The first operand is a string indicating the name of the associated counter.</p>
+<p>Currently, one counter is supported: &#8220;function_entry_count&#8221;. This is a 64-bit
+counter that indicates the number of times that this function was invoked (in
+the case of instrumentation-based profiles). In the case of sampling-based
+profiles, this counter is an approximation of how many times the function was
+invoked.</p>
+<p>For example, in the code below, the instrumentation for function foo()
+indicates that it was called 2,590 times at runtime.</p>
+<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i32</span> <span class="vg">@foo</span><span class="p">()</span> <span class="nv">!prof</span> <span class="nv-Anonymous">!1</span> <span class="p">{</span>
+  <span class="k">ret</span> <span class="k">i32</span> <span class="m">0</span>
+<span class="p">}</span>
+<span class="nv-Anonymous">!1</span> <span class="p">=</span> <span class="p">!{</span><span class="nv">!&quot;function_entry_count&quot;</span><span class="p">,</span> <span class="k">i64</span> <span class="m">2590</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -200,8 +220,8 @@ occur due to incorrent branch prediction information.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

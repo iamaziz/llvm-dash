@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>lit - LLVM Integrated Tester &mdash; LLVM 3.6 documentation</title>
+    <title>lit - LLVM Integrated Tester &mdash; LLVM 3.7 documentation</title>
     
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '3.6',
+        VERSION:     '3.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.6 documentation" href="../index.html" />
+    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
     <link rel="up" title="LLVM Command Guide" href="index.html" />
     <link rel="next" title="llvm-build - LLVM Project Build Utility" href="llvm-build.html" />
     <link rel="prev" title="tblgen - Target Description To C++ Code Generator" href="tblgen.html" />
@@ -120,8 +120,8 @@ test suites, instead of <code class="file docutils literal"><span class="pre">li
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--param">
-<span id="cmdoption--param"></span><code class="descname">--param</code><code class="descclassname"> NAME</code><code class="descclassname">, </code><code class="descname">--param</code><code class="descclassname"> NAME=VALUE</code><a class="headerlink" href="#cmdoption--param" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-D">
+<span id="cmdoption-D"></span><span id="cmdoption--param"></span><span id="cmdoption--param"></span><code class="descname">-D</code><code class="descclassname"> NAME</code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"> NAME=VALUE</code><code class="descclassname">, </code><code class="descname">--param</code><code class="descclassname"> NAME</code><code class="descclassname">, </code><code class="descname">--param</code><code class="descclassname"> NAME=VALUE</code><a class="headerlink" href="#cmdoption-D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a user defined parameter <code class="docutils literal"><span class="pre">NAME</span></code> with the given <code class="docutils literal"><span class="pre">VALUE</span></code> (or the empty
 string if not given).  The meaning and use of these parameters is test suite
 dependent.</p>
@@ -252,7 +252,7 @@ with <code class="docutils literal"><span class="pre">-j</span> <span class="pre
 <dl class="option">
 <dt id="cmdoption--show-tests">
 <code class="descname">--show-tests</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--show-tests" title="Permalink to this definition">¶</a></dt>
-<dd><p>List all of the the discovered tests and exit.</p>
+<dd><p>List all of the discovered tests and exit.</p>
 </dd></dl>
 
 </div>
@@ -392,7 +392,7 @@ test file and a subpath to identify the virtual test.</p>
 <div class="section" id="local-configuration-files">
 <span id="id8"></span><h3>LOCAL CONFIGURATION FILES<a class="headerlink" href="#local-configuration-files" title="Permalink to this headline">¶</a></h3>
 <p>When <strong class="program">lit</strong> loads a subdirectory in a test suite, it instantiates a
-local test configuration by cloning the configuration for the parent direction
+local test configuration by cloning the configuration for the parent directory
 &#8212; the root of this configuration chain will always be a test suite.  Once the
 test configuration is cloned <strong class="program">lit</strong> checks for a <em>lit.local.cfg</em> file
 in the subdirectory.  If present, this file will be loaded and can be used to
@@ -478,8 +478,8 @@ test suites in the <em>ExampleTests</em> directory.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2014, LLVM Project.
-      Last updated on 2015-08-18.
+        &copy; Copyright 2003-2015, LLVM Project.
+      Last updated on 2015-09-08.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
