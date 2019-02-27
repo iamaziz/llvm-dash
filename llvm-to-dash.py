@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 import sqlite3, os, urllib, subprocess, hashlib
+import urllib.request
 from bs4 import BeautifulSoup as bs
 from shutil import rmtree
 
 # CONFIGURATION
-llvm_version = '3.7.0'
-llvm_tarball_md5sum = 'b98b9495e5655a672d6cb83e1a180f8e'
+llvm_version = '7.0.1'
+llvm_tarball_md5sum = '79f1256f97d52a054da8660706deb5f6'
 tarball_name = 'llvm-%s.src.tar.xz' % llvm_version
 docset_name = 'LLVM.docset'
 output = docset_name + '/Contents/Resources/Documents/'
 
 def md5(fname):
-    hash = hashlib.md5()
-    with open(fname) as f:
-        for chunk in iter(lambda: f.read(4096), ''):
-            hash.update(chunk)
-    return hash.hexdigest()
+    hashval = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hashval.update(chunk)
+    return hashval.hexdigest()
 
 def check_llvm_tarball():
   return md5(tarball_name) == llvm_tarball_md5sum
@@ -23,14 +24,15 @@ def check_llvm_tarball():
 def download_llvm_tarball():
   if os.access(tarball_name, os.R_OK):
       if check_llvm_tarball():
-          print 'using existing tarball'
+          print('using existing tarball')
           return
-      print 'removing unusable tarball'
+      print('removing unusable tarball')
       os.remove(tarball_name)
 
-  tarball_url='http://llvm.org/releases/%s/%s' % (llvm_version, tarball_name)
-  print 'downloading %s from %s' % (tarball_name, tarball_url)
-  urllib.urlretrieve(tarball_url, tarball_name)
+  tarball_url='http://releases.llvm.org/%s/%s' % (llvm_version, tarball_name)
+  sst = 'downloading %s from %s' % (tarball_name, tarball_url)
+  print(sst)
+  urllib.request.urlretrieve(tarball_url, tarball_name)
 
   if not check_llvm_tarball():
       raise IOError('llvm src md5sum check failed')
@@ -128,8 +130,8 @@ def add_infoplist():
           '    <key>DashDocSetFallbackURL</key>' \
           '    <string>{4}</string>' \
           '</dict>' \
-          '</plist>'.format(name, name, name, 'index.html', 'http://llvm.org/releases/3.7.0/docs/')
-  open(docset_name + '/Contents/Info.plist', 'wb').write(info)
+          '</plist>'.format(name, name, name, 'index.html', 'http://llvm.org/releases/7.0.1/docs/')
+  open(docset_name + '/Contents/Info.plist', 'w').write(info)
 
 if __name__ == '__main__':
   remove_old_data()
@@ -139,8 +141,8 @@ if __name__ == '__main__':
   extract_llvm_tarball()
 
   # add icon
-  icon = 'http://d2wwfe3odivqm9.cloudfront.net/wp-content/uploads/2013/12/llvm-logo-100x100.png'
-  urllib.urlretrieve(icon, docset_name + '/icon.png')
+  icon = 'https://llvm.org/img/DragonMedium.png'
+  urllib.request.urlretrieve(icon, docset_name + '/icon.png')
 
   # create and open SQLite db
   db = sqlite3.connect(docset_name + '/Contents/Resources/docSet.dsidx')
