@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>llvm-readelf - GNU-style LLVM Object Reader &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="llvm-size - print segment sizes" href="llvm-size.html" />
+    <link rel="prev" title="llvm-ranlib - generates an archive index" href="llvm-ranlib.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="llvm-size.html" title="llvm-size - print segment sizes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="llvm-ranlib.html" title="llvm-ranlib - generates an archive index"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="llvm-readelf-gnu-style-llvm-object-reader">
+<h1>llvm-readelf - GNU-style LLVM Object Reader<a class="headerlink" href="#llvm-readelf-gnu-style-llvm-object-reader" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">llvm-readelf</strong> [<em>options</em>] [<em>input…</em>]</p>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <strong class="program">llvm-readelf</strong> tool displays low-level format-specific information
+about one or more object files.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">input</span></code> is “<code class="docutils literal notranslate"><span class="pre">-</span></code>” or omitted, <strong class="program">llvm-readelf</strong> reads from standard
+input. Otherwise, it will read from the specified <code class="docutils literal notranslate"><span class="pre">filenames</span></code>.</p>
+</div>
+<div class="section" id="options">
+<h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-all">
+<code class="sig-name descname">--all</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to specifying all the main display options.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-addrsig">
+<code class="sig-name descname">--addrsig</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-addrsig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the address-significance table.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-arm-attributes">
+<code class="sig-name descname">--arm-attributes</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-arm-attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the ARM attributes section. Only applicable for ARM architectures.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-color">
+<code class="sig-name descname">--color</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use colors in the output for warnings and errors.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-demangle">
+<code class="sig-name descname">--demangle</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-C</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-demangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display demangled symbol names in the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-dyn-relocations">
+<code class="sig-name descname">--dyn-relocations</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-dyn-relocations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the dynamic relocation entries.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-dyn-symbols">
+<code class="sig-name descname">--dyn-symbols</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--dyn-syms</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-dyn-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the dynamic symbol table.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-dynamic-table">
+<code class="sig-name descname">--dynamic-table</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--dynamic</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-d</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-dynamic-table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the dynamic table.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-elf-cg-profile">
+<code class="sig-name descname">--elf-cg-profile</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-elf-cg-profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the callgraph profile section.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-elf-hash-histogram">
+<code class="sig-name descname">--elf-hash-histogram</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--histogram</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-I</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-elf-hash-histogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display a bucket list histogram for dynamic symbol hash tables.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-elf-linker-options">
+<code class="sig-name descname">--elf-linker-options</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-elf-linker-options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the linker options section.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-elf-output-style">
+<code class="sig-name descname">--elf-output-style</code><code class="sig-prename descclassname">=&lt;value&gt;</code><a class="headerlink" href="#cmdoption-llvm-readelf-elf-output-style" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format ELF information in the specified style. Valid options are <code class="docutils literal notranslate"><span class="pre">LLVM</span></code> and
+<code class="docutils literal notranslate"><span class="pre">GNU</span></code>. <code class="docutils literal notranslate"><span class="pre">LLVM</span></code> output is an expanded and structured format, whilst <code class="docutils literal notranslate"><span class="pre">GNU</span></code>
+(the default) output mimics the equivalent GNU <strong class="program">readelf</strong> output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-elf-section-groups">
+<code class="sig-name descname">--elf-section-groups</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--section-groups</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-g</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-elf-section-groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display section groups.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-expand-relocs">
+<code class="sig-name descname">--expand-relocs</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-expand-relocs" title="Permalink to this definition">¶</a></dt>
+<dd><p>When used with <a class="reference internal" href="#cmdoption-llvm-readelf-relocations"><code class="xref std std-option docutils literal notranslate"><span class="pre">--relocations</span></code></a>, display each relocation in an expanded
+multi-line format.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-file-headers">
+<code class="sig-name descname">--file-headers</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-h</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-file-headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display file headers.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-gnu-hash-table">
+<code class="sig-name descname">--gnu-hash-table</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-gnu-hash-table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the GNU hash table for dynamic symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-hash-symbols">
+<code class="sig-name descname">--hash-symbols</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-hash-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the expanded hash table with dynamic symbol data.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-hash-table">
+<code class="sig-name descname">--hash-table</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-hash-table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the hash table for dynamic symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-headers">
+<code class="sig-name descname">--headers</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-e</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to setting: <a class="reference internal" href="#cmdoption-llvm-readelf-file-headers"><code class="xref std std-option docutils literal notranslate"><span class="pre">--file-headers</span></code></a>, <a class="reference internal" href="#cmdoption-llvm-readelf-program-headers"><code class="xref std std-option docutils literal notranslate"><span class="pre">--program-headers</span></code></a>,
+and <a class="reference internal" href="#cmdoption-llvm-readelf-sections"><code class="xref std std-option docutils literal notranslate"><span class="pre">--sections</span></code></a>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-help">
+<code class="sig-name descname">--help</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display a summary of command line options.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-help-list">
+<code class="sig-name descname">--help-list</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-help-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display an uncategorized summary of command line options.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-hex-dump">
+<code class="sig-name descname">--hex-dump</code><code class="sig-prename descclassname">=&lt;section[,section,...]&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-x</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-hex-dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the specified section(s) as hexadecimal bytes. <code class="docutils literal notranslate"><span class="pre">section</span></code> may be a
+section index or section name.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-needed-libs">
+<code class="sig-name descname">--needed-libs</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-needed-libs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the needed libraries.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-notes">
+<code class="sig-name descname">--notes</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-n</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-notes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display all notes.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-program-headers">
+<code class="sig-name descname">--program-headers</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--segments</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-l</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-program-headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the program headers.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-raw-relr">
+<code class="sig-name descname">--raw-relr</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-raw-relr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not decode relocations in RELR relocation sections when displaying them.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-relocations">
+<code class="sig-name descname">--relocations</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--relocs</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-r</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-relocations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the relocation entries in the file.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-sections">
+<code class="sig-name descname">--sections</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--section-headers</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-S</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display all sections.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-section-data">
+<code class="sig-name descname">--section-data</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-section-data" title="Permalink to this definition">¶</a></dt>
+<dd><p>When used with <a class="reference internal" href="#cmdoption-llvm-readelf-sections"><code class="xref std std-option docutils literal notranslate"><span class="pre">--sections</span></code></a>, display section data for each section
+shown. This option has no effect for GNU style output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-section-mapping">
+<code class="sig-name descname">--section-mapping</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-section-mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the section to segment mapping.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-section-relocations">
+<code class="sig-name descname">--section-relocations</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-section-relocations" title="Permalink to this definition">¶</a></dt>
+<dd><p>When used with <a class="reference internal" href="#cmdoption-llvm-readelf-sections"><code class="xref std std-option docutils literal notranslate"><span class="pre">--sections</span></code></a>, display relocations for each section
+shown. This option has no effect for GNU style output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-section-symbols">
+<code class="sig-name descname">--section-symbols</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-section-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>When used with <a class="reference internal" href="#cmdoption-llvm-readelf-sections"><code class="xref std std-option docutils literal notranslate"><span class="pre">--sections</span></code></a>, display symbols for each section shown.
+This option has no effect for GNU style output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-stackmap">
+<code class="sig-name descname">--stackmap</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-stackmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display contents of the stackmap section.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-string-dump">
+<code class="sig-name descname">--string-dump</code><code class="sig-prename descclassname">=&lt;section[,section,...]&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-p</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-string-dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the specified section(s) as a list of strings. <code class="docutils literal notranslate"><span class="pre">section</span></code> may be a
+section index or section name.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-symbols">
+<code class="sig-name descname">--symbols</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--syms</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-s</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the symbol table.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-unwind">
+<code class="sig-name descname">--unwind</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-u</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-unwind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display unwind information.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-version">
+<code class="sig-name descname">--version</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the version of this program.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-version-info">
+<code class="sig-name descname">--version-info</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-V</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-version-info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display version sections.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-readelf-arg-file">
+<code class="sig-name descname">&#64;&lt;FILE&gt;</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-readelf-arg-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read command-line options from response file <cite>&lt;FILE&gt;</cite>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="exit-status">
+<h2>EXIT STATUS<a class="headerlink" href="#exit-status" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">llvm-readelf</strong> returns 0 under normal operation. It returns a non-zero
+exit code if there were any errors.</p>
+</div>
+<div class="section" id="see-also">
+<h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<p><em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-nm.html">llvm-nm(1)</a></em>, <em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-objdump.html">llvm-objdump(1)</a></em>, <em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-readobj.html">llvm-readobj(1)</a></em></p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="llvm-size.html" title="llvm-size - print segment sizes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="llvm-ranlib.html" title="llvm-ranlib - generates an archive index"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

@@ -1,31 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>7. Kaleidoscope: Extending the Language: Mutable Variables &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>7. Kaleidoscope: Extending the Language: Mutable Variables &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="8. Kaleidoscope: Conclusion and other useful LLVM tidbits" href="OCamlLangImpl8.html" />
     <link rel="prev" title="6. Kaleidoscope: Extending the Language: User-defined Operators" href="OCamlLangImpl6.html" />
 <style type="text/css">
@@ -33,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +44,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
 
@@ -66,30 +54,30 @@
           <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-extending-the-language-mutable-variables">
-<h1>7. Kaleidoscope: Extending the Language: Mutable Variables<a class="headerlink" href="#kaleidoscope-extending-the-language-mutable-variables" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">7. </span>Kaleidoscope: Extending the Language: Mutable Variables<a class="headerlink" href="#kaleidoscope-extending-the-language-mutable-variables" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#chapter-7-introduction" id="id2">Chapter 7 Introduction</a></li>
-<li><a class="reference internal" href="#why-is-this-a-hard-problem" id="id3">Why is this a hard problem?</a></li>
-<li><a class="reference internal" href="#memory-in-llvm" id="id4">Memory in LLVM</a></li>
-<li><a class="reference internal" href="#mutable-variables-in-kaleidoscope" id="id5">Mutable Variables in Kaleidoscope</a></li>
-<li><a class="reference internal" href="#adjusting-existing-variables-for-mutation" id="id6">Adjusting Existing Variables for Mutation</a></li>
-<li><a class="reference internal" href="#new-assignment-operator" id="id7">New Assignment Operator</a></li>
-<li><a class="reference internal" href="#user-defined-local-variables" id="id8">User-defined Local Variables</a></li>
-<li><a class="reference internal" href="#id1" id="id9">Full Code Listing</a></li>
+<li><p><a class="reference internal" href="#chapter-7-introduction" id="id2">Chapter 7 Introduction</a></p></li>
+<li><p><a class="reference internal" href="#why-is-this-a-hard-problem" id="id3">Why is this a hard problem?</a></p></li>
+<li><p><a class="reference internal" href="#memory-in-llvm" id="id4">Memory in LLVM</a></p></li>
+<li><p><a class="reference internal" href="#mutable-variables-in-kaleidoscope" id="id5">Mutable Variables in Kaleidoscope</a></p></li>
+<li><p><a class="reference internal" href="#adjusting-existing-variables-for-mutation" id="id6">Adjusting Existing Variables for Mutation</a></p></li>
+<li><p><a class="reference internal" href="#new-assignment-operator" id="id7">New Assignment Operator</a></p></li>
+<li><p><a class="reference internal" href="#user-defined-local-variables" id="id8">User-defined Local Variables</a></p></li>
+<li><p><a class="reference internal" href="#id1" id="id9">Full Code Listing</a></p></li>
 </ul>
 </div>
 <div class="section" id="chapter-7-introduction">
-<h2><a class="toc-backref" href="#id2">7.1. Chapter 7 Introduction</a><a class="headerlink" href="#chapter-7-introduction" title="Permalink to this headline">¶</a></h2>
-<p>Welcome to Chapter 7 of the &#8220;<a class="reference external" href="index.html">Implementing a language with
-LLVM</a>&#8221; tutorial. In chapters 1 through 6, we&#8217;ve built a
+<h2><a class="toc-backref" href="#id2"><span class="section-number">7.1. </span>Chapter 7 Introduction</a><a class="headerlink" href="#chapter-7-introduction" title="Permalink to this headline">¶</a></h2>
+<p>Welcome to Chapter 7 of the “<a class="reference external" href="index.html">Implementing a language with
+LLVM</a>” tutorial. In chapters 1 through 6, we’ve built a
 very respectable, albeit simple, <a class="reference external" href="http://en.wikipedia.org/wiki/Functional_programming">functional programming
 language</a>. In our
 journey, we learned some parsing techniques, how to build and represent
 an AST, how to build LLVM IR, and how to optimize the resultant code as
 well as JIT compile it.</p>
 <p>While Kaleidoscope is interesting as a functional language, the fact
-that it is functional makes it &#8220;too easy&#8221; to generate LLVM IR for it. In
+that it is functional makes it “too easy” to generate LLVM IR for it. In
 particular, a functional language makes it very easy to build LLVM IR
 directly in <a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">SSA
 form</a>.
@@ -102,10 +90,10 @@ well tested support for this, though the way it works is a bit
 unexpected for some.</p>
 </div>
 <div class="section" id="why-is-this-a-hard-problem">
-<h2><a class="toc-backref" href="#id3">7.2. Why is this a hard problem?</a><a class="headerlink" href="#why-is-this-a-hard-problem" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3"><span class="section-number">7.2. </span>Why is this a hard problem?</a><a class="headerlink" href="#why-is-this-a-hard-problem" title="Permalink to this headline">¶</a></h2>
 <p>To understand why mutable variables cause complexities in SSA
 construction, consider this extremely simple C example:</p>
-<div class="highlight-c"><div class="highlight"><pre><span class="kt">int</span> <span class="n">G</span><span class="p">,</span> <span class="n">H</span><span class="p">;</span>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">G</span><span class="p">,</span> <span class="n">H</span><span class="p">;</span>
 <span class="kt">int</span> <span class="nf">test</span><span class="p">(</span><span class="kt">_Bool</span> <span class="n">Condition</span><span class="p">)</span> <span class="p">{</span>
   <span class="kt">int</span> <span class="n">X</span><span class="p">;</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">Condition</span><span class="p">)</span>
@@ -116,24 +104,24 @@ construction, consider this extremely simple C example:</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>In this case, we have the variable &#8220;X&#8221;, whose value depends on the path
+<p>In this case, we have the variable “X”, whose value depends on the path
 executed in the program. Because there are two different possible values
 for X before the return instruction, a PHI node is inserted to merge the
 two values. The LLVM IR that we want for this example looks like this:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="vg">@G</span> <span class="p">=</span> <span class="k">weak</span> <span class="k">global</span> <span class="k">i32</span> <span class="m">0</span>   <span class="c">; type of @G is i32*</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="vg">@G</span> <span class="p">=</span> <span class="k">weak</span> <span class="k">global</span> <span class="k">i32</span> <span class="m">0</span>   <span class="c">; type of @G is i32*</span>
 <span class="vg">@H</span> <span class="p">=</span> <span class="k">weak</span> <span class="k">global</span> <span class="k">i32</span> <span class="m">0</span>   <span class="c">; type of @H is i32*</span>
 
 <span class="k">define</span> <span class="k">i32</span> <span class="vg">@test</span><span class="p">(</span><span class="k">i1</span> <span class="nv">%Condition</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
-  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%Condition</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cond_true</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cond_false</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%Condition</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%cond_true</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%cond_false</span>
 
 <span class="nl">cond_true:</span>
   <span class="nv">%X.0</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i32</span><span class="p">*</span> <span class="vg">@G</span>
-  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%cond_next</span>
+  <span class="k">br</span> <span class="k">label</span> <span class="nv">%cond_next</span>
 
 <span class="nl">cond_false:</span>
   <span class="nv">%X.1</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i32</span><span class="p">*</span> <span class="vg">@H</span>
-  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%cond_next</span>
+  <span class="k">br</span> <span class="k">label</span> <span class="nv">%cond_next</span>
 
 <span class="nl">cond_next:</span>
   <span class="nv">%X.2</span> <span class="p">=</span> <span class="k">phi</span> <span class="k">i32</span> <span class="p">[</span> <span class="nv">%X.1</span><span class="p">,</span> <span class="nv">%cond_false</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%X.0</span><span class="p">,</span> <span class="nv">%cond_true</span> <span class="p">]</span>
@@ -151,16 +139,16 @@ control flow comes from cond_true, it gets the value of X.0. The intent
 of this chapter is not to explain the details of SSA form. For more
 information, see one of the many <a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">online
 references</a>.</p>
-<p>The question for this article is &#8220;who places the phi nodes when lowering
-assignments to mutable variables?&#8221;. The issue here is that LLVM
-<em>requires</em> that its IR be in SSA form: there is no &#8220;non-ssa&#8221; mode for
+<p>The question for this article is “who places the phi nodes when lowering
+assignments to mutable variables?”. The issue here is that LLVM
+<em>requires</em> that its IR be in SSA form: there is no “non-ssa” mode for
 it. However, SSA construction requires non-trivial algorithms and data
 structures, so it is inconvenient and wasteful for every front-end to
 have to reproduce this logic.</p>
 </div>
 <div class="section" id="memory-in-llvm">
-<h2><a class="toc-backref" href="#id4">7.3. Memory in LLVM</a><a class="headerlink" href="#memory-in-llvm" title="Permalink to this headline">¶</a></h2>
-<p>The &#8216;trick&#8217; here is that while LLVM does require all register values to
+<h2><a class="toc-backref" href="#id4"><span class="section-number">7.3. </span>Memory in LLVM</a><a class="headerlink" href="#memory-in-llvm" title="Permalink to this headline">¶</a></h2>
+<p>The ‘trick’ here is that while LLVM does require all register values to
 be in SSA form, it does not require (or permit) memory objects to be in
 SSA form. In the example above, note that the loads from G and H are
 direct accesses to G and H: they are not renamed or versioned. This
@@ -173,15 +161,15 @@ variable (which lives in memory, because it is on the stack) for each
 mutable object in a function. To take advantage of this trick, we need
 to talk about how LLVM represents stack variables.</p>
 <p>In LLVM, all memory accesses are explicit with load/store instructions,
-and it is carefully designed not to have (or need) an &#8220;address-of&#8221;
+and it is carefully designed not to have (or need) an “address-of”
 operator. Notice how the type of the &#64;G/&#64;H global variables is actually
-&#8220;i32*&#8221; even though the variable is defined as &#8220;i32&#8221;. What this means is
+“i32*” even though the variable is defined as “i32”. What this means is
 that &#64;G defines <em>space</em> for an i32 in the global data area, but its
 <em>name</em> actually refers to the address for that space. Stack variables
 work the same way, except that instead of being declared with global
-variable definitions, they are declared with the <a class="reference external" href="../LangRef.html#i_alloca">LLVM alloca
+variable definitions, they are declared with the <a class="reference external" href="../LangRef.html#alloca-instruction">LLVM alloca
 instruction</a>:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i32</span> <span class="vg">@example</span><span class="p">()</span> <span class="p">{</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i32</span> <span class="vg">@example</span><span class="p">()</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="nv">%X</span> <span class="p">=</span> <span class="k">alloca</span> <span class="k">i32</span>           <span class="c">; type of %X is i32*.</span>
   <span class="p">...</span>
@@ -197,23 +185,23 @@ instruction is fully general: you can pass the address of the stack slot
 to functions, you can store it in other variables, etc. In our example
 above, we could rewrite the example to use the alloca technique to avoid
 using a PHI node:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="vg">@G</span> <span class="p">=</span> <span class="k">weak</span> <span class="k">global</span> <span class="k">i32</span> <span class="m">0</span>   <span class="c">; type of @G is i32*</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="vg">@G</span> <span class="p">=</span> <span class="k">weak</span> <span class="k">global</span> <span class="k">i32</span> <span class="m">0</span>   <span class="c">; type of @G is i32*</span>
 <span class="vg">@H</span> <span class="p">=</span> <span class="k">weak</span> <span class="k">global</span> <span class="k">i32</span> <span class="m">0</span>   <span class="c">; type of @H is i32*</span>
 
 <span class="k">define</span> <span class="k">i32</span> <span class="vg">@test</span><span class="p">(</span><span class="k">i1</span> <span class="nv">%Condition</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="nv">%X</span> <span class="p">=</span> <span class="k">alloca</span> <span class="k">i32</span>           <span class="c">; type of %X is i32*.</span>
-  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%Condition</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cond_true</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%cond_false</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%Condition</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%cond_true</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%cond_false</span>
 
 <span class="nl">cond_true:</span>
   <span class="nv">%X.0</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i32</span><span class="p">*</span> <span class="vg">@G</span>
         <span class="k">store</span> <span class="k">i32</span> <span class="nv">%X.0</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%X</span>   <span class="c">; Update X</span>
-  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%cond_next</span>
+  <span class="k">br</span> <span class="k">label</span> <span class="nv">%cond_next</span>
 
 <span class="nl">cond_false:</span>
   <span class="nv">%X.1</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i32</span><span class="p">*</span> <span class="vg">@H</span>
         <span class="k">store</span> <span class="k">i32</span> <span class="nv">%X.1</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%X</span>   <span class="c">; Update X</span>
-  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%cond_next</span>
+  <span class="k">br</span> <span class="k">label</span> <span class="nv">%cond_next</span>
 
 <span class="nl">cond_next:</span>
   <span class="nv">%X.2</span> <span class="p">=</span> <span class="k">load</span> <span class="k">i32</span><span class="p">*</span> <span class="nv">%X</span>       <span class="c">; Read X</span>
@@ -224,22 +212,22 @@ using a PHI node:</p>
 <p>With this, we have discovered a way to handle arbitrary mutable
 variables without the need to create Phi nodes at all:</p>
 <ol class="arabic simple">
-<li>Each mutable variable becomes a stack allocation.</li>
-<li>Each read of the variable becomes a load from the stack.</li>
-<li>Each update of the variable becomes a store to the stack.</li>
-<li>Taking the address of a variable just uses the stack address
-directly.</li>
+<li><p>Each mutable variable becomes a stack allocation.</p></li>
+<li><p>Each read of the variable becomes a load from the stack.</p></li>
+<li><p>Each update of the variable becomes a store to the stack.</p></li>
+<li><p>Taking the address of a variable just uses the stack address
+directly.</p></li>
 </ol>
 <p>While this solution has solved our immediate problem, it introduced
 another one: we have now apparently introduced a lot of stack traffic
 for very simple and common operations, a major performance problem.
 Fortunately for us, the LLVM optimizer has a highly-tuned optimization
-pass named &#8220;mem2reg&#8221; that handles this case, promoting allocas like this
+pass named “mem2reg” that handles this case, promoting allocas like this
 into SSA registers, inserting Phi nodes as appropriate. If you run this
-example through the pass, for example, you&#8217;ll get:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>llvm-as &lt; example.ll <span class="p">|</span> opt -mem2reg <span class="p">|</span> llvm-dis
-@G <span class="o">=</span> weak global i32 0
-@H <span class="o">=</span> weak global i32 0
+example through the pass, for example, you’ll get:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ llvm-as &lt; example.ll <span class="p">|</span> opt -mem2reg <span class="p">|</span> llvm-dis
+@G <span class="o">=</span> weak global i32 <span class="m">0</span>
+@H <span class="o">=</span> weak global i32 <span class="m">0</span>
 
 define i32 @test<span class="o">(</span>i1 %Condition<span class="o">)</span> <span class="o">{</span>
 entry:
@@ -259,137 +247,137 @@ cond_next:
 <span class="o">}</span>
 </pre></div>
 </div>
-<p>The mem2reg pass implements the standard &#8220;iterated dominance frontier&#8221;
+<p>The mem2reg pass implements the standard “iterated dominance frontier”
 algorithm for constructing SSA form and has a number of optimizations
 that speed up (very common) degenerate cases. The mem2reg optimization
 pass is the answer to dealing with mutable variables, and we highly
 recommend that you depend on it. Note that mem2reg only works on
 variables in certain circumstances:</p>
 <ol class="arabic simple">
-<li>mem2reg is alloca-driven: it looks for allocas and if it can handle
+<li><p>mem2reg is alloca-driven: it looks for allocas and if it can handle
 them, it promotes them. It does not apply to global variables or heap
-allocations.</li>
-<li>mem2reg only looks for alloca instructions in the entry block of the
+allocations.</p></li>
+<li><p>mem2reg only looks for alloca instructions in the entry block of the
 function. Being in the entry block guarantees that the alloca is only
-executed once, which makes analysis simpler.</li>
-<li>mem2reg only promotes allocas whose uses are direct loads and stores.
+executed once, which makes analysis simpler.</p></li>
+<li><p>mem2reg only promotes allocas whose uses are direct loads and stores.
 If the address of the stack object is passed to a function, or if any
 funny pointer arithmetic is involved, the alloca will not be
-promoted.</li>
-<li>mem2reg only works on allocas of <a class="reference external" href="../LangRef.html#t_classifications">first
+promoted.</p></li>
+<li><p>mem2reg only works on allocas of <a class="reference external" href="../LangRef.html#first-class-types">first
 class</a> values (such as pointers,
 scalars and vectors), and only if the array size of the allocation is
 1 (or missing in the .ll file). mem2reg is not capable of promoting
-structs or arrays to registers. Note that the &#8220;scalarrepl&#8221; pass is
-more powerful and can promote structs, &#8220;unions&#8221;, and arrays in many
-cases.</li>
+structs or arrays to registers. Note that the “sroa” pass is
+more powerful and can promote structs, “unions”, and arrays in many
+cases.</p></li>
 </ol>
 <p>All of these properties are easy to satisfy for most imperative
-languages, and we&#8217;ll illustrate it below with Kaleidoscope. The final
+languages, and we’ll illustrate it below with Kaleidoscope. The final
 question you may be asking is: should I bother with this nonsense for my
-front-end? Wouldn&#8217;t it be better if I just did SSA construction
+front-end? Wouldn’t it be better if I just did SSA construction
 directly, avoiding use of the mem2reg optimization pass? In short, we
 strongly recommend that you use this technique for building SSA form,
 unless there is an extremely good reason not to. Using this technique
 is:</p>
 <ul class="simple">
-<li>Proven and well tested: clang uses this technique
+<li><p>Proven and well tested: clang uses this technique
 for local mutable variables. As such, the most common clients of LLVM
 are using this to handle a bulk of their variables. You can be sure
-that bugs are found fast and fixed early.</li>
-<li>Extremely Fast: mem2reg has a number of special cases that make it
+that bugs are found fast and fixed early.</p></li>
+<li><p>Extremely Fast: mem2reg has a number of special cases that make it
 fast in common cases as well as fully general. For example, it has
 fast-paths for variables that are only used in a single block,
 variables that only have one assignment point, good heuristics to
-avoid insertion of unneeded phi nodes, etc.</li>
-<li>Needed for debug info generation: <a class="reference external" href="../SourceLevelDebugging.html">Debug information in
+avoid insertion of unneeded phi nodes, etc.</p></li>
+<li><p>Needed for debug info generation: <a class="reference external" href="../SourceLevelDebugging.html">Debug information in
 LLVM</a> relies on having the address of
 the variable exposed so that debug info can be attached to it. This
-technique dovetails very naturally with this style of debug info.</li>
+technique dovetails very naturally with this style of debug info.</p></li>
 </ul>
 <p>If nothing else, this makes it much easier to get your front-end up and
 running, and is very simple to implement. Lets extend Kaleidoscope with
 mutable variables now!</p>
 </div>
 <div class="section" id="mutable-variables-in-kaleidoscope">
-<h2><a class="toc-backref" href="#id5">7.4. Mutable Variables in Kaleidoscope</a><a class="headerlink" href="#mutable-variables-in-kaleidoscope" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5"><span class="section-number">7.4. </span>Mutable Variables in Kaleidoscope</a><a class="headerlink" href="#mutable-variables-in-kaleidoscope" title="Permalink to this headline">¶</a></h2>
 <p>Now that we know the sort of problem we want to tackle, lets see what
 this looks like in the context of our little Kaleidoscope language.
-We&#8217;re going to add two features:</p>
+We’re going to add two features:</p>
 <ol class="arabic simple">
-<li>The ability to mutate variables with the &#8216;=&#8217; operator.</li>
-<li>The ability to define new variables.</li>
+<li><p>The ability to mutate variables with the ‘=’ operator.</p></li>
+<li><p>The ability to define new variables.</p></li>
 </ol>
 <p>While the first item is really what this is about, we only have
 variables for incoming arguments as well as for induction variables, and
 redefining those only goes so far :). Also, the ability to define new
 variables is a useful thing regardless of whether you will be mutating
-them. Here&#8217;s a motivating example that shows how we could use these:</p>
-<div class="highlight-python"><div class="highlight"><pre># Define &#39;:&#39; for sequencing: as a low-precedence operator that ignores operands
-# and just returns the RHS.
-def binary : 1 (x y) y;
+them. Here’s a motivating example that shows how we could use these:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define &#39;:&#39; for sequencing: as a low-precedence operator that ignores operands</span>
+<span class="c1"># and just returns the RHS.</span>
+<span class="k">def</span> <span class="nf">binary</span> <span class="p">:</span> <span class="mi">1</span> <span class="p">(</span><span class="n">x</span> <span class="n">y</span><span class="p">)</span> <span class="n">y</span><span class="p">;</span>
 
-# Recursive fib, we could do this before.
-def fib(x)
-  if (x &lt; 3) then
-    1
-  else
-    fib(x-1)+fib(x-2);
+<span class="c1"># Recursive fib, we could do this before.</span>
+<span class="k">def</span> <span class="nf">fib</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="n">then</span>
+    <span class="mi">1</span>
+  <span class="k">else</span>
+    <span class="n">fib</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="n">fib</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
 
-# Iterative fib.
-def fibi(x)
-  var a = 1, b = 1, c in
-  (for i = 3, i &lt; x in
-     c = a + b :
-     a = b :
-     b = c) :
-  b;
+<span class="c1"># Iterative fib.</span>
+<span class="k">def</span> <span class="nf">fibi</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="n">var</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span>
+  <span class="p">(</span><span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="ow">in</span>
+     <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="p">:</span>
+     <span class="n">a</span> <span class="o">=</span> <span class="n">b</span> <span class="p">:</span>
+     <span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="p">)</span> <span class="p">:</span>
+  <span class="n">b</span><span class="p">;</span>
 
-# Call it.
-fibi(10);
+<span class="c1"># Call it.</span>
+<span class="n">fibi</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
 </pre></div>
 </div>
 <p>In order to mutate variables, we have to change our existing variables
-to use the &#8220;alloca trick&#8221;. Once we have that, we&#8217;ll add our new
+to use the “alloca trick”. Once we have that, we’ll add our new
 operator, then extend Kaleidoscope to support new variable definitions.</p>
 </div>
 <div class="section" id="adjusting-existing-variables-for-mutation">
-<h2><a class="toc-backref" href="#id6">7.5. Adjusting Existing Variables for Mutation</a><a class="headerlink" href="#adjusting-existing-variables-for-mutation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6"><span class="section-number">7.5. </span>Adjusting Existing Variables for Mutation</a><a class="headerlink" href="#adjusting-existing-variables-for-mutation" title="Permalink to this headline">¶</a></h2>
 <p>The symbol table in Kaleidoscope is managed at code generation time by
-the &#8216;<code class="docutils literal"><span class="pre">named_values</span></code>&#8216; map. This map currently keeps track of the LLVM
-&#8220;Value*&#8221; that holds the double value for the named variable. In order
+the ‘<code class="docutils literal notranslate"><span class="pre">named_values</span></code>’ map. This map currently keeps track of the LLVM
+“Value*” that holds the double value for the named variable. In order
 to support mutation, we need to change this slightly, so that it
-<code class="docutils literal"><span class="pre">named_values</span></code> holds the <em>memory location</em> of the variable in
+<code class="docutils literal notranslate"><span class="pre">named_values</span></code> holds the <em>memory location</em> of the variable in
 question. Note that this change is a refactoring: it changes the
 structure of the code, but does not (by itself) change the behavior of
 the compiler. All of these changes are isolated in the Kaleidoscope code
 generator.</p>
-<p>At this point in Kaleidoscope&#8217;s development, it only supports variables
+<p>At this point in Kaleidoscope’s development, it only supports variables
 for two things: incoming arguments to functions and the induction
-variable of &#8216;for&#8217; loops. For consistency, we&#8217;ll allow mutation of these
+variable of ‘for’ loops. For consistency, we’ll allow mutation of these
 variables in addition to other user-defined variables. This means that
 these will both need memory locations.</p>
-<p>To start our transformation of Kaleidoscope, we&#8217;ll change the
-<code class="docutils literal"><span class="pre">named_values</span></code> map so that it maps to AllocaInst* instead of Value*.
+<p>To start our transformation of Kaleidoscope, we’ll change the
+<code class="docutils literal notranslate"><span class="pre">named_values</span></code> map so that it maps to AllocaInst* instead of Value*.
 Once we do this, the C++ compiler will tell us what parts of the code we
 need to update:</p>
-<p><strong>Note:</strong> the ocaml bindings currently model both <code class="docutils literal"><span class="pre">Value*</span></code>&#8216;s and
-<code class="docutils literal"><span class="pre">AllocInst*</span></code>&#8216;s as <code class="docutils literal"><span class="pre">Llvm.llvalue</span></code>&#8216;s, but this may change in the future
+<p><strong>Note:</strong> the ocaml bindings currently model both <code class="docutils literal notranslate"><span class="pre">Value*</span></code>’s and
+<code class="docutils literal notranslate"><span class="pre">AllocInst*</span></code>’s as <code class="docutils literal notranslate"><span class="pre">Llvm.llvalue</span></code>’s, but this may change in the future
 to be more type safe.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="n">named_values</span><span class="o">:(</span><span class="kt">string</span><span class="o">,</span> <span class="n">llvalue</span><span class="o">)</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">create</span> <span class="mi">10</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">named_values</span><span class="o">:(</span><span class="kt">string</span><span class="o">,</span> <span class="n">llvalue</span><span class="o">)</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">create</span> <span class="mi">10</span>
 </pre></div>
 </div>
-<p>Also, since we will need to create these alloca&#8217;s, we&#8217;ll use a helper
+<p>Also, since we will need to create these alloca’s, we’ll use a helper
 function that ensures that the allocas are created in the entry block of
 the function:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* Create an alloca instruction in the entry block of the function. This</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* Create an alloca instruction in the entry block of the function. This</span>
 <span class="c"> * is used for mutable variables etc. *)</span>
 <span class="k">let</span> <span class="n">create_entry_block_alloca</span> <span class="n">the_function</span> <span class="n">var_name</span> <span class="o">=</span>
   <span class="k">let</span> <span class="n">builder</span> <span class="o">=</span> <span class="n">builder_at</span> <span class="o">(</span><span class="n">instr_begin</span> <span class="o">(</span><span class="n">entry_block</span> <span class="n">the_function</span><span class="o">))</span> <span class="k">in</span>
   <span class="n">build_alloca</span> <span class="n">double_type</span> <span class="n">var_name</span> <span class="n">builder</span>
 </pre></div>
 </div>
-<p>This funny looking code creates an <code class="docutils literal"><span class="pre">Llvm.llbuilder</span></code> object that is
+<p>This funny looking code creates an <code class="docutils literal notranslate"><span class="pre">Llvm.llbuilder</span></code> object that is
 pointing at the first instruction of the entry block. It then creates an
 alloca with the expected name and returns it. Because all values in
 Kaleidoscope are doubles, there is no need to pass in a type to use.</p>
@@ -397,7 +385,7 @@ Kaleidoscope are doubles, there is no need to pass in a type to use.</p>
 variable references. In our new scheme, variables live on the stack, so
 code generating a reference to them actually needs to produce a load
 from the stack slot:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
   <span class="o">...</span>
   <span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Variable</span> <span class="n">name</span> <span class="o">-&gt;</span>
       <span class="k">let</span> <span class="n">v</span> <span class="o">=</span> <span class="k">try</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">find</span> <span class="n">named_values</span> <span class="n">name</span> <span class="k">with</span>
@@ -408,10 +396,10 @@ from the stack slot:</p>
 </pre></div>
 </div>
 <p>As you can see, this is pretty straightforward. Now we need to update
-the things that define the variables to set up the alloca. We&#8217;ll start
-with <code class="docutils literal"><span class="pre">codegen_expr</span> <span class="pre">Ast.For</span> <span class="pre">...</span></code> (see the <a class="reference external" href="#code">full code listing</a>
+the things that define the variables to set up the alloca. We’ll start
+with <code class="docutils literal notranslate"><span class="pre">codegen_expr</span> <span class="pre">Ast.For</span> <span class="pre">...</span></code> (see the <a class="reference external" href="#id1">full code listing</a>
 for the unabridged code):</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">For</span> <span class="o">(</span><span class="n">var_name</span><span class="o">,</span> <span class="n">start</span><span class="o">,</span> <span class="n">end_</span><span class="o">,</span> <span class="n">step</span><span class="o">,</span> <span class="n">body</span><span class="o">)</span> <span class="o">-&gt;</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">For</span> <span class="o">(</span><span class="n">var_name</span><span class="o">,</span> <span class="n">start</span><span class="o">,</span> <span class="n">end_</span><span class="o">,</span> <span class="n">step</span><span class="o">,</span> <span class="n">body</span><span class="o">)</span> <span class="o">-&gt;</span>
     <span class="k">let</span> <span class="n">the_function</span> <span class="o">=</span> <span class="n">block_parent</span> <span class="o">(</span><span class="n">insertion_block</span> <span class="n">builder</span><span class="o">)</span> <span class="k">in</span>
 
     <span class="c">(* Create an alloca for the variable in the entry block. *)</span>
@@ -446,13 +434,13 @@ for the unabridged code):</p>
     <span class="o">...</span>
 </pre></div>
 </div>
-<p>This code is virtually identical to the code <a class="reference external" href="OCamlLangImpl5.html#forcodegen">before we allowed mutable
+<p>This code is virtually identical to the code <a class="reference external" href="OCamlLangImpl5.html#code-generation-for-the-for-loop">before we allowed mutable
 variables</a>. The big difference is that
 we no longer have to construct a PHI node, and we use load/store to
 access the variable as needed.</p>
 <p>To support mutable argument variables, we need to also make allocas for
 them. The code for this is also pretty simple:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* Create an alloca for each argument and register the argument in the symbol</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* Create an alloca for each argument and register the argument in the symbol</span>
 <span class="c"> * table so that references to it will succeed. *)</span>
 <span class="k">let</span> <span class="n">create_argument_allocas</span> <span class="n">the_function</span> <span class="n">proto</span> <span class="o">=</span>
   <span class="k">let</span> <span class="n">args</span> <span class="o">=</span> <span class="k">match</span> <span class="n">proto</span> <span class="k">with</span>
@@ -473,11 +461,11 @@ them. The code for this is also pretty simple:</p>
 </div>
 <p>For each argument, we make an alloca, store the input value to the
 function into the alloca, and register the alloca as the memory location
-for the argument. This method gets invoked by <code class="docutils literal"><span class="pre">Codegen.codegen_func</span></code>
+for the argument. This method gets invoked by <code class="docutils literal notranslate"><span class="pre">Codegen.codegen_func</span></code>
 right after it sets up the entry block for the function.</p>
 <p>The final missing piece is adding the mem2reg pass, which allows us to
 get good codegen once again:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="n">main</span> <span class="bp">()</span> <span class="o">=</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">main</span> <span class="bp">()</span> <span class="o">=</span>
   <span class="o">...</span>
   <span class="k">let</span> <span class="n">the_fpm</span> <span class="o">=</span> <span class="nn">PassManager</span><span class="p">.</span><span class="n">create_function</span> <span class="nn">Codegen</span><span class="p">.</span><span class="n">the_module</span> <span class="k">in</span>
 
@@ -498,32 +486,32 @@ get good codegen once again:</p>
 <p>It is interesting to see what the code looks like before and after the
 mem2reg optimization runs. For example, this is the before/after code
 for our recursive fib function. Before the optimization:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="kt">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="kt">double</span> <span class="nv">%x</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="k">double</span> <span class="nv">%x</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
-  <span class="nv">%x1</span> <span class="p">=</span> <span class="k">alloca</span> <span class="kt">double</span>
-  <span class="k">store</span> <span class="kt">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="kt">double</span><span class="p">*</span> <span class="nv">%x1</span>
-  <span class="nv">%x2</span> <span class="p">=</span> <span class="k">load</span> <span class="kt">double</span><span class="p">*</span> <span class="nv">%x1</span>
-  <span class="nv">%cmptmp</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">ult</span> <span class="kt">double</span> <span class="nv">%x2</span><span class="p">,</span> <span class="m">3.000000e+00</span>
-  <span class="nv">%booltmp</span> <span class="p">=</span> <span class="k">uitofp</span> <span class="k">i1</span> <span class="nv">%cmptmp</span> <span class="k">to</span> <span class="kt">double</span>
-  <span class="nv">%ifcond</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">one</span> <span class="kt">double</span> <span class="nv">%booltmp</span><span class="p">,</span> <span class="m">0.000000e+00</span>
-  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%ifcond</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%then</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%else</span>
+  <span class="nv">%x1</span> <span class="p">=</span> <span class="k">alloca</span> <span class="k">double</span>
+  <span class="k">store</span> <span class="k">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="k">double</span><span class="p">*</span> <span class="nv">%x1</span>
+  <span class="nv">%x2</span> <span class="p">=</span> <span class="k">load</span> <span class="k">double</span><span class="p">*</span> <span class="nv">%x1</span>
+  <span class="nv">%cmptmp</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">ult</span> <span class="k">double</span> <span class="nv">%x2</span><span class="p">,</span> <span class="m">3.000000e+00</span>
+  <span class="nv">%booltmp</span> <span class="p">=</span> <span class="k">uitofp</span> <span class="k">i1</span> <span class="nv">%cmptmp</span> <span class="k">to</span> <span class="k">double</span>
+  <span class="nv">%ifcond</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">one</span> <span class="k">double</span> <span class="nv">%booltmp</span><span class="p">,</span> <span class="m">0.000000e+00</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%ifcond</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%then</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%else</span>
 
 <span class="nl">then:</span>    <span class="c">; preds = %entry</span>
-  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%ifcont</span>
+  <span class="k">br</span> <span class="k">label</span> <span class="nv">%ifcont</span>
 
 <span class="nl">else:</span>    <span class="c">; preds = %entry</span>
-  <span class="nv">%x3</span> <span class="p">=</span> <span class="k">load</span> <span class="kt">double</span><span class="p">*</span> <span class="nv">%x1</span>
-  <span class="nv">%subtmp</span> <span class="p">=</span> <span class="k">fsub</span> <span class="kt">double</span> <span class="nv">%x3</span><span class="p">,</span> <span class="m">1.000000e+00</span>
-  <span class="nv">%calltmp</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="kt">double</span> <span class="nv">%subtmp</span><span class="p">)</span>
-  <span class="nv">%x4</span> <span class="p">=</span> <span class="k">load</span> <span class="kt">double</span><span class="p">*</span> <span class="nv">%x1</span>
-  <span class="nv">%subtmp5</span> <span class="p">=</span> <span class="k">fsub</span> <span class="kt">double</span> <span class="nv">%x4</span><span class="p">,</span> <span class="m">2.000000e+00</span>
-  <span class="nv">%calltmp6</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="kt">double</span> <span class="nv">%subtmp5</span><span class="p">)</span>
-  <span class="nv">%addtmp</span> <span class="p">=</span> <span class="k">fadd</span> <span class="kt">double</span> <span class="nv">%calltmp</span><span class="p">,</span> <span class="nv">%calltmp6</span>
-  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%ifcont</span>
+  <span class="nv">%x3</span> <span class="p">=</span> <span class="k">load</span> <span class="k">double</span><span class="p">*</span> <span class="nv">%x1</span>
+  <span class="nv">%subtmp</span> <span class="p">=</span> <span class="k">fsub</span> <span class="k">double</span> <span class="nv">%x3</span><span class="p">,</span> <span class="m">1.000000e+00</span>
+  <span class="nv">%calltmp</span> <span class="p">=</span> <span class="k">call</span> <span class="k">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="k">double</span> <span class="nv">%subtmp</span><span class="p">)</span>
+  <span class="nv">%x4</span> <span class="p">=</span> <span class="k">load</span> <span class="k">double</span><span class="p">*</span> <span class="nv">%x1</span>
+  <span class="nv">%subtmp5</span> <span class="p">=</span> <span class="k">fsub</span> <span class="k">double</span> <span class="nv">%x4</span><span class="p">,</span> <span class="m">2.000000e+00</span>
+  <span class="nv">%calltmp6</span> <span class="p">=</span> <span class="k">call</span> <span class="k">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="k">double</span> <span class="nv">%subtmp5</span><span class="p">)</span>
+  <span class="nv">%addtmp</span> <span class="p">=</span> <span class="k">fadd</span> <span class="k">double</span> <span class="nv">%calltmp</span><span class="p">,</span> <span class="nv">%calltmp6</span>
+  <span class="k">br</span> <span class="k">label</span> <span class="nv">%ifcont</span>
 
 <span class="nl">ifcont:</span>    <span class="c">; preds = %else, %then</span>
-  <span class="nv">%iftmp</span> <span class="p">=</span> <span class="k">phi</span> <span class="kt">double</span> <span class="p">[</span> <span class="m">1.000000e+00</span><span class="p">,</span> <span class="nv">%then</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%addtmp</span><span class="p">,</span> <span class="nv">%else</span> <span class="p">]</span>
-  <span class="k">ret</span> <span class="kt">double</span> <span class="nv">%iftmp</span>
+  <span class="nv">%iftmp</span> <span class="p">=</span> <span class="k">phi</span> <span class="k">double</span> <span class="p">[</span> <span class="m">1.000000e+00</span><span class="p">,</span> <span class="nv">%then</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%addtmp</span><span class="p">,</span> <span class="nv">%else</span> <span class="p">]</span>
+  <span class="k">ret</span> <span class="k">double</span> <span class="nv">%iftmp</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -531,32 +519,32 @@ for our recursive fib function. Before the optimization:</p>
 still see the extremely simple-minded code generation strategy we are
 using. In the entry block, an alloca is created, and the initial input
 value is stored into it. Each reference to the variable does a reload
-from the stack. Also, note that we didn&#8217;t modify the if/then/else
+from the stack. Also, note that we didn’t modify the if/then/else
 expression, so it still inserts a PHI node. While we could make an
 alloca for it, it is actually easier to create a PHI node for it, so we
 still just make the PHI.</p>
 <p>Here is the code after the mem2reg pass runs:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="kt">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="kt">double</span> <span class="nv">%x</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="k">double</span> <span class="nv">%x</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
-  <span class="nv">%cmptmp</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">ult</span> <span class="kt">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">3.000000e+00</span>
-  <span class="nv">%booltmp</span> <span class="p">=</span> <span class="k">uitofp</span> <span class="k">i1</span> <span class="nv">%cmptmp</span> <span class="k">to</span> <span class="kt">double</span>
-  <span class="nv">%ifcond</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">one</span> <span class="kt">double</span> <span class="nv">%booltmp</span><span class="p">,</span> <span class="m">0.000000e+00</span>
-  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%ifcond</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%then</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%else</span>
+  <span class="nv">%cmptmp</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">ult</span> <span class="k">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">3.000000e+00</span>
+  <span class="nv">%booltmp</span> <span class="p">=</span> <span class="k">uitofp</span> <span class="k">i1</span> <span class="nv">%cmptmp</span> <span class="k">to</span> <span class="k">double</span>
+  <span class="nv">%ifcond</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">one</span> <span class="k">double</span> <span class="nv">%booltmp</span><span class="p">,</span> <span class="m">0.000000e+00</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%ifcond</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%then</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%else</span>
 
 <span class="nl">then:</span>
-  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%ifcont</span>
+  <span class="k">br</span> <span class="k">label</span> <span class="nv">%ifcont</span>
 
 <span class="nl">else:</span>
-  <span class="nv">%subtmp</span> <span class="p">=</span> <span class="k">fsub</span> <span class="kt">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">1.000000e+00</span>
-  <span class="nv">%calltmp</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="kt">double</span> <span class="nv">%subtmp</span><span class="p">)</span>
-  <span class="nv">%subtmp5</span> <span class="p">=</span> <span class="k">fsub</span> <span class="kt">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">2.000000e+00</span>
-  <span class="nv">%calltmp6</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="kt">double</span> <span class="nv">%subtmp5</span><span class="p">)</span>
-  <span class="nv">%addtmp</span> <span class="p">=</span> <span class="k">fadd</span> <span class="kt">double</span> <span class="nv">%calltmp</span><span class="p">,</span> <span class="nv">%calltmp6</span>
-  <span class="k">br</span> <span class="kt">label</span> <span class="nv">%ifcont</span>
+  <span class="nv">%subtmp</span> <span class="p">=</span> <span class="k">fsub</span> <span class="k">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">1.000000e+00</span>
+  <span class="nv">%calltmp</span> <span class="p">=</span> <span class="k">call</span> <span class="k">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="k">double</span> <span class="nv">%subtmp</span><span class="p">)</span>
+  <span class="nv">%subtmp5</span> <span class="p">=</span> <span class="k">fsub</span> <span class="k">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">2.000000e+00</span>
+  <span class="nv">%calltmp6</span> <span class="p">=</span> <span class="k">call</span> <span class="k">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="k">double</span> <span class="nv">%subtmp5</span><span class="p">)</span>
+  <span class="nv">%addtmp</span> <span class="p">=</span> <span class="k">fadd</span> <span class="k">double</span> <span class="nv">%calltmp</span><span class="p">,</span> <span class="nv">%calltmp6</span>
+  <span class="k">br</span> <span class="k">label</span> <span class="nv">%ifcont</span>
 
 <span class="nl">ifcont:</span>    <span class="c">; preds = %else, %then</span>
-  <span class="nv">%iftmp</span> <span class="p">=</span> <span class="k">phi</span> <span class="kt">double</span> <span class="p">[</span> <span class="m">1.000000e+00</span><span class="p">,</span> <span class="nv">%then</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%addtmp</span><span class="p">,</span> <span class="nv">%else</span> <span class="p">]</span>
-  <span class="k">ret</span> <span class="kt">double</span> <span class="nv">%iftmp</span>
+  <span class="nv">%iftmp</span> <span class="p">=</span> <span class="k">phi</span> <span class="k">double</span> <span class="p">[</span> <span class="m">1.000000e+00</span><span class="p">,</span> <span class="nv">%then</span> <span class="p">],</span> <span class="p">[</span> <span class="nv">%addtmp</span><span class="p">,</span> <span class="nv">%else</span> <span class="p">]</span>
+  <span class="k">ret</span> <span class="k">double</span> <span class="nv">%iftmp</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -564,39 +552,39 @@ still just make the PHI.</p>
 the variable. The point of showing this is to calm your tension about
 inserting such blatent inefficiencies :).</p>
 <p>After the rest of the optimizers run, we get:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="kt">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="kt">double</span> <span class="nv">%x</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="k">double</span> <span class="nv">%x</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
-  <span class="nv">%cmptmp</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">ult</span> <span class="kt">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">3.000000e+00</span>
-  <span class="nv">%booltmp</span> <span class="p">=</span> <span class="k">uitofp</span> <span class="k">i1</span> <span class="nv">%cmptmp</span> <span class="k">to</span> <span class="kt">double</span>
-  <span class="nv">%ifcond</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">ueq</span> <span class="kt">double</span> <span class="nv">%booltmp</span><span class="p">,</span> <span class="m">0.000000e+00</span>
-  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%ifcond</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%else</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%ifcont</span>
+  <span class="nv">%cmptmp</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">ult</span> <span class="k">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">3.000000e+00</span>
+  <span class="nv">%booltmp</span> <span class="p">=</span> <span class="k">uitofp</span> <span class="k">i1</span> <span class="nv">%cmptmp</span> <span class="k">to</span> <span class="k">double</span>
+  <span class="nv">%ifcond</span> <span class="p">=</span> <span class="k">fcmp</span> <span class="k">ueq</span> <span class="k">double</span> <span class="nv">%booltmp</span><span class="p">,</span> <span class="m">0.000000e+00</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="nv">%ifcond</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%else</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%ifcont</span>
 
 <span class="nl">else:</span>
-  <span class="nv">%subtmp</span> <span class="p">=</span> <span class="k">fsub</span> <span class="kt">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">1.000000e+00</span>
-  <span class="nv">%calltmp</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="kt">double</span> <span class="nv">%subtmp</span><span class="p">)</span>
-  <span class="nv">%subtmp5</span> <span class="p">=</span> <span class="k">fsub</span> <span class="kt">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">2.000000e+00</span>
-  <span class="nv">%calltmp6</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="kt">double</span> <span class="nv">%subtmp5</span><span class="p">)</span>
-  <span class="nv">%addtmp</span> <span class="p">=</span> <span class="k">fadd</span> <span class="kt">double</span> <span class="nv">%calltmp</span><span class="p">,</span> <span class="nv">%calltmp6</span>
-  <span class="k">ret</span> <span class="kt">double</span> <span class="nv">%addtmp</span>
+  <span class="nv">%subtmp</span> <span class="p">=</span> <span class="k">fsub</span> <span class="k">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">1.000000e+00</span>
+  <span class="nv">%calltmp</span> <span class="p">=</span> <span class="k">call</span> <span class="k">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="k">double</span> <span class="nv">%subtmp</span><span class="p">)</span>
+  <span class="nv">%subtmp5</span> <span class="p">=</span> <span class="k">fsub</span> <span class="k">double</span> <span class="nv">%x</span><span class="p">,</span> <span class="m">2.000000e+00</span>
+  <span class="nv">%calltmp6</span> <span class="p">=</span> <span class="k">call</span> <span class="k">double</span> <span class="vg">@fib</span><span class="p">(</span><span class="k">double</span> <span class="nv">%subtmp5</span><span class="p">)</span>
+  <span class="nv">%addtmp</span> <span class="p">=</span> <span class="k">fadd</span> <span class="k">double</span> <span class="nv">%calltmp</span><span class="p">,</span> <span class="nv">%calltmp6</span>
+  <span class="k">ret</span> <span class="k">double</span> <span class="nv">%addtmp</span>
 
 <span class="nl">ifcont:</span>
-  <span class="k">ret</span> <span class="kt">double</span> <span class="m">1.000000e+00</span>
+  <span class="k">ret</span> <span class="k">double</span> <span class="m">1.000000e+00</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>Here we see that the simplifycfg pass decided to clone the return
-instruction into the end of the &#8216;else&#8217; block. This allowed it to
+instruction into the end of the ‘else’ block. This allowed it to
 eliminate some branches and the PHI node.</p>
 <p>Now that all symbol table references are updated to use stack variables,
-we&#8217;ll add the assignment operator.</p>
+we’ll add the assignment operator.</p>
 </div>
 <div class="section" id="new-assignment-operator">
-<h2><a class="toc-backref" href="#id7">7.6. New Assignment Operator</a><a class="headerlink" href="#new-assignment-operator" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7"><span class="section-number">7.6. </span>New Assignment Operator</a><a class="headerlink" href="#new-assignment-operator" title="Permalink to this headline">¶</a></h2>
 <p>With our current framework, adding a new assignment operator is really
 simple. We will parse it just like any other binary operator, but handle
 it internally (instead of allowing the user to define it). The first
 step is to set a precedence:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="n">main</span> <span class="bp">()</span> <span class="o">=</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">main</span> <span class="bp">()</span> <span class="o">=</span>
   <span class="c">(* Install standard binary operators.</span>
 <span class="c">   * 1 is the lowest precedence. *)</span>
   <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">add</span> <span class="nn">Parser</span><span class="p">.</span><span class="n">binop_precedence</span> <span class="sc">&#39;=&#39;</span> <span class="mi">2</span><span class="o">;</span>
@@ -609,7 +597,7 @@ step is to set a precedence:</p>
 <p>Now that the parser knows the precedence of the binary operator, it
 takes care of all the parsing and AST generation. We just need to
 implement codegen for the assignment operator. This looks like:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
       <span class="k">begin</span> <span class="k">match</span> <span class="n">op</span> <span class="k">with</span>
       <span class="o">|</span> <span class="sc">&#39;=&#39;</span> <span class="o">-&gt;</span>
           <span class="c">(* Special case &#39;=&#39; because we don&#39;t want to emit the LHS as an</span>
@@ -621,13 +609,13 @@ implement codegen for the assignment operator. This looks like:</p>
           <span class="k">in</span>
 </pre></div>
 </div>
-<p>Unlike the rest of the binary operators, our assignment operator doesn&#8217;t
-follow the &#8220;emit LHS, emit RHS, do computation&#8221; model. As such, it is
+<p>Unlike the rest of the binary operators, our assignment operator doesn’t
+follow the “emit LHS, emit RHS, do computation” model. As such, it is
 handled as a special case before the other binary operators are handled.
 The other strange thing is that it requires the LHS to be a variable. It
-is invalid to have &#8220;(x+1) = expr&#8221; - only things like &#8220;x = expr&#8221; are
+is invalid to have “(x+1) = expr” - only things like “x = expr” are
 allowed.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre>    <span class="c">(* Codegen the rhs. *)</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>    <span class="c">(* Codegen the rhs. *)</span>
     <span class="k">let</span> <span class="n">val_</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">rhs</span> <span class="k">in</span>
 
     <span class="c">(* Lookup the name. *)</span>
@@ -640,41 +628,41 @@ allowed.</p>
       <span class="o">...</span>
 </pre></div>
 </div>
-<p>Once we have the variable, codegen&#8217;ing the assignment is
+<p>Once we have the variable, codegen’ing the assignment is
 straightforward: we emit the RHS of the assignment, create a store, and
 return the computed value. Returning a value allows for chained
-assignments like &#8220;X = (Y = Z)&#8221;.</p>
+assignments like “X = (Y = Z)”.</p>
 <p>Now that we have an assignment operator, we can mutate loop variables
 and arguments. For example, we can now run code like this:</p>
-<div class="highlight-python"><div class="highlight"><pre># Function to print a double.
-extern printd(x);
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Function to print a double.</span>
+<span class="n">extern</span> <span class="n">printd</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
 
-# Define &#39;:&#39; for sequencing: as a low-precedence operator that ignores operands
-# and just returns the RHS.
-def binary : 1 (x y) y;
+<span class="c1"># Define &#39;:&#39; for sequencing: as a low-precedence operator that ignores operands</span>
+<span class="c1"># and just returns the RHS.</span>
+<span class="k">def</span> <span class="nf">binary</span> <span class="p">:</span> <span class="mi">1</span> <span class="p">(</span><span class="n">x</span> <span class="n">y</span><span class="p">)</span> <span class="n">y</span><span class="p">;</span>
 
-def test(x)
-  printd(x) :
-  x = 4 :
-  printd(x);
+<span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="n">printd</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">:</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="mi">4</span> <span class="p">:</span>
+  <span class="n">printd</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
 
-test(123);
+<span class="n">test</span><span class="p">(</span><span class="mi">123</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>When run, this example prints &#8220;123&#8221; and then &#8220;4&#8221;, showing that we did
+<p>When run, this example prints “123” and then “4”, showing that we did
 actually mutate the value! Okay, we have now officially implemented our
 goal: getting this to work requires SSA construction in the general
 case. However, to be really useful, we want the ability to define our
 own local variables, lets add this next!</p>
 </div>
 <div class="section" id="user-defined-local-variables">
-<h2><a class="toc-backref" href="#id8">7.7. User-defined Local Variables</a><a class="headerlink" href="#user-defined-local-variables" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8"><span class="section-number">7.7. </span>User-defined Local Variables</a><a class="headerlink" href="#user-defined-local-variables" title="Permalink to this headline">¶</a></h2>
 <p>Adding var/in is just like any other other extensions we made to
 Kaleidoscope: we extend the lexer, the parser, the AST and the code
-generator. The first step for adding our new &#8216;var/in&#8217; construct is to
+generator. The first step for adding our new ‘var/in’ construct is to
 extend the lexer. As before, this is pretty trivial, the code looks like
 this:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">type</span> <span class="n">token</span> <span class="o">=</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">token</span> <span class="o">=</span>
   <span class="o">...</span>
   <span class="c">(* var definition *)</span>
   <span class="o">|</span> <span class="nn">Var</span>
@@ -692,7 +680,7 @@ this:</p>
 </div>
 <p>The next step is to define the AST node that we will construct. For
 var/in, it looks like this:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">type</span> <span class="n">expr</span> <span class="o">=</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">expr</span> <span class="o">=</span>
   <span class="o">...</span>
   <span class="c">(* variant for var/in. *)</span>
   <span class="o">|</span> <span class="nc">Var</span> <span class="k">of</span> <span class="o">(</span><span class="kt">string</span> <span class="o">*</span> <span class="n">expr</span> <span class="n">option</span><span class="o">)</span> <span class="kt">array</span> <span class="o">*</span> <span class="n">expr</span>
@@ -705,7 +693,7 @@ information in the VarNames vector. Also, var/in has a body, this body
 is allowed to access the variables defined by the var/in.</p>
 <p>With this in place, we can define the parser pieces. The first thing we
 do is add it as a primary expression:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* primary</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* primary</span>
 <span class="c"> *   ::= identifier</span>
 <span class="c"> *   ::= numberexpr</span>
 <span class="c"> *   ::= parenexpr</span>
@@ -744,7 +732,7 @@ do is add it as a primary expression:</p>
 </div>
 <p>Now that we can parse and represent the code, we need to support
 emission of LLVM IR for it. This code starts out with:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
   <span class="o">...</span>
   <span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Var</span> <span class="o">(</span><span class="n">var_names</span><span class="o">,</span> <span class="n">body</span><span class="o">)</span>
       <span class="k">let</span> <span class="n">old_bindings</span> <span class="o">=</span> <span class="n">ref</span> <span class="bp">[]</span> <span class="k">in</span>
@@ -758,7 +746,7 @@ emission of LLVM IR for it. This code starts out with:</p>
 <p>Basically it loops over all the variables, installing them one at a
 time. For each variable we put into the symbol table, we remember the
 previous value that we replace in OldBindings.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre>  <span class="c">(* Emit the initializer before adding the variable to scope, this</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>  <span class="c">(* Emit the initializer before adding the variable to scope, this</span>
 <span class="c">   * prevents the initializer from referencing the variable itself, and</span>
 <span class="c">   * permits stuff like this:</span>
 <span class="c">   *   var a = 1 in</span>
@@ -792,12 +780,12 @@ previous value that we replace in OldBindings.</p>
 the initializer, create the alloca, then update the symbol table to
 point to it. Once all the variables are installed in the symbol table,
 we evaluate the body of the var/in expression:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* Codegen the body, now that all vars are in scope. *)</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* Codegen the body, now that all vars are in scope. *)</span>
 <span class="k">let</span> <span class="n">body_val</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">body</span> <span class="k">in</span>
 </pre></div>
 </div>
 <p>Finally, before returning, we restore the previous variable bindings:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* Pop all our variables from scope. *)</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* Pop all our variables from scope. *)</span>
 <span class="nn">List</span><span class="p">.</span><span class="n">iter</span> <span class="o">(</span><span class="k">fun</span> <span class="o">(</span><span class="n">var_name</span><span class="o">,</span> <span class="n">old_value</span><span class="o">)</span> <span class="o">-&gt;</span>
   <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">add</span> <span class="n">named_values</span> <span class="n">var_name</span> <span class="n">old_value</span>
 <span class="o">)</span> <span class="o">!</span><span class="n">old_bindings</span><span class="o">;</span>
@@ -811,31 +799,29 @@ definitions, and we even (trivially) allow mutation of them :).</p>
 <p>With this, we completed what we set out to do. Our nice iterative fib
 example from the intro compiles and runs just fine. The mem2reg pass
 optimizes all of our stack variables into SSA registers, inserting PHI
-nodes where needed, and our front-end remains simple: no &#8220;iterated
-dominance frontier&#8221; computation anywhere in sight.</p>
+nodes where needed, and our front-end remains simple: no “iterated
+dominance frontier” computation anywhere in sight.</p>
 </div>
 <div class="section" id="id1">
-<h2><a class="toc-backref" href="#id9">7.8. Full Code Listing</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9"><span class="section-number">7.8. </span>Full Code Listing</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>Here is the complete code listing for our running example, enhanced with
 mutable variables and var/in support. To build this example, use:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="c"># Compile</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
 ocamlbuild toy.byte
-<span class="c"># Run</span>
+<span class="c1"># Run</span>
 ./toy.byte
 </pre></div>
 </div>
 <p>Here is the code:</p>
-<dl class="docutils">
-<dt>_tags:</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre>&lt;{lexer,parser}.ml&gt;: use_camlp4, pp(camlp4of)
-&lt;*.{byte,native}&gt;: g++, use_llvm, use_llvm_analysis
-&lt;*.{byte,native}&gt;: use_llvm_executionengine, use_llvm_target
-&lt;*.{byte,native}&gt;: use_llvm_scalar_opts, use_bindings
+<dl>
+<dt>_tags:</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="p">{</span><span class="n">lexer</span><span class="p">,</span><span class="n">parser</span><span class="p">}</span><span class="o">.</span><span class="n">ml</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">use_camlp4</span><span class="p">,</span> <span class="n">pp</span><span class="p">(</span><span class="n">camlp4of</span><span class="p">)</span>
+<span class="o">&lt;*.</span><span class="p">{</span><span class="n">byte</span><span class="p">,</span><span class="n">native</span><span class="p">}</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">g</span><span class="o">++</span><span class="p">,</span> <span class="n">use_llvm</span><span class="p">,</span> <span class="n">use_llvm_analysis</span>
+<span class="o">&lt;*.</span><span class="p">{</span><span class="n">byte</span><span class="p">,</span><span class="n">native</span><span class="p">}</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">use_llvm_executionengine</span><span class="p">,</span> <span class="n">use_llvm_target</span>
+<span class="o">&lt;*.</span><span class="p">{</span><span class="n">byte</span><span class="p">,</span><span class="n">native</span><span class="p">}</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">use_llvm_scalar_opts</span><span class="p">,</span> <span class="n">use_bindings</span>
 </pre></div>
 </div>
 </dd>
-<dt>myocamlbuild.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="k">open</span> <span class="nc">Ocamlbuild_plugin</span><span class="o">;;</span>
+<dt>myocamlbuild.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">open</span> <span class="nc">Ocamlbuild_plugin</span><span class="o">;;</span>
 
 <span class="n">ocaml_lib</span> <span class="o">~</span><span class="n">extern</span><span class="o">:</span><span class="bp">true</span> <span class="s2">&quot;llvm&quot;</span><span class="o">;;</span>
 <span class="n">ocaml_lib</span> <span class="o">~</span><span class="n">extern</span><span class="o">:</span><span class="bp">true</span> <span class="s2">&quot;llvm_analysis&quot;</span><span class="o">;;</span>
@@ -848,8 +834,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>token.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>token.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Lexer Tokens</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -877,8 +862,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>lexer.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>lexer.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Lexer</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -941,8 +925,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>ast.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>ast.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Abstract Syntax Tree (aka Parse Tree)</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -984,8 +967,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>parser.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===---------------------------------------------------------------------===</span>
+<dt>parser.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===---------------------------------------------------------------------===</span>
 <span class="c"> * Parser</span>
 <span class="c"> *===---------------------------------------------------------------------===*)</span>
 
@@ -1209,8 +1191,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>codegen.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>codegen.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Code Generation</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -1583,8 +1564,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>toplevel.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>toplevel.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Top-Level parsing and JIT Driver</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -1636,8 +1616,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>toy.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>toy.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Main driver code.</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -1697,8 +1676,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>bindings.c</dt>
-<dd><div class="first last highlight-c"><div class="highlight"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
+<dt>bindings.c</dt><dd><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
 
 <span class="cm">/* putchard - putchar that takes a double and returns 0. */</span>
 <span class="k">extern</span> <span class="kt">double</span> <span class="nf">putchard</span><span class="p">(</span><span class="kt">double</span> <span class="n">X</span><span class="p">)</span> <span class="p">{</span>
@@ -1739,13 +1717,13 @@ ocamlbuild toy.byte
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

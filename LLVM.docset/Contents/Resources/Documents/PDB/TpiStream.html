@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>The PDB TPI and IPI Streams &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The PDB DBI (Debug Info) Stream" href="DbiStream.html" />
+    <link rel="prev" title="The PDB Info Stream (aka the PDB Stream)" href="PdbStream.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="DbiStream.html" title="The PDB DBI (Debug Info) Stream"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="PdbStream.html" title="The PDB Info Stream (aka the PDB Stream)"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The PDB File Format</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-pdb-tpi-and-ipi-streams">
+<h1>The PDB TPI and IPI Streams<a class="headerlink" href="#the-pdb-tpi-and-ipi-streams" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id2">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#tpi-vs-ipi-stream" id="id3">TPI vs IPI Stream</a></p></li>
+<li><p><a class="reference internal" href="#type-indices" id="id4">Type Indices</a></p></li>
+<li><p><a class="reference internal" href="#stream-header" id="id5">Stream Header</a></p></li>
+<li><p><a class="reference internal" href="#codeview-type-record-list" id="id6">CodeView Type Record List</a></p></li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<span id="tpi-intro"></span><h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The PDB TPI Stream (Index 2) and IPI Stream (Index 4) contain information about
+all types used in the program.  It is organized as a <a class="reference internal" href="#tpi-header"><span class="std std-ref">header</span></a>
+followed by a list of <a class="reference internal" href="CodeViewTypes.html"><span class="doc">CodeView Type Records</span></a>.  Types are
+referenced from various streams and records throughout the PDB by their
+<a class="reference internal" href="#type-indices"><span class="std std-ref">type index</span></a>.  In general, the sequence of type records
+following the <a class="reference internal" href="#tpi-header"><span class="std std-ref">header</span></a> forms a topologically sorted DAG
+(directed acyclic graph), which means that a type record B can only refer to
+the type A if <code class="docutils literal notranslate"><span class="pre">A.TypeIndex</span> <span class="pre">&lt;</span> <span class="pre">B.TypeIndex</span></code>.  While there are rare cases where
+this property will not hold (particularly when dealing with object files
+compiled with MASM), an implementation should try very hard to make this
+property hold, as it means the entire type graph can be constructed in a single
+pass.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Type records form a topologically sorted DAG (directed acyclic graph).</p>
+</div>
+</div>
+<div class="section" id="tpi-vs-ipi-stream">
+<span id="tpi-ipi"></span><h2><a class="toc-backref" href="#id3">TPI vs IPI Stream</a><a class="headerlink" href="#tpi-vs-ipi-stream" title="Permalink to this headline">¶</a></h2>
+<p>Recent versions of the PDB format (aka all versions covered by this document)
+have 2 streams with identical layout, henceforth referred to as the TPI stream
+and IPI stream.  Subsequent contents of this document describing the on-disk
+format apply equally whether it is for the TPI Stream or the IPI Stream.  The
+only difference between the two is in <em>which</em> CodeView records are allowed to
+appear in each one, summarized by the following table:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 51%" />
+<col style="width: 49%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>TPI Stream</p></th>
+<th class="head"><p>IPI Stream</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>LF_POINTER</p></td>
+<td><p>LF_FUNC_ID</p></td>
+</tr>
+<tr class="row-odd"><td><p>LF_MODIFIER</p></td>
+<td><p>LF_MFUNC_ID</p></td>
+</tr>
+<tr class="row-even"><td><p>LF_PROCEDURE</p></td>
+<td><p>LF_BUILDINFO</p></td>
+</tr>
+<tr class="row-odd"><td><p>LF_MFUNCTION</p></td>
+<td><p>LF_SUBSTR_LIST</p></td>
+</tr>
+<tr class="row-even"><td><p>LF_LABEL</p></td>
+<td><p>LF_STRING_ID</p></td>
+</tr>
+<tr class="row-odd"><td><p>LF_ARGLIST</p></td>
+<td><p>LF_UDT_SRC_LINE</p></td>
+</tr>
+<tr class="row-even"><td><p>LF_FIELDLIST</p></td>
+<td><p>LF_UDT_MOD_SRC_LINE</p></td>
+</tr>
+<tr class="row-odd"><td><p>LF_ARRAY</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>LF_CLASS</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>LF_STRUCTURE</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>LF_INTERFACE</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>LF_UNION</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>LF_ENUM</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>LF_TYPESERVER2</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>LF_VFTABLE</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>LF_VTSHAPE</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>LF_BITFIELD</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>LF_METHODLIST</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>LF_PRECOMP</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>LF_ENDPRECOMP</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>The usage of these records is described in more detail in
+<a class="reference internal" href="CodeViewTypes.html"><span class="doc">CodeView Type Records</span></a>.</p>
+</div>
+<div class="section" id="type-indices">
+<span id="id1"></span><h2><a class="toc-backref" href="#id4">Type Indices</a><a class="headerlink" href="#type-indices" title="Permalink to this headline">¶</a></h2>
+<p>A type index is a 32-bit integer that uniquely identifies a type inside of an
+object file’s <code class="docutils literal notranslate"><span class="pre">.debug$T</span></code> section or a PDB file’s TPI or IPI stream.  The
+value of the type index for the first type record from the TPI stream is given
+by the <code class="docutils literal notranslate"><span class="pre">TypeIndexBegin</span></code> member of the <a class="reference internal" href="#tpi-header"><span class="std std-ref">TPI Stream Header</span></a>
+although in practice this value is always equal to 0x1000 (4096).</p>
+<p>Any type index with a high bit set is considered to come from the IPI stream,
+although this appears to be more of a hack, and LLVM does not generate type
+indices of this nature.  They can, however, be observed in Microsoft PDBs
+occasionally, so one should be prepared to handle them.  Note that having the
+high bit set is not a necessary condition to determine whether a type index
+comes from the IPI stream, it is only sufficient.</p>
+<p>Once the high bit is cleared, any type index &gt;= <code class="docutils literal notranslate"><span class="pre">TypeIndexBegin</span></code> is presumed
+to come from the appropriate stream, and any type index less than this is a
+bitmask which can be decomposed as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.---------------------------.------.----------.
+|           Unused          | Mode |   Kind   |
+&#39;---------------------------&#39;------&#39;----------&#39;
+|+32                        |+12   |+8        |+0
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Kind</strong> - A value from the following enum:</p></li>
+</ul>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">SimpleTypeKind</span> <span class="o">:</span> <span class="kt">uint32_t</span> <span class="p">{</span>
+  <span class="n">None</span> <span class="o">=</span> <span class="mh">0x0000</span><span class="p">,</span>          <span class="c1">// uncharacterized type (no type)</span>
+  <span class="n">Void</span> <span class="o">=</span> <span class="mh">0x0003</span><span class="p">,</span>          <span class="c1">// void</span>
+  <span class="n">NotTranslated</span> <span class="o">=</span> <span class="mh">0x0007</span><span class="p">,</span> <span class="c1">// type not translated by cvpack</span>
+  <span class="n">HResult</span> <span class="o">=</span> <span class="mh">0x0008</span><span class="p">,</span>       <span class="c1">// OLE/COM HRESULT</span>
+
+  <span class="n">SignedCharacter</span> <span class="o">=</span> <span class="mh">0x0010</span><span class="p">,</span>   <span class="c1">// 8 bit signed</span>
+  <span class="n">UnsignedCharacter</span> <span class="o">=</span> <span class="mh">0x0020</span><span class="p">,</span> <span class="c1">// 8 bit unsigned</span>
+  <span class="n">NarrowCharacter</span> <span class="o">=</span> <span class="mh">0x0070</span><span class="p">,</span>   <span class="c1">// really a char</span>
+  <span class="n">WideCharacter</span> <span class="o">=</span> <span class="mh">0x0071</span><span class="p">,</span>     <span class="c1">// wide char</span>
+  <span class="n">Character16</span> <span class="o">=</span> <span class="mh">0x007a</span><span class="p">,</span>       <span class="c1">// char16_t</span>
+  <span class="n">Character32</span> <span class="o">=</span> <span class="mh">0x007b</span><span class="p">,</span>       <span class="c1">// char32_t</span>
+
+  <span class="n">SByte</span> <span class="o">=</span> <span class="mh">0x0068</span><span class="p">,</span>       <span class="c1">// 8 bit signed int</span>
+  <span class="n">Byte</span> <span class="o">=</span> <span class="mh">0x0069</span><span class="p">,</span>        <span class="c1">// 8 bit unsigned int</span>
+  <span class="n">Int16Short</span> <span class="o">=</span> <span class="mh">0x0011</span><span class="p">,</span>  <span class="c1">// 16 bit signed</span>
+  <span class="n">UInt16Short</span> <span class="o">=</span> <span class="mh">0x0021</span><span class="p">,</span> <span class="c1">// 16 bit unsigned</span>
+  <span class="n">Int16</span> <span class="o">=</span> <span class="mh">0x0072</span><span class="p">,</span>       <span class="c1">// 16 bit signed int</span>
+  <span class="n">UInt16</span> <span class="o">=</span> <span class="mh">0x0073</span><span class="p">,</span>      <span class="c1">// 16 bit unsigned int</span>
+  <span class="n">Int32Long</span> <span class="o">=</span> <span class="mh">0x0012</span><span class="p">,</span>   <span class="c1">// 32 bit signed</span>
+  <span class="n">UInt32Long</span> <span class="o">=</span> <span class="mh">0x0022</span><span class="p">,</span>  <span class="c1">// 32 bit unsigned</span>
+  <span class="n">Int32</span> <span class="o">=</span> <span class="mh">0x0074</span><span class="p">,</span>       <span class="c1">// 32 bit signed int</span>
+  <span class="n">UInt32</span> <span class="o">=</span> <span class="mh">0x0075</span><span class="p">,</span>      <span class="c1">// 32 bit unsigned int</span>
+  <span class="n">Int64Quad</span> <span class="o">=</span> <span class="mh">0x0013</span><span class="p">,</span>   <span class="c1">// 64 bit signed</span>
+  <span class="n">UInt64Quad</span> <span class="o">=</span> <span class="mh">0x0023</span><span class="p">,</span>  <span class="c1">// 64 bit unsigned</span>
+  <span class="n">Int64</span> <span class="o">=</span> <span class="mh">0x0076</span><span class="p">,</span>       <span class="c1">// 64 bit signed int</span>
+  <span class="n">UInt64</span> <span class="o">=</span> <span class="mh">0x0077</span><span class="p">,</span>      <span class="c1">// 64 bit unsigned int</span>
+  <span class="n">Int128Oct</span> <span class="o">=</span> <span class="mh">0x0014</span><span class="p">,</span>   <span class="c1">// 128 bit signed int</span>
+  <span class="n">UInt128Oct</span> <span class="o">=</span> <span class="mh">0x0024</span><span class="p">,</span>  <span class="c1">// 128 bit unsigned int</span>
+  <span class="n">Int128</span> <span class="o">=</span> <span class="mh">0x0078</span><span class="p">,</span>      <span class="c1">// 128 bit signed int</span>
+  <span class="n">UInt128</span> <span class="o">=</span> <span class="mh">0x0079</span><span class="p">,</span>     <span class="c1">// 128 bit unsigned int</span>
+
+  <span class="n">Float16</span> <span class="o">=</span> <span class="mh">0x0046</span><span class="p">,</span>                 <span class="c1">// 16 bit real</span>
+  <span class="n">Float32</span> <span class="o">=</span> <span class="mh">0x0040</span><span class="p">,</span>                 <span class="c1">// 32 bit real</span>
+  <span class="n">Float32PartialPrecision</span> <span class="o">=</span> <span class="mh">0x0045</span><span class="p">,</span> <span class="c1">// 32 bit PP real</span>
+  <span class="n">Float48</span> <span class="o">=</span> <span class="mh">0x0044</span><span class="p">,</span>                 <span class="c1">// 48 bit real</span>
+  <span class="n">Float64</span> <span class="o">=</span> <span class="mh">0x0041</span><span class="p">,</span>                 <span class="c1">// 64 bit real</span>
+  <span class="n">Float80</span> <span class="o">=</span> <span class="mh">0x0042</span><span class="p">,</span>                 <span class="c1">// 80 bit real</span>
+  <span class="n">Float128</span> <span class="o">=</span> <span class="mh">0x0043</span><span class="p">,</span>                <span class="c1">// 128 bit real</span>
+
+  <span class="n">Complex16</span> <span class="o">=</span> <span class="mh">0x0056</span><span class="p">,</span>                 <span class="c1">// 16 bit complex</span>
+  <span class="n">Complex32</span> <span class="o">=</span> <span class="mh">0x0050</span><span class="p">,</span>                 <span class="c1">// 32 bit complex</span>
+  <span class="n">Complex32PartialPrecision</span> <span class="o">=</span> <span class="mh">0x0055</span><span class="p">,</span> <span class="c1">// 32 bit PP complex</span>
+  <span class="n">Complex48</span> <span class="o">=</span> <span class="mh">0x0054</span><span class="p">,</span>                 <span class="c1">// 48 bit complex</span>
+  <span class="n">Complex64</span> <span class="o">=</span> <span class="mh">0x0051</span><span class="p">,</span>                 <span class="c1">// 64 bit complex</span>
+  <span class="n">Complex80</span> <span class="o">=</span> <span class="mh">0x0052</span><span class="p">,</span>                 <span class="c1">// 80 bit complex</span>
+  <span class="n">Complex128</span> <span class="o">=</span> <span class="mh">0x0053</span><span class="p">,</span>                <span class="c1">// 128 bit complex</span>
+
+  <span class="n">Boolean8</span> <span class="o">=</span> <span class="mh">0x0030</span><span class="p">,</span>   <span class="c1">// 8 bit boolean</span>
+  <span class="n">Boolean16</span> <span class="o">=</span> <span class="mh">0x0031</span><span class="p">,</span>  <span class="c1">// 16 bit boolean</span>
+  <span class="n">Boolean32</span> <span class="o">=</span> <span class="mh">0x0032</span><span class="p">,</span>  <span class="c1">// 32 bit boolean</span>
+  <span class="n">Boolean64</span> <span class="o">=</span> <span class="mh">0x0033</span><span class="p">,</span>  <span class="c1">// 64 bit boolean</span>
+  <span class="n">Boolean128</span> <span class="o">=</span> <span class="mh">0x0034</span><span class="p">,</span> <span class="c1">// 128 bit boolean</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Mode</strong> - A value from the following enum:</p></li>
+</ul>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">SimpleTypeMode</span> <span class="o">:</span> <span class="kt">uint32_t</span> <span class="p">{</span>
+  <span class="n">Direct</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>        <span class="c1">// Not a pointer</span>
+  <span class="n">NearPointer</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>   <span class="c1">// Near pointer</span>
+  <span class="n">FarPointer</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>    <span class="c1">// Far pointer</span>
+  <span class="n">HugePointer</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>   <span class="c1">// Huge pointer</span>
+  <span class="n">NearPointer32</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="c1">// 32 bit near pointer</span>
+  <span class="n">FarPointer32</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1">// 32 bit far pointer</span>
+  <span class="n">NearPointer64</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="c1">// 64 bit near pointer</span>
+  <span class="n">NearPointer128</span> <span class="o">=</span> <span class="mi">7</span> <span class="c1">// 128 bit near pointer</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Note that for pointers, the bitness is represented in the mode.  So a <code class="docutils literal notranslate"><span class="pre">void*</span></code>
+would have a type index with <code class="docutils literal notranslate"><span class="pre">Mode=NearPointer32,</span> <span class="pre">Kind=Void</span></code> if built for
+32-bits but a type index with <code class="docutils literal notranslate"><span class="pre">Mode=NearPointer64,</span> <span class="pre">Kind=Void</span></code> if built for
+64-bits.</p>
+<p>By convention, the type index for <code class="docutils literal notranslate"><span class="pre">std::nullptr_t</span></code> is constructed the same
+way as the type index for <code class="docutils literal notranslate"><span class="pre">void*</span></code>, but using the bitless enumeration value
+<code class="docutils literal notranslate"><span class="pre">NearPointer</span></code>.</p>
+</div>
+<div class="section" id="stream-header">
+<span id="tpi-header"></span><h2><a class="toc-backref" href="#id5">Stream Header</a><a class="headerlink" href="#stream-header" title="Permalink to this headline">¶</a></h2>
+<p>At offset 0 of the TPI Stream is a header with the following layout:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">TpiStreamHeader</span> <span class="p">{</span>
+  <span class="kt">uint32_t</span> <span class="n">Version</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">HeaderSize</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">TypeIndexBegin</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">TypeIndexEnd</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">TypeRecordBytes</span><span class="p">;</span>
+
+  <span class="kt">uint16_t</span> <span class="n">HashStreamIndex</span><span class="p">;</span>
+  <span class="kt">uint16_t</span> <span class="n">HashAuxStreamIndex</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">HashKeySize</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">NumHashBuckets</span><span class="p">;</span>
+
+  <span class="kt">int32_t</span> <span class="n">HashValueBufferOffset</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">HashValueBufferLength</span><span class="p">;</span>
+
+  <span class="kt">int32_t</span> <span class="n">IndexOffsetBufferOffset</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">IndexOffsetBufferLength</span><span class="p">;</span>
+
+  <span class="kt">int32_t</span> <span class="n">HashAdjBufferOffset</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">HashAdjBufferLength</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Version</strong> - A value from the following enum.</p></li>
+</ul>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">TpiStreamVersion</span> <span class="o">:</span> <span class="kt">uint32_t</span> <span class="p">{</span>
+  <span class="n">V40</span> <span class="o">=</span> <span class="mi">19950410</span><span class="p">,</span>
+  <span class="n">V41</span> <span class="o">=</span> <span class="mi">19951122</span><span class="p">,</span>
+  <span class="n">V50</span> <span class="o">=</span> <span class="mi">19961031</span><span class="p">,</span>
+  <span class="n">V70</span> <span class="o">=</span> <span class="mi">19990903</span><span class="p">,</span>
+  <span class="n">V80</span> <span class="o">=</span> <span class="mi">20040203</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>Similar to the <a class="reference internal" href="PdbStream.html"><span class="doc">PDB Stream</span></a>, this value always appears to be
+<code class="docutils literal notranslate"><span class="pre">V80</span></code>, and no other values have been observed.  It is assumed that should
+another value be observed, the layout described by this document may not be
+accurate.</p>
+<ul class="simple">
+<li><p><strong>HeaderSize</strong> - <code class="docutils literal notranslate"><span class="pre">sizeof(TpiStreamHeader)</span></code></p></li>
+<li><p><strong>TypeIndexBegin</strong> - The numeric value of the type index representing the
+first type record in the TPI stream.  This is usually the value 0x1000 as
+type indices lower than this are reserved (see <a class="reference internal" href="#type-indices"><span class="std std-ref">Type Indices</span></a> for
+a discussion of reserved type indices).</p></li>
+<li><p><strong>TypeIndexEnd</strong> - One greater than the numeric value of the type index
+representing the last type record in the TPI stream.  The total number of
+type records in the TPI stream can be computed as <code class="docutils literal notranslate"><span class="pre">TypeIndexEnd</span> <span class="pre">-</span>
+<span class="pre">TypeIndexBegin</span></code>.</p></li>
+<li><p><strong>TypeRecordBytes</strong> - The number of bytes of type record data following the
+header.</p></li>
+<li><p><strong>HashStreamIndex</strong> - The index of a stream which contains a list of hashes
+for every type record.  This value may be -1, indicating that hash
+information is not present.  In practice a valid stream index is always
+observed, so any producer implementation should be prepared to emit this
+stream to ensure compatibility with tools which may expect it to be present.</p></li>
+<li><p><strong>HashAuxStreamIndex</strong> - Presumably the index of a stream which contains a
+separate hash table, although this has not been observed in practice and it’s
+unclear what it might be used for.</p></li>
+<li><p><strong>HashKeySize</strong> - The size of a hash value (usually 4 bytes).</p></li>
+<li><p><strong>NumHashBuckets</strong> - The number of buckets used to generate the hash values
+in the aforementioned hash streams.</p></li>
+<li><p><strong>HashValueBufferOffset / HashValueBufferLength</strong> - The offset and size within
+the TPI Hash Stream of the list of hash values.  It should be assumed that
+there are either 0 hash values, or a number equal to the number of type
+records in the TPI stream (<code class="docutils literal notranslate"><span class="pre">TypeIndexEnd</span> <span class="pre">-</span> <span class="pre">TypeEndBegin</span></code>).  Thus, if
+<code class="docutils literal notranslate"><span class="pre">HashBufferLength</span></code> is not equal to <code class="docutils literal notranslate"><span class="pre">(TypeIndexEnd</span> <span class="pre">-</span> <span class="pre">TypeEndBegin)</span> <span class="pre">*</span>
+<span class="pre">HashKeySize</span></code> we can consider the PDB malformed.</p></li>
+<li><p><strong>IndexOffsetBufferOffset / IndexOffsetBufferLength</strong> - The offset and size
+within the TPI Hash Stream of the Type Index Offsets Buffer.  This is a list
+of pairs of uint32_t’s where the first value is a <a class="reference internal" href="#type-indices"><span class="std std-ref">Type Index</span></a> and the second value is the offset in the type record data of
+the type with this index.  This can be used to do a binary search followed by
+a linear search to get O(log n) lookup by type index.</p></li>
+<li><p><strong>HashAdjBufferOffset / HashAdjBufferLength</strong> - The offset and size within
+the TPI hash stream of a serialized hash table whose keys are the hash values
+in the hash value buffer and whose values are type indices.  This appears to
+be useful in incremental linking scenarios, so that if a type is modified an
+entry can be created mapping the old hash value to the new type index so that
+a PDB file consumer can always have the most up to date version of the type
+without forcing the incremental linker to garbage collect and update
+references that point to the old version to now point to the new version.
+The layout of this hash table is described in <a class="reference internal" href="HashTable.html"><span class="doc">The PDB Serialized Hash Table Format</span></a>.</p></li>
+</ul>
+</div>
+<div class="section" id="codeview-type-record-list">
+<span id="tpi-records"></span><h2><a class="toc-backref" href="#id6">CodeView Type Record List</a><a class="headerlink" href="#codeview-type-record-list" title="Permalink to this headline">¶</a></h2>
+<p>Following the header, there are <code class="docutils literal notranslate"><span class="pre">TypeRecordBytes</span></code> bytes of data that
+represent a variable length array of <a class="reference internal" href="CodeViewTypes.html"><span class="doc">CodeView type records</span></a>.  The number of such records (e.g. the length of the array)
+can be determined by computing the value <code class="docutils literal notranslate"><span class="pre">Header.TypeIndexEnd</span> <span class="pre">-</span>
+<span class="pre">Header.TypeIndexBegin</span></code>.</p>
+<p>O(log(n)) access is provided by way of the Type Index Offsets array (if
+present) described previously.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="DbiStream.html" title="The PDB DBI (Debug Info) Stream"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="PdbStream.html" title="The PDB Info Stream (aka the PDB Stream)"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >The PDB File Format</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

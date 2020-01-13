@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>How to Cross Compile Compiler-rt Builtins For Arm &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How To Cross-Compile Clang/LLVM using Clang/LLVM" href="HowToCrossCompileLLVM.html" />
+    <link rel="prev" title="How To Build Clang and LLVM with Profile-Guided Optimizations" href="HowToBuildWithPGO.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="index.html">
+    <img src="_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="HowToCrossCompileLLVM.html" title="How To Cross-Compile Clang/LLVM using Clang/LLVM"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="HowToBuildWithPGO.html" title="How To Build Clang and LLVM with Profile-Guided Optimizations"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="how-to-cross-compile-compiler-rt-builtins-for-arm">
+<h1>How to Cross Compile Compiler-rt Builtins For Arm<a class="headerlink" href="#how-to-cross-compile-compiler-rt-builtins-for-arm" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This document contains information about building and testing the builtins part
+of compiler-rt for an Arm target, from an x86_64 Linux machine.</p>
+<p>While this document concentrates on Arm and Linux the general principles should
+apply to other targets supported by compiler-rt. Further contributions for other
+targets are welcome.</p>
+<p>The instructions in this document depend on libraries and programs external to
+LLVM, there are many ways to install and configure these dependencies so you
+may need to adapt the instructions here to fit your own local situation.</p>
+</div>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>In this use case we’ll be using cmake on a Debian-based Linux system,
+cross-compiling from an x86_64 host to a hard-float Armv7-A target. We’ll be
+using as many of the LLVM tools as we can, but it is possible to use GNU
+equivalents.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">build</span> <span class="pre">of</span> <span class="pre">LLVM/clang</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">llvm-tools</span> <span class="pre">and</span> <span class="pre">llvm-config</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">clang</span> <span class="pre">executable</span> <span class="pre">with</span> <span class="pre">support</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">ARM</span> <span class="pre">target</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compiler-rt</span> <span class="pre">sources</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">The</span> <span class="pre">qemu-arm</span> <span class="pre">user</span> <span class="pre">mode</span> <span class="pre">emulator</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">An</span> <span class="pre">arm-linux-gnueabihf</span> <span class="pre">sysroot</span></code></p></li>
+</ul>
+</div></blockquote>
+<p>In this example we will be using ninja.</p>
+<p>See <a class="reference external" href="https://compiler-rt.llvm.org/">https://compiler-rt.llvm.org/</a> for more information about the dependencies
+on clang and LLVM.</p>
+<p>See <a class="reference external" href="https://llvm.org/docs/GettingStarted.html">https://llvm.org/docs/GettingStarted.html</a> for information about obtaining
+the source for LLVM and compiler-rt. Note that the getting started guide
+places compiler-rt in the projects subdirectory, but this is not essential and
+if you are using the BaremetalARM.cmake cache for v6-M, v7-M and v7-EM then
+compiler-rt must be placed in the runtimes directory.</p>
+<p><code class="docutils literal notranslate"><span class="pre">qemu-arm</span></code> should be available as a package for your Linux distribution.</p>
+<p>The most complicated of the prequisites to satisfy is the arm-linux-gnueabihf
+sysroot. In theory it is possible to use the Linux distributions multiarch
+support to fulfill the dependencies for building but unfortunately due to
+/usr/local/include being added some host includes are selected. The easiest way
+to supply a sysroot is to download the arm-linux-gnueabihf toolchain. This can
+be found at:
+* <a class="reference external" href="https://developer.arm.com/open-source/gnu-toolchain/gnu-a/downloads">https://developer.arm.com/open-source/gnu-toolchain/gnu-a/downloads</a> for gcc 8 and above
+* <a class="reference external" href="https://releases.linaro.org/components/toolchain/binaries/">https://releases.linaro.org/components/toolchain/binaries/</a> for gcc 4.9 to 7.3</p>
+</div>
+<div class="section" id="building-compiler-rt-builtins-for-arm">
+<h2>Building compiler-rt builtins for Arm<a class="headerlink" href="#building-compiler-rt-builtins-for-arm" title="Permalink to this headline">¶</a></h2>
+<p>We will be doing a standalone build of compiler-rt using the following cmake
+options.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">path/to/compiler-rt</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-G</span> <span class="pre">Ninja</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BUILD_BUILTINS=ON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BUILD_SANITIZERS=OFF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BUILD_XRAY=OFF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BUILD_LIBFUZZER=OFF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BUILD_PROFILE=OFF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_C_COMPILER=/path/to/clang</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_AR=/path/to/llvm-ar</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_NM=/path/to/llvm-nm</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_RANLIB=/path/to/llvm-ranlib</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_EXE_LINKER_FLAGS=&quot;-fuse-ld=lld&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_C_COMPILER_TARGET=&quot;arm-linux-gnueabihf&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_ASM_COMPILER_TARGET=&quot;arm-linux-gnueabihf&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DLLVM_CONFIG_PATH=/path/to/llvm-config</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_C_FLAGS=&quot;build-c-flags&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_ASM_FLAGS=&quot;build-c-flags&quot;</span></code></p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">build-c-flags</span></code> need to be sufficient to pass the C-make compiler check,
+compile compiler-rt, and if you are running the tests, compile and link the
+tests. When cross-compiling with clang we will need to pass sufficient
+information to generate code for the Arm architecture we are targeting. We will
+need to select the Arm target, select the Armv7-A architecture and choose
+between using Arm or Thumb.
+instructions. For example:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--target=arm-linux-gnueabihf</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-march=armv7a</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-mthumb</span></code></p></li>
+</ul>
+<p>When using a GCC arm-linux-gnueabihf toolchain the following flags are
+needed to pick up the includes and libraries:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--gcc-toolchain=/path/to/dir/toolchain</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--sysroot=/path/to/toolchain/arm-linux-gnueabihf/libc</span></code></p></li>
+</ul>
+<p>In this example we will be adding all of the command line options to both
+<code class="docutils literal notranslate"><span class="pre">CMAKE_C_FLAGS</span></code> and <code class="docutils literal notranslate"><span class="pre">CMAKE_ASM_FLAGS</span></code>. There are cmake flags to pass some of
+these options individually which can be used to simplify the <code class="docutils literal notranslate"><span class="pre">build-c-flags</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_C_COMPILER_TARGET=&quot;arm-linux-gnueabihf&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_ASM_COMPILER_TARGET=&quot;arm-linux-gnueabihf&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_C_COMPILER_EXTERNAL_TOOLCHAIN=/path/to/dir/toolchain</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_SYSROOT=/path/to/dir/toolchain/arm-linux-gnueabihf/libc</span></code></p></li>
+</ul>
+<p>Once cmake has completed the builtins can be built with <code class="docutils literal notranslate"><span class="pre">ninja</span> <span class="pre">builtins</span></code></p>
+</div>
+<div class="section" id="testing-compiler-rt-builtins-using-qemu-arm">
+<h2>Testing compiler-rt builtins using qemu-arm<a class="headerlink" href="#testing-compiler-rt-builtins-using-qemu-arm" title="Permalink to this headline">¶</a></h2>
+<p>To test the builtins library we need to add a few more cmake flags to enable
+testing and set up the compiler and flags for test case. We must also tell
+cmake that we wish to run the tests on <code class="docutils literal notranslate"><span class="pre">qemu-arm</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_EMULATOR=&quot;qemu-arm</span> <span class="pre">-L</span> <span class="pre">/path/to/armhf/sysroot</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_INCLUDE_TESTS=ON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_TEST_COMPILER=&quot;/path/to/clang&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_TEST_COMPILER_CFLAGS=&quot;test-c-flags&quot;</span></code></p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">/path/to/armhf/sysroot</span></code> should be the same as the one passed to
+<code class="docutils literal notranslate"><span class="pre">--sysroot</span></code> in the “build-c-flags”.</p>
+<p>The “test-c-flags” need to include the target, architecture, gcc-toolchain,
+sysroot and arm/thumb state. The additional cmake defines such as
+<code class="docutils literal notranslate"><span class="pre">CMAKE_C_COMPILER_EXTERNAL_TOOLCHAIN</span></code> do not apply when building the tests. If
+you have put all of these in “build-c-flags” then these can be repeated. If you
+wish to use lld to link the tests then add <code class="docutils literal notranslate"><span class="pre">&quot;-fuse-ld=lld</span></code>.</p>
+<p>Once cmake has completed the tests can be built and run using
+<code class="docutils literal notranslate"><span class="pre">ninja</span> <span class="pre">check-builtins</span></code></p>
+</div>
+<div class="section" id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-cmake-try-compile-stage-fails">
+<h3>The cmake try compile stage fails<a class="headerlink" href="#the-cmake-try-compile-stage-fails" title="Permalink to this headline">¶</a></h3>
+<p>At an early stage cmake will attempt to compile and link a simple C program to
+test if the toolchain is working.</p>
+<p>This stage can often fail at link time if the <code class="docutils literal notranslate"><span class="pre">--sysroot</span></code> and
+<code class="docutils literal notranslate"><span class="pre">--gcc-toolchain</span></code> options are not passed to the compiler. Check the
+<code class="docutils literal notranslate"><span class="pre">CMAKE_C_FLAGS</span></code> and <code class="docutils literal notranslate"><span class="pre">CMAKE_C_COMPILER_TARGET</span></code> flags.</p>
+<p>It can be useful to build a simple example outside of cmake with your toolchain
+to make sure it is working. For example: <code class="docutils literal notranslate"><span class="pre">clang</span> <span class="pre">--target=arm-linux-gnueabi</span> <span class="pre">-march=armv7a</span> <span class="pre">--gcc-toolchain=/path/to/gcc-toolchain</span> <span class="pre">--sysroot=/path/to/gcc-toolchain/arm-linux-gnueabihf/libc</span> <span class="pre">helloworld.c</span></code></p>
+</div>
+<div class="section" id="clang-uses-the-host-header-files">
+<h3>Clang uses the host header files<a class="headerlink" href="#clang-uses-the-host-header-files" title="Permalink to this headline">¶</a></h3>
+<p>On debian based systems it is possible to install multiarch support for
+arm-linux-gnueabi and arm-linux-gnueabihf. In many cases clang can successfully
+use this multiarch support when -gcc-toolchain and –sysroot are not supplied.
+Unfortunately clang adds <code class="docutils literal notranslate"><span class="pre">/usr/local/include</span></code> before
+<code class="docutils literal notranslate"><span class="pre">/usr/include/arm-linux-gnueabihf</span></code> leading to errors when compiling the hosts
+header files.</p>
+<p>The multiarch support is not sufficient to build the builtins you will need to
+use a separate arm-linux-gnueabihf toolchain.</p>
+</div>
+<div class="section" id="no-target-passed-to-clang">
+<h3>No target passed to clang<a class="headerlink" href="#no-target-passed-to-clang" title="Permalink to this headline">¶</a></h3>
+<p>If clang is not given a target it will typically use the host target, this will
+not understand the Arm assembly language files resulting in error messages such
+as <code class="docutils literal notranslate"><span class="pre">error:</span> <span class="pre">unknown</span> <span class="pre">directive</span> <span class="pre">.syntax</span> <span class="pre">unified</span></code>.</p>
+<p>You can check the clang invocation in the error message to see if there is no
+<code class="docutils literal notranslate"><span class="pre">--target</span></code> or if it is set incorrectly. The cause is usually
+<code class="docutils literal notranslate"><span class="pre">CMAKE_ASM_FLAGS</span></code> not containing <code class="docutils literal notranslate"><span class="pre">--target</span></code> or <code class="docutils literal notranslate"><span class="pre">CMAKE_ASM_COMPILER_TARGET</span></code> not being present.</p>
+</div>
+<div class="section" id="arm-architecture-not-given">
+<h3>Arm architecture not given<a class="headerlink" href="#arm-architecture-not-given" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">--target=arm-linux-gnueabihf</span></code> will default to arm architecture v4t which
+cannot assemble the barrier instructions used in the synch_and_fetch source
+files.</p>
+<p>The cause is usually a missing <code class="docutils literal notranslate"><span class="pre">-march=armv7a</span></code> from the <code class="docutils literal notranslate"><span class="pre">CMAKE_ASM_FLAGS</span></code>.</p>
+</div>
+<div class="section" id="compiler-rt-builds-but-the-tests-fail-to-build">
+<h3>Compiler-rt builds but the tests fail to build<a class="headerlink" href="#compiler-rt-builds-but-the-tests-fail-to-build" title="Permalink to this headline">¶</a></h3>
+<p>The flags used to build the tests are not the same as those used to build the
+builtins. The c flags are provided by <code class="docutils literal notranslate"><span class="pre">COMPILER_RT_TEST_COMPILE_CFLAGS</span></code> and
+the <code class="docutils literal notranslate"><span class="pre">CMAKE_C_COMPILER_TARGET</span></code>, <code class="docutils literal notranslate"><span class="pre">CMAKE_ASM_COMPILER_TARGET</span></code>,
+<code class="docutils literal notranslate"><span class="pre">CMAKE_C_COMPILER_EXTERNAL_TOOLCHAIN</span></code> and <code class="docutils literal notranslate"><span class="pre">CMAKE_SYSROOT</span></code> flags are not
+applied.</p>
+<p>Make sure that <code class="docutils literal notranslate"><span class="pre">COMPILER_RT_TEST_COMPILE_CFLAGS</span></code> contains all the necessary
+information.</p>
+</div>
+</div>
+<div class="section" id="modifications-for-other-targets">
+<h2>Modifications for other Targets<a class="headerlink" href="#modifications-for-other-targets" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="arm-soft-float-target">
+<h3>Arm Soft-Float Target<a class="headerlink" href="#arm-soft-float-target" title="Permalink to this headline">¶</a></h3>
+<p>The instructions for the Arm hard-float target can be used for the soft-float
+target by substituting soft-float equivalents for the sysroot and target. The
+target to use is:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_C_COMPILER_TARGET=arm-linux-gnueabi</span></code></p></li>
+</ul>
+<p>Depending on whether you want to use floating point instructions or not you
+may need extra c-flags such as <code class="docutils literal notranslate"><span class="pre">-mfloat-abi=softfp</span></code> for use of floating-point
+instructions, and <code class="docutils literal notranslate"><span class="pre">-mfloat-abi=soft</span> <span class="pre">-mfpu=none</span></code> for software floating-point
+emulation.</p>
+<p>You will need to use an arm-linux-gnueabi GNU toolchain for soft-float.</p>
+</div>
+<div class="section" id="aarch64-target">
+<h3>AArch64 Target<a class="headerlink" href="#aarch64-target" title="Permalink to this headline">¶</a></h3>
+<p>The instructions for Arm can be used for AArch64 by substituting AArch64
+equivalents for the sysroot, emulator and target.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_C_COMPILER_TARGET=aarch64-linux-gnu</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_EMULATOR=&quot;qemu-aarch64</span> <span class="pre">-L</span> <span class="pre">/path/to/aarch64/sysroot</span></code></p></li>
+</ul>
+<p>The CMAKE_C_FLAGS and COMPILER_RT_TEST_COMPILER_CFLAGS may also need:
+<code class="docutils literal notranslate"><span class="pre">&quot;--sysroot=/path/to/aarch64/sysroot</span> <span class="pre">--gcc-toolchain=/path/to/gcc-toolchain&quot;</span></code></p>
+</div>
+<div class="section" id="armv6-m-armv7-m-and-armv7e-m-targets">
+<h3>Armv6-m, Armv7-m and Armv7E-M targets<a class="headerlink" href="#armv6-m-armv7-m-and-armv7e-m-targets" title="Permalink to this headline">¶</a></h3>
+<p>To build and test the libraries using a similar method to Armv7-A is possible
+but more difficult. The main problems are:</p>
+<ul class="simple">
+<li><p>There isn’t a <code class="docutils literal notranslate"><span class="pre">qemu-arm</span></code> user-mode emulator for bare-metal systems. The <code class="docutils literal notranslate"><span class="pre">qemu-system-arm</span></code> can be used but this is significantly more difficult to setup.</p></li>
+<li><p>The targets to compile compiler-rt have the suffix -none-eabi. This uses the BareMetal driver in clang and by default won’t find the libraries needed to pass the cmake compiler check.</p></li>
+</ul>
+<p>As the Armv6-M, Armv7-M and Armv7E-M builds of compiler-rt only use instructions
+that are supported on Armv7-A we can still get most of the value of running the
+tests using the same <code class="docutils literal notranslate"><span class="pre">qemu-arm</span></code> that we used for Armv7-A by building and
+running the test cases for Armv7-A but using the builtins compiled for
+Armv6-M, Armv7-M or Armv7E-M. This will test that the builtins can be linked
+into a binary and execute the tests correctly but it will not catch if the
+builtins use instructions that are supported on Armv7-A but not Armv6-M,
+Armv7-M and Armv7E-M.</p>
+<p>To get the cmake compile test to pass you will need to pass the libraries
+needed to successfully link the cmake test via <code class="docutils literal notranslate"><span class="pre">CMAKE_CFLAGS</span></code>. It is
+strongly recommended that you use version 3.6 or above of cmake so you can use
+<code class="docutils literal notranslate"><span class="pre">CMAKE_TRY_COMPILE_TARGET=STATIC_LIBRARY</span></code> to skip the link step.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_OS_DIR=&quot;baremetal&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BUILD_BUILTINS=ON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BUILD_SANITIZERS=OFF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BUILD_XRAY=OFF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BUILD_LIBFUZZER=OFF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BUILD_PROFILE=OFF</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_C_COMPILER=${host_install_dir}/bin/clang</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_C_COMPILER_TARGET=&quot;your</span> <span class="pre">*-none-eabi</span> <span class="pre">target&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_ASM_COMPILER_TARGET=&quot;your</span> <span class="pre">*-none-eabi</span> <span class="pre">target&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_AR=/path/to/llvm-ar</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_NM=/path/to/llvm-nm</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_RANLIB=/path/to/llvm-ranlib</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_BAREMETAL_BUILD=ON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DLLVM_CONFIG_PATH=/path/to/llvm-config</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_C_FLAGS=&quot;build-c-flags&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCMAKE_ASM_FLAGS=&quot;build-c-flags&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_EMULATOR=&quot;qemu-arm</span> <span class="pre">-L</span> <span class="pre">/path/to/armv7-A/sysroot&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_INCLUDE_TESTS=ON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_TEST_COMPILER=&quot;/path/to/clang&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DCOMPILER_RT_TEST_COMPILER_CFLAGS=&quot;test-c-flags&quot;</span></code></p></li>
+</ul>
+<p>The Armv6-M builtins will use the soft-float ABI. When compiling the tests for
+Armv7-A we must include <code class="docutils literal notranslate"><span class="pre">&quot;-mthumb</span> <span class="pre">-mfloat-abi=soft</span> <span class="pre">-mfpu=none&quot;</span></code> in the
+test-c-flags. We must use an Armv7-A soft-float abi sysroot for <code class="docutils literal notranslate"><span class="pre">qemu-arm</span></code>.</p>
+<p>Depending on the linker used for the test cases you may encounter BuildAttribute
+mismatches between the M-profile objects from compiler-rt and the A-profile
+objects from the test. The lld linker does not check the profile
+BuildAttribute so it can be used to link the tests by adding -fuse-ld=lld to the
+<code class="docutils literal notranslate"><span class="pre">COMPILER_RT_TEST_COMPILER_CFLAGS</span></code>.</p>
+</div>
+<div class="section" id="alternative-using-a-cmake-cache">
+<h3>Alternative using a cmake cache<a class="headerlink" href="#alternative-using-a-cmake-cache" title="Permalink to this headline">¶</a></h3>
+<p>If you wish to build, but not test compiler-rt for Armv6-M, Armv7-M or Armv7E-M
+the easiest way is to use the BaremetalARM.cmake recipe in clang/cmake/caches.</p>
+<p>You will need a bare metal sysroot such as that provided by the GNU ARM
+Embedded toolchain.</p>
+<p>The libraries can be built with the cmake options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-DBAREMETAL_ARMV6M_SYSROOT=/path/to/bare/metal/toolchain/arm-none-eabi</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DBAREMETAL_ARMV7M_SYSROOT=/path/to/bare/metal/toolchain/arm-none-eabi</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-DBAREMETAL_ARMV7EM_SYSROOT=/path/to/bare/metal/toolchain/arm-none-eabi</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">/path/to/llvm/source/tools/clang/cmake/caches/BaremetalARM.cmake</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/path/to/llvm</span></code></p></li>
+</ul>
+<p><strong>Note</strong> that for the recipe to work the compiler-rt source must be checked out
+into the directory llvm/runtimes. You will also need clang and lld checked out.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="HowToCrossCompileLLVM.html" title="How To Cross-Compile Clang/LLVM using Clang/LLVM"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="HowToBuildWithPGO.html" title="How To Build Clang and LLVM with Profile-Guided Optimizations"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

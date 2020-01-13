@@ -1,0 +1,415 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>CodeView Symbol Records &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CodeView Type Records" href="CodeViewTypes.html" />
+    <link rel="prev" title="The PDB Serialized Hash Table Format" href="HashTable.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="CodeViewTypes.html" title="CodeView Type Records"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="HashTable.html" title="The PDB Serialized Hash Table Format"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The PDB File Format</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="codeview-symbol-records">
+<h1>CodeView Symbol Records<a class="headerlink" href="#codeview-symbol-records" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id4">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#record-categories" id="id5">Record Categories</a></p>
+<ul>
+<li><p><a class="reference internal" href="#public-symbols" id="id6">Public Symbols</a></p>
+<ul>
+<li><p><a class="reference internal" href="#s-pub32-0x110e" id="id7">S_PUB32 (0x110e)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#global-symbols" id="id8">Global Symbols</a></p>
+<ul>
+<li><p><a class="reference internal" href="#s-gdata32" id="id9">S_GDATA32</a></p></li>
+<li><p><a class="reference internal" href="#s-gthread32-0x1113" id="id10">S_GTHREAD32 (0x1113)</a></p></li>
+<li><p><a class="reference internal" href="#s-procref-0x1125" id="id11">S_PROCREF (0x1125)</a></p></li>
+<li><p><a class="reference internal" href="#s-lprocref-0x1127" id="id12">S_LPROCREF (0x1127)</a></p></li>
+<li><p><a class="reference internal" href="#s-gmandata-0x111d" id="id13">S_GMANDATA (0x111d)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#module-symbols" id="id14">Module Symbols</a></p>
+<ul>
+<li><p><a class="reference internal" href="#s-end-0x0006" id="id15">S_END (0x0006)</a></p></li>
+<li><p><a class="reference internal" href="#s-frameproc-0x1012" id="id16">S_FRAMEPROC (0x1012)</a></p></li>
+<li><p><a class="reference internal" href="#s-objname-0x1101" id="id17">S_OBJNAME (0x1101)</a></p></li>
+<li><p><a class="reference internal" href="#s-thunk32-0x1102" id="id18">S_THUNK32 (0x1102)</a></p></li>
+<li><p><a class="reference internal" href="#s-block32-0x1103" id="id19">S_BLOCK32 (0x1103)</a></p></li>
+<li><p><a class="reference internal" href="#s-label32-0x1105" id="id20">S_LABEL32 (0x1105)</a></p></li>
+<li><p><a class="reference internal" href="#s-register-0x1106" id="id21">S_REGISTER (0x1106)</a></p></li>
+<li><p><a class="reference internal" href="#s-bprel32-0x110b" id="id22">S_BPREL32 (0x110b)</a></p></li>
+<li><p><a class="reference internal" href="#s-lproc32-0x110f" id="id23">S_LPROC32 (0x110f)</a></p></li>
+<li><p><a class="reference internal" href="#s-gproc32-0x1110" id="id24">S_GPROC32 (0x1110)</a></p></li>
+<li><p><a class="reference internal" href="#s-regrel32-0x1111" id="id25">S_REGREL32 (0x1111)</a></p></li>
+<li><p><a class="reference internal" href="#s-compile2-0x1116" id="id26">S_COMPILE2 (0x1116)</a></p></li>
+<li><p><a class="reference internal" href="#s-unamespace-0x1124" id="id27">S_UNAMESPACE (0x1124)</a></p></li>
+<li><p><a class="reference internal" href="#s-trampoline-0x112c" id="id28">S_TRAMPOLINE (0x112c)</a></p></li>
+<li><p><a class="reference internal" href="#s-section-0x1136" id="id29">S_SECTION (0x1136)</a></p></li>
+<li><p><a class="reference internal" href="#s-coffgroup-0x1137" id="id30">S_COFFGROUP (0x1137)</a></p></li>
+<li><p><a class="reference internal" href="#s-export-0x1138" id="id31">S_EXPORT (0x1138)</a></p></li>
+<li><p><a class="reference internal" href="#s-callsiteinfo-0x1139" id="id32">S_CALLSITEINFO (0x1139)</a></p></li>
+<li><p><a class="reference internal" href="#s-framecookie-0x113a" id="id33">S_FRAMECOOKIE (0x113a)</a></p></li>
+<li><p><a class="reference internal" href="#s-compile3-0x113c" id="id34">S_COMPILE3 (0x113c)</a></p></li>
+<li><p><a class="reference internal" href="#s-envblock-0x113d" id="id35">S_ENVBLOCK (0x113d)</a></p></li>
+<li><p><a class="reference internal" href="#s-local-0x113e" id="id36">S_LOCAL (0x113e)</a></p></li>
+<li><p><a class="reference internal" href="#s-defrange-0x113f" id="id37">S_DEFRANGE (0x113f)</a></p></li>
+<li><p><a class="reference internal" href="#s-defrange-subfield-0x1140" id="id38">S_DEFRANGE_SUBFIELD (0x1140)</a></p></li>
+<li><p><a class="reference internal" href="#s-defrange-register-0x1141" id="id39">S_DEFRANGE_REGISTER (0x1141)</a></p></li>
+<li><p><a class="reference internal" href="#s-defrange-framepointer-rel-0x1142" id="id40">S_DEFRANGE_FRAMEPOINTER_REL (0x1142)</a></p></li>
+<li><p><a class="reference internal" href="#s-defrange-subfield-register-0x1143" id="id41">S_DEFRANGE_SUBFIELD_REGISTER (0x1143)</a></p></li>
+<li><p><a class="reference internal" href="#s-defrange-framepointer-rel-full-scope-0x1144" id="id42">S_DEFRANGE_FRAMEPOINTER_REL_FULL_SCOPE (0x1144)</a></p></li>
+<li><p><a class="reference internal" href="#s-defrange-register-rel-0x1145" id="id43">S_DEFRANGE_REGISTER_REL (0x1145)</a></p></li>
+<li><p><a class="reference internal" href="#s-lproc32-id-0x1146" id="id44">S_LPROC32_ID (0x1146)</a></p></li>
+<li><p><a class="reference internal" href="#s-gproc32-id-0x1147" id="id45">S_GPROC32_ID (0x1147)</a></p></li>
+<li><p><a class="reference internal" href="#s-buildinfo-0x114c" id="id46">S_BUILDINFO (0x114c)</a></p></li>
+<li><p><a class="reference internal" href="#s-inlinesite-0x114d" id="id47">S_INLINESITE (0x114d)</a></p></li>
+<li><p><a class="reference internal" href="#s-inlinesite-end-0x114e" id="id48">S_INLINESITE_END (0x114e)</a></p></li>
+<li><p><a class="reference internal" href="#s-proc-id-end-0x114f" id="id49">S_PROC_ID_END (0x114f)</a></p></li>
+<li><p><a class="reference internal" href="#s-filestatic-0x1153" id="id50">S_FILESTATIC (0x1153)</a></p></li>
+<li><p><a class="reference internal" href="#s-lproc32-dpc-0x1155" id="id51">S_LPROC32_DPC (0x1155)</a></p></li>
+<li><p><a class="reference internal" href="#s-lproc32-dpc-id-0x1156" id="id52">S_LPROC32_DPC_ID (0x1156)</a></p></li>
+<li><p><a class="reference internal" href="#s-callees-0x115a" id="id53">S_CALLEES (0x115a)</a></p></li>
+<li><p><a class="reference internal" href="#s-callers-0x115b" id="id54">S_CALLERS (0x115b)</a></p></li>
+<li><p><a class="reference internal" href="#s-heapallocsite-0x115e" id="id55">S_HEAPALLOCSITE (0x115e)</a></p></li>
+<li><p><a class="reference internal" href="#s-fastlink-0x1167" id="id56">S_FASTLINK (0x1167)</a></p></li>
+<li><p><a class="reference internal" href="#s-inlinees-0x1168" id="id57">S_INLINEES (0x1168)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#symbols-which-can-go-in-either-both-of-the-module-info-stream-global-stream" id="id58">Symbols which can go in either/both of the module info stream &amp; global stream</a></p>
+<ul>
+<li><p><a class="reference internal" href="#s-constant-0x1107" id="id59">S_CONSTANT (0x1107)</a></p></li>
+<li><p><a class="reference internal" href="#s-udt-0x1108" id="id60">S_UDT (0x1108)</a></p></li>
+<li><p><a class="reference internal" href="#s-ldata32-0x110c" id="id61">S_LDATA32 (0x110c)</a></p></li>
+<li><p><a class="reference internal" href="#s-lthread32-0x1112" id="id62">S_LTHREAD32 (0x1112)</a></p></li>
+<li><p><a class="reference internal" href="#s-lmandata-0x111c" id="id63">S_LMANDATA (0x111c)</a></p></li>
+<li><p><a class="reference internal" href="#s-manconstant-0x112d" id="id64">S_MANCONSTANT (0x112d)</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<span id="symbols-intro"></span><h2><a class="toc-backref" href="#id4">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This document describes the usage and serialization format of the various
+CodeView symbol records that LLVM understands.  Like
+<a class="reference internal" href="CodeViewTypes.html"><span class="doc">CodeView Type Records</span></a>, we describe only the important
+types which are generated by modern C++ toolchains.</p>
+</div>
+<div class="section" id="record-categories">
+<h2><a class="toc-backref" href="#id5">Record Categories</a><a class="headerlink" href="#record-categories" title="Permalink to this headline">¶</a></h2>
+<p>Symbol records share one major similarity with <a class="reference internal" href="CodeViewTypes.html"><span class="doc">type records</span></a>:
+They start with the same <a class="reference internal" href="CodeViewTypes.html#leaf-types"><span class="std std-ref">record prefix</span></a>, which we will not describe
+again (refer to the previous link for a description).  As a result of this, a sequence
+of symbol records can be processed with largely the same code as that which processes
+type records.  There are several important differences between symbol and type records:</p>
+<ul class="simple">
+<li><p>Symbol records only appear in the <a class="reference internal" href="PublicStream.html"><span class="doc">The PDB Public Symbol Stream</span></a>, <a class="reference internal" href="GlobalStream.html"><span class="doc">The PDB Global Symbol Stream</span></a>, and
+<a class="reference internal" href="ModiStream.html"><span class="doc">Module Info Streams</span></a>.</p></li>
+<li><p>Type records only appear in the <a class="reference internal" href="TpiStream.html"><span class="doc">TPI &amp; IPI streams</span></a>.</p></li>
+<li><p>While types are referenced from other CodeView records via <a class="reference internal" href="TpiStream.html#type-indices"><span class="std std-ref">type indices</span></a>,
+symbol records are referenced by the byte offset of the record in the stream that it appears
+in.</p></li>
+<li><p>Types can reference types (via type indices), and symbols can reference both types (via type
+indices) and symbols (via offsets), but types can never reference symbols.</p></li>
+<li><p>There is no notion of <a class="reference internal" href="CodeViewTypes.html#leaf-types"><span class="std std-ref">Leaf Records</span></a> and <a class="reference internal" href="CodeViewTypes.html#member-types"><span class="std std-ref">Member Records</span></a>
+as there are with types.  Every symbol record describes is own length.</p></li>
+<li><p>Certain special symbol records begin a “scope”.  For these records, all following records
+up until the next <code class="docutils literal notranslate"><span class="pre">S_END</span></code> record are “children” of this symbol record.  For example,
+given a symbol record which describes a certain function, all local variables of this
+function would appear following the function up until the corresponding <code class="docutils literal notranslate"><span class="pre">S_END</span></code> record.</p></li>
+</ul>
+<p>Finally, there are three general categories of symbol record, grouped by where they are legal
+to appear in a PDB file.  Public Symbols (which appear only in the
+<a class="reference internal" href="PublicStream.html"><span class="doc">publics stream</span></a>), Global Symbols (which appear only in the
+<a class="reference internal" href="GlobalStream.html"><span class="doc">globals stream</span></a>) and module symbols (which appear in the
+<a class="reference internal" href="ModiStream.html"><span class="doc">module info stream</span></a>).</p>
+<div class="section" id="public-symbols">
+<span id="id1"></span><h3><a class="toc-backref" href="#id6">Public Symbols</a><a class="headerlink" href="#public-symbols" title="Permalink to this headline">¶</a></h3>
+<p>Public symbols are the CodeView equivalent of DWARF <code class="docutils literal notranslate"><span class="pre">.debug_pubnames</span></code>.  There
+is one public symbol record for every function or variable in the program that
+has a mangled name.  The <a class="reference internal" href="PublicStream.html"><span class="doc">Publics Stream</span></a>, which contains these
+records, additionally contains a hash table that allows one to quickly locate a
+record by mangled name.</p>
+<div class="section" id="s-pub32-0x110e">
+<h4><a class="toc-backref" href="#id7">S_PUB32 (0x110e)</a><a class="headerlink" href="#s-pub32-0x110e" title="Permalink to this headline">¶</a></h4>
+<p>There is only type of public symbol, an <code class="docutils literal notranslate"><span class="pre">S_PUB32</span></code> which describes a mangled
+name, a flag indicating what kind of symbol it is (e.g. function, variable), and
+the symbol’s address.  The <a class="reference internal" href="DbiStream.html#dbi-section-map-substream"><span class="std std-ref">Section Map Substream</span></a> of the
+<a class="reference internal" href="DbiStream.html"><span class="doc">DBI Stream</span></a> can be consulted to determine what module this address
+corresponds to, and from there that module’s <a class="reference internal" href="ModiStream.html"><span class="doc">module debug stream</span></a>
+can be consulted to locate full information for the symbol with the given address.</p>
+</div>
+</div>
+<div class="section" id="global-symbols">
+<span id="id2"></span><h3><a class="toc-backref" href="#id8">Global Symbols</a><a class="headerlink" href="#global-symbols" title="Permalink to this headline">¶</a></h3>
+<p>While there is one <a class="reference internal" href="#public-symbols"><span class="std std-ref">public symbol</span></a> for every symbol in the
+program with <cite>external</cite> linkage, there is one global symbol for every symbol in the
+program with linkage (including internal linkage).  As a result, global symbols do
+not describe a mangled name <em>or</em> an address, since symbols with internal linkage
+need not have any mangling at all, and also may not have an address.  Thus, all
+global symbols simply refer directly to the full symbol record via a module/offset
+combination.</p>
+<p>Similarly to <a class="reference internal" href="#public-symbols"><span class="std std-ref">public symbols</span></a>, all global symbols are contained
+in a single <a class="reference internal" href="GlobalStream.html"><span class="doc">Globals Stream</span></a>, which contains a hash table mapping
+fully qualified name to the corresponding record in the globals stream (which as
+mentioned, then contains information allowing one to locate the full record in the
+corresponding module symbol stream).</p>
+<p>Note that a consequence and limitation of this design is that program-wide lookup
+by anything other than an exact textually matching fully-qualified name of whatever
+the compiler decided to emit is impractical.  This differs from DWARF, where even
+though we don’t necessarily have O(1) lookup by basename within a given scope (including
+O(1) scope, we at least have O(n) access within a given scope).</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Program-wide lookup of names by anything other than an exact textually matching fully
+qualified name is not possible.</p>
+</div>
+<div class="section" id="s-gdata32">
+<h4><a class="toc-backref" href="#id9">S_GDATA32</a><a class="headerlink" href="#s-gdata32" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-gthread32-0x1113">
+<h4><a class="toc-backref" href="#id10">S_GTHREAD32 (0x1113)</a><a class="headerlink" href="#s-gthread32-0x1113" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-procref-0x1125">
+<h4><a class="toc-backref" href="#id11">S_PROCREF (0x1125)</a><a class="headerlink" href="#s-procref-0x1125" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-lprocref-0x1127">
+<h4><a class="toc-backref" href="#id12">S_LPROCREF (0x1127)</a><a class="headerlink" href="#s-lprocref-0x1127" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-gmandata-0x111d">
+<h4><a class="toc-backref" href="#id13">S_GMANDATA (0x111d)</a><a class="headerlink" href="#s-gmandata-0x111d" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+<div class="section" id="module-symbols">
+<span id="id3"></span><h3><a class="toc-backref" href="#id14">Module Symbols</a><a class="headerlink" href="#module-symbols" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="s-end-0x0006">
+<h4><a class="toc-backref" href="#id15">S_END (0x0006)</a><a class="headerlink" href="#s-end-0x0006" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-frameproc-0x1012">
+<h4><a class="toc-backref" href="#id16">S_FRAMEPROC (0x1012)</a><a class="headerlink" href="#s-frameproc-0x1012" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-objname-0x1101">
+<h4><a class="toc-backref" href="#id17">S_OBJNAME (0x1101)</a><a class="headerlink" href="#s-objname-0x1101" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-thunk32-0x1102">
+<h4><a class="toc-backref" href="#id18">S_THUNK32 (0x1102)</a><a class="headerlink" href="#s-thunk32-0x1102" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-block32-0x1103">
+<h4><a class="toc-backref" href="#id19">S_BLOCK32 (0x1103)</a><a class="headerlink" href="#s-block32-0x1103" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-label32-0x1105">
+<h4><a class="toc-backref" href="#id20">S_LABEL32 (0x1105)</a><a class="headerlink" href="#s-label32-0x1105" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-register-0x1106">
+<h4><a class="toc-backref" href="#id21">S_REGISTER (0x1106)</a><a class="headerlink" href="#s-register-0x1106" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-bprel32-0x110b">
+<h4><a class="toc-backref" href="#id22">S_BPREL32 (0x110b)</a><a class="headerlink" href="#s-bprel32-0x110b" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-lproc32-0x110f">
+<h4><a class="toc-backref" href="#id23">S_LPROC32 (0x110f)</a><a class="headerlink" href="#s-lproc32-0x110f" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-gproc32-0x1110">
+<h4><a class="toc-backref" href="#id24">S_GPROC32 (0x1110)</a><a class="headerlink" href="#s-gproc32-0x1110" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-regrel32-0x1111">
+<h4><a class="toc-backref" href="#id25">S_REGREL32 (0x1111)</a><a class="headerlink" href="#s-regrel32-0x1111" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-compile2-0x1116">
+<h4><a class="toc-backref" href="#id26">S_COMPILE2 (0x1116)</a><a class="headerlink" href="#s-compile2-0x1116" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-unamespace-0x1124">
+<h4><a class="toc-backref" href="#id27">S_UNAMESPACE (0x1124)</a><a class="headerlink" href="#s-unamespace-0x1124" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-trampoline-0x112c">
+<h4><a class="toc-backref" href="#id28">S_TRAMPOLINE (0x112c)</a><a class="headerlink" href="#s-trampoline-0x112c" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-section-0x1136">
+<h4><a class="toc-backref" href="#id29">S_SECTION (0x1136)</a><a class="headerlink" href="#s-section-0x1136" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-coffgroup-0x1137">
+<h4><a class="toc-backref" href="#id30">S_COFFGROUP (0x1137)</a><a class="headerlink" href="#s-coffgroup-0x1137" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-export-0x1138">
+<h4><a class="toc-backref" href="#id31">S_EXPORT (0x1138)</a><a class="headerlink" href="#s-export-0x1138" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-callsiteinfo-0x1139">
+<h4><a class="toc-backref" href="#id32">S_CALLSITEINFO (0x1139)</a><a class="headerlink" href="#s-callsiteinfo-0x1139" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-framecookie-0x113a">
+<h4><a class="toc-backref" href="#id33">S_FRAMECOOKIE (0x113a)</a><a class="headerlink" href="#s-framecookie-0x113a" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-compile3-0x113c">
+<h4><a class="toc-backref" href="#id34">S_COMPILE3 (0x113c)</a><a class="headerlink" href="#s-compile3-0x113c" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-envblock-0x113d">
+<h4><a class="toc-backref" href="#id35">S_ENVBLOCK (0x113d)</a><a class="headerlink" href="#s-envblock-0x113d" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-local-0x113e">
+<h4><a class="toc-backref" href="#id36">S_LOCAL (0x113e)</a><a class="headerlink" href="#s-local-0x113e" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-defrange-0x113f">
+<h4><a class="toc-backref" href="#id37">S_DEFRANGE (0x113f)</a><a class="headerlink" href="#s-defrange-0x113f" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-defrange-subfield-0x1140">
+<h4><a class="toc-backref" href="#id38">S_DEFRANGE_SUBFIELD (0x1140)</a><a class="headerlink" href="#s-defrange-subfield-0x1140" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-defrange-register-0x1141">
+<h4><a class="toc-backref" href="#id39">S_DEFRANGE_REGISTER (0x1141)</a><a class="headerlink" href="#s-defrange-register-0x1141" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-defrange-framepointer-rel-0x1142">
+<h4><a class="toc-backref" href="#id40">S_DEFRANGE_FRAMEPOINTER_REL (0x1142)</a><a class="headerlink" href="#s-defrange-framepointer-rel-0x1142" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-defrange-subfield-register-0x1143">
+<h4><a class="toc-backref" href="#id41">S_DEFRANGE_SUBFIELD_REGISTER (0x1143)</a><a class="headerlink" href="#s-defrange-subfield-register-0x1143" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-defrange-framepointer-rel-full-scope-0x1144">
+<h4><a class="toc-backref" href="#id42">S_DEFRANGE_FRAMEPOINTER_REL_FULL_SCOPE (0x1144)</a><a class="headerlink" href="#s-defrange-framepointer-rel-full-scope-0x1144" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-defrange-register-rel-0x1145">
+<h4><a class="toc-backref" href="#id43">S_DEFRANGE_REGISTER_REL (0x1145)</a><a class="headerlink" href="#s-defrange-register-rel-0x1145" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-lproc32-id-0x1146">
+<h4><a class="toc-backref" href="#id44">S_LPROC32_ID (0x1146)</a><a class="headerlink" href="#s-lproc32-id-0x1146" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-gproc32-id-0x1147">
+<h4><a class="toc-backref" href="#id45">S_GPROC32_ID (0x1147)</a><a class="headerlink" href="#s-gproc32-id-0x1147" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-buildinfo-0x114c">
+<h4><a class="toc-backref" href="#id46">S_BUILDINFO (0x114c)</a><a class="headerlink" href="#s-buildinfo-0x114c" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-inlinesite-0x114d">
+<h4><a class="toc-backref" href="#id47">S_INLINESITE (0x114d)</a><a class="headerlink" href="#s-inlinesite-0x114d" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-inlinesite-end-0x114e">
+<h4><a class="toc-backref" href="#id48">S_INLINESITE_END (0x114e)</a><a class="headerlink" href="#s-inlinesite-end-0x114e" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-proc-id-end-0x114f">
+<h4><a class="toc-backref" href="#id49">S_PROC_ID_END (0x114f)</a><a class="headerlink" href="#s-proc-id-end-0x114f" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-filestatic-0x1153">
+<h4><a class="toc-backref" href="#id50">S_FILESTATIC (0x1153)</a><a class="headerlink" href="#s-filestatic-0x1153" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-lproc32-dpc-0x1155">
+<h4><a class="toc-backref" href="#id51">S_LPROC32_DPC (0x1155)</a><a class="headerlink" href="#s-lproc32-dpc-0x1155" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-lproc32-dpc-id-0x1156">
+<h4><a class="toc-backref" href="#id52">S_LPROC32_DPC_ID (0x1156)</a><a class="headerlink" href="#s-lproc32-dpc-id-0x1156" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-callees-0x115a">
+<h4><a class="toc-backref" href="#id53">S_CALLEES (0x115a)</a><a class="headerlink" href="#s-callees-0x115a" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-callers-0x115b">
+<h4><a class="toc-backref" href="#id54">S_CALLERS (0x115b)</a><a class="headerlink" href="#s-callers-0x115b" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-heapallocsite-0x115e">
+<h4><a class="toc-backref" href="#id55">S_HEAPALLOCSITE (0x115e)</a><a class="headerlink" href="#s-heapallocsite-0x115e" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-fastlink-0x1167">
+<h4><a class="toc-backref" href="#id56">S_FASTLINK (0x1167)</a><a class="headerlink" href="#s-fastlink-0x1167" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-inlinees-0x1168">
+<h4><a class="toc-backref" href="#id57">S_INLINEES (0x1168)</a><a class="headerlink" href="#s-inlinees-0x1168" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+<div class="section" id="symbols-which-can-go-in-either-both-of-the-module-info-stream-global-stream">
+<span id="module-and-global-symbols"></span><h3><a class="toc-backref" href="#id58">Symbols which can go in either/both of the module info stream &amp; global stream</a><a class="headerlink" href="#symbols-which-can-go-in-either-both-of-the-module-info-stream-global-stream" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="s-constant-0x1107">
+<h4><a class="toc-backref" href="#id59">S_CONSTANT (0x1107)</a><a class="headerlink" href="#s-constant-0x1107" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-udt-0x1108">
+<h4><a class="toc-backref" href="#id60">S_UDT (0x1108)</a><a class="headerlink" href="#s-udt-0x1108" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-ldata32-0x110c">
+<h4><a class="toc-backref" href="#id61">S_LDATA32 (0x110c)</a><a class="headerlink" href="#s-ldata32-0x110c" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-lthread32-0x1112">
+<h4><a class="toc-backref" href="#id62">S_LTHREAD32 (0x1112)</a><a class="headerlink" href="#s-lthread32-0x1112" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-lmandata-0x111c">
+<h4><a class="toc-backref" href="#id63">S_LMANDATA (0x111c)</a><a class="headerlink" href="#s-lmandata-0x111c" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="s-manconstant-0x112d">
+<h4><a class="toc-backref" href="#id64">S_MANCONSTANT (0x112d)</a><a class="headerlink" href="#s-manconstant-0x112d" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="CodeViewTypes.html" title="CodeView Type Records"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="HashTable.html" title="The PDB Serialized Hash Table Format"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >The PDB File Format</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

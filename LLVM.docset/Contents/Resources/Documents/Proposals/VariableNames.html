@@ -1,0 +1,624 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Variable Names Plan &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Test-Suite Extentions" href="TestSuite.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="TestSuite.html" title="Test-Suite Extentions"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="variable-names-plan">
+<h1>Variable Names Plan<a class="headerlink" href="#variable-names-plan" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#too-long-didn-t-read" id="id76">Too Long; Didn’t Read</a></p></li>
+<li><p><a class="reference internal" href="#introduction" id="id77">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#variable-names-coding-standard-options" id="id78">Variable Names Coding Standard Options</a></p>
+<ul>
+<li><p><a class="reference internal" href="#differentiating-variable-kinds" id="id79">Differentiating variable kinds</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#reducing-the-number-of-acronyms" id="id80">Reducing the number of acronyms</a></p></li>
+<li><p><a class="reference internal" href="#transition-options" id="id81">Transition Options</a></p>
+<ul>
+<li><p><a class="reference internal" href="#keep-the-current-coding-standard" id="id82">Keep the current coding standard</a></p></li>
+<li><p><a class="reference internal" href="#laissez-faire" id="id83">Laissez faire</a></p>
+<ul>
+<li><p><a class="reference internal" href="#advantages" id="id84">Advantages</a></p></li>
+<li><p><a class="reference internal" href="#disadvantages" id="id85">Disadvantages</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#big-bang" id="id86">Big bang</a></p>
+<ul>
+<li><p><a class="reference internal" href="#keeping-git-blame-usable" id="id87">Keeping git blame usable</a></p></li>
+<li><p><a class="reference internal" href="#minimising-cost-of-downstream-merges" id="id88">Minimising cost of downstream merges</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#provisional-plan" id="id89">Provisional Plan</a></p></li>
+<li><p><a class="reference internal" href="#references" id="id90">References</a></p></li>
+</ul>
+</div>
+<p>This plan is <em>provisional</em>. It is not agreed upon. It is written with the
+intention of capturing the desires and concerns of the LLVM community, and
+forming them into a plan that can be agreed upon.
+The original author is somewhat naïve in the ways of LLVM so there will
+inevitably be some details that are flawed. You can help - you can edit this
+page (preferably with a Phabricator review for larger changes) or reply to the
+<a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130083.html">Request For Comments thread</a>.</p>
+<div class="section" id="too-long-didn-t-read">
+<h2><a class="toc-backref" href="#id76">Too Long; Didn’t Read</a><a class="headerlink" href="#too-long-didn-t-read" title="Permalink to this headline">¶</a></h2>
+<p>Improve the readability of LLVM code.</p>
+</div>
+<div class="section" id="introduction">
+<h2><a class="toc-backref" href="#id77">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The current <a class="reference external" href="../CodingStandards.html#name-types-functions-variables-and-enumerators-properly">variable naming rule</a>
+states:</p>
+<blockquote>
+<div><p>Variable names should be nouns (as they represent state). The name should be
+camel case, and start with an upper case letter (e.g. Leader or Boats).</p>
+</div></blockquote>
+<p>This rule is the same as that for type names. This is a problem because the
+type name cannot be reused for a variable name <a class="footnote-reference brackets" href="#id17" id="id1">*</a>. LLVM developers tend to
+work around this by either prepending <code class="docutils literal notranslate"><span class="pre">The</span></code> to the type name:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Triple</span> <span class="n">TheTriple</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>… or more commonly use an acronym, despite the coding standard stating “Avoid
+abbreviations unless they are well known”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Triple</span> <span class="n">T</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>The proliferation of acronyms leads to hard-to-read code such as <a class="reference external" href="https://github.com/llvm/llvm-project/blob/0a8bc14ad7f3209fe702d18e250194cd90188596/llvm/lib/Transforms/Vectorize/LoopVectorize.cpp#L7445">this</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">InnerLoopVectorizer</span> <span class="n">LB</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">PSE</span><span class="p">,</span> <span class="n">LI</span><span class="p">,</span> <span class="n">DT</span><span class="p">,</span> <span class="n">TLI</span><span class="p">,</span> <span class="n">TTI</span><span class="p">,</span> <span class="n">AC</span><span class="p">,</span> <span class="n">ORE</span><span class="p">,</span> <span class="n">VF</span><span class="o">.</span><span class="n">Width</span><span class="p">,</span> <span class="n">IC</span><span class="p">,</span>
+                       <span class="o">&amp;</span><span class="n">LVL</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">CM</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Many other coding guidelines <a class="reference internal" href="#lldb" id="id2"><span>[LLDB]</span></a> <a class="reference internal" href="#google" id="id3"><span>[Google]</span></a> <a class="reference internal" href="#webkit" id="id4"><span>[WebKit]</span></a> <a class="reference internal" href="#qt" id="id5"><span>[Qt]</span></a> <a class="reference internal" href="#rust" id="id6"><span>[Rust]</span></a> <a class="reference internal" href="#swift" id="id7"><span>[Swift]</span></a>
+<a class="reference internal" href="#python" id="id8"><span>[Python]</span></a> require that variable names begin with a lower case letter in contrast
+to class names which begin with a capital letter. This convention means that the
+most readable variable name also requires the least thought:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Triple</span> <span class="n">triple</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>There is some agreement that the current rule is broken <a class="reference internal" href="#lattneragree" id="id9"><span>[LattnerAgree]</span></a>
+<a class="reference internal" href="#arsenaultagree" id="id10"><span>[ArsenaultAgree]</span></a> <a class="reference internal" href="#robinsonagree" id="id11"><span>[RobinsonAgree]</span></a> and that acronyms are an obstacle to reading
+new code <a class="reference internal" href="#malyutindistinguish" id="id12"><span>[MalyutinDistinguish]</span></a> <a class="reference internal" href="#carruthacronym" id="id13"><span>[CarruthAcronym]</span></a> <a class="reference internal" href="#picusacronym" id="id14"><span>[PicusAcronym]</span></a>. There are
+some opposing views <a class="reference internal" href="#parzyszekacronym2" id="id15"><span>[ParzyszekAcronym2]</span></a> <a class="reference internal" href="#ricciacronyms" id="id16"><span>[RicciAcronyms]</span></a>.</p>
+<p>This work-in-progress proposal is to change the coding standard for variable
+names to require that they start with a lower case letter.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id17"><span class="brackets"><a class="fn-backref" href="#id1">*</a></span></dt>
+<dd><p>In <a class="reference external" href="https://github.com/llvm/llvm-project/blob/8b72080d4d7b13072f371712eed333f987b7a18e/llvm/lib/CodeGen/SelectionDAG/SelectionDAG.cpp#L2727">some cases</a>
+the type name <em>is</em> reused as a variable name, but this shadows the type name
+and confuses many debuggers <a class="reference internal" href="#denisovcamelback" id="id18"><span>[DenisovCamelBack]</span></a>.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="variable-names-coding-standard-options">
+<h2><a class="toc-backref" href="#id78">Variable Names Coding Standard Options</a><a class="headerlink" href="#variable-names-coding-standard-options" title="Permalink to this headline">¶</a></h2>
+<p>There are two main options for variable names that begin with a lower case
+letter: <code class="docutils literal notranslate"><span class="pre">camelBack</span></code> and <code class="docutils literal notranslate"><span class="pre">lower_case</span></code>. (These are also known by other names
+but here we use the terminology from clang-tidy).</p>
+<p><code class="docutils literal notranslate"><span class="pre">camelBack</span></code> is consistent with <a class="reference internal" href="#webkit" id="id19"><span>[WebKit]</span></a>, <a class="reference internal" href="#qt" id="id20"><span>[Qt]</span></a> and <a class="reference internal" href="#swift" id="id21"><span>[Swift]</span></a> while
+<code class="docutils literal notranslate"><span class="pre">lower_case</span></code> is consistent with <a class="reference internal" href="#lldb" id="id22"><span>[LLDB]</span></a>, <a class="reference internal" href="#google" id="id23"><span>[Google]</span></a>, <a class="reference internal" href="#rust" id="id24"><span>[Rust]</span></a> and <a class="reference internal" href="#python" id="id25"><span>[Python]</span></a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">camelBack</span></code> is already used for function names, which may be considered an
+advantage <a class="reference internal" href="#lattnerfunction" id="id26"><span>[LattnerFunction]</span></a> or a disadvantage <a class="reference internal" href="#carruthfunction" id="id27"><span>[CarruthFunction]</span></a>.</p>
+<p>Approval for <code class="docutils literal notranslate"><span class="pre">camelBack</span></code> was expressed by <a class="reference internal" href="#denisovcamelback" id="id28"><span>[DenisovCamelBack]</span></a>
+<a class="reference internal" href="#lattnerfunction" id="id29"><span>[LattnerFunction]</span></a> <a class="reference internal" href="#ivanovicdistinguish" id="id30"><span>[IvanovicDistinguish]</span></a>.
+Opposition to <code class="docutils literal notranslate"><span class="pre">camelBack</span></code> was expressed by <a class="reference internal" href="#carruthcamelback" id="id31"><span>[CarruthCamelBack]</span></a>
+<a class="reference internal" href="#turnercamelback" id="id32"><span>[TurnerCamelBack]</span></a>.
+Approval for <code class="docutils literal notranslate"><span class="pre">lower_case</span></code> was expressed by <a class="reference internal" href="#carruthlower" id="id33"><span>[CarruthLower]</span></a>
+<a class="reference internal" href="#carruthcamelback" id="id34"><span>[CarruthCamelBack]</span></a> <a class="reference internal" href="#turnerlldb" id="id35"><span>[TurnerLLDB]</span></a>.
+Opposition to <code class="docutils literal notranslate"><span class="pre">lower_case</span></code> was expressed by <a class="reference internal" href="#lattnerlower" id="id36"><span>[LattnerLower]</span></a>.</p>
+<div class="section" id="differentiating-variable-kinds">
+<h3><a class="toc-backref" href="#id79">Differentiating variable kinds</a><a class="headerlink" href="#differentiating-variable-kinds" title="Permalink to this headline">¶</a></h3>
+<p>An additional requested change is to distinguish between different kinds of
+variables <a class="reference internal" href="#robinsondistinguish" id="id37"><span>[RobinsonDistinguish]</span></a> <a class="reference internal" href="#robinsondistinguish2" id="id38"><span>[RobinsonDistinguish2]</span></a> <a class="reference internal" href="#jonesdistinguish" id="id39"><span>[JonesDistinguish]</span></a>
+<a class="reference internal" href="#ivanovicdistinguish" id="id40"><span>[IvanovicDistinguish]</span></a> <a class="reference internal" href="#carruthdistinguish" id="id41"><span>[CarruthDistinguish]</span></a> <a class="reference internal" href="#malyutindistinguish" id="id42"><span>[MalyutinDistinguish]</span></a>.</p>
+<p>Others oppose this idea <a class="reference internal" href="#hahnledistinguish" id="id43"><span>[HähnleDistinguish]</span></a> <a class="reference internal" href="#greenedistinguish" id="id44"><span>[GreeneDistinguish]</span></a>
+<a class="reference internal" href="#hendersonprefix" id="id45"><span>[HendersonPrefix]</span></a>.</p>
+<p>A possibility is for member variables to be prefixed with <code class="docutils literal notranslate"><span class="pre">m_</span></code> and for global
+variables to be prefixed with <code class="docutils literal notranslate"><span class="pre">g_</span></code> to distinguish them from local variables.
+This is consistent with <a class="reference internal" href="#lldb" id="id46"><span>[LLDB]</span></a>. The <code class="docutils literal notranslate"><span class="pre">m_</span></code> prefix is consistent with <a class="reference internal" href="#webkit" id="id47"><span>[WebKit]</span></a>.</p>
+<p>A variation is for member variables to be prefixed with <code class="docutils literal notranslate"><span class="pre">m</span></code>
+<a class="reference internal" href="#ivanovicdistinguish" id="id48"><span>[IvanovicDistinguish]</span></a> <a class="reference internal" href="#beylsdistinguish" id="id49"><span>[BeylsDistinguish]</span></a>. This is consistent with <a class="reference internal" href="#mozilla" id="id50"><span>[Mozilla]</span></a>.</p>
+<p>Another option is for member variables to be suffixed with <code class="docutils literal notranslate"><span class="pre">_</span></code> which is
+consistent with <a class="reference internal" href="#google" id="id51"><span>[Google]</span></a> and similar to <a class="reference internal" href="#python" id="id52"><span>[Python]</span></a>. Opposed by
+<a class="reference internal" href="#parzyszekdistinguish" id="id53"><span>[ParzyszekDistinguish]</span></a>.</p>
+</div>
+</div>
+<div class="section" id="reducing-the-number-of-acronyms">
+<h2><a class="toc-backref" href="#id80">Reducing the number of acronyms</a><a class="headerlink" href="#reducing-the-number-of-acronyms" title="Permalink to this headline">¶</a></h2>
+<p>While switching coding standard will make it easier to use non-acronym names for
+new code, it doesn’t improve the existing large body of code that uses acronyms
+extensively to the detriment of its readability. Further, it is natural and
+generally encouraged that new code be written in the style of the surrounding
+code. Therefore it is likely that much newly written code will also use
+acronyms despite what the coding standard says, much as it is today.</p>
+<p>As well as changing the case of variable names, they could also be expanded to
+their non-acronym form e.g. <code class="docutils literal notranslate"><span class="pre">Triple</span> <span class="pre">T</span></code> → <code class="docutils literal notranslate"><span class="pre">Triple</span> <span class="pre">triple</span></code>.</p>
+<p>There is support for expanding many acronyms <a class="reference internal" href="#carruthacronym" id="id54"><span>[CarruthAcronym]</span></a> <a class="reference internal" href="#picusacronym" id="id55"><span>[PicusAcronym]</span></a>
+but there is a preference that expanding acronyms be deferred
+<a class="reference internal" href="#parzyszekacronym" id="id56"><span>[ParzyszekAcronym]</span></a> <a class="reference internal" href="#carruthacronym" id="id57"><span>[CarruthAcronym]</span></a>.</p>
+<p>The consensus within the community seems to be that at least some acronyms are
+valuable <a class="reference internal" href="#parzyszekacronym" id="id58"><span>[ParzyszekAcronym]</span></a> <a class="reference internal" href="#lattneracronym" id="id59"><span>[LattnerAcronym]</span></a>. The most commonly cited acronym
+is <code class="docutils literal notranslate"><span class="pre">TLI</span></code> however that is used to refer to both <code class="docutils literal notranslate"><span class="pre">TargetLowering</span></code> and
+<code class="docutils literal notranslate"><span class="pre">TargetLibraryInfo</span></code> <a class="reference internal" href="#greenedistinguish" id="id60"><span>[GreeneDistinguish]</span></a>.</p>
+<p>The following is a list of acronyms considered sufficiently useful that the
+benefit of using them outweighs the cost of learning them. Acronyms that are
+either not on the list or are used to refer to a different type should be
+expanded.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 68%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Class name</p></th>
+<th class="head"><p>Variable name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>DeterministicFiniteAutomaton</p></td>
+<td><p>dfa</p></td>
+</tr>
+<tr class="row-odd"><td><p>DominatorTree</p></td>
+<td><p>dt</p></td>
+</tr>
+<tr class="row-even"><td><p>LoopInfo</p></td>
+<td><p>li</p></td>
+</tr>
+<tr class="row-odd"><td><p>MachineFunction</p></td>
+<td><p>mf</p></td>
+</tr>
+<tr class="row-even"><td><p>MachineInstr</p></td>
+<td><p>mi</p></td>
+</tr>
+<tr class="row-odd"><td><p>MachineRegisterInfo</p></td>
+<td><p>mri</p></td>
+</tr>
+<tr class="row-even"><td><p>ScalarEvolution</p></td>
+<td><p>se</p></td>
+</tr>
+<tr class="row-odd"><td><p>TargetInstrInfo</p></td>
+<td><p>tii</p></td>
+</tr>
+<tr class="row-even"><td><p>TargetLibraryInfo</p></td>
+<td><p>tli</p></td>
+</tr>
+<tr class="row-odd"><td><p>TargetRegisterInfo</p></td>
+<td><p>tri</p></td>
+</tr>
+</tbody>
+</table>
+<p>In some cases renaming acronyms to the full type name will result in overly
+verbose code. Unlike most classes, a variable’s scope is limited and therefore
+some of its purpose can implied from that scope, meaning that fewer words are
+necessary to give it a clear name. For example, in an optization pass the reader
+can assume that a variable’s purpose relates to optimization and therefore an
+<code class="docutils literal notranslate"><span class="pre">OptimizationRemarkEmitter</span></code> variable could be given the name <code class="docutils literal notranslate"><span class="pre">remarkEmitter</span></code>
+or even <code class="docutils literal notranslate"><span class="pre">remarker</span></code>.</p>
+<p>The following is a list of longer class names and the associated shorter
+variable name.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 66%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Class name</p></th>
+<th class="head"><p>Variable name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>BasicBlock</p></td>
+<td><p>block</p></td>
+</tr>
+<tr class="row-odd"><td><p>ConstantExpr</p></td>
+<td><p>expr</p></td>
+</tr>
+<tr class="row-even"><td><p>ExecutionEngine</p></td>
+<td><p>engine</p></td>
+</tr>
+<tr class="row-odd"><td><p>MachineOperand</p></td>
+<td><p>operand</p></td>
+</tr>
+<tr class="row-even"><td><p>OptimizationRemarkEmitter</p></td>
+<td><p>remarker</p></td>
+</tr>
+<tr class="row-odd"><td><p>PreservedAnalyses</p></td>
+<td><p>analyses</p></td>
+</tr>
+<tr class="row-even"><td><p>PreservedAnalysesChecker</p></td>
+<td><p>checker</p></td>
+</tr>
+<tr class="row-odd"><td><p>TargetLowering</p></td>
+<td><p>lowering</p></td>
+</tr>
+<tr class="row-even"><td><p>TargetMachine</p></td>
+<td><p>machine</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="transition-options">
+<h2><a class="toc-backref" href="#id81">Transition Options</a><a class="headerlink" href="#transition-options" title="Permalink to this headline">¶</a></h2>
+<p>There are three main options for transitioning:</p>
+<ol class="arabic simple">
+<li><p>Keep the current coding standard</p></li>
+<li><p>Laissez faire</p></li>
+<li><p>Big bang</p></li>
+</ol>
+<div class="section" id="keep-the-current-coding-standard">
+<h3><a class="toc-backref" href="#id82">Keep the current coding standard</a><a class="headerlink" href="#keep-the-current-coding-standard" title="Permalink to this headline">¶</a></h3>
+<p>Proponents of keeping the current coding standard (i.e. not transitioning at
+all) question whether the cost of transition outweighs the benefit
+<a class="reference internal" href="#emersonconcern" id="id61"><span>[EmersonConcern]</span></a> <a class="reference internal" href="#reamesconcern" id="id62"><span>[ReamesConcern]</span></a> <a class="reference internal" href="#bradburyconcern" id="id63"><span>[BradburyConcern]</span></a>.
+The costs are that <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">blame</span></code> will become less usable; and that merging the
+changes will be costly for downstream maintainers. See <a class="reference internal" href="#big-bang">Big bang</a> for potential
+mitigations.</p>
+</div>
+<div class="section" id="laissez-faire">
+<h3><a class="toc-backref" href="#id83">Laissez faire</a><a class="headerlink" href="#laissez-faire" title="Permalink to this headline">¶</a></h3>
+<p>The coding standard could allow both <code class="docutils literal notranslate"><span class="pre">CamelCase</span></code> and <code class="docutils literal notranslate"><span class="pre">camelBack</span></code> styles for
+variable names <a class="reference internal" href="#lattnertransition" id="id64"><span>[LattnerTransition]</span></a>.</p>
+<p>A code review to implement this is at <a class="reference external" href="https://reviews.llvm.org/D57896">https://reviews.llvm.org/D57896</a>.</p>
+<div class="section" id="advantages">
+<h4><a class="toc-backref" href="#id84">Advantages</a><a class="headerlink" href="#advantages" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ul class="simple">
+<li><p>Very easy to implement initially.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="disadvantages">
+<h4><a class="toc-backref" href="#id85">Disadvantages</a><a class="headerlink" href="#disadvantages" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ul class="simple">
+<li><p>Leads to inconsistency <a class="reference internal" href="#bradburyconcern" id="id65"><span>[BradburyConcern]</span></a> <a class="reference internal" href="#aminiinconsistent" id="id66"><span>[AminiInconsistent]</span></a>.</p></li>
+<li><p>Inconsistency means it will be hard to know at a guess what name a variable
+will have <a class="reference internal" href="#dasinconsistent" id="id67"><span>[DasInconsistent]</span></a> <a class="reference internal" href="#carruthinconsistent" id="id68"><span>[CarruthInconsistent]</span></a>.</p></li>
+<li><p>Some large-scale renaming may happen anyway, leading to its disadvantages
+without any mitigations.</p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="big-bang">
+<h3><a class="toc-backref" href="#id86">Big bang</a><a class="headerlink" href="#big-bang" title="Permalink to this headline">¶</a></h3>
+<p>With this approach, variables will be renamed by an automated script in a series
+of large commits.</p>
+<p>The principle advantage of this approach is that it minimises the cost of
+inconsistency <a class="reference internal" href="#bradburytransition" id="id69"><span>[BradburyTransition]</span></a> <a class="reference internal" href="#robinsontransition" id="id70"><span>[RobinsonTransition]</span></a>.</p>
+<p>It goes against a policy of avoiding large-scale reformatting of existing code
+<a class="reference internal" href="#greenedistinguish" id="id71"><span>[GreeneDistinguish]</span></a>.</p>
+<p>It has been suggested that LLD would be a good starter project for the renaming
+<a class="reference internal" href="#ueyama" id="id72"><span>[Ueyama]</span></a>.</p>
+<div class="section" id="keeping-git-blame-usable">
+<h4><a class="toc-backref" href="#id87">Keeping git blame usable</a><a class="headerlink" href="#keeping-git-blame-usable" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">blame</span></code> (or <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">annotate</span></code>) permits quickly identifying the commit that
+changed a given line in a file. After renaming variables, many lines will show
+as being changed by that one commit, requiring a further invocation of <code class="docutils literal notranslate"><span class="pre">git</span>
+<span class="pre">blame</span></code> to identify prior, more interesting commits <a class="reference internal" href="#greenegitblame" id="id73"><span>[GreeneGitBlame]</span></a>
+<a class="reference internal" href="#ricciacronyms" id="id74"><span>[RicciAcronyms]</span></a>.</p>
+<p><strong>Mitigation</strong>: <a class="reference external" href="https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/git-hyper-blame.html">git-hyper-blame</a>
+can ignore or “look through” a given set of commits.
+A <code class="docutils literal notranslate"><span class="pre">.git-blame-ignore-revs</span></code> file identifying the variable renaming commits
+could be added to the LLVM git repository root directory.
+It is being <a class="reference external" href="https://public-inbox.org/git/20190324235020.49706-1-michael&#64;platin.gs/">investigated</a>
+whether similar functionality could be added to <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">blame</span></code> itself.</p>
+</div>
+<div class="section" id="minimising-cost-of-downstream-merges">
+<h4><a class="toc-backref" href="#id88">Minimising cost of downstream merges</a><a class="headerlink" href="#minimising-cost-of-downstream-merges" title="Permalink to this headline">¶</a></h4>
+<p>There are many forks of LLVM with downstream changes. Merging a large-scale
+renaming change could be difficult for the fork maintainers.</p>
+<p><strong>Mitigation</strong>: A large-scale renaming would be automated. A fork maintainer can
+merge from the commit immediately before the renaming, then apply the renaming
+script to their own branch. They can then merge again from the renaming commit,
+resolving all conflicts by choosing their own version. This could be tested on
+the <a class="reference internal" href="#sve" id="id75"><span>[SVE]</span></a> fork.</p>
+</div>
+</div>
+</div>
+<div class="section" id="provisional-plan">
+<h2><a class="toc-backref" href="#id89">Provisional Plan</a><a class="headerlink" href="#provisional-plan" title="Permalink to this headline">¶</a></h2>
+<p>This is a provisional plan for the <a class="reference internal" href="#big-bang">Big bang</a> approach. It has not been agreed.</p>
+<ol class="arabic">
+<li><p>Investigate improving <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">blame</span></code>. The extent to which it can be made to
+“look through” commits may impact how big a change can be made.</p></li>
+<li><p>Write a script to expand acronyms.</p></li>
+<li><p>Experiment and perform dry runs of the various refactoring options.
+Results can be published in forks of the LLVM Git repository.</p></li>
+<li><p>Consider the evidence and agree on the new policy.</p></li>
+<li><p>Agree &amp; announce a date for the renaming of the starter project (LLD).</p></li>
+<li><p>Update the <a class="reference external" href="../CodingStandards.html">policy page</a>. This will explain the
+old and new rules and which projects each applies to.</p></li>
+<li><p>Refactor the starter project in two commits:</p>
+<ol class="arabic">
+<li><p>Add or change the project’s .clang-tidy to reflect the agreed rules.
+(This is in a separate commit to enable the merging process described in
+<a class="reference internal" href="#minimising-cost-of-downstream-merges">Minimising cost of downstream merges</a>).
+Also update the project list on the policy page.</p></li>
+<li><p>Apply <code class="docutils literal notranslate"><span class="pre">clang-tidy</span></code> to the project’s files, with only the
+<code class="docutils literal notranslate"><span class="pre">readability-identifier-naming</span></code> rules enabled. <code class="docutils literal notranslate"><span class="pre">clang-tidy</span></code> will also
+reformat the affected lines according to the rules in <code class="docutils literal notranslate"><span class="pre">.clang-format</span></code>.
+It is anticipated that this will be a good dog-fooding opportunity for
+clang-tidy, and bugs should be fixed in the process, likely including:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://bugs.llvm.org/show_bug.cgi?id=41119">readability-identifier-naming incorrectly fixes lambda capture</a>.</p></li>
+<li><p><a class="reference external" href="https://bugs.llvm.org/show_bug.cgi?id=41120">readability-identifier-naming incorrectly fixes variables which
+become keywords</a>.</p></li>
+<li><p><a class="reference external" href="https://bugs.llvm.org/show_bug.cgi?id=41122">readability-identifier-naming misses fixing member variables in
+destructor</a>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+</li>
+<li><p>Gather feedback and refine the process as appropriate.</p></li>
+<li><p>Apply the process to the following projects, with a suitable delay between
+each (at least 4 weeks after the first change, at least 2 weeks subsequently)
+to allow gathering further feedback.
+This list should exclude projects that must adhere to an externally defined
+standard e.g. libcxx.
+The list is roughly in chronological order of renaming.
+Some items may not make sense to rename individually - it is expected that
+this list will change following experimentation:</p>
+<ul class="simple">
+<li><p>TableGen</p></li>
+<li><p>llvm/tools</p></li>
+<li><p>clang-tools-extra</p></li>
+<li><p>clang</p></li>
+<li><p>ARM backend</p></li>
+<li><p>AArch64 backend</p></li>
+<li><p>AMDGPU backend</p></li>
+<li><p>ARC backend</p></li>
+<li><p>AVR backend</p></li>
+<li><p>BPF backend</p></li>
+<li><p>Hexagon backend</p></li>
+<li><p>Lanai backend</p></li>
+<li><p>MIPS backend</p></li>
+<li><p>NVPTX backend</p></li>
+<li><p>PowerPC backend</p></li>
+<li><p>RISC-V backend</p></li>
+<li><p>Sparc backend</p></li>
+<li><p>SystemZ backend</p></li>
+<li><p>WebAssembly backend</p></li>
+<li><p>X86 backend</p></li>
+<li><p>XCore backend</p></li>
+<li><p>libLTO</p></li>
+<li><p>Debug Information</p></li>
+<li><p>Remainder of llvm</p></li>
+<li><p>compiler-rt</p></li>
+<li><p>libunwind</p></li>
+<li><p>openmp</p></li>
+<li><p>parallel-libs</p></li>
+<li><p>polly</p></li>
+<li><p>lldb</p></li>
+</ul>
+</li>
+<li><p>Remove the old variable name rule from the policy page.</p></li>
+<li><p>Repeat many of the steps in the sequence, using a script to expand acronyms.</p></li>
+</ol>
+</div>
+<div class="section" id="references">
+<h2><a class="toc-backref" href="#id90">References</a><a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<dl class="citation">
+<dt class="label" id="lldb"><span class="brackets">LLDB</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id22">2</a>,<a href="#id46">3</a>)</span></dt>
+<dd><p>LLDB Coding Conventions <a class="reference external" href="https://llvm.org/svn/llvm-project/lldb/branches/release_39/www/lldb-coding-conventions.html">https://llvm.org/svn/llvm-project/lldb/branches/release_39/www/lldb-coding-conventions.html</a></p>
+</dd>
+<dt class="label" id="google"><span class="brackets">Google</span><span class="fn-backref">(<a href="#id3">1</a>,<a href="#id23">2</a>,<a href="#id51">3</a>)</span></dt>
+<dd><p>Google C++ Style Guide <a class="reference external" href="https://google.github.io/styleguide/cppguide.html#Variable_Names">https://google.github.io/styleguide/cppguide.html#Variable_Names</a></p>
+</dd>
+<dt class="label" id="webkit"><span class="brackets">WebKit</span><span class="fn-backref">(<a href="#id4">1</a>,<a href="#id19">2</a>,<a href="#id47">3</a>)</span></dt>
+<dd><p>WebKit Code Style Guidelines <a class="reference external" href="https://webkit.org/code-style-guidelines/#names">https://webkit.org/code-style-guidelines/#names</a></p>
+</dd>
+<dt class="label" id="qt"><span class="brackets">Qt</span><span class="fn-backref">(<a href="#id5">1</a>,<a href="#id20">2</a>)</span></dt>
+<dd><p>Qt Coding Style <a class="reference external" href="https://wiki.qt.io/Qt_Coding_Style#Declaring_variables">https://wiki.qt.io/Qt_Coding_Style#Declaring_variables</a></p>
+</dd>
+<dt class="label" id="rust"><span class="brackets">Rust</span><span class="fn-backref">(<a href="#id6">1</a>,<a href="#id24">2</a>)</span></dt>
+<dd><p>Rust naming conventions <a class="reference external" href="https://doc.rust-lang.org/1.0.0/style/style/naming/README.html">https://doc.rust-lang.org/1.0.0/style/style/naming/README.html</a></p>
+</dd>
+<dt class="label" id="swift"><span class="brackets">Swift</span><span class="fn-backref">(<a href="#id7">1</a>,<a href="#id21">2</a>)</span></dt>
+<dd><p>Swift API Design Guidelines <a class="reference external" href="https://swift.org/documentation/api-design-guidelines/#general-conventions">https://swift.org/documentation/api-design-guidelines/#general-conventions</a></p>
+</dd>
+<dt class="label" id="python"><span class="brackets">Python</span><span class="fn-backref">(<a href="#id8">1</a>,<a href="#id25">2</a>,<a href="#id52">3</a>)</span></dt>
+<dd><p>Style Guide for Python Code <a class="reference external" href="https://www.python.org/dev/peps/pep-0008/#function-and-variable-names">https://www.python.org/dev/peps/pep-0008/#function-and-variable-names</a></p>
+</dd>
+<dt class="label" id="mozilla"><span class="brackets"><a class="fn-backref" href="#id50">Mozilla</a></span></dt>
+<dd><p>Mozilla Coding style: Prefixes <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#Prefixes">https://developer.mozilla.org/en-US/docs/Mozilla/Developer_guide/Coding_Style#Prefixes</a></p>
+</dd>
+<dt class="label" id="sve"><span class="brackets"><a class="fn-backref" href="#id75">SVE</a></span></dt>
+<dd><p>LLVM with support for SVE <a class="reference external" href="https://github.com/ARM-software/LLVM-SVE">https://github.com/ARM-software/LLVM-SVE</a></p>
+</dd>
+<dt class="label" id="aminiinconsistent"><span class="brackets"><a class="fn-backref" href="#id66">AminiInconsistent</a></span></dt>
+<dd><p>Mehdi Amini, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130329.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130329.html</a></p>
+</dd>
+<dt class="label" id="arsenaultagree"><span class="brackets"><a class="fn-backref" href="#id10">ArsenaultAgree</a></span></dt>
+<dd><p>Matt Arsenault, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/129934.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/129934.html</a></p>
+</dd>
+<dt class="label" id="beylsdistinguish"><span class="brackets"><a class="fn-backref" href="#id49">BeylsDistinguish</a></span></dt>
+<dd><p>Kristof Beyls, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130292.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130292.html</a></p>
+</dd>
+<dt class="label" id="bradburyconcern"><span class="brackets">BradburyConcern</span><span class="fn-backref">(<a href="#id63">1</a>,<a href="#id65">2</a>)</span></dt>
+<dd><p>Alex Bradbury, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130266.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130266.html</a></p>
+</dd>
+<dt class="label" id="bradburytransition"><span class="brackets"><a class="fn-backref" href="#id69">BradburyTransition</a></span></dt>
+<dd><p>Alex Bradbury, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130388.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130388.html</a></p>
+</dd>
+<dt class="label" id="carruthacronym"><span class="brackets">CarruthAcronym</span><span class="fn-backref">(<a href="#id13">1</a>,<a href="#id54">2</a>,<a href="#id57">3</a>)</span></dt>
+<dd><p>Chandler Carruth, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130313.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130313.html</a></p>
+</dd>
+<dt class="label" id="carruthcamelback"><span class="brackets">CarruthCamelBack</span><span class="fn-backref">(<a href="#id31">1</a>,<a href="#id34">2</a>)</span></dt>
+<dd><p>Chandler Carruth, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130214.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130214.html</a></p>
+</dd>
+<dt class="label" id="carruthdistinguish"><span class="brackets"><a class="fn-backref" href="#id41">CarruthDistinguish</a></span></dt>
+<dd><p>Chandler Carruth, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130310.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130310.html</a></p>
+</dd>
+<dt class="label" id="carruthfunction"><span class="brackets"><a class="fn-backref" href="#id27">CarruthFunction</a></span></dt>
+<dd><p>Chandler Carruth, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130309.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130309.html</a></p>
+</dd>
+<dt class="label" id="carruthinconsistent"><span class="brackets"><a class="fn-backref" href="#id68">CarruthInconsistent</a></span></dt>
+<dd><p>Chandler Carruth, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130312.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130312.html</a></p>
+</dd>
+<dt class="label" id="carruthlower"><span class="brackets"><a class="fn-backref" href="#id33">CarruthLower</a></span></dt>
+<dd><p>Chandler Carruth, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130430.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130430.html</a></p>
+</dd>
+<dt class="label" id="dasinconsistent"><span class="brackets"><a class="fn-backref" href="#id67">DasInconsistent</a></span></dt>
+<dd><p>Sanjoy Das, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130304.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130304.html</a></p>
+</dd>
+<dt class="label" id="denisovcamelback"><span class="brackets">DenisovCamelBack</span><span class="fn-backref">(<a href="#id18">1</a>,<a href="#id28">2</a>)</span></dt>
+<dd><p>Alex Denisov, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130179.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130179.html</a></p>
+</dd>
+<dt class="label" id="emersonconcern"><span class="brackets"><a class="fn-backref" href="#id61">EmersonConcern</a></span></dt>
+<dd><p>Amara Emerson, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/129894.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/129894.html</a></p>
+</dd>
+<dt class="label" id="greenedistinguish"><span class="brackets">GreeneDistinguish</span><span class="fn-backref">(<a href="#id44">1</a>,<a href="#id60">2</a>,<a href="#id71">3</a>)</span></dt>
+<dd><p>David Greene, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130425.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130425.html</a></p>
+</dd>
+<dt class="label" id="greenegitblame"><span class="brackets"><a class="fn-backref" href="#id73">GreeneGitBlame</a></span></dt>
+<dd><p>David Greene, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130228.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130228.html</a></p>
+</dd>
+<dt class="label" id="hendersonprefix"><span class="brackets"><a class="fn-backref" href="#id45">HendersonPrefix</a></span></dt>
+<dd><p>James Henderson, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130465.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130465.html</a></p>
+</dd>
+<dt class="label" id="hahnledistinguish"><span class="brackets"><a class="fn-backref" href="#id43">HähnleDistinguish</a></span></dt>
+<dd><p>Nicolai Hähnle, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/129923.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/129923.html</a></p>
+</dd>
+<dt class="label" id="ivanovicdistinguish"><span class="brackets">IvanovicDistinguish</span><span class="fn-backref">(<a href="#id30">1</a>,<a href="#id40">2</a>,<a href="#id48">3</a>)</span></dt>
+<dd><p>Nemanja Ivanovic, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130249.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130249.html</a></p>
+</dd>
+<dt class="label" id="jonesdistinguish"><span class="brackets"><a class="fn-backref" href="#id39">JonesDistinguish</a></span></dt>
+<dd><p>JD Jones, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/129926.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/129926.html</a></p>
+</dd>
+<dt class="label" id="lattneracronym"><span class="brackets"><a class="fn-backref" href="#id59">LattnerAcronym</a></span></dt>
+<dd><p>Chris Lattner, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130353.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130353.html</a></p>
+</dd>
+<dt class="label" id="lattneragree"><span class="brackets"><a class="fn-backref" href="#id9">LattnerAgree</a></span></dt>
+<dd><p>Chris Latter, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/129907.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/129907.html</a></p>
+</dd>
+<dt class="label" id="lattnerfunction"><span class="brackets">LattnerFunction</span><span class="fn-backref">(<a href="#id26">1</a>,<a href="#id29">2</a>)</span></dt>
+<dd><p>Chris Lattner, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130630.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130630.html</a></p>
+</dd>
+<dt class="label" id="lattnerlower"><span class="brackets"><a class="fn-backref" href="#id36">LattnerLower</a></span></dt>
+<dd><p>Chris Lattner, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130629.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130629.html</a></p>
+</dd>
+<dt class="label" id="lattnertransition"><span class="brackets"><a class="fn-backref" href="#id64">LattnerTransition</a></span></dt>
+<dd><p>Chris Lattner, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130355.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130355.html</a></p>
+</dd>
+<dt class="label" id="malyutindistinguish"><span class="brackets">MalyutinDistinguish</span><span class="fn-backref">(<a href="#id12">1</a>,<a href="#id42">2</a>)</span></dt>
+<dd><p>Danila Malyutin, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130320.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130320.html</a></p>
+</dd>
+<dt class="label" id="parzyszekacronym"><span class="brackets">ParzyszekAcronym</span><span class="fn-backref">(<a href="#id56">1</a>,<a href="#id58">2</a>)</span></dt>
+<dd><p>Krzysztof Parzyszek, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130306.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130306.html</a></p>
+</dd>
+<dt class="label" id="parzyszekacronym2"><span class="brackets"><a class="fn-backref" href="#id15">ParzyszekAcronym2</a></span></dt>
+<dd><p>Krzysztof Parzyszek, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130323.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130323.html</a></p>
+</dd>
+<dt class="label" id="parzyszekdistinguish"><span class="brackets"><a class="fn-backref" href="#id53">ParzyszekDistinguish</a></span></dt>
+<dd><p>Krzysztof Parzyszek, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/129941.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/129941.html</a></p>
+</dd>
+<dt class="label" id="picusacronym"><span class="brackets">PicusAcronym</span><span class="fn-backref">(<a href="#id14">1</a>,<a href="#id55">2</a>)</span></dt>
+<dd><p>Diana Picus, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130318.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130318.html</a></p>
+</dd>
+<dt class="label" id="reamesconcern"><span class="brackets"><a class="fn-backref" href="#id62">ReamesConcern</a></span></dt>
+<dd><p>Philip Reames, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130181.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130181.html</a></p>
+</dd>
+<dt class="label" id="ricciacronyms"><span class="brackets">RicciAcronyms</span><span class="fn-backref">(<a href="#id16">1</a>,<a href="#id74">2</a>)</span></dt>
+<dd><p>Bruno Ricci, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130328.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130328.html</a></p>
+</dd>
+<dt class="label" id="robinsonagree"><span class="brackets"><a class="fn-backref" href="#id11">RobinsonAgree</a></span></dt>
+<dd><p>Paul Robinson, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130111.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130111.html</a></p>
+</dd>
+<dt class="label" id="robinsondistinguish"><span class="brackets"><a class="fn-backref" href="#id37">RobinsonDistinguish</a></span></dt>
+<dd><p>Paul Robinson, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/129920.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/129920.html</a></p>
+</dd>
+<dt class="label" id="robinsondistinguish2"><span class="brackets"><a class="fn-backref" href="#id38">RobinsonDistinguish2</a></span></dt>
+<dd><p>Paul Robinson, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130229.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130229.html</a></p>
+</dd>
+<dt class="label" id="robinsontransition"><span class="brackets"><a class="fn-backref" href="#id70">RobinsonTransition</a></span></dt>
+<dd><p>Paul Robinson, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130415.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130415.html</a></p>
+</dd>
+<dt class="label" id="turnercamelback"><span class="brackets"><a class="fn-backref" href="#id32">TurnerCamelBack</a></span></dt>
+<dd><p>Zachary Turner, <a class="reference external" href="https://reviews.llvm.org/D57896#1402264">https://reviews.llvm.org/D57896#1402264</a></p>
+</dd>
+<dt class="label" id="turnerlldb"><span class="brackets"><a class="fn-backref" href="#id35">TurnerLLDB</a></span></dt>
+<dd><p>Zachary Turner, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130213.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130213.html</a></p>
+</dd>
+<dt class="label" id="ueyama"><span class="brackets"><a class="fn-backref" href="#id72">Ueyama</a></span></dt>
+<dd><p>Rui Ueyama, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2019-February/130435.html">http://lists.llvm.org/pipermail/llvm-dev/2019-February/130435.html</a></p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="TestSuite.html" title="Test-Suite Extentions"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

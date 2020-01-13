@@ -1,40 +1,28 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>llvm-nm - list LLVM bitcode and object file’s symbol table &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>llvm-nm - list LLVM bitcode and object file’s symbol table &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
-    <link rel="next" title="llvm-config - Print LLVM compilation options" href="llvm-config.html" />
-    <link rel="prev" title="llvm-ar - LLVM archiver" href="llvm-ar.html" />
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="llvm-objcopy - object copying and editing tool" href="llvm-objcopy.html" />
+    <link rel="prev" title="llvm-cxxfilt - LLVM symbol name demangler" href="llvm-cxxfilt.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -48,15 +36,15 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="llvm-config.html" title="llvm-config - Print LLVM compilation options"
+          <a href="llvm-objcopy.html" title="llvm-objcopy - object copying and editing tool"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="llvm-ar.html" title="llvm-ar - LLVM archiver"
+          <a href="llvm-cxxfilt.html" title="llvm-cxxfilt - LLVM symbol name demangler"
              accesskey="P">previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -66,142 +54,325 @@
           <div class="body" role="main">
             
   <div class="section" id="llvm-nm-list-llvm-bitcode-and-object-file-s-symbol-table">
-<h1>llvm-nm - list LLVM bitcode and object file&#8217;s symbol table<a class="headerlink" href="#llvm-nm-list-llvm-bitcode-and-object-file-s-symbol-table" title="Permalink to this headline">¶</a></h1>
+<h1>llvm-nm - list LLVM bitcode and object file’s symbol table<a class="headerlink" href="#llvm-nm-list-llvm-bitcode-and-object-file-s-symbol-table" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="synopsis">
 <h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
-<p><strong class="program">llvm-nm</strong> [<em>options</em>] [<em>filenames...</em>]</p>
+<p><strong class="program">llvm-nm</strong> [<em>options</em>] [<em>filenames…</em>]</p>
 </div>
 <div class="section" id="description">
 <h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
-<p>The <strong class="program">llvm-nm</strong> utility lists the names of symbols from the LLVM bitcode
-files, object files, or <strong class="program">ar</strong> archives containing them, named on the
-command line.  Each symbol is listed along with some simple information about
-its provenance.  If no file name is specified, or <em>-</em> is used as a file name,
-<strong class="program">llvm-nm</strong> will process a file on its standard input stream.</p>
-<p><strong class="program">llvm-nm</strong>&#8216;s default output format is the traditional BSD <strong class="program">nm</strong>
-output format.  Each such output record consists of an (optional) 8-digit
+<p>The <strong class="program">llvm-nm</strong> utility lists the names of symbols from LLVM bitcode
+files, object files, and archives. Each symbol is listed along with some simple
+information about its provenance. If no filename is specified, <em>a.out</em> is used
+as the input. If <em>-</em> is used as a filename, <strong class="program">llvm-nm</strong> will read a file
+from its standard input stream.</p>
+<p><strong class="program">llvm-nm</strong>’s default output format is the traditional BSD <strong class="program">nm</strong>
+output format. Each such output record consists of an (optional) 8-digit
 hexadecimal address, followed by a type code character, followed by a name, for
-each symbol.  One record is printed per line; fields are separated by spaces.
+each symbol. One record is printed per line; fields are separated by spaces.
 When the address is omitted, it is replaced by 8 spaces.</p>
-<p>Type code characters currently supported, and their meanings, are as follows:</p>
-<p>U</p>
+<p>The supported type code characters are as follows. Where both lower and
+upper-case characters are listed for the same meaning, a lower-case character
+represents a local symbol, whilst an upper-case character represents a global
+(external) symbol:</p>
+<p>a, A</p>
 <blockquote>
-<div>Named object is referenced but undefined in this bitcode file</div></blockquote>
+<div><p>Absolute symbol.</p>
+</div></blockquote>
+<p>b, B</p>
+<blockquote>
+<div><p>Unitialized data (bss) object.</p>
+</div></blockquote>
 <p>C</p>
 <blockquote>
-<div>Common (multiple definitions link together into one def)</div></blockquote>
+<div><p>Common symbol. Multiple definitions link together into one definition.</p>
+</div></blockquote>
+<p>d, D</p>
+<blockquote>
+<div><p>Writable data object.</p>
+</div></blockquote>
+<p>i, I</p>
+<blockquote>
+<div><p>COFF: .idata symbol or symbol in a section with IMAGE_SCN_LNK_INFO set.</p>
+</div></blockquote>
+<p>n</p>
+<blockquote>
+<div><p>ELF: local symbol from non-alloc section.</p>
+<p>COFF: debug symbol.</p>
+</div></blockquote>
+<p>N</p>
+<blockquote>
+<div><p>ELF: debug section symbol, or global symbol from non-alloc section.</p>
+</div></blockquote>
+<p>s, S</p>
+<blockquote>
+<div><p>COFF: section symbol.</p>
+<p>Mach-O: absolute symbol or symbol from a section other than __TEXT_EXEC __text,
+__TEXT __text, __DATA __data, or __DATA __bss.</p>
+</div></blockquote>
+<p>r, R</p>
+<blockquote>
+<div><p>Read-only data object.</p>
+</div></blockquote>
+<p>t, T</p>
+<blockquote>
+<div><p>Code (text) object.</p>
+</div></blockquote>
+<p>u</p>
+<blockquote>
+<div><p>ELF: GNU unique symbol.</p>
+</div></blockquote>
+<p>U</p>
+<blockquote>
+<div><p>Named object is undefined in this file.</p>
+</div></blockquote>
+<p>v</p>
+<blockquote>
+<div><p>ELF: Undefined weak object. It is not a link failure if the object is not
+defined.</p>
+</div></blockquote>
+<p>V</p>
+<blockquote>
+<div><p>ELF: Defined weak object symbol. This definition will only be used if no
+regular definitions exist in a link. If multiple weak definitions and no
+regular definitons exist, one of the weak definitions will be used.</p>
+</div></blockquote>
+<p>w</p>
+<blockquote>
+<div><p>Undefined weak symbol other than an ELF object symbol. It is not a link failure
+if the symbol is not defined.</p>
+</div></blockquote>
 <p>W</p>
 <blockquote>
-<div>Weak reference (multiple definitions link together into zero or one definitions)</div></blockquote>
-<p>t</p>
+<div><p>Defined weak symbol other than an ELF object symbol. This definition will only
+be used if no regular definitions exist in a link. If multiple weak definitions
+and no regular definitons exist, one of the weak definitions will be used.</p>
+</div></blockquote>
+<p>-</p>
 <blockquote>
-<div>Local function (text) object</div></blockquote>
-<p>T</p>
-<blockquote>
-<div>Global function (text) object</div></blockquote>
-<p>d</p>
-<blockquote>
-<div>Local data object</div></blockquote>
-<p>D</p>
-<blockquote>
-<div>Global data object</div></blockquote>
+<div><p>Mach-O: N_STAB symbol.</p>
+</div></blockquote>
 <p>?</p>
 <blockquote>
-<div>Something unrecognizable</div></blockquote>
+<div><p>Something unrecognizable.</p>
+</div></blockquote>
 <p>Because LLVM bitcode files typically contain objects that are not considered to
 have addresses until they are linked into an executable image or dynamically
-compiled &#8220;just-in-time&#8221;, <strong class="program">llvm-nm</strong> does not print an address for any
+compiled “just-in-time”, <strong class="program">llvm-nm</strong> does not print an address for any
 symbol in an LLVM bitcode file, even symbols which are defined in the bitcode
 file.</p>
 </div>
 <div class="section" id="options">
 <h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption-llvm-nm-B">
-<code class="descname">-B</code><code class="descclassname">    (default)</code><a class="headerlink" href="#cmdoption-llvm-nm-B" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use BSD output format.  Alias for <code class="xref std std-option docutils literal"><span class="pre">--format=bsd</span></code>.</p>
+<dt id="cmdoption-llvm-nm-b">
+<code class="sig-name descname">-B</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-b" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use BSD output format. Alias for <code class="docutils literal notranslate"><span class="pre">--format=bsd</span></code>.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm-P">
-<code class="descname">-P</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-P" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use POSIX.2 output format.  Alias for <code class="xref std std-option docutils literal"><span class="pre">--format=posix</span></code>.</p>
+<dt id="cmdoption-llvm-nm-debug-syms">
+<code class="sig-name descname">--debug-syms</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-a</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-debug-syms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show all symbols, even those usually suppressed.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--debug-syms">
-<span id="cmdoption-llvm-nm-a"></span><code class="descname">--debug-syms</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-a</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--debug-syms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Show all symbols, even debugger only.</p>
+<dt id="cmdoption-llvm-nm-defined-only">
+<code class="sig-name descname">--defined-only</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-U</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-defined-only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print only symbols defined in this file.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--defined-only">
-<code class="descname">--defined-only</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--defined-only" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print only symbols defined in this file (as opposed to
-symbols which may be referenced by objects in this file, but not
-defined in this file.)</p>
+<dt id="cmdoption-llvm-nm-demangle">
+<code class="sig-name descname">--demangle</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-C</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-demangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Demangle symbol names.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--dynamic">
-<span id="cmdoption-llvm-nm-D"></span><code class="descname">--dynamic</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--dynamic" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-llvm-nm-dynamic">
+<code class="sig-name descname">--dynamic</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-D</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-dynamic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Display dynamic symbols instead of normal symbols.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--extern-only">
-<span id="cmdoption-llvm-nm-g"></span><code class="descname">--extern-only</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-g</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--extern-only" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print only symbols whose definitions are external; that is, accessible
-from other files.</p>
+<dt id="cmdoption-llvm-nm-extern-only">
+<code class="sig-name descname">--extern-only</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-g</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-extern-only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print only symbols whose definitions are external; that is, accessible from
+other files.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--format">
-<span id="cmdoption-llvm-nm-f"></span><code class="descname">--format</code><code class="descclassname">=format</code><code class="descclassname">, </code><code class="descname">-f</code><code class="descclassname"> format</code><a class="headerlink" href="#cmdoption-llvm-nm--format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Select an output format; <em>format</em> may be <em>sysv</em>, <em>posix</em>, or <em>bsd</em>.  The default
-is <em>bsd</em>.</p>
+<dt id="cmdoption-llvm-nm-format">
+<code class="sig-name descname">--format</code><code class="sig-prename descclassname">=&lt;format&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-f</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select an output format; <em>format</em> may be <em>sysv</em>, <em>posix</em>, <em>darwin</em>, or <em>bsd</em>.
+The default is <em>bsd</em>.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-llvm-nm-help">
-<code class="descname">-help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-help" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">--help</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-h</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-help" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a summary of command-line options and their meanings.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--no-sort">
-<span id="cmdoption-llvm-nm-p"></span><code class="descname">--no-sort</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-p</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--no-sort" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shows symbols in order encountered.</p>
+<dt id="cmdoption-llvm-nm-help-list">
+<code class="sig-name descname">--help-list</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-help-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print an uncategorized summary of command-line options and their meanings.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--numeric-sort">
-<span id="cmdoption-llvm-nm-n"></span><span id="cmdoption-llvm-nm-v"></span><code class="descname">--numeric-sort</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-n</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-v</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--numeric-sort" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-llvm-nm-just-symbol-name">
+<code class="sig-name descname">--just-symbol-name</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-j</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-just-symbol-name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print just the symbol names.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-m">
+<code class="sig-name descname">-m</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-m" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use Darwin format. Alias for <code class="docutils literal notranslate"><span class="pre">--format=darwin</span></code>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-no-demangle">
+<code class="sig-name descname">--no-demangle</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-no-demangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Don’t demangle symbol names. This is the default.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-no-llvm-bc">
+<code class="sig-name descname">--no-llvm-bc</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-no-llvm-bc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable the LLVM bitcode reader.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-no-sort">
+<code class="sig-name descname">--no-sort</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-p</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-no-sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show symbols in the order encountered.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-no-weak">
+<code class="sig-name descname">--no-weak</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-W</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-no-weak" title="Permalink to this definition">¶</a></dt>
+<dd><p>Don’t print weak symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-numeric-sort">
+<code class="sig-name descname">--numeric-sort</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-n</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-v</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-numeric-sort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sort symbols by address.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--print-file-name">
-<span id="cmdoption-llvm-nm-A"></span><span id="cmdoption-llvm-nm-o"></span><code class="descname">--print-file-name</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-A</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-o</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--print-file-name" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-llvm-nm-portability">
+<code class="sig-name descname">--portability</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-P</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-portability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use POSIX.2 output format.  Alias for <code class="docutils literal notranslate"><span class="pre">--format=posix</span></code>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-print-armap">
+<code class="sig-name descname">--print-armap</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-M</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-print-armap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the archive symbol table, in addition to the symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-print-file-name">
+<code class="sig-name descname">--print-file-name</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-A</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-o</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-print-file-name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Precede each symbol with the file it came from.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--print-size">
-<span id="cmdoption-llvm-nm-S"></span><code class="descname">--print-size</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-S</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--print-size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Show symbol size instead of address.</p>
+<dt id="cmdoption-llvm-nm-print-size">
+<code class="sig-name descname">--print-size</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-S</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-print-size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show symbol size as well as address (not applicable for Mach-O).</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--size-sort">
-<code class="descname">--size-sort</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--size-sort" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-llvm-nm-radix">
+<code class="sig-name descname">--radix</code><code class="sig-prename descclassname">=&lt;RADIX&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-t</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-radix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify the radix of the symbol address(es). Values accepted are <em>d</em> (decimal),
+<em>x</em> (hexadecimal) and <em>o</em> (octal).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-reverse-sort">
+<code class="sig-name descname">--reverse-sort</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-r</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-reverse-sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort symbols in reverse order.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-size-sort">
+<code class="sig-name descname">--size-sort</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-size-sort" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sort symbols by size.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-llvm-nm--undefined-only">
-<span id="cmdoption-llvm-nm-u"></span><code class="descname">--undefined-only</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">-u</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm--undefined-only" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print only symbols referenced but not defined in this file.</p>
+<dt id="cmdoption-llvm-nm-special-syms">
+<code class="sig-name descname">--special-syms</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-special-syms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignored. For GNU compatibility only.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-undefined-only">
+<code class="sig-name descname">--undefined-only</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-u</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-undefined-only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print only undefined symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-version">
+<code class="sig-name descname">--version</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the version of this program. Does not stack with other commands.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-without-aliases">
+<code class="sig-name descname">--without-aliases</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-without-aliases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exclude aliases from the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-arg-file">
+<code class="sig-name descname">&#64;&lt;FILE&gt;</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-arg-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read command-line options from response file <cite>&lt;FILE&gt;</cite>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="mach-o-specific-options">
+<h2>MACH-O SPECIFIC OPTIONS<a class="headerlink" href="#mach-o-specific-options" title="Permalink to this headline">¶</a></h2>
+<dl class="option">
+<dt id="cmdoption-llvm-nm-add-dyldinfo">
+<code class="sig-name descname">--add-dyldinfo</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-add-dyldinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add symbols from the dyldinfo, if they are not already in the symbol table.
+This is the default.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-arch">
+<code class="sig-name descname">--arch</code><code class="sig-prename descclassname">=&lt;arch1[,arch2,...]&gt;</code><a class="headerlink" href="#cmdoption-llvm-nm-arch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump the symbols from the specified architecture(s).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-dyldinfo-only">
+<code class="sig-name descname">--dyldinfo-only</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-dyldinfo-only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump only symbols from the dyldinfo.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-no-dyldinfo">
+<code class="sig-name descname">--no-dyldinfo</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-no-dyldinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not add any symbols from the dyldinfo.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-s">
+<code class="sig-name descname">-s</code><code class="sig-prename descclassname">=&lt;segment section&gt;</code><a class="headerlink" href="#cmdoption-llvm-nm-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump only symbols from this segment and section name.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-nm-x">
+<code class="sig-name descname">-x</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-nm-x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print symbol entry in hex.</p>
 </dd></dl>
 
 </div>
@@ -209,10 +380,8 @@ is <em>bsd</em>.</p>
 <h2>BUGS<a class="headerlink" href="#bugs" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
-<li><strong class="program">llvm-nm</strong> cannot demangle C++ mangled names, like GNU <strong class="program">nm</strong>
-can.</li>
-<li><strong class="program">llvm-nm</strong> does not support the full set of arguments that GNU
-<strong class="program">nm</strong> does.</li>
+<li><p><strong class="program">llvm-nm</strong> does not support the full set of arguments that GNU
+<strong class="program">nm</strong> does.</p></li>
 </ul>
 </div></blockquote>
 </div>
@@ -222,7 +391,8 @@ can.</li>
 </div>
 <div class="section" id="see-also">
 <h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
-<p>llvm-dis, ar(1), nm(1)</p>
+<p><em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-ar.html">llvm-ar(1)</a></em>, <em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-objdump.html">llvm-objdump(1)</a></em>, <em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-readelf.html">llvm-readelf(1)</a></em>,
+<em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-readobj.html">llvm-readobj(1)</a></em></p>
 </div>
 </div>
 
@@ -238,21 +408,21 @@ can.</li>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="llvm-config.html" title="llvm-config - Print LLVM compilation options"
+          <a href="llvm-objcopy.html" title="llvm-objcopy - object copying and editing tool"
              >next</a> |</li>
         <li class="right" >
-          <a href="llvm-ar.html" title="llvm-ar - LLVM archiver"
+          <a href="llvm-cxxfilt.html" title="llvm-cxxfilt - LLVM symbol name demangler"
              >previous</a> |</li>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

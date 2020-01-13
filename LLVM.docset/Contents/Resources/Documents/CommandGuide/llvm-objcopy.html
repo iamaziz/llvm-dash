@@ -1,0 +1,689 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>llvm-objcopy - object copying and editing tool &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="llvm-objdump - LLVM’s object file dumper" href="llvm-objdump.html" />
+    <link rel="prev" title="llvm-nm - list LLVM bitcode and object file’s symbol table" href="llvm-nm.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="llvm-objdump.html" title="llvm-objdump - LLVM’s object file dumper"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="llvm-nm.html" title="llvm-nm - list LLVM bitcode and object file’s symbol table"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="llvm-objcopy-object-copying-and-editing-tool">
+<h1>llvm-objcopy - object copying and editing tool<a class="headerlink" href="#llvm-objcopy-object-copying-and-editing-tool" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">llvm-objcopy</strong> [<em>options</em>] <em>input</em> [<em>output</em>]</p>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">llvm-objcopy</strong> is a tool to copy and manipulate objects. In basic
+usage, it makes a semantic copy of the input to the output. If any options are
+specified, the output may be modified along the way, e.g. by removing sections.</p>
+<p>If no output file is specified, the input file is modified in-place. If “-” is
+specified for the input file, the input is read from the program’s standard
+input stream. If “-” is specified for the output file, the output is written to
+the standard output stream of the program.</p>
+<p>If the input is an archive, any requested operations will be applied to each
+archive member individually.</p>
+<p>The tool is still in active development, but in most scenarios it works as a
+drop-in replacement for GNU’s <strong class="program">objcopy</strong>.</p>
+</div>
+<div class="section" id="generic-and-cross-platform-options">
+<h2>GENERIC AND CROSS-PLATFORM OPTIONS<a class="headerlink" href="#generic-and-cross-platform-options" title="Permalink to this headline">¶</a></h2>
+<p>The following options are either agnostic of the file format, or apply to
+multiple file formats.</p>
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-add-gnu-debuglink">
+<code class="sig-name descname">--add-gnu-debuglink</code><code class="sig-prename descclassname"> &lt;debug-file&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-add-gnu-debuglink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a .gnu_debuglink section for <code class="docutils literal notranslate"><span class="pre">&lt;debug-file&gt;</span></code> to the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-disable-deterministic-archives">
+<code class="sig-name descname">--disable-deterministic-archives</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-U</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-disable-deterministic-archives" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use real values for UIDs, GIDs and timestamps when updating archive member
+headers.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-discard-all">
+<code class="sig-name descname">--discard-all</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-x</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-discard-all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove most local symbols from the output. Different file formats may limit
+this to a subset of the local symbols. For example, file and section symbols in
+ELF objects will not be discarded.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-enable-deterministic-archives">
+<code class="sig-name descname">--enable-deterministic-archives</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-D</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-enable-deterministic-archives" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable deterministic mode when copying archives, i.e. use 0 for archive member
+header UIDs, GIDs and timestamp fields. On by default.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-help">
+<code class="sig-name descname">--help</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-h</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a summary of command line options.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-only-section">
+<code class="sig-name descname">--only-section</code><code class="sig-prename descclassname"> &lt;section&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-j</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-only-section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all sections from the output, except for sections named <code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code>.
+Can be specified multiple times to keep multiple sections.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-regex">
+<code class="sig-name descname">--regex</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-regex" title="Permalink to this definition">¶</a></dt>
+<dd><p>If specified, symbol and section names specified by other switches are treated
+as extended POSIX regular expression patterns.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-remove-section">
+<code class="sig-name descname">--remove-section</code><code class="sig-prename descclassname"> &lt;section&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-R</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-remove-section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the specified section from the output. Can be specified multiple times
+to remove multiple sections simultaneously.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-all-gnu">
+<code class="sig-name descname">--strip-all-gnu</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-all-gnu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all symbols, debug sections and relocations from the output. This option
+is equivalent to GNU <strong class="program">objcopy</strong>’s <code class="docutils literal notranslate"><span class="pre">--strip-all</span></code> switch.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-all">
+<code class="sig-name descname">--strip-all</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-S</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-all" title="Permalink to this definition">¶</a></dt>
+<dd><p>For ELF objects, remove from the output all symbols and non-alloc sections not
+within segments, except for .gnu.warning sections and the section name table.</p>
+<p>For COFF objects, remove all symbols, debug sections, and relocations from the
+output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-debug">
+<code class="sig-name descname">--strip-debug</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-g</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all debug sections from the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-symbol">
+<code class="sig-name descname">--strip-symbol</code><code class="sig-prename descclassname"> &lt;symbol&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-N</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all symbols named <code class="docutils literal notranslate"><span class="pre">&lt;symbol&gt;</span></code> from the output. Can be specified
+multiple times to remove multiple symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-symbols">
+<code class="sig-name descname">--strip-symbols</code><code class="sig-prename descclassname"> &lt;filename&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all symbols whose names appear in the file <code class="docutils literal notranslate"><span class="pre">&lt;filename&gt;</span></code>, from the
+output. In the file, each line represents a single symbol name, with leading
+and trailing whitespace ignored, as is anything following a ‘#’. Can be
+specified multiple times to read names from multiple files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-unneeded-symbol">
+<code class="sig-name descname">--strip-unneeded-symbol</code><code class="sig-prename descclassname"> &lt;symbol&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-unneeded-symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove from the output all symbols named <code class="docutils literal notranslate"><span class="pre">&lt;symbol&gt;</span></code> that are local or
+undefined and are not required by any relocation.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-unneeded-symbols">
+<code class="sig-name descname">--strip-unneeded-symbols</code><code class="sig-prename descclassname"> &lt;filename&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-unneeded-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all symbols whose names appear in the file <code class="docutils literal notranslate"><span class="pre">&lt;filename&gt;</span></code>, from the
+output, if they are local or undefined and are not required by any relocation.
+In the file, each line represents a single symbol name, with leading and
+trailing whitespace ignored, as is anything following a ‘#’. Can be specified
+multiple times to read names from multiple files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-unneeded">
+<code class="sig-name descname">--strip-unneeded</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-unneeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove from the output all local or undefined symbols that are not required by
+relocations.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-version">
+<code class="sig-name descname">--version</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-V</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the version of this program.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="coff-specific-options">
+<h2>COFF-SPECIFIC OPTIONS<a class="headerlink" href="#coff-specific-options" title="Permalink to this headline">¶</a></h2>
+<p>The following options are implemented only for COFF objects. If used with other
+objects, <strong class="program">llvm-objcopy</strong> will either emit an error or silently ignore
+them.</p>
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-only-keep-debug">
+<code class="sig-name descname">--only-keep-debug</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-only-keep-debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the contents of non-debug sections from the output, but keep the section
+headers.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="elf-specific-options">
+<h2>ELF-SPECIFIC OPTIONS<a class="headerlink" href="#elf-specific-options" title="Permalink to this headline">¶</a></h2>
+<p>The following options are implemented only for ELF objects. If used with other
+objects, <strong class="program">llvm-objcopy</strong> will either emit an error or silently ignore
+them.</p>
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-add-section">
+<code class="sig-name descname">--add-section</code><code class="sig-prename descclassname"> &lt;section=file&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-add-section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a section named <code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code> with the contents of <code class="docutils literal notranslate"><span class="pre">&lt;file&gt;</span></code> to the
+output. The section will be of type <cite>SHT_NOTE</cite>, if the name starts with
+“.note”. Otherwise, it will have type <cite>SHT_PROGBITS</cite>. Can be specified multiple
+times to add multiple sections.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-add-symbol">
+<code class="sig-name descname">--add-symbol</code><code class="sig-prename descclassname"> &lt;name&gt;=[&lt;section&gt;:]&lt;value&gt;[,&lt;flags&gt;]</code><a class="headerlink" href="#cmdoption-llvm-objcopy-add-symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new symbol called <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;</span></code> to the output symbol table, in the section
+named <code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code>, with value <code class="docutils literal notranslate"><span class="pre">&lt;value&gt;</span></code>. If <code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code> is not specified,
+the symbol is added as an absolute symbol. The <code class="docutils literal notranslate"><span class="pre">&lt;flags&gt;</span></code> affect the symbol
+properties. Accepted values are:</p>
+<ul class="simple">
+<li><p><cite>global</cite> = the symbol will have global binding.</p></li>
+<li><p><cite>local</cite> = the symbol will have local binding.</p></li>
+<li><p><cite>weak</cite> = the symbol will have weak binding.</p></li>
+<li><p><cite>default</cite> = the symbol will have default visibility.</p></li>
+<li><p><cite>hidden</cite> = the symbol will have hidden visibility.</p></li>
+<li><p><cite>file</cite> = the symbol will be an <cite>STT_FILE</cite> symbol.</p></li>
+<li><p><cite>section</cite> = the symbol will be an <cite>STT_SECTION</cite> symbol.</p></li>
+<li><p><cite>object</cite> = the symbol will be an <cite>STT_OBJECT</cite> symbol.</p></li>
+<li><p><cite>function</cite> = the symbol will be an <cite>STT_FUNC</cite> symbol.</p></li>
+<li><p><cite>indirect-function</cite> = the symbol will be an <cite>STT_GNU_IFUNC</cite> symbol.</p></li>
+</ul>
+<p>Additionally, the following flags are accepted but ignored: <cite>debug</cite>,
+<cite>constructor</cite>, <cite>warning</cite>, <cite>indirect</cite>, <cite>synthetic</cite>, <cite>unique-object</cite>, <cite>before</cite>.</p>
+<p>Can be specified multiple times to add multiple symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-allow-broken-links">
+<code class="sig-name descname">--allow-broken-links</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-allow-broken-links" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow llvm-objcopy to remove sections even if it would leave invalid section
+references. Any invalid sh_link fields will be set to zero.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-binary-architecture">
+<code class="sig-name descname">--binary-architecture</code><code class="sig-prename descclassname"> &lt;arch&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-B</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-binary-architecture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify the architecture to use, when transforming an architecture-less format
+(e.g. binary) to another format. Valid options are:</p>
+<ul class="simple">
+<li><p><cite>aarch64</cite></p></li>
+<li><p><cite>arm</cite></p></li>
+<li><p><cite>i386</cite></p></li>
+<li><p><cite>i386:x86-64</cite></p></li>
+<li><p><cite>mips</cite></p></li>
+<li><p><cite>powerpc:common64</cite></p></li>
+<li><p><cite>riscv:rv32</cite></p></li>
+<li><p><cite>riscv:rv64</cite></p></li>
+<li><p><cite>sparc</cite></p></li>
+<li><p><cite>sparcel</cite></p></li>
+<li><p><cite>x86-64</cite></p></li>
+</ul>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-build-id-link-dir">
+<code class="sig-name descname">--build-id-link-dir</code><code class="sig-prename descclassname"> &lt;dir&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-build-id-link-dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the directory used by <a class="reference internal" href="#cmdoption-llvm-objcopy-build-id-link-input"><code class="xref std std-option docutils literal notranslate"><span class="pre">--build-id-link-input</span></code></a> and
+<a class="reference internal" href="#cmdoption-llvm-objcopy-build-id-link-output"><code class="xref std std-option docutils literal notranslate"><span class="pre">--build-id-link-output</span></code></a>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-build-id-link-input">
+<code class="sig-name descname">--build-id-link-input</code><code class="sig-prename descclassname"> &lt;suffix&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-build-id-link-input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hard-link the input to <code class="docutils literal notranslate"><span class="pre">&lt;dir&gt;/xx/xxx&lt;suffix&gt;</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;dir&gt;</span></code> is the directory
+specified by <a class="reference internal" href="#cmdoption-llvm-objcopy-build-id-link-dir"><code class="xref std std-option docutils literal notranslate"><span class="pre">--build-id-link-dir</span></code></a>. The path used is derived from the
+hex build ID.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-build-id-link-output">
+<code class="sig-name descname">--build-id-link-output</code><code class="sig-prename descclassname"> &lt;suffix&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-build-id-link-output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hard-link the output to <code class="docutils literal notranslate"><span class="pre">&lt;dir&gt;/xx/xxx&lt;suffix&gt;</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;dir&gt;</span></code> is the directory
+specified by <a class="reference internal" href="#cmdoption-llvm-objcopy-build-id-link-dir"><code class="xref std std-option docutils literal notranslate"><span class="pre">--build-id-link-dir</span></code></a>. The path used is derived from the
+hex build ID.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-change-start">
+<code class="sig-name descname">--change-start</code><code class="sig-prename descclassname"> &lt;incr&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--adjust-start</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-change-start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add <code class="docutils literal notranslate"><span class="pre">&lt;incr&gt;</span></code> to the program’s start address. Can be specified multiple
+times, in which case the values will be applied cumulatively.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-compress-debug-sections">
+<code class="sig-name descname">--compress-debug-sections</code><code class="sig-prename descclassname"> [&lt;style&gt;]</code><a class="headerlink" href="#cmdoption-llvm-objcopy-compress-debug-sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compress DWARF debug sections in the output, using the specified style.
+Supported styles are <cite>zlib-gnu</cite> and <cite>zlib</cite>. Defaults to <cite>zlib</cite> if no style is
+specified.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-decompress-debug-sections">
+<code class="sig-name descname">--decompress-debug-sections</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-decompress-debug-sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decompress any compressed DWARF debug sections in the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-discard-locals">
+<code class="sig-name descname">--discard-locals</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-X</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-discard-locals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove local symbols starting with “.L” from the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-dump-section">
+<code class="sig-name descname">--dump-section</code><code class="sig-prename descclassname"> &lt;section&gt;=&lt;file&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-dump-section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump the contents of section <code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code> into the file <code class="docutils literal notranslate"><span class="pre">&lt;file&gt;</span></code>. Can be
+specified multiple times to dump multiple sections to different files.
+<code class="docutils literal notranslate"><span class="pre">&lt;file&gt;</span></code> is unrelated to the input and output files provided to
+<strong class="program">llvm-objcopy</strong> and as such the normal copying and editing
+operations will still be performed. No operations are performed on the sections
+prior to dumping them.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-extract-dwo">
+<code class="sig-name descname">--extract-dwo</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-extract-dwo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all sections that are not DWARF .dwo sections from the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-extract-main-partition">
+<code class="sig-name descname">--extract-main-partition</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-extract-main-partition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the main partition from the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-extract-partition">
+<code class="sig-name descname">--extract-partition</code><code class="sig-prename descclassname"> &lt;name&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-extract-partition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the named partition from the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-globalize-symbol">
+<code class="sig-name descname">--globalize-symbol</code><code class="sig-prename descclassname"> &lt;symbol&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-globalize-symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark any defined symbols named <code class="docutils literal notranslate"><span class="pre">&lt;symbol&gt;</span></code> as global symbols in the output.
+Can be specified multiple times to mark multiple symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-globalize-symbols">
+<code class="sig-name descname">--globalize-symbols</code><code class="sig-prename descclassname"> &lt;filename&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-globalize-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a list of names from the file <code class="docutils literal notranslate"><span class="pre">&lt;filename&gt;</span></code> and mark defined symbols with
+those names as global in the output. In the file, each line represents a single
+symbol, with leading and trailing whitespace ignored, as is anything following
+a ‘#’. Can be specified multiple times to read names from multiple files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-input-target">
+<code class="sig-name descname">--input-target</code><code class="sig-prename descclassname"> &lt;format&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-I</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-input-target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the input as the specified format. See <a class="reference internal" href="#supported-formats">SUPPORTED FORMATS</a> for a list of
+valid <code class="docutils literal notranslate"><span class="pre">&lt;format&gt;</span></code> values. If unspecified, <strong class="program">llvm-objcopy</strong> will attempt
+to determine the format automatically.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-keep-file-symbols">
+<code class="sig-name descname">--keep-file-symbols</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-keep-file-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keep symbols of type <cite>STT_FILE</cite>, even if they would otherwise be stripped.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-keep-global-symbol">
+<code class="sig-name descname">--keep-global-symbol</code><code class="sig-prename descclassname"> &lt;symbol&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-keep-global-symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make all symbols local in the output, except for symbols with the name
+<code class="docutils literal notranslate"><span class="pre">&lt;symbol&gt;</span></code>. Can be specified multiple times to ignore multiple symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-keep-global-symbols">
+<code class="sig-name descname">--keep-global-symbols</code><code class="sig-prename descclassname"> &lt;filename&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-keep-global-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make all symbols local in the output, except for symbols named in the file
+<code class="docutils literal notranslate"><span class="pre">&lt;filename&gt;</span></code>. In the file, each line represents a single symbol, with leading
+and trailing whitespace ignored, as is anything following a ‘#’. Can be
+specified multiple times to read names from multiple files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-keep-section">
+<code class="sig-name descname">--keep-section</code><code class="sig-prename descclassname"> &lt;section&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-keep-section" title="Permalink to this definition">¶</a></dt>
+<dd><p>When removing sections from the output, do not remove sections named
+<code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code>. Can be specified multiple times to keep multiple sections.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-keep-symbol">
+<code class="sig-name descname">--keep-symbol</code><code class="sig-prename descclassname"> &lt;symbol&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-K</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-keep-symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>When removing symbols from the output, do not remove symbols named
+<code class="docutils literal notranslate"><span class="pre">&lt;symbol&gt;</span></code>. Can be specified multiple times to keep multiple symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-keep-symbols">
+<code class="sig-name descname">--keep-symbols</code><code class="sig-prename descclassname"> &lt;filename&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-keep-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>When removing symbols from the output do not remove symbols named in the file
+<code class="docutils literal notranslate"><span class="pre">&lt;filename&gt;</span></code>. In the file, each line represents a single symbol, with leading
+and trailing whitespace ignored, as is anything following a ‘#’. Can be
+specified multiple times to read names from multiple files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-localize-hidden">
+<code class="sig-name descname">--localize-hidden</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-localize-hidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make all symbols with hidden or internal visibility local in the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-localize-symbol">
+<code class="sig-name descname">--localize-symbol</code><code class="sig-prename descclassname"> &lt;symbol&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-L</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-localize-symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark any defined non-common symbol named <code class="docutils literal notranslate"><span class="pre">&lt;symbol&gt;</span></code> as a local symbol in the
+output. Can be specified multiple times to mark multiple symbols as local.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-localize-symbols">
+<code class="sig-name descname">--localize-symbols</code><code class="sig-prename descclassname"> &lt;filename&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-localize-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a list of names from the file <code class="docutils literal notranslate"><span class="pre">&lt;filename&gt;</span></code> and mark defined non-common
+symbols with those names as local in the output. In the file, each line
+represents a single symbol, with leading and trailing whitespace ignored, as is
+anything following a ‘#’. Can be specified multiple times to read names from
+multiple files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-output-target">
+<code class="sig-name descname">--output-target</code><code class="sig-prename descclassname"> &lt;format&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-O</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-output-target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the output as the specified format. See <a class="reference internal" href="#supported-formats">SUPPORTED FORMATS</a> for a list
+of valid <code class="docutils literal notranslate"><span class="pre">&lt;format&gt;</span></code> values. If unspecified, the output format is assumed to
+be the same as the input file’s format.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-prefix-alloc-sections">
+<code class="sig-name descname">--prefix-alloc-sections</code><code class="sig-prename descclassname"> &lt;prefix&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-prefix-alloc-sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add <code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;</span></code> to the front of the names of all allocatable sections in the
+output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-prefix-symbols">
+<code class="sig-name descname">--prefix-symbols</code><code class="sig-prename descclassname"> &lt;prefix&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-prefix-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add <code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;</span></code> to the front of every symbol name in the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-preserve-dates">
+<code class="sig-name descname">--preserve-dates</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-p</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-preserve-dates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preserve access and modification timestamps in the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-redefine-sym">
+<code class="sig-name descname">--redefine-sym</code><code class="sig-prename descclassname"> &lt;old&gt;=&lt;new&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-redefine-sym" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename symbols called <code class="docutils literal notranslate"><span class="pre">&lt;old&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">&lt;new&gt;</span></code> in the output. Can be specified
+multiple times to rename multiple symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-redefine-syms">
+<code class="sig-name descname">--redefine-syms</code><code class="sig-prename descclassname"> &lt;filename&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-redefine-syms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename symbols in the output as described in the file <code class="docutils literal notranslate"><span class="pre">&lt;filename&gt;</span></code>. In the
+file, each line represents a single symbol to rename, with the old name and new
+name separated by an equals sign. Leading and trailing whitespace is ignored,
+as is anything following a ‘#’. Can be specified multiple times to read names
+from multiple files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-rename-section">
+<code class="sig-name descname">--rename-section</code><code class="sig-prename descclassname"> &lt;old&gt;=&lt;new&gt;[,&lt;flag&gt;,...]</code><a class="headerlink" href="#cmdoption-llvm-objcopy-rename-section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename sections called <code class="docutils literal notranslate"><span class="pre">&lt;old&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">&lt;new&gt;</span></code> in the output, and apply any
+specified <code class="docutils literal notranslate"><span class="pre">&lt;flag&gt;</span></code> values. See <a class="reference internal" href="#cmdoption-llvm-objcopy-set-section-flags"><code class="xref std std-option docutils literal notranslate"><span class="pre">--set-section-flags</span></code></a> for a list of
+supported flags. Can be specified multiple times to rename multiple sections.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-set-section-flags">
+<code class="sig-name descname">--set-section-flags</code><code class="sig-prename descclassname"> &lt;section&gt;=&lt;flag&gt;[,&lt;flag&gt;,...]</code><a class="headerlink" href="#cmdoption-llvm-objcopy-set-section-flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set section properties in the output of section <code class="docutils literal notranslate"><span class="pre">&lt;section&gt;</span></code> based on the
+specified <code class="docutils literal notranslate"><span class="pre">&lt;flag&gt;</span></code> values. Can be specified multiple times to update multiple
+sections.</p>
+<p>Following is a list of supported flags and their effects:</p>
+<ul class="simple">
+<li><p><cite>alloc</cite> = add the <cite>SHF_ALLOC</cite> flag.</p></li>
+<li><p><cite>load</cite> = if the section has <cite>SHT_NOBITS</cite> type, mark it as a <cite>SHT_PROGBITS</cite>
+section.</p></li>
+<li><p><cite>readonly</cite> = if this flag is not specified, add the <cite>SHF_WRITE</cite> flag.</p></li>
+<li><p><cite>code</cite> = add the <cite>SHF_EXECINSTR</cite> flag.</p></li>
+<li><p><cite>merge</cite> = add the <cite>SHF_MERGE</cite> flag.</p></li>
+<li><p><cite>strings</cite> = add the <cite>SHF_STRINGS</cite> flag.</p></li>
+<li><p><cite>contents</cite> = if the section has <cite>SHT_NOBITS</cite> type, mark it as a <cite>SHT_PROGBITS</cite>
+section.</p></li>
+</ul>
+<p>The following flags are also accepted, but are ignored for GNU compatibility:
+<cite>noload</cite>, <cite>debug</cite>, <cite>data</cite>, <cite>rom</cite>, <cite>share</cite>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-set-start-addr">
+<code class="sig-name descname">--set-start-addr</code><code class="sig-prename descclassname"> &lt;addr&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-set-start-addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the start address of the output to <code class="docutils literal notranslate"><span class="pre">&lt;addr&gt;</span></code>. Overrides any previously
+specified <a class="reference internal" href="#cmdoption-llvm-objcopy-change-start"><code class="xref std std-option docutils literal notranslate"><span class="pre">--change-start</span></code></a> or <a class="reference internal" href="#cmdoption-llvm-objcopy-change-start"><code class="xref std std-option docutils literal notranslate"><span class="pre">--adjust-start</span></code></a> options.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-split-dwo">
+<code class="sig-name descname">--split-dwo</code><code class="sig-prename descclassname"> &lt;dwo-file&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-split-dwo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to running <strong class="program">llvm-objcopy</strong> with <a class="reference internal" href="#cmdoption-llvm-objcopy-extract-dwo"><code class="xref std std-option docutils literal notranslate"><span class="pre">--extract-dwo</span></code></a> and
+<code class="docutils literal notranslate"><span class="pre">&lt;dwo-file&gt;</span></code> as the output file and no other options, and then with
+<a class="reference internal" href="#cmdoption-llvm-objcopy-strip-dwo"><code class="xref std std-option docutils literal notranslate"><span class="pre">--strip-dwo</span></code></a> on the input file.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-dwo">
+<code class="sig-name descname">--strip-dwo</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-dwo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all DWARF .dwo sections from the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-non-alloc">
+<code class="sig-name descname">--strip-non-alloc</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-non-alloc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove from the output all non-allocatable sections that are not within
+segments.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-strip-sections">
+<code class="sig-name descname">--strip-sections</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-strip-sections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove from the output all section headers and all section data not within
+segments. Note that many tools will not be able to use an object without
+section headers.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-target">
+<code class="sig-name descname">--target</code><code class="sig-prename descclassname"> &lt;format&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-F</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to <a class="reference internal" href="#cmdoption-llvm-objcopy-input-target"><code class="xref std std-option docutils literal notranslate"><span class="pre">--input-target</span></code></a> and <a class="reference internal" href="#cmdoption-llvm-objcopy-output-target"><code class="xref std std-option docutils literal notranslate"><span class="pre">--output-target</span></code></a> for the
+specified format. See <a class="reference internal" href="#supported-formats">SUPPORTED FORMATS</a> for a list of valid <code class="docutils literal notranslate"><span class="pre">&lt;format&gt;</span></code>
+values.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-weaken-symbol">
+<code class="sig-name descname">--weaken-symbol</code><code class="sig-prename descclassname"> &lt;symbol&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-W</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-weaken-symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark any global symbol named <code class="docutils literal notranslate"><span class="pre">&lt;symbol&gt;</span></code> as a weak symbol in the output. Can
+be specified multiple times to mark multiple symbols as weak.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-weaken-symbols">
+<code class="sig-name descname">--weaken-symbols</code><code class="sig-prename descclassname"> &lt;filename&gt;</code><a class="headerlink" href="#cmdoption-llvm-objcopy-weaken-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a list of names from the file <code class="docutils literal notranslate"><span class="pre">&lt;filename&gt;</span></code> and mark global symbols with
+those names as weak in the output. In the file, each line represents a single
+symbol, with leading and trailing whitespace ignored, as is anything following
+a ‘#’. Can be specified multiple times to read names from multiple files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objcopy-weaken">
+<code class="sig-name descname">--weaken</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objcopy-weaken" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark all defined global symbols as weak in the output.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="supported-formats">
+<h2>SUPPORTED FORMATS<a class="headerlink" href="#supported-formats" title="Permalink to this headline">¶</a></h2>
+<p>The following values are currently supported by <strong class="program">llvm-objcopy</strong> for the
+<a class="reference internal" href="#cmdoption-llvm-objcopy-input-target"><code class="xref std std-option docutils literal notranslate"><span class="pre">--input-target</span></code></a>, <a class="reference internal" href="#cmdoption-llvm-objcopy-output-target"><code class="xref std std-option docutils literal notranslate"><span class="pre">--output-target</span></code></a>, and <a class="reference internal" href="#cmdoption-llvm-objcopy-target"><code class="xref std std-option docutils literal notranslate"><span class="pre">--target</span></code></a>
+options. For GNU <strong class="program">objcopy</strong> compatibility, the values are all bfdnames.</p>
+<ul class="simple">
+<li><p><cite>binary</cite></p></li>
+<li><p><cite>ihex</cite></p></li>
+<li><p><cite>elf32-i386</cite></p></li>
+<li><p><cite>elf32-x86-64</cite></p></li>
+<li><p><cite>elf64-x86-64</cite></p></li>
+<li><p><cite>elf32-iamcu</cite></p></li>
+<li><p><cite>elf32-littlearm</cite></p></li>
+<li><p><cite>elf64-aarch64</cite></p></li>
+<li><p><cite>elf64-littleaarch64</cite></p></li>
+<li><p><cite>elf32-littleriscv</cite></p></li>
+<li><p><cite>elf64-littleriscv</cite></p></li>
+<li><p><cite>elf32-powerpc</cite></p></li>
+<li><p><cite>elf32-powerpcle</cite></p></li>
+<li><p><cite>elf64-powerpc</cite></p></li>
+<li><p><cite>elf64-powerpcle</cite></p></li>
+<li><p><cite>elf32-bigmips</cite></p></li>
+<li><p><cite>elf32-ntradbigmips</cite></p></li>
+<li><p><cite>elf32-ntradlittlemips</cite></p></li>
+<li><p><cite>elf32-tradbigmips</cite></p></li>
+<li><p><cite>elf32-tradlittlemips</cite></p></li>
+<li><p><cite>elf64-tradbigmips</cite></p></li>
+<li><p><cite>elf64-tradlittlemips</cite></p></li>
+<li><p><cite>elf32-sparc</cite></p></li>
+<li><p><cite>elf32-sparcel</cite></p></li>
+</ul>
+<p>Additionally, all targets except <cite>binary</cite> and <cite>ihex</cite> can have <cite>-freebsd</cite> as a
+suffix.</p>
+</div>
+<div class="section" id="binary-input-and-output">
+<h2>BINARY INPUT AND OUTPUT<a class="headerlink" href="#binary-input-and-output" title="Permalink to this headline">¶</a></h2>
+<p>If <cite>binary</cite> is used as the value for <a class="reference internal" href="#cmdoption-llvm-objcopy-input-target"><code class="xref std std-option docutils literal notranslate"><span class="pre">--input-target</span></code></a>, the input file
+will be embedded as a data section in an ELF relocatable object, with symbols
+<code class="docutils literal notranslate"><span class="pre">_binary_&lt;file_name&gt;_start</span></code>, <code class="docutils literal notranslate"><span class="pre">_binary_&lt;file_name&gt;_end</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">_binary_&lt;file_name&gt;_size</span></code> representing the start, end and size of the data,
+where <code class="docutils literal notranslate"><span class="pre">&lt;file_name&gt;</span></code> is the path of the input file as specified on the command
+line with non-alphanumeric characters converted to <code class="docutils literal notranslate"><span class="pre">_</span></code>.</p>
+<p>If <cite>binary</cite> is used as the value for <a class="reference internal" href="#cmdoption-llvm-objcopy-output-target"><code class="xref std std-option docutils literal notranslate"><span class="pre">--output-target</span></code></a>, the output file
+will be a raw binary file, containing the memory image of the input file.
+Symbols and relocation information will be discarded. The image will start at
+the address of the first loadable section in the output.</p>
+</div>
+<div class="section" id="exit-status">
+<h2>EXIT STATUS<a class="headerlink" href="#exit-status" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">llvm-objcopy</strong> exits with a non-zero exit code if there is an error.
+Otherwise, it exits with code 0.</p>
+</div>
+<div class="section" id="bugs">
+<h2>BUGS<a class="headerlink" href="#bugs" title="Permalink to this headline">¶</a></h2>
+<p>To report bugs, please visit &lt;<a class="reference external" href="http://llvm.org/bugs/">http://llvm.org/bugs/</a>&gt;.</p>
+<p>There is a known issue with <a class="reference internal" href="#cmdoption-llvm-objcopy-input-target"><code class="xref std std-option docutils literal notranslate"><span class="pre">--input-target</span></code></a> and <a class="reference internal" href="#cmdoption-llvm-objcopy-target"><code class="xref std std-option docutils literal notranslate"><span class="pre">--target</span></code></a>
+causing only <code class="docutils literal notranslate"><span class="pre">binary</span></code> and <code class="docutils literal notranslate"><span class="pre">ihex</span></code> formats to have any effect. Other values
+will be ignored and <strong class="program">llvm-objcopy</strong> will attempt to guess the input
+format.</p>
+</div>
+<div class="section" id="see-also">
+<h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<p><em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-strip.html">llvm-strip(1)</a></em></p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="llvm-objdump.html" title="llvm-objdump - LLVM’s object file dumper"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="llvm-nm.html" title="llvm-nm - list LLVM bitcode and object file’s symbol table"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

@@ -1,40 +1,28 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>llvm-dwarfdump - print contents of DWARF sections &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>llvm-dwarfdump - dump and verify DWARF debug information &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
-    <link rel="next" title="bugpoint - automatic test case reduction tool" href="bugpoint.html" />
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="dsymutil - manipulate archived DWARF debug symbol files" href="dsymutil.html" />
     <link rel="prev" title="llvm-symbolizer - convert addresses into source code locations" href="llvm-symbolizer.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -48,7 +36,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="bugpoint.html" title="bugpoint - automatic test case reduction tool"
+          <a href="dsymutil.html" title="dsymutil - manipulate archived DWARF debug symbol files"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="llvm-symbolizer.html" title="llvm-symbolizer - convert addresses into source code locations"
@@ -56,7 +44,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -65,27 +53,209 @@
       <div class="documentwrapper">
           <div class="body" role="main">
             
-  <div class="section" id="llvm-dwarfdump-print-contents-of-dwarf-sections">
-<h1>llvm-dwarfdump - print contents of DWARF sections<a class="headerlink" href="#llvm-dwarfdump-print-contents-of-dwarf-sections" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="llvm-dwarfdump-dump-and-verify-dwarf-debug-information">
+<h1>llvm-dwarfdump - dump and verify DWARF debug information<a class="headerlink" href="#llvm-dwarfdump-dump-and-verify-dwarf-debug-information" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="synopsis">
 <h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
-<p><strong class="program">llvm-dwarfdump</strong> [<em>options</em>] [<em>filenames...</em>]</p>
+<p><strong class="program">llvm-dwarfdump</strong> [<em>options</em>] [<em>filename …</em>]</p>
 </div>
 <div class="section" id="description">
 <h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
-<p><strong class="program">llvm-dwarfdump</strong> parses DWARF sections in the object files
-and prints their contents in human-readable form.</p>
+<p><strong class="program">llvm-dwarfdump</strong> parses DWARF sections in object files,
+archives, and <cite>.dSYM</cite> bundles and prints their contents in
+human-readable form. Only the .debug_info section is printed unless one of
+the section-specific options or <a class="reference internal" href="#cmdoption-llvm-dwarfdump-a"><code class="xref std std-option docutils literal notranslate"><span class="pre">--all</span></code></a> is specified.</p>
+<p>If no input file is specified, <cite>a.out</cite> is used instead. If <cite>-</cite> is used as the
+input file, <strong class="program">llvm-dwarfdump</strong> reads the input from its standard input
+stream.</p>
 </div>
 <div class="section" id="options">
 <h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption-debug-dump">
-<code class="descname">-debug-dump</code><code class="descclassname">=section</code><a class="headerlink" href="#cmdoption-debug-dump" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specify the DWARF section to dump.
-For example, use <code class="docutils literal"><span class="pre">abbrev</span></code> to dump the contents of <code class="docutils literal"><span class="pre">.debug_abbrev</span></code> section,
-<code class="docutils literal"><span class="pre">loc.dwo</span></code> to dump the contents of <code class="docutils literal"><span class="pre">.debug_loc.dwo</span></code> etc.
-See <code class="docutils literal"><span class="pre">llvm-dwarfdump</span> <span class="pre">--help</span></code> for the complete list of supported sections.
-Use <code class="docutils literal"><span class="pre">all</span></code> to dump all DWARF sections. It is the default.</p>
+<dt id="cmdoption-llvm-dwarfdump-a">
+<code class="sig-name descname">-a</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--all</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump all supported DWARF sections.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-arch">
+<code class="sig-name descname">--arch</code><code class="sig-prename descclassname">=&lt;arch&gt;</code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-arch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump DWARF debug information for the specified CPU architecture.
+Architectures may be specified by name or by number.  This
+option can be specified multiple times, once for each desired
+architecture.  All CPU architectures will be printed by
+default.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-c">
+<code class="sig-name descname">-c</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--show-children</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-c" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show a debug info entry’s children when selectively printing with
+the <cite>=&lt;offset&gt;</cite> argument of <a class="reference internal" href="#cmdoption-llvm-dwarfdump-debug-abbrev"><code class="xref std std-option docutils literal notranslate"><span class="pre">--debug-info</span></code></a>, or options such
+as <a class="reference internal" href="#cmdoption-llvm-dwarfdump-f"><code class="xref std std-option docutils literal notranslate"><span class="pre">--find</span></code></a> or <a class="reference internal" href="#cmdoption-llvm-dwarfdump-n"><code class="xref std std-option docutils literal notranslate"><span class="pre">--name</span></code></a>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-color">
+<code class="sig-name descname">--color</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use colors in output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-f">
+<code class="sig-name descname">-f</code><code class="sig-prename descclassname"> &lt;name&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--find</code><code class="sig-prename descclassname">=&lt;name&gt;</code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for the exact text &lt;name&gt; in the accelerator tables
+and print the matching debug information entries.
+When there is no accelerator tables or the name of the DIE
+you are looking for is not found in the accelerator tables,
+try using the slower but more complete <a class="reference internal" href="#cmdoption-llvm-dwarfdump-n"><code class="xref std std-option docutils literal notranslate"><span class="pre">--name</span></code></a> option.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-show-form">
+<code class="sig-name descname">-F</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--show-form</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-show-form" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show DWARF form types after the DWARF attribute types.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-h">
+<code class="sig-name descname">-h</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--help</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help and usage for this command.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-help-list">
+<code class="sig-name descname">--help-list</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-help-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show help and usage for this command without grouping the options
+into categories.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-i">
+<code class="sig-name descname">-i</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--ignore-case</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore case distinctions when using <a class="reference internal" href="#cmdoption-llvm-dwarfdump-n"><code class="xref std std-option docutils literal notranslate"><span class="pre">--name</span></code></a>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-n">
+<code class="sig-name descname">-n</code><code class="sig-prename descclassname"> &lt;name&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--name</code><code class="sig-prename descclassname">=&lt;name&gt;</code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find and print all debug info entries whose name
+(<cite>DW_AT_name</cite> attribute) is &lt;name&gt;.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-lookup">
+<code class="sig-name descname">--lookup</code><code class="sig-prename descclassname">=&lt;address&gt;</code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-lookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Look up &lt;address&gt; in the debug information and print out the file,
+function, block, and line table details.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-o">
+<code class="sig-name descname">-o</code><code class="sig-prename descclassname"> &lt;path&gt;</code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-o" title="Permalink to this definition">¶</a></dt>
+<dd><p>Redirect output to a file specified by &lt;path&gt;, where <cite>-</cite> is the
+standard output stream.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-p">
+<code class="sig-name descname">-p</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--show-parents</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show a debug info entry’s parents when selectively printing with
+the <cite>=&lt;offset&gt;</cite> argument of <a class="reference internal" href="#cmdoption-llvm-dwarfdump-debug-abbrev"><code class="xref std std-option docutils literal notranslate"><span class="pre">--debug-info</span></code></a>, or options such
+as <a class="reference internal" href="#cmdoption-llvm-dwarfdump-f"><code class="xref std std-option docutils literal notranslate"><span class="pre">--find</span></code></a> or <a class="reference internal" href="#cmdoption-llvm-dwarfdump-n"><code class="xref std std-option docutils literal notranslate"><span class="pre">--name</span></code></a>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-parent-recurse-depth">
+<code class="sig-name descname">--parent-recurse-depth</code><code class="sig-prename descclassname">=&lt;N&gt;</code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-parent-recurse-depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>When displaying debug info entry parents, only show them to a
+maximum depth of &lt;N&gt;.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-quiet">
+<code class="sig-name descname">--quiet</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-quiet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use with <a class="reference internal" href="#cmdoption-llvm-dwarfdump-verify"><code class="xref std std-option docutils literal notranslate"><span class="pre">--verify</span></code></a> to not emit to <cite>STDOUT</cite>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-r">
+<code class="sig-name descname">-r</code><code class="sig-prename descclassname"> &lt;N&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--recurse-depth</code><code class="sig-prename descclassname">=&lt;N&gt;</code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>When displaying debug info entries, only show children to a maximum
+depth of &lt;N&gt;.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-statistics">
+<code class="sig-name descname">--statistics</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect debug info quality metrics and print the results
+as machine-readable single-line JSON output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-summarize-types">
+<code class="sig-name descname">--summarize-types</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-summarize-types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abbreviate the description of type unit entries.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-x">
+<code class="sig-name descname">-x</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--regex</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Treat any &lt;name&gt; strings as regular expressions when searching
+with <a class="reference internal" href="#cmdoption-llvm-dwarfdump-n"><code class="xref std std-option docutils literal notranslate"><span class="pre">--name</span></code></a>. If <a class="reference internal" href="#cmdoption-llvm-dwarfdump-i"><code class="xref std std-option docutils literal notranslate"><span class="pre">--ignore-case</span></code></a> is also specified,
+the regular expression becomes case-insensitive.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-u">
+<code class="sig-name descname">-u</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--uuid</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the UUID for each architecture.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-diff">
+<code class="sig-name descname">--diff</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump the output in a format that is more friendly for comparing
+DWARF output from two different files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-v">
+<code class="sig-name descname">-v</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--verbose</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-v" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display verbose information when dumping. This can help to debug
+DWARF issues.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-verify">
+<code class="sig-name descname">--verify</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the structure of the DWARF information by verifying the
+compile unit chains, DIE relationships graph, address
+ranges, and more.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-version">
+<code class="sig-name descname">--version</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the version of the tool.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-debug-abbrev">
+<code class="sig-name descname">--debug-abbrev</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-addr</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-aranges</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-cu-index</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-frame</code><code class="sig-prename descclassname"> [=&lt;offset&gt;]</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-gnu-pubnames</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-gnu-pubtypes</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-info</code><code class="sig-prename descclassname"> [=&lt;offset&gt;]</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-line</code><code class="sig-prename descclassname"> [=&lt;offset&gt;]</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-line-str</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-loc</code><code class="sig-prename descclassname"> [=&lt;offset&gt;]</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-loclists</code><code class="sig-prename descclassname"> [=&lt;offset&gt;]</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-macro</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-names</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-pubnames</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-pubtypes</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-ranges</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-rnglists</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-str</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-str-offsets</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-tu-index</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--debug-types</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--eh-frame</code><code class="sig-prename descclassname"> [=&lt;offset&gt;]</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--gdb-index</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--apple-names</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--apple-types</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--apple-namespaces</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--apple-objc</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-debug-abbrev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump the specified DWARF section by name. Only the
+<cite>.debug_info</cite> section is shown by default. Some entries
+support adding an <cite>=&lt;offset&gt;</cite> as a way to provide an
+optional offset of the exact entry to dump within the
+respective section. When an offset is provided, only the
+entry at that offset will be dumped, else the entire
+section will be dumped.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-dwarfdump-arg-file">
+<code class="sig-name descname">&#64;&lt;FILE&gt;</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-dwarfdump-arg-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read command-line options from <cite>&lt;FILE&gt;</cite>.</p>
 </dd></dl>
 
 </div>
@@ -93,6 +263,10 @@ Use <code class="docutils literal"><span class="pre">all</span></code> to dump a
 <h2>EXIT STATUS<a class="headerlink" href="#exit-status" title="Permalink to this headline">¶</a></h2>
 <p><strong class="program">llvm-dwarfdump</strong> returns 0 if the input files were parsed and dumped
 successfully. Otherwise, it returns 1.</p>
+</div>
+<div class="section" id="see-also">
+<h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<p><em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/dsymutil.html">dsymutil(1)</a></em></p>
 </div>
 </div>
 
@@ -108,7 +282,7 @@ successfully. Otherwise, it returns 1.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="bugpoint.html" title="bugpoint - automatic test case reduction tool"
+          <a href="dsymutil.html" title="dsymutil - manipulate archived DWARF debug symbol files"
              >next</a> |</li>
         <li class="right" >
           <a href="llvm-symbolizer.html" title="llvm-symbolizer - convert addresses into source code locations"
@@ -116,13 +290,13 @@ successfully. Otherwise, it returns 1.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>The PDB File Format &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The MSF File Format" href="MsfFile.html" />
+    <link rel="prev" title="XRay Flight Data Recorder Trace Format" href="../XRayFDRFormat.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="MsfFile.html" title="The MSF File Format"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../XRayFDRFormat.html" title="XRay Flight Data Recorder Trace Format"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-pdb-file-format">
+<h1>The PDB File Format<a class="headerlink" href="#the-pdb-file-format" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id2">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#file-layout" id="id3">File Layout</a></p>
+<ul>
+<li><p><a class="reference internal" href="#the-msf-container" id="id4">The MSF Container</a></p></li>
+<li><p><a class="reference internal" href="#streams" id="id5">Streams</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#codeview" id="id6">CodeView</a></p></li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<span id="pdb-intro"></span><h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>PDB (Program Database) is a file format invented by Microsoft and which contains
+debug information that can be consumed by debuggers and other tools.  Since
+officially supported APIs exist on Windows for querying debug information from
+PDBs even without the user understanding the internals of the file format, a
+large ecosystem of tools has been built for Windows to consume this format.  In
+order for Clang to be able to generate programs that can interoperate with these
+tools, it is necessary for us to generate PDB files ourselves.</p>
+<p>At the same time, LLVM has a long history of being able to cross-compile from
+any platform to any platform, and we wish for the same to be true here.  So it
+is necessary for us to understand the PDB file format at the byte-level so that
+we can generate PDB files entirely on our own.</p>
+<p>This manual describes what we know about the PDB file format today.  The layout
+of the file, the various streams contained within, the format of individual
+records within, and more.</p>
+<p>We would like to extend our heartfelt gratitude to Microsoft, without whom we
+would not be where we are today.  Much of the knowledge contained within this
+manual was learned through reading code published by Microsoft on their <a class="reference external" href="https://github.com/Microsoft/microsoft-pdb">GitHub
+repo</a>.</p>
+</div>
+<div class="section" id="file-layout">
+<span id="pdb-layout"></span><h2><a class="toc-backref" href="#id3">File Layout</a><a class="headerlink" href="#file-layout" title="Permalink to this headline">¶</a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Unless otherwise specified, all numeric values are encoded in little endian.
+If you see a type such as <code class="docutils literal notranslate"><span class="pre">uint16_t</span></code> or <code class="docutils literal notranslate"><span class="pre">uint64_t</span></code> going forward, always
+assume it is little endian!</p>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="the-msf-container">
+<span id="msf"></span><h3><a class="toc-backref" href="#id4">The MSF Container</a><a class="headerlink" href="#the-msf-container" title="Permalink to this headline">¶</a></h3>
+<p>A PDB file is an MSF (Multi-Stream Format) file.  An MSF file is a “file system
+within a file”.  It contains multiple streams (aka files) which can represent
+arbitrary data, and these streams are divided into blocks which may not
+necessarily be contiguously laid out within the MSF container file.
+Additionally, the MSF contains a stream directory (aka MFT) which describes how
+the streams (files) are laid out within the MSF.</p>
+<p>For more information about the MSF container format, stream directory, and
+block layout, see <a class="reference internal" href="MsfFile.html"><span class="doc">The MSF File Format</span></a>.</p>
+</div>
+<div class="section" id="streams">
+<span id="id1"></span><h3><a class="toc-backref" href="#id5">Streams</a><a class="headerlink" href="#streams" title="Permalink to this headline">¶</a></h3>
+<p>The PDB format contains a number of streams which describe various information
+such as the types, symbols, source files, and compilands (e.g. object files)
+of a program, as well as some additional streams containing hash tables that are
+used by debuggers and other tools to provide fast lookup of records and types
+by name, and various other information about how the program was compiled such
+as the specific toolchain used, and more.  A summary of streams contained in a
+PDB file is as follows:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 32%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Stream Index</p></th>
+<th class="head"><p>Contents</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Old Directory</p></td>
+<td><ul class="simple">
+<li><p>Fixed Stream Index 0</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Previous MSF Stream Directory</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>PDB Stream</p></td>
+<td><ul class="simple">
+<li><p>Fixed Stream Index 1</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Basic File Information</p></li>
+<li><p>Fields to match EXE to this PDB</p></li>
+<li><p>Map of named streams to stream indices</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>TPI Stream</p></td>
+<td><ul class="simple">
+<li><p>Fixed Stream Index 2</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>CodeView Type Records</p></li>
+<li><p>Index of TPI Hash Stream</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>DBI Stream</p></td>
+<td><ul class="simple">
+<li><p>Fixed Stream Index 3</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Module/Compiland Information</p></li>
+<li><p>Indices of individual module streams</p></li>
+<li><p>Indices of public / global streams</p></li>
+<li><p>Section Contribution Information</p></li>
+<li><p>Source File Information</p></li>
+<li><p>References to streams containing
+FPO / PGO Data</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>IPI Stream</p></td>
+<td><ul class="simple">
+<li><p>Fixed Stream Index 4</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>CodeView Type Records</p></li>
+<li><p>Index of IPI Hash Stream</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>/LinkInfo</p></td>
+<td><ul class="simple">
+<li><p>Contained in PDB Stream
+Named Stream map</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Unknown</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>/src/headerblock</p></td>
+<td><ul class="simple">
+<li><p>Contained in PDB Stream
+Named Stream map</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Summary of embedded source file content
+(e.g. natvis files)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>/names</p></td>
+<td><ul class="simple">
+<li><p>Contained in PDB Stream
+Named Stream map</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>PDB-wide global string table used for
+string de-duplication</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>Module Info Stream</p></td>
+<td><ul class="simple">
+<li><p>Contained in DBI Stream</p></li>
+<li><p>One for each compiland</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>CodeView Symbol Records for this module</p></li>
+<li><p>Line Number Information</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>Public Stream</p></td>
+<td><ul class="simple">
+<li><p>Contained in DBI Stream</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Public (Exported) Symbol Records</p></li>
+<li><p>Index of Public Hash Stream</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>Global Stream</p></td>
+<td><ul class="simple">
+<li><p>Contained in DBI Stream</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Single combined master symbol-table</p></li>
+<li><p>Index of Global Hash Stream</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>TPI Hash Stream</p></td>
+<td><ul class="simple">
+<li><p>Contained in TPI Stream</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Hash table for looking up TPI records
+by name</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>IPI Hash Stream</p></td>
+<td><ul class="simple">
+<li><p>Contained in IPI Stream</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li><p>Hash table for looking up IPI records
+by name</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>More information about the structure of each of these can be found on the
+following pages:</p>
+<dl class="simple">
+<dt><a class="reference internal" href="PdbStream.html"><span class="doc">The PDB Info Stream (aka the PDB Stream)</span></a></dt><dd><p>Information about the PDB Info Stream and how it is used to match PDBs to EXEs.</p>
+</dd>
+<dt><a class="reference internal" href="TpiStream.html"><span class="doc">The PDB TPI and IPI Streams</span></a></dt><dd><p>Information about the TPI stream and the CodeView records contained within.</p>
+</dd>
+<dt><a class="reference internal" href="DbiStream.html"><span class="doc">The PDB DBI (Debug Info) Stream</span></a></dt><dd><p>Information about the DBI stream and relevant substreams including the
+Module Substreams, source file information, and CodeView symbol records
+contained within.</p>
+</dd>
+<dt><a class="reference internal" href="ModiStream.html"><span class="doc">The Module Information Stream</span></a></dt><dd><p>Information about the Module Information Stream, of which there is one for
+each compilation unit and the format of symbols contained within.</p>
+</dd>
+<dt><a class="reference internal" href="PublicStream.html"><span class="doc">The PDB Public Symbol Stream</span></a></dt><dd><p>Information about the Public Symbol Stream.</p>
+</dd>
+<dt><a class="reference internal" href="GlobalStream.html"><span class="doc">The PDB Global Symbol Stream</span></a></dt><dd><p>Information about the Global Symbol Stream.</p>
+</dd>
+<dt><a class="reference internal" href="HashTable.html"><span class="doc">The PDB Serialized Hash Table Format</span></a></dt><dd><p>Information about the serialized hash table format used internally to
+represent things such as the Named Stream Map and the Hash Adjusters in the
+<a class="reference internal" href="TpiStream.html"><span class="doc">TPI/IPI Stream</span></a>.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="codeview">
+<h2><a class="toc-backref" href="#id6">CodeView</a><a class="headerlink" href="#codeview" title="Permalink to this headline">¶</a></h2>
+<p>CodeView is another format which comes into the picture.  While MSF defines
+the structure of the overall file, and PDB defines the set of streams that
+appear within the MSF file and the format of those streams, CodeView defines
+the format of <strong>symbol and type records</strong> that appear within specific streams.
+Refer to the pages on <a class="reference internal" href="CodeViewSymbols.html"><span class="doc">CodeView Symbol Records</span></a> and <a class="reference internal" href="CodeViewTypes.html"><span class="doc">CodeView Type Records</span></a> for
+more information about the CodeView format.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="MsfFile.html" title="The MSF File Format"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../XRayFDRFormat.html" title="XRay Flight Data Recorder Trace Format"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

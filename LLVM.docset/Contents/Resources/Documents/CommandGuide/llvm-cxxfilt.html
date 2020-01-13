@@ -1,0 +1,174 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>llvm-cxxfilt - LLVM symbol name demangler &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="llvm-nm - list LLVM bitcode and object file’s symbol table" href="llvm-nm.html" />
+    <link rel="prev" title="llvm-ar - LLVM archiver" href="llvm-ar.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="llvm-nm.html" title="llvm-nm - list LLVM bitcode and object file’s symbol table"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="llvm-ar.html" title="llvm-ar - LLVM archiver"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="llvm-cxxfilt-llvm-symbol-name-demangler">
+<h1>llvm-cxxfilt - LLVM symbol name demangler<a class="headerlink" href="#llvm-cxxfilt-llvm-symbol-name-demangler" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">llvm-cxxfilt</strong> [<em>options</em>] [<em>mangled names…</em>]</p>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">llvm-cxxfilt</strong> is a symbol demangler that can be used as a replacement
+for the GNU <strong class="program">c++filt</strong> tool. It takes a series of symbol names and
+prints their demangled form on the standard output stream. If a name cannot be
+demangled, it is simply printed as is.</p>
+<p>If no names are specified on the command-line, names are read interactively from
+the standard input stream. When reading names from standard input, each input
+line is split on characters that are not part of valid Itanium name manglings,
+i.e. characters that are not alphanumeric, ‘.’, ‘$’, or ‘_’. Separators between
+names are copied to the output as is.</p>
+</div>
+<div class="section" id="example">
+<h2>EXAMPLE<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> llvm-cxxfilt _Z3foov _Z3bari not_mangled
+<span class="go">foo()</span>
+<span class="go">bar(int)</span>
+<span class="go">not_mangled</span>
+<span class="gp">$</span> cat input.txt
+<span class="go">| _Z3foov *** _Z3bari *** not_mangled |</span>
+<span class="gp">$</span> llvm-cxxfilt &lt; input.txt
+<span class="go">| foo() *** bar(int) *** not_mangled |</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="options">
+<h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<dl class="option">
+<dt id="cmdoption-llvm-cxxfilt-format">
+<code class="sig-name descname">--format</code><code class="sig-prename descclassname">=&lt;value&gt;</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-s</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cxxfilt-format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mangling scheme to assume. Valid values are <code class="docutils literal notranslate"><span class="pre">auto</span></code> (default, auto-detect the
+style) and <code class="docutils literal notranslate"><span class="pre">gnu</span></code> (assume GNU/Itanium style).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-cxxfilt-help">
+<code class="sig-name descname">--help</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-h</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cxxfilt-help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a summary of command line options.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-cxxfilt-help-list">
+<code class="sig-name descname">--help-list</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cxxfilt-help-list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print an uncategorized summary of command line options.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-cxxfilt-strip-underscore">
+<code class="sig-name descname">--strip-underscore</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-_</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cxxfilt-strip-underscore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discard a single leading underscore, if present, from each input name before
+demangling.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-cxxfilt-types">
+<code class="sig-name descname">--types</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">-t</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cxxfilt-types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempt to demangle names as type names as well as function names.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-cxxfilt-version">
+<code class="sig-name descname">--version</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cxxfilt-version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the version of this program.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-cxxfilt-arg-file">
+<code class="sig-name descname">&#64;&lt;FILE&gt;</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-cxxfilt-arg-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read command-line options from response file <cite>&lt;FILE&gt;</cite>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="exit-status">
+<h2>EXIT STATUS<a class="headerlink" href="#exit-status" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">llvm-cxxfilt</strong> returns 0 unless it encounters a usage error, in which
+case a non-zero exit code is returned.</p>
+</div>
+<div class="section" id="see-also">
+<h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<p><em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-nm.html">llvm-nm(1)</a></em></p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="llvm-nm.html" title="llvm-nm - list LLVM bitcode and object file’s symbol table"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="llvm-ar.html" title="llvm-ar - LLVM archiver"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

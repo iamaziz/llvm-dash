@@ -1,30 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Garbage Collection Safepoints in LLVM &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>Garbage Collection Safepoints in LLVM &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="MergeFunctions pass, how it works" href="MergeFunctions.html" />
     <link rel="prev" title="LLVM Code Coverage Mapping Format" href="CoverageMappingFormat.html" />
 <style type="text/css">
@@ -32,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -67,54 +56,78 @@
 <h1>Garbage Collection Safepoints in LLVM<a class="headerlink" href="#garbage-collection-safepoints-in-llvm" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#status" id="id12">Status</a></li>
-<li><a class="reference internal" href="#overview" id="id13">Overview</a><ul>
-<li><a class="reference internal" href="#gc-transitions" id="id14">GC Transitions</a></li>
+<li><p><a class="reference internal" href="#status" id="id11">Status</a></p></li>
+<li><p><a class="reference internal" href="#overview-core-concepts" id="id12">Overview &amp; Core Concepts</a></p>
+<ul>
+<li><p><a class="reference internal" href="#abstract-machine-model" id="id13">Abstract Machine Model</a></p></li>
+<li><p><a class="reference internal" href="#explicit-representation" id="id14">Explicit Representation</a></p></li>
+<li><p><a class="reference internal" href="#simplifications-for-non-relocating-gcs" id="id15">Simplifications for Non-Relocating GCs</a></p></li>
+<li><p><a class="reference internal" href="#recording-on-stack-regions" id="id16">Recording On Stack Regions</a></p></li>
+<li><p><a class="reference internal" href="#base-derived-pointers" id="id17">Base &amp; Derived Pointers</a></p></li>
+<li><p><a class="reference internal" href="#gc-transitions" id="id18">GC Transitions</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#intrinsics" id="id15">Intrinsics</a><ul>
-<li><a class="reference internal" href="#llvm-experimental-gc-statepoint-intrinsic" id="id16">&#8216;llvm.experimental.gc.statepoint&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-experimental-gc-result-intrinsic" id="id17">&#8216;llvm.experimental.gc.result&#8217; Intrinsic</a></li>
-<li><a class="reference internal" href="#llvm-experimental-gc-relocate-intrinsic" id="id18">&#8216;llvm.experimental.gc.relocate&#8217; Intrinsic</a></li>
+<li><p><a class="reference internal" href="#intrinsics" id="id19">Intrinsics</a></p>
+<ul>
+<li><p><a class="reference internal" href="#llvm-experimental-gc-statepoint-intrinsic" id="id20">‘llvm.experimental.gc.statepoint’ Intrinsic</a></p></li>
+<li><p><a class="reference internal" href="#llvm-experimental-gc-result-intrinsic" id="id21">‘llvm.experimental.gc.result’ Intrinsic</a></p></li>
+<li><p><a class="reference internal" href="#llvm-experimental-gc-relocate-intrinsic" id="id22">‘llvm.experimental.gc.relocate’ Intrinsic</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#stack-map-format" id="id19">Stack Map Format</a></li>
-<li><a class="reference internal" href="#safepoint-semantics-verification" id="id20">Safepoint Semantics &amp; Verification</a></li>
-<li><a class="reference internal" href="#utility-passes-for-safepoint-insertion" id="id21">Utility Passes for Safepoint Insertion</a><ul>
-<li><a class="reference internal" href="#rewritestatepointsforgc" id="id22">RewriteStatepointsForGC</a></li>
-<li><a class="reference internal" href="#placesafepoints" id="id23">PlaceSafepoints</a></li>
+<li><p><a class="reference internal" href="#stack-map-format" id="id23">Stack Map Format</a></p></li>
+<li><p><a class="reference internal" href="#safepoint-semantics-verification" id="id24">Safepoint Semantics &amp; Verification</a></p></li>
+<li><p><a class="reference internal" href="#utility-passes-for-safepoint-insertion" id="id25">Utility Passes for Safepoint Insertion</a></p>
+<ul>
+<li><p><a class="reference internal" href="#rewritestatepointsforgc" id="id26">RewriteStatepointsForGC</a></p></li>
+<li><p><a class="reference internal" href="#placesafepoints" id="id27">PlaceSafepoints</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#bugs-and-enhancements" id="id24">Bugs and Enhancements</a></li>
+<li><p><a class="reference internal" href="#supported-architectures" id="id28">Supported Architectures</a></p></li>
+<li><p><a class="reference internal" href="#limitations-and-half-baked-ideas" id="id29">Limitations and Half Baked Ideas</a></p>
+<ul>
+<li><p><a class="reference internal" href="#mixing-references-and-raw-pointers" id="id30">Mixing References and Raw Pointers</a></p></li>
+<li><p><a class="reference internal" href="#objects-on-the-stack" id="id31">Objects on the Stack</a></p></li>
+<li><p><a class="reference internal" href="#lowering-quality-and-representation-overhead" id="id32">Lowering Quality and Representation Overhead</a></p></li>
+<li><p><a class="reference internal" href="#relocations-along-exceptional-edges" id="id33">Relocations Along Exceptional Edges</a></p></li>
+<li><p><a class="reference internal" href="#support-for-alternate-stackmap-formats" id="id34">Support for alternate stackmap formats</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#bugs-and-enhancements" id="id35">Bugs and Enhancements</a></p></li>
 </ul>
 </div>
 <div class="section" id="status">
-<h2><a class="toc-backref" href="#id12">Status</a><a class="headerlink" href="#status" title="Permalink to this headline">¶</a></h2>
-<p>This document describes a set of experimental extensions to LLVM. Use
-with caution.  Because the intrinsics have experimental status,
-compatibility across LLVM releases is not guaranteed.</p>
-<p>LLVM currently supports an alternate mechanism for conservative
-garbage collection support using the <code class="docutils literal"><span class="pre">gcroot</span></code> intrinsic.  The mechanism
-described here shares little in common with the alternate <code class="docutils literal"><span class="pre">gcroot</span></code>
-implementation and it is hoped that this mechanism will eventually
-replace the gc_root mechanism.</p>
+<h2><a class="toc-backref" href="#id11">Status</a><a class="headerlink" href="#status" title="Permalink to this headline">¶</a></h2>
+<p>This document describes a set of extensions to LLVM to support garbage
+collection.  By now, these mechanisms are well proven with commercial java
+implementation with a fully relocating collector having shipped using them.
+There are a couple places where bugs might still linger; these are called out
+below.</p>
+<p>They are still listed as “experimental” to indicate that no forward or backward
+compatibility guarantees are offered across versions.  If your use case is such
+that you need some form of forward compatibility guarantee, please raise the
+issue on the llvm-dev mailing list.</p>
+<p>LLVM still supports an alternate mechanism for conservative garbage collection
+support using the <code class="docutils literal notranslate"><span class="pre">gcroot</span></code> intrinsic.  The <code class="docutils literal notranslate"><span class="pre">gcroot</span></code> mechanism is mostly of
+historical interest at this point with one exception - its implementation of
+shadow stacks has been used successfully by a number of language frontends and
+is still supported.</p>
 </div>
-<div class="section" id="overview">
-<h2><a class="toc-backref" href="#id13">Overview</a><a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="overview-core-concepts">
+<h2><a class="toc-backref" href="#id12">Overview &amp; Core Concepts</a><a class="headerlink" href="#overview-core-concepts" title="Permalink to this headline">¶</a></h2>
 <p>To collect dead objects, garbage collectors must be able to identify
 any references to objects contained within executing code, and,
 depending on the collector, potentially update them.  The collector
 does not need this information at all points in code - that would make
 the problem much harder - but only at well-defined points in the
-execution known as &#8216;safepoints&#8217; For most collectors, it is sufficient
+execution known as ‘safepoints’ For most collectors, it is sufficient
 to track at least one copy of each unique pointer value.  However, for
 a collector which wishes to relocate objects directly reachable from
 running code, a higher standard is required.</p>
 <p>One additional challenge is that the compiler may compute intermediate
-results (&#8220;derived pointers&#8221;) which point outside of the allocation or
+results (“derived pointers”) which point outside of the allocation or
 even into the middle of another allocation.  The eventual use of this
 intermediate value must yield an address within the bounds of the
-allocation, but such &#8220;exterior derived pointers&#8221; may be visible to the
+allocation, but such “exterior derived pointers” may be visible to the
 collector.  Given this, a garbage collector can not safely rely on the
 runtime value of an address to indicate the object it is associated
 with.  If the garbage collector wishes to move any object, the
@@ -124,29 +137,30 @@ its allocation.</p>
 most garbage collectors are organized in terms of three abstractions:
 load barriers, store barriers, and safepoints.</p>
 <ol class="arabic simple">
-<li>A load barrier is a bit of code executed immediately after the
+<li><p>A load barrier is a bit of code executed immediately after the
 machine load instruction, but before any use of the value loaded.
 Depending on the collector, such a barrier may be needed for all
 loads, merely loads of a particular type (in the original source
-language), or none at all.</li>
-<li>Analogously, a store barrier is a code fragement that runs
+language), or none at all.</p></li>
+<li><p>Analogously, a store barrier is a code fragment that runs
 immediately before the machine store instruction, but after the
 computation of the value stored.  The most common use of a store
-barrier is to update a &#8216;card table&#8217; in a generational garbage
-collector.</li>
-<li>A safepoint is a location at which pointers visible to the compiled
+barrier is to update a ‘card table’ in a generational garbage
+collector.</p></li>
+<li><p>A safepoint is a location at which pointers visible to the compiled
 code (i.e. currently in registers or on the stack) are allowed to
 change.  After the safepoint completes, the actual pointer value
-may differ, but the &#8216;object&#8217; (as seen by the source language)
-pointed to will not.</li>
+may differ, but the ‘object’ (as seen by the source language)
+pointed to will not.</p></li>
 </ol>
 <blockquote>
-<div>Note that the term &#8216;safepoint&#8217; is somewhat overloaded.  It refers to
+<div><p>Note that the term ‘safepoint’ is somewhat overloaded.  It refers to
 both the location at which the machine state is parsable and the
 coordination protocol involved in bring application threads to a
 point at which the collector can safely use that information.  The
-term &#8220;statepoint&#8221; as used in this document refers exclusively to the
-former.</div></blockquote>
+term “statepoint” as used in this document refers exclusively to the
+former.</p>
+</div></blockquote>
 <p>This document focuses on the last item - compiler support for
 safepoints in generated code.  We will assume that an outside
 mechanism has decided where to place safepoints.  From our
@@ -154,62 +168,95 @@ perspective, all safepoints will be function calls.  To support
 relocation of objects directly reachable from values in compiled code,
 the collector must be able to:</p>
 <ol class="arabic simple">
-<li>identify every copy of a pointer (including copies introduced by
-the compiler itself) at the safepoint,</li>
-<li>identify which object each pointer relates to, and</li>
-<li>potentially update each of those copies.</li>
+<li><p>identify every copy of a pointer (including copies introduced by
+the compiler itself) at the safepoint,</p></li>
+<li><p>identify which object each pointer relates to, and</p></li>
+<li><p>potentially update each of those copies.</p></li>
 </ol>
 <p>This document describes the mechanism by which an LLVM based compiler
 can provide this information to a language runtime/collector, and
-ensure that all pointers can be read and updated if desired.  The
-heart of the approach is to construct (or rewrite) the IR in a manner
-where the possible updates performed by the garbage collector are
+ensure that all pointers can be read and updated if desired.</p>
+<div class="section" id="abstract-machine-model">
+<h3><a class="toc-backref" href="#id13">Abstract Machine Model</a><a class="headerlink" href="#abstract-machine-model" title="Permalink to this headline">¶</a></h3>
+<p>At a high level, LLVM has been extended to support compiling to an abstract
+machine which extends the actual target with a non-integral pointer type
+suitable for representing a garbage collected reference to an object.  In
+particular, such non-integral pointer type have no defined mapping to an
+integer representation.  This semantic quirk allows the runtime to pick a
+integer mapping for each point in the program allowing relocations of objects
+without visible effects.</p>
+<p>This high level abstract machine model is used for most of the optimizer.  As
+a result, transform passes do not need to be extended to look through explicit
+relocation sequence.  Before starting code generation, we switch
+representations to an explicit form.  The exact location chosen for lowering
+is an implementation detail.</p>
+<p>Note that most of the value of the abstract machine model comes for collectors
+which need to model potentially relocatable objects.  For a compiler which
+supports only a non-relocating collector, you may wish to consider starting
+with the fully explicit form.</p>
+<p>Warning: There is one currently known semantic hole in the definition of
+non-integral pointers which has not been addressed upstream.  To work around
+this, you need to disable speculation of loads unless the memory type
+(non-integral pointer vs anything else) is known to unchanged.  That is, it is
+not safe to speculate a load if doing causes a non-integral pointer value to
+be loaded as any other type or vice versa.  In practice, this restriction is
+well isolated to isSafeToSpeculate in ValueTracking.cpp.</p>
+</div>
+<div class="section" id="explicit-representation">
+<h3><a class="toc-backref" href="#id14">Explicit Representation</a><a class="headerlink" href="#explicit-representation" title="Permalink to this headline">¶</a></h3>
+<p>A frontend could directly generate this low level explicit form, but
+doing so may inhibit optimization.  Instead, it is recommended that
+compilers with relocating collectors target the abstract machine model just
+described.</p>
+<p>The heart of the explicit approach is to construct (or rewrite) the IR in a
+manner where the possible updates performed by the garbage collector are
 explicitly visible in the IR.  Doing so requires that we:</p>
 <ol class="arabic simple">
-<li>create a new SSA value for each potentially relocated pointer, and
+<li><p>create a new SSA value for each potentially relocated pointer, and
 ensure that no uses of the original (non relocated) value is
-reachable after the safepoint,</li>
-<li>specify the relocation in a way which is opaque to the compiler to
+reachable after the safepoint,</p></li>
+<li><p>specify the relocation in a way which is opaque to the compiler to
 ensure that the optimizer can not introduce new uses of an
 unrelocated value after a statepoint. This prevents the optimizer
-from performing unsound optimizations.</li>
-<li>recording a mapping of live pointers (and the allocation they&#8217;re
-associated with) for each statepoint.</li>
+from performing unsound optimizations.</p></li>
+<li><p>recording a mapping of live pointers (and the allocation they’re
+associated with) for each statepoint.</p></li>
 </ol>
 <p>At the most abstract level, inserting a safepoint can be thought of as
 replacing a call instruction with a call to a multiple return value
 function which both calls the original target of the call, returns
-it&#8217;s result, and returns updated values for any live pointers to
+its result, and returns updated values for any live pointers to
 garbage collected objects.</p>
 <blockquote>
-<div>Note that the task of identifying all live pointers to garbage
+<div><p>Note that the task of identifying all live pointers to garbage
 collected values, transforming the IR to expose a pointer giving the
 base object for every such live pointer, and inserting all the
 intrinsics correctly is explicitly out of scope for this document.
-The recommended approach is to use the <a class="reference internal" href="#statepoint-utilities"><span>utility passes</span></a> described below.</div></blockquote>
+The recommended approach is to use the <a class="reference internal" href="#statepoint-utilities"><span class="std std-ref">utility passes</span></a> described below.</p>
+</div></blockquote>
 <p>This abstract function call is concretely represented by a sequence of
-intrinsic calls known collectively as a &#8220;statepoint relocation sequence&#8221;.</p>
-<p>Let&#8217;s consider a simple call in LLVM IR:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
+intrinsic calls known collectively as a “statepoint relocation sequence”.</p>
+<p>Let’s consider a simple call in LLVM IR:</p>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
        <span class="k">gc</span> <span class="s">&quot;statepoint-example&quot;</span> <span class="p">{</span>
-  <span class="k">call</span> <span class="kt">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">()</span>
+  <span class="k">call</span> <span class="k">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">()</span>
   <span class="k">ret</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>Depending on our language we may need to allow a safepoint during the execution
-of <code class="docutils literal"><span class="pre">foo</span></code>. If so, we need to let the collector update local values in the
-current frame.  If we don&#8217;t, we&#8217;ll be accessing a potential invalid reference
+of <code class="docutils literal notranslate"><span class="pre">foo</span></code>. If so, we need to let the collector update local values in the
+current frame.  If we don’t, we’ll be accessing a potential invalid reference
 once we eventually return from the call.</p>
-<p>In this example, we need to relocate the SSA value <code class="docutils literal"><span class="pre">%obj</span></code>.  Since we can&#8217;t
-actually change the value in the SSA value <code class="docutils literal"><span class="pre">%obj</span></code>, we need to introduce a new
-SSA value <code class="docutils literal"><span class="pre">%obj.relocated</span></code> which represents the potentially changed value of
-<code class="docutils literal"><span class="pre">%obj</span></code> after the safepoint and update any following uses appropriately.  The
+<p>In this example, we need to relocate the SSA value <code class="docutils literal notranslate"><span class="pre">%obj</span></code>.  Since we can’t
+actually change the value in the SSA value <code class="docutils literal notranslate"><span class="pre">%obj</span></code>, we need to introduce a new
+SSA value <code class="docutils literal notranslate"><span class="pre">%obj.relocated</span></code> which represents the potentially changed value of
+<code class="docutils literal notranslate"><span class="pre">%obj</span></code> after the safepoint and update any following uses appropriately.  The
 resulting relocation sequence is:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
        <span class="k">gc</span> <span class="s">&quot;statepoint-example&quot;</span> <span class="p">{</span>
-  <span class="nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i32</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
-  <span class="nv">%obj.relocated</span> <span class="p">=</span> <span class="k">call</span> <span class="k">coldcc</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.experimental.gc.relocate.p1i8</span><span class="p">(</span><span class="k">i32</span> <span class="nv-Anonymous">%0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">)</span>
+  <span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">call</span> <span class="k">token</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
+  <span class="nv">%obj.relocated</span> <span class="p">=</span> <span class="k">call</span> <span class="k">coldcc</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.experimental.gc.relocate.p1i8</span><span class="p">(</span><span class="k">token</span> <span class="nv nv-Anonymous">%0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">)</span>
   <span class="k">ret</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj.relocated</span>
 <span class="p">}</span>
 </pre></div>
@@ -222,13 +269,13 @@ representation.</p>
 <p>Instead, the statepoint intrinsic marks the actual site of the
 safepoint or statepoint.  The statepoint returns a token value (which
 exists only at compile time).  To get back the original return value
-of the call, we use the <code class="docutils literal"><span class="pre">gc.result</span></code> intrinsic.  To get the relocation
-of each pointer in turn, we use the <code class="docutils literal"><span class="pre">gc.relocate</span></code> intrinsic with the
-appropriate index.  Note that both the <code class="docutils literal"><span class="pre">gc.relocate</span></code> and <code class="docutils literal"><span class="pre">gc.result</span></code> are
-tied to the statepoint.  The combination forms a &#8220;statepoint relocation
-sequence&#8221; and represents the entitety of a parseable call or &#8216;statepoint&#8217;.</p>
+of the call, we use the <code class="docutils literal notranslate"><span class="pre">gc.result</span></code> intrinsic.  To get the relocation
+of each pointer in turn, we use the <code class="docutils literal notranslate"><span class="pre">gc.relocate</span></code> intrinsic with the
+appropriate index.  Note that both the <code class="docutils literal notranslate"><span class="pre">gc.relocate</span></code> and <code class="docutils literal notranslate"><span class="pre">gc.result</span></code> are
+tied to the statepoint.  The combination forms a “statepoint relocation
+sequence” and represents the entirety of a parseable call or ‘statepoint’.</p>
 <p>When lowered, this example would generate the following x86 assembly:</p>
-<div class="highlight-gas"><div class="highlight"><pre>        <span class="na">.globl</span>        <span class="no">test1</span>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span>        <span class="na">.globl</span>        <span class="no">test1</span>
         <span class="na">.align</span>        <span class="mi">16</span><span class="p">,</span> <span class="mi">0x90</span>
         <span class="nf">pushq</span> <span class="nv">%rax</span>
         <span class="nf">callq</span> <span class="no">foo</span>
@@ -240,11 +287,11 @@ sequence&#8221; and represents the entitety of a parseable call or &#8216;statep
 </div>
 <p>Each of the potentially relocated values has been spilled to the
 stack, and a record of that location has been recorded to the
-<a class="reference internal" href="StackMaps.html#stackmap-section"><span>Stack Map section</span></a>.  If the garbage collector
+<a class="reference internal" href="StackMaps.html#stackmap-section"><span class="std std-ref">Stack Map section</span></a>.  If the garbage collector
 needs to update any of these pointers during the call, it knows
 exactly what to change.</p>
 <p>The relevant parts of the StackMap section for our example are:</p>
-<div class="highlight-gas"><div class="highlight"><pre><span class="c"># This describes the call site</span>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="c"># This describes the call site</span>
 <span class="c"># Stack Maps: callsite 2882400000</span>
         <span class="na">.quad</span> <span class="mi">2882400000</span>
         <span class="na">.long</span> <span class="no">.Ltmp1-test1</span>
@@ -260,63 +307,149 @@ exactly what to change.</p>
         <span class="na">.long</span> <span class="mi">0</span>
 </pre></div>
 </div>
-<p>This example was taken from the tests for the <a class="reference internal" href="#rewritestatepointsforgc"><span>RewriteStatepointsForGC</span></a> utility pass.  As such, it&#8217;s full StackMap can be easily examined with the following command.</p>
-<div class="highlight-bash"><div class="highlight"><pre>opt -rewrite-statepoints-for-gc <span class="nb">test</span>/Transforms/RewriteStatepointsForGC/basics.ll -S <span class="p">|</span> llc -debug-only<span class="o">=</span>stackmaps
+<p>This example was taken from the tests for the <a class="reference internal" href="#rewritestatepointsforgc"><span class="std std-ref">RewriteStatepointsForGC</span></a>
+utility pass.  As such, its full StackMap can be easily examined with the
+following command.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>opt -rewrite-statepoints-for-gc test/Transforms/RewriteStatepointsForGC/basics.ll -S <span class="p">|</span> llc -debug-only<span class="o">=</span>stackmaps
 </pre></div>
 </div>
+</div>
+<div class="section" id="simplifications-for-non-relocating-gcs">
+<h3><a class="toc-backref" href="#id15">Simplifications for Non-Relocating GCs</a><a class="headerlink" href="#simplifications-for-non-relocating-gcs" title="Permalink to this headline">¶</a></h3>
+<p>Some of the complexity in the previous example is unnecessary for a
+non-relocating collector.  While a non-relocating collector still needs the
+information about which location contain live references, it doesn’t need to
+represent explicit relocations.  As such, the previously described explicit
+lowering can be simplified to remove all of the <code class="docutils literal notranslate"><span class="pre">gc.relocate</span></code> intrinsic
+calls and leave uses in terms of the original reference value.</p>
+<p>Here’s the explicit lowering for the previous example for a non-relocating
+collector:</p>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
+       <span class="k">gc</span> <span class="s">&quot;statepoint-example&quot;</span> <span class="p">{</span>
+  <span class="k">call</span> <span class="k">token</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
+  <span class="k">ret</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="recording-on-stack-regions">
+<h3><a class="toc-backref" href="#id16">Recording On Stack Regions</a><a class="headerlink" href="#recording-on-stack-regions" title="Permalink to this headline">¶</a></h3>
+<p>In addition to the explicit relocation form previously described, the
+statepoint infrastructure also allows the listing of allocas within the gc
+pointer list.  Allocas can be listed with or without additional explicit gc
+pointer values and relocations.</p>
+<p>An alloca in the gc region of the statepoint operand list will cause the
+address of the stack region to be listed in the stackmap for the statepoint.</p>
+<p>This mechanism can be used to describe explicit spill slots if desired.  It
+then becomes the generator’s responsibility to ensure that values are
+spill/filled to/from the alloca as needed on either side of the safepoint.
+Note that there is no way to indicate a corresponding base pointer for such
+an explicitly specified spill slot, so usage is restricted to values for
+which the associated collector can derive the object base from the pointer
+itself.</p>
+<p>This mechanism can be used to describe on stack objects containing
+references provided that the collector can map from the location on the
+stack to a heap map describing the internal layout of the references the
+collector needs to process.</p>
+<p>WARNING: At the moment, this alternate form is not well exercised.  It is
+recommended to use this with caution and expect to have to fix a few bugs.
+In particular, the RewriteStatepointsForGC utility pass does not do
+anything for allocas today.</p>
+</div>
+<div class="section" id="base-derived-pointers">
+<h3><a class="toc-backref" href="#id17">Base &amp; Derived Pointers</a><a class="headerlink" href="#base-derived-pointers" title="Permalink to this headline">¶</a></h3>
+<p>A “base pointer” is one which points to the starting address of an allocation
+(object).  A “derived pointer” is one which is offset from a base pointer by
+some amount.  When relocating objects, a garbage collector needs to be able
+to relocate each derived pointer associated with an allocation to the same
+offset from the new address.</p>
+<p>“Interior derived pointers” remain within the bounds of the allocation
+they’re associated with.  As a result, the base object can be found at
+runtime provided the bounds of allocations are known to the runtime system.</p>
+<p>“Exterior derived pointers” are outside the bounds of the associated object;
+they may even fall within <em>another</em> allocations address range.  As a result,
+there is no way for a garbage collector to determine which allocation they
+are associated with at runtime and compiler support is needed.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">gc.relocate</span></code> intrinsic supports an explicit operand for describing the
+allocation associated with a derived pointer.  This operand is frequently
+referred to as the base operand, but does not strictly speaking have to be
+a base pointer, but it does need to lie within the bounds of the associated
+allocation.  Some collectors may require that the operand be an actual base
+pointer rather than merely an internal derived pointer. Note that during
+lowering both the base and derived pointer operands are required to be live
+over the associated call safepoint even if the base is otherwise unused
+afterwards.</p>
+<p>If we extend our previous example to include a pointless derived pointer,
+we get:</p>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
+       <span class="k">gc</span> <span class="s">&quot;statepoint-example&quot;</span> <span class="p">{</span>
+  <span class="nv">%gep</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="k">i8</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">,</span> <span class="k">i64</span> <span class="m">20000</span>
+  <span class="nv">%token</span> <span class="p">=</span> <span class="k">call</span> <span class="k">token</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%gep</span><span class="p">)</span>
+  <span class="nv">%obj.relocated</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.experimental.gc.relocate.p1i8</span><span class="p">(</span><span class="k">token</span> <span class="nv">%token</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">)</span>
+  <span class="nv">%gep.relocated</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.experimental.gc.relocate.p1i8</span><span class="p">(</span><span class="k">token</span> <span class="nv">%token</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">,</span> <span class="k">i32</span> <span class="m">8</span><span class="p">)</span>
+  <span class="nv">%p</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="k">i8</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%gep</span><span class="p">,</span> <span class="k">i64</span> <span class="m">-20000</span>
+  <span class="k">ret</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%p</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Note that in this example %p and %obj.relocate are the same address and we
+could replace one with the other, potentially removing the derived pointer
+from the live set at the safepoint entirely.</p>
+</div>
 <div class="section" id="gc-transitions">
-<h3><a class="toc-backref" href="#id14">GC Transitions</a><a class="headerlink" href="#gc-transitions" title="Permalink to this headline">¶</a></h3>
+<span id="gc-transition-args"></span><h3><a class="toc-backref" href="#id18">GC Transitions</a><a class="headerlink" href="#gc-transitions" title="Permalink to this headline">¶</a></h3>
 <p>As a practical consideration, many garbage-collected systems allow code that is
-collector-aware (&#8220;managed code&#8221;) to call code that is not collector-aware
-(&#8220;unmanaged code&#8221;). It is common that such calls must also be safepoints, since
+collector-aware (“managed code”) to call code that is not collector-aware
+(“unmanaged code”). It is common that such calls must also be safepoints, since
 it is desirable to allow the collector to run during the execution of
-unmanaged code. Futhermore, it is common that coordinating the transition from
+unmanaged code. Furthermore, it is common that coordinating the transition from
 managed to unmanaged code requires extra code generation at the call site to
 inform the collector of the transition. In order to support these needs, a
 statepoint may be marked as a GC transition, and data that is necessary to
 perform the transition (if any) may be provided as additional arguments to the
 statepoint.</p>
 <blockquote>
-<div>Note that although in many cases statepoints may be inferred to be GC
+<div><p>Note that although in many cases statepoints may be inferred to be GC
 transitions based on the function symbols involved (e.g. a call from a
-function with GC strategy &#8220;foo&#8221; to a function with GC strategy &#8220;bar&#8221;),
+function with GC strategy “foo” to a function with GC strategy “bar”),
 indirect calls that are also GC transitions must also be supported. This
-requirement is the driving force behing the decision to require that GC
-transitions are explicitly marked.</div></blockquote>
-<p>Let&#8217;s revisit the sample given above, this time treating the call to <code class="docutils literal"><span class="pre">&#64;foo</span></code>
+requirement is the driving force behind the decision to require that GC
+transitions are explicitly marked.</p>
+</div></blockquote>
+<p>Let’s revisit the sample given above, this time treating the call to <code class="docutils literal notranslate"><span class="pre">&#64;foo</span></code>
 as a GC transition. Depending on our target, the transition code may need to
 access some extra state in order to inform the collector of the transition.
-Let&#8217;s assume a hypothetical GC&#8211;somewhat unimaginatively named &#8220;hypothetical-gc&#8221;
-&#8211;that requires that a TLS variable must be written to before and after a call
+Let’s assume a hypothetical GC–somewhat unimaginatively named “hypothetical-gc”
+–that requires that a TLS variable must be written to before and after a call
 to unmanaged code. The resulting relocation sequence is:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="vg">@flag</span> <span class="p">=</span> <span class="k">thread_local</span> <span class="k">global</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="vg">@flag</span> <span class="p">=</span> <span class="k">thread_local</span> <span class="k">global</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
 
 <span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)</span> <span class="p">*</span><span class="nv">%obj</span><span class="p">)</span>
        <span class="k">gc</span> <span class="s">&quot;hypothetical-gc&quot;</span> <span class="p">{</span>
 
-  <span class="nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i32</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="vg">@Flag</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
-  <span class="nv">%obj.relocated</span> <span class="p">=</span> <span class="k">call</span> <span class="k">coldcc</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.experimental.gc.relocate.p1i8</span><span class="p">(</span><span class="k">i32</span> <span class="nv-Anonymous">%0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">)</span>
+  <span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">call</span> <span class="k">token</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">,</span> <span class="k">i32</span><span class="p">*</span> <span class="vg">@Flag</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
+  <span class="nv">%obj.relocated</span> <span class="p">=</span> <span class="k">call</span> <span class="k">coldcc</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.experimental.gc.relocate.p1i8</span><span class="p">(</span><span class="k">token</span> <span class="nv nv-Anonymous">%0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">,</span> <span class="k">i32</span> <span class="m">7</span><span class="p">)</span>
   <span class="k">ret</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj.relocated</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>During lowering, this will result in a instruction selection DAG that looks
 something like:</p>
-<div class="highlight-python"><div class="highlight"><pre>CALLSEQ_START
-...
-GC_TRANSITION_START (lowered i32 *@Flag), SRCVALUE i32* Flag
-STATEPOINT
-GC_TRANSITION_END (lowered i32 *@Flag), SRCVALUE i32 *Flag
-...
-CALLSEQ_END
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CALLSEQ_START</span>
+<span class="o">...</span>
+<span class="n">GC_TRANSITION_START</span> <span class="p">(</span><span class="n">lowered</span> <span class="n">i32</span> <span class="o">*</span><span class="nd">@Flag</span><span class="p">),</span> <span class="n">SRCVALUE</span> <span class="n">i32</span><span class="o">*</span> <span class="n">Flag</span>
+<span class="n">STATEPOINT</span>
+<span class="n">GC_TRANSITION_END</span> <span class="p">(</span><span class="n">lowered</span> <span class="n">i32</span> <span class="o">*</span><span class="nd">@Flag</span><span class="p">),</span> <span class="n">SRCVALUE</span> <span class="n">i32</span> <span class="o">*</span><span class="n">Flag</span>
+<span class="o">...</span>
+<span class="n">CALLSEQ_END</span>
 </pre></div>
 </div>
 <p>In order to generate the necessary transition code, the backend for each target
-supported by &#8220;hypothetical-gc&#8221; must be modified to lower <code class="docutils literal"><span class="pre">GC_TRANSITION_START</span></code>
-and <code class="docutils literal"><span class="pre">GC_TRANSITION_END</span></code> nodes appropriately when the &#8220;hypothetical-gc&#8221;
+supported by “hypothetical-gc” must be modified to lower <code class="docutils literal notranslate"><span class="pre">GC_TRANSITION_START</span></code>
+and <code class="docutils literal notranslate"><span class="pre">GC_TRANSITION_END</span></code> nodes appropriately when the “hypothetical-gc”
 strategy is in use for a particular function. Assuming that such lowering has
 been added for X86, the generated assembly would be:</p>
-<div class="highlight-gas"><div class="highlight"><pre>        <span class="na">.globl</span>        <span class="no">test1</span>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span>        <span class="na">.globl</span>        <span class="no">test1</span>
         <span class="na">.align</span>        <span class="mi">16</span><span class="p">,</span> <span class="mi">0x90</span>
         <span class="nf">pushq</span> <span class="nv">%rax</span>
         <span class="nf">movl</span> <span class="no">$1</span><span class="p">,</span> <span class="nv">%fs</span><span class="p">:</span><span class="no">Flag@TPOFF</span>
@@ -335,101 +468,103 @@ removed by the backend during dead machine instruction elimination.</p>
 </div>
 </div>
 <div class="section" id="intrinsics">
-<h2><a class="toc-backref" href="#id15">Intrinsics</a><a class="headerlink" href="#intrinsics" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id19">Intrinsics</a><a class="headerlink" href="#intrinsics" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="llvm-experimental-gc-statepoint-intrinsic">
-<h3><a class="toc-backref" href="#id16">&#8216;llvm.experimental.gc.statepoint&#8217; Intrinsic</a><a class="headerlink" href="#llvm-experimental-gc-statepoint-intrinsic" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id20">‘llvm.experimental.gc.statepoint’ Intrinsic</a><a class="headerlink" href="#llvm-experimental-gc-statepoint-intrinsic" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="syntax">
 <h4>Syntax:<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare i32
-  @llvm.experimental.gc.statepoint(i64 &lt;id&gt;, i32 &lt;num patch bytes&gt;,
-                 func_type &lt;target&gt;,
-                 i64 &lt;#call args&gt;, i64 &lt;flags&gt;,
-                 ... (call parameters),
-                 i64 &lt;# transition args&gt;, ... (transition parameters),
-                 i64 &lt;# deopt args&gt;, ... (deopt parameters),
-                 ... (gc parameters))
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="n">token</span>
+  <span class="nd">@llvm</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">gc</span><span class="o">.</span><span class="n">statepoint</span><span class="p">(</span><span class="n">i64</span> <span class="o">&lt;</span><span class="nb">id</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">i32</span> <span class="o">&lt;</span><span class="n">num</span> <span class="n">patch</span> <span class="nb">bytes</span><span class="o">&gt;</span><span class="p">,</span>
+                 <span class="n">func_type</span> <span class="o">&lt;</span><span class="n">target</span><span class="o">&gt;</span><span class="p">,</span>
+                 <span class="n">i64</span> <span class="o">&lt;</span><span class="c1">#call args&gt;, i64 &lt;flags&gt;,</span>
+                 <span class="o">...</span> <span class="p">(</span><span class="n">call</span> <span class="n">parameters</span><span class="p">),</span>
+                 <span class="n">i64</span> <span class="o">&lt;</span><span class="c1"># transition args&gt;, ... (transition parameters),</span>
+                 <span class="n">i64</span> <span class="o">&lt;</span><span class="c1"># deopt args&gt;, ... (deopt parameters),</span>
+                 <span class="o">...</span> <span class="p">(</span><span class="n">gc</span> <span class="n">parameters</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id1">
-<h4>Overview:<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="overview">
+<h4>Overview:<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h4>
 <p>The statepoint intrinsic represents a call which is parse-able by the
 runtime.</p>
 </div>
 <div class="section" id="operands">
 <h4>Operands:<a class="headerlink" href="#operands" title="Permalink to this headline">¶</a></h4>
-<p>The &#8216;id&#8217; operand is a constant integer that is reported as the ID
+<p>The ‘id’ operand is a constant integer that is reported as the ID
 field in the generated stackmap.  LLVM does not interpret this
 parameter in any way and its meaning is up to the statepoint user to
 decide.  Note that LLVM is free to duplicate code containing
-statepoint calls, and this may transform IR that had a unique &#8216;id&#8217; per
+statepoint calls, and this may transform IR that had a unique ‘id’ per
 lexical call to statepoint to IR that does not.</p>
-<p>If &#8216;num patch bytes&#8217; is non-zero then the call instruction
-corresponding to the statepoint is not emitted and LLVM emits &#8216;num
-patch bytes&#8217; bytes of nops in its place.  LLVM will emit code to
+<p>If ‘num patch bytes’ is non-zero then the call instruction
+corresponding to the statepoint is not emitted and LLVM emits ‘num
+patch bytes’ bytes of nops in its place.  LLVM will emit code to
 prepare the function arguments and retrieve the function return value
 in accordance to the calling convention; the former before the nop
 sequence and the latter after the nop sequence.  It is expected that
-the user will patch over the &#8216;num patch bytes&#8217; bytes of nops with a
+the user will patch over the ‘num patch bytes’ bytes of nops with a
 calling sequence specific to their runtime before executing the
 generated machine code.  There are no guarantees with respect to the
-alignment of the nop sequence.  Unlike <a class="reference internal" href="StackMaps.html"><em>Stack maps and patch points in LLVM</em></a> statepoints do
-not have a concept of shadow bytes.</p>
-<p>The &#8216;target&#8217; operand is the function actually being called.  The
+alignment of the nop sequence.  Unlike <a class="reference internal" href="StackMaps.html"><span class="doc">Stack maps and patch points in LLVM</span></a> statepoints do
+not have a concept of shadow bytes.  Note that semantically the
+statepoint still represents a call or invoke to ‘target’, and the nop
+sequence after patching is expected to represent an operation
+equivalent to a call or invoke to ‘target’.</p>
+<p>The ‘target’ operand is the function actually being called.  The
 target can be specified as either a symbolic LLVM function, or as an
 arbitrary Value of appropriate function type.  Note that the function
-type must match the signature of the callee and the types of the &#8216;call
-parameters&#8217; arguments.  If &#8216;num patch bytes&#8217; is non-zero then &#8216;target&#8217;
-has to be the constant pointer null of the appropriate function type.</p>
-<p>The &#8216;#call args&#8217; operand is the number of arguments to the actual
+type must match the signature of the callee and the types of the ‘call
+parameters’ arguments.</p>
+<p>The ‘#call args’ operand is the number of arguments to the actual
 call.  It must exactly match the number of arguments passed in the
-&#8216;call parameters&#8217; variable length section.</p>
-<p>The &#8216;flags&#8217; operand is used to specify extra information about the
+‘call parameters’ variable length section.</p>
+<p>The ‘flags’ operand is used to specify extra information about the
 statepoint. This is currently only used to mark certain statepoints
 as GC transitions. This operand is a 64-bit integer with the following
 layout, where bit 0 is the least significant bit:</p>
 <blockquote>
-<div><table border="1" class="docutils">
+<div><table class="docutils align-default">
 <colgroup>
-<col width="12%" />
-<col width="88%" />
+<col style="width: 12%" />
+<col style="width: 88%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Bit #</th>
-<th class="head">Usage</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Bit #</p></th>
+<th class="head"><p>Usage</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>0</td>
-<td>Set if the statepoint is a GC transition, cleared
-otherwise.</td>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>Set if the statepoint is a GC transition, cleared
+otherwise.</p></td>
 </tr>
-<tr class="row-odd"><td>1-63</td>
-<td>Reserved for future use; must be cleared.</td>
+<tr class="row-odd"><td><p>1-63</p></td>
+<td><p>Reserved for future use; must be cleared.</p></td>
 </tr>
 </tbody>
 </table>
 </div></blockquote>
-<p>The &#8216;call parameters&#8217; arguments are simply the arguments which need to
+<p>The ‘call parameters’ arguments are simply the arguments which need to
 be passed to the call target.  They will be lowered according to the
 specified calling convention and otherwise handled like a normal call
 instruction.  The number of arguments must exactly match what is
-specified in &#8216;# call args&#8217;.  The types must match the signature of
-&#8216;target&#8217;.</p>
-<p>The &#8216;transition parameters&#8217; arguments contain an arbitrary list of
+specified in ‘# call args’.  The types must match the signature of
+‘target’.</p>
+<p>The ‘transition parameters’ arguments contain an arbitrary list of
 Values which need to be passed to GC transition code. They will be
 lowered and passed as operands to the appropriate GC_TRANSITION nodes
 in the selection DAG. It is assumed that these arguments must be
 available before and after (but not necessarily during) the execution
-of the callee. The &#8216;# transition args&#8217; field indicates how many operands
-are to be interpreted as &#8216;transition parameters&#8217;.</p>
-<p>The &#8216;deopt parameters&#8217; arguments contain an arbitrary list of Values
+of the callee. The ‘# transition args’ field indicates how many operands
+are to be interpreted as ‘transition parameters’.</p>
+<p>The ‘deopt parameters’ arguments contain an arbitrary list of Values
 which is meaningful to the runtime.  The runtime may read any of these
 values, but is assumed not to modify them.  If the garbage collector
 might need to modify one of these values, it must also be listed in
-the &#8216;gc pointer&#8217; argument list.  The &#8216;# deopt args&#8217; field indicates
-how many operands are to be interpreted as &#8216;deopt parameters&#8217;.</p>
-<p>The &#8216;gc parameters&#8217; arguments contain every pointer to a garbage
+the ‘gc pointer’ argument list.  The ‘# deopt args’ field indicates
+how many operands are to be interpreted as ‘deopt parameters’.</p>
+<p>The ‘gc parameters’ arguments contain every pointer to a garbage
 collector object which potentially needs to be updated by the garbage
 collector.  Note that the argument list must explicitly contain a base
 pointer for every derived pointer listed.  The order of arguments is
@@ -440,120 +575,153 @@ list is not length prefixed.</p>
 <h4>Semantics:<a class="headerlink" href="#semantics" title="Permalink to this headline">¶</a></h4>
 <p>A statepoint is assumed to read and write all memory.  As a result,
 memory operations can not be reordered past a statepoint.  It is
-illegal to mark a statepoint as being either &#8216;readonly&#8217; or &#8216;readnone&#8217;.</p>
-<p>Note that legal IR can not perform any memory operation on a &#8216;gc
-pointer&#8217; argument of the statepoint in a location statically reachable
+illegal to mark a statepoint as being either ‘readonly’ or ‘readnone’.</p>
+<p>Note that legal IR can not perform any memory operation on a ‘gc
+pointer’ argument of the statepoint in a location statically reachable
 from the statepoint.  Instead, the explicitly relocated value (from a
-<code class="docutils literal"><span class="pre">gc.relocate</span></code>) must be used.</p>
+<code class="docutils literal notranslate"><span class="pre">gc.relocate</span></code>) must be used.</p>
 </div>
 </div>
 <div class="section" id="llvm-experimental-gc-result-intrinsic">
-<h3><a class="toc-backref" href="#id17">&#8216;llvm.experimental.gc.result&#8217; Intrinsic</a><a class="headerlink" href="#llvm-experimental-gc-result-intrinsic" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id2">
-<h4>Syntax:<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare type*
-  @llvm.experimental.gc.result(i32 %statepoint_token)
+<h3><a class="toc-backref" href="#id21">‘llvm.experimental.gc.result’ Intrinsic</a><a class="headerlink" href="#llvm-experimental-gc-result-intrinsic" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h4>Syntax:<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="nb">type</span><span class="o">*</span>
+  <span class="nd">@llvm</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">gc</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">token</span> <span class="o">%</span><span class="n">statepoint_token</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id3">
-<h4>Overview:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
-<p><code class="docutils literal"><span class="pre">gc.result</span></code> extracts the result of the original call instruction
-which was replaced by the <code class="docutils literal"><span class="pre">gc.statepoint</span></code>.  The <code class="docutils literal"><span class="pre">gc.result</span></code>
+<div class="section" id="id2">
+<h4>Overview:<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">gc.result</span></code> extracts the result of the original call instruction
+which was replaced by the <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code>.  The <code class="docutils literal notranslate"><span class="pre">gc.result</span></code>
 intrinsic is actually a family of three intrinsics due to an
 implementation limitation.  Other than the type of the return value,
 the semantics are the same.</p>
 </div>
-<div class="section" id="id4">
-<h4>Operands:<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
-<p>The first and only argument is the <code class="docutils literal"><span class="pre">gc.statepoint</span></code> which starts
-the safepoint sequence of which this <code class="docutils literal"><span class="pre">gc.result</span></code> is a part.
-Despite the typing of this as a generic i32, <em>only</em> the value defined
-by a <code class="docutils literal"><span class="pre">gc.statepoint</span></code> is legal here.</p>
+<div class="section" id="id3">
+<h4>Operands:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p>The first and only argument is the <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code> which starts
+the safepoint sequence of which this <code class="docutils literal notranslate"><span class="pre">gc.result</span></code> is a part.
+Despite the typing of this as a generic token, <em>only</em> the value defined
+by a <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code> is legal here.</p>
 </div>
-<div class="section" id="id5">
-<h4>Semantics:<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
-<p>The <code class="docutils literal"><span class="pre">gc.result</span></code> represents the return value of the call target of
-the <code class="docutils literal"><span class="pre">statepoint</span></code>.  The type of the <code class="docutils literal"><span class="pre">gc.result</span></code> must exactly match
+<div class="section" id="id4">
+<h4>Semantics:<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">gc.result</span></code> represents the return value of the call target of
+the <code class="docutils literal notranslate"><span class="pre">statepoint</span></code>.  The type of the <code class="docutils literal notranslate"><span class="pre">gc.result</span></code> must exactly match
 the type of the target.  If the call target returns void, there will
-be no <code class="docutils literal"><span class="pre">gc.result</span></code>.</p>
-<p>A <code class="docutils literal"><span class="pre">gc.result</span></code> is modeled as a &#8216;readnone&#8217; pure function.  It has no
+be no <code class="docutils literal notranslate"><span class="pre">gc.result</span></code>.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">gc.result</span></code> is modeled as a ‘readnone’ pure function.  It has no
 side effects since it is just a projection of the return value of the
-previous call represented by the <code class="docutils literal"><span class="pre">gc.statepoint</span></code>.</p>
+previous call represented by the <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code>.</p>
 </div>
 </div>
 <div class="section" id="llvm-experimental-gc-relocate-intrinsic">
-<h3><a class="toc-backref" href="#id18">&#8216;llvm.experimental.gc.relocate&#8217; Intrinsic</a><a class="headerlink" href="#llvm-experimental-gc-relocate-intrinsic" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id6">
-<h4>Syntax:<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
-<div class="highlight-python"><div class="highlight"><pre>declare &lt;pointer type&gt;
-  @llvm.experimental.gc.relocate(i32 %statepoint_token,
-                                 i32 %base_offset,
-                                 i32 %pointer_offset)
+<h3><a class="toc-backref" href="#id22">‘llvm.experimental.gc.relocate’ Intrinsic</a><a class="headerlink" href="#llvm-experimental-gc-relocate-intrinsic" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h4>Syntax:<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">declare</span> <span class="o">&lt;</span><span class="n">pointer</span> <span class="nb">type</span><span class="o">&gt;</span>
+  <span class="nd">@llvm</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">gc</span><span class="o">.</span><span class="n">relocate</span><span class="p">(</span><span class="n">token</span> <span class="o">%</span><span class="n">statepoint_token</span><span class="p">,</span>
+                                 <span class="n">i32</span> <span class="o">%</span><span class="n">base_offset</span><span class="p">,</span>
+                                 <span class="n">i32</span> <span class="o">%</span><span class="n">pointer_offset</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="id7">
-<h4>Overview:<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
-<p>A <code class="docutils literal"><span class="pre">gc.relocate</span></code> returns the potentially relocated value of a pointer
+<div class="section" id="id6">
+<h4>Overview:<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<p>A <code class="docutils literal notranslate"><span class="pre">gc.relocate</span></code> returns the potentially relocated value of a pointer
 at the safepoint.</p>
 </div>
-<div class="section" id="id8">
-<h4>Operands:<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
-<p>The first argument is the <code class="docutils literal"><span class="pre">gc.statepoint</span></code> which starts the
-safepoint sequence of which this <code class="docutils literal"><span class="pre">gc.relocation</span></code> is a part.
-Despite the typing of this as a generic i32, <em>only</em> the value defined
-by a <code class="docutils literal"><span class="pre">gc.statepoint</span></code> is legal here.</p>
+<div class="section" id="id7">
+<h4>Operands:<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p>The first argument is the <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code> which starts the
+safepoint sequence of which this <code class="docutils literal notranslate"><span class="pre">gc.relocation</span></code> is a part.
+Despite the typing of this as a generic token, <em>only</em> the value defined
+by a <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code> is legal here.</p>
 <p>The second argument is an index into the statepoints list of arguments
-which specifies the base pointer for the pointer being relocated.
-This index must land within the &#8216;gc parameter&#8217; section of the
-statepoint&#8217;s argument list.</p>
-<p>The third argument is an index into the statepoint&#8217;s list of arguments
+which specifies the allocation for the pointer being relocated.
+This index must land within the ‘gc parameter’ section of the
+statepoint’s argument list.  The associated value must be within the
+object with which the pointer being relocated is associated. The optimizer
+is free to change <em>which</em> interior derived pointer is reported, provided that
+it does not replace an actual base pointer with another interior derived
+pointer.  Collectors are allowed to rely on the base pointer operand
+remaining an actual base pointer if so constructed.</p>
+<p>The third argument is an index into the statepoint’s list of arguments
 which specify the (potentially) derived pointer being relocated.  It
 is legal for this index to be the same as the second argument
 if-and-only-if a base pointer is being relocated. This index must land
-within the &#8216;gc parameter&#8217; section of the statepoint&#8217;s argument list.</p>
+within the ‘gc parameter’ section of the statepoint’s argument list.</p>
 </div>
-<div class="section" id="id9">
-<h4>Semantics:<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
-<p>The return value of <code class="docutils literal"><span class="pre">gc.relocate</span></code> is the potentially relocated value
-of the pointer specified by it&#8217;s arguments.  It is unspecified how the
+<div class="section" id="id8">
+<h4>Semantics:<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<p>The return value of <code class="docutils literal notranslate"><span class="pre">gc.relocate</span></code> is the potentially relocated value
+of the pointer specified by its arguments.  It is unspecified how the
 value of the returned pointer relates to the argument to the
-<code class="docutils literal"><span class="pre">gc.statepoint</span></code> other than that a) it points to the same source
-language object with the same offset, and b) the &#8216;based-on&#8217;
+<code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code> other than that a) it points to the same source
+language object with the same offset, and b) the ‘based-on’
 relationship of the newly relocated pointers is a projection of the
 unrelocated pointers.  In particular, the integer value of the pointer
 returned is unspecified.</p>
-<p>A <code class="docutils literal"><span class="pre">gc.relocate</span></code> is modeled as a <code class="docutils literal"><span class="pre">readnone</span></code> pure function.  It has no
+<p>A <code class="docutils literal notranslate"><span class="pre">gc.relocate</span></code> is modeled as a <code class="docutils literal notranslate"><span class="pre">readnone</span></code> pure function.  It has no
 side effects since it is just a way to extract information about work
-done during the actual call modeled by the <code class="docutils literal"><span class="pre">gc.statepoint</span></code>.</p>
+done during the actual call modeled by the <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code>.</p>
 </div>
 </div>
 </div>
 <div class="section" id="stack-map-format">
-<span id="statepoint-stackmap-format"></span><h2><a class="toc-backref" href="#id19">Stack Map Format</a><a class="headerlink" href="#stack-map-format" title="Permalink to this headline">¶</a></h2>
+<span id="statepoint-stackmap-format"></span><h2><a class="toc-backref" href="#id23">Stack Map Format</a><a class="headerlink" href="#stack-map-format" title="Permalink to this headline">¶</a></h2>
 <p>Locations for each pointer value which may need read and/or updated by
-the runtime or collector are provided via the <a class="reference internal" href="StackMaps.html#stackmap-format"><span>Stack Map format</span></a> specified in the PatchPoint documentation.</p>
+the runtime or collector are provided in a separate section of the
+generated object file as specified in the PatchPoint documentation.
+This special section is encoded per the
+<a class="reference internal" href="StackMaps.html#stackmap-format"><span class="std std-ref">Stack Map format</span></a>.</p>
+<p>The general expectation is that a JIT compiler will parse and discard this
+format; it is not particularly memory efficient.  If you need an alternate
+format (e.g. for an ahead of time compiler), see discussion under
+:ref: <cite>open work items &lt;OpenWork&gt;</cite> below.</p>
 <p>Each statepoint generates the following Locations:</p>
 <ul class="simple">
-<li>Constant which describes the calling convention of the call target. This
-constant is a valid <a class="reference internal" href="LangRef.html#callingconv"><span>calling convention identifier</span></a> for
+<li><p>Constant which describes the calling convention of the call target. This
+constant is a valid <a class="reference internal" href="LangRef.html#callingconv"><span class="std std-ref">calling convention identifier</span></a> for
 the version of LLVM used to generate the stackmap. No additional compatibility
 guarantees are made for this constant over what LLVM provides elsewhere w.r.t.
-these identifiers.</li>
-<li>Constant which describes the flags passed to the statepoint intrinsic</li>
-<li>Constant which describes number of following deopt <em>Locations</em> (not
-operands)</li>
-<li>Variable number of Locations, one for each deopt parameter listed in
-the IR statepoint (same number as described by previous Constant)</li>
-<li>Variable number of Locations pairs, one pair for each unique pointer
-which needs relocated.  The first Location in each pair describes
-the base pointer for the object.  The second is the derived pointer
-actually being relocated.  It is guaranteed that the base pointer
-must also appear explicitly as a relocation pair if used after the
-statepoint. There may be fewer pairs then gc parameters in the IR
+these identifiers.</p></li>
+<li><p>Constant which describes the flags passed to the statepoint intrinsic</p></li>
+<li><p>Constant which describes number of following deopt <em>Locations</em> (not
+operands)</p></li>
+<li><p>Variable number of Locations, one for each deopt parameter listed in
+the IR statepoint (same number as described by previous Constant).  At
+the moment, only deopt parameters with a bitwidth of 64 bits or less
+are supported.  Values of a type larger than 64 bits can be specified
+and reported only if a) the value is constant at the call site, and b)
+the constant can be represented with less than 64 bits (assuming zero
+extension to the original bitwidth).</p></li>
+<li><p>Variable number of relocation records, each of which consists of
+exactly two Locations.  Relocation records are described in detail
+below.</p></li>
+</ul>
+<p>Each relocation record provides sufficient information for a collector to
+relocate one or more derived pointers.  Each record consists of a pair of
+Locations.  The second element in the record represents the pointer (or
+pointers) which need updated.  The first element in the record provides a
+pointer to the base of the object with which the pointer(s) being relocated is
+associated.  This information is required for handling generalized derived
+pointers since a pointer may be outside the bounds of the original allocation,
+but still needs to be relocated with the allocation.  Additionally:</p>
+<ul class="simple">
+<li><p>It is guaranteed that the base pointer must also appear explicitly as a
+relocation pair if used after the statepoint.</p></li>
+<li><p>There may be fewer relocation records then gc parameters in the IR
 statepoint. Each <em>unique</em> pair will occur at least once; duplicates
-are possible.</li>
+are possible.</p></li>
+<li><p>The Locations within each record may either be of pointer size or a
+multiple of pointer size.  In the later case, the record must be
+interpreted as describing a sequence of pointers and their corresponding
+base pointers. If the Location is of size N x sizeof(pointer), then
+there will be N records of one pointer each contained within the Location.
+Both Locations in a pair can be assumed to be of the same size.</p></li>
 </ul>
 <p>Note that the Locations used in each section may describe the same
 physical location.  e.g. A stack slot may appear as a deopt location,
@@ -562,16 +730,16 @@ a gc base pointer, and a gc derived pointer.</p>
 record.</p>
 </div>
 <div class="section" id="safepoint-semantics-verification">
-<h2><a class="toc-backref" href="#id20">Safepoint Semantics &amp; Verification</a><a class="headerlink" href="#safepoint-semantics-verification" title="Permalink to this headline">¶</a></h2>
-<p>The fundamental correctness property for the compiled code&#8217;s
+<h2><a class="toc-backref" href="#id24">Safepoint Semantics &amp; Verification</a><a class="headerlink" href="#safepoint-semantics-verification" title="Permalink to this headline">¶</a></h2>
+<p>The fundamental correctness property for the compiled code’s
 correctness w.r.t. the garbage collector is a dynamic one.  It must be
 the case that there is no dynamic trace such that a operation
 involving a potentially relocated pointer is observably-after a
-safepoint which could relocate it.  &#8216;observably-after&#8217; is this usage
+safepoint which could relocate it.  ‘observably-after’ is this usage
 means that an outside observer could observe this sequence of events
 in a way which precludes the operation being performed before the
 safepoint.</p>
-<p>To understand why this &#8216;observable-after&#8217; property is required,
+<p>To understand why this ‘observable-after’ property is required,
 consider a null comparison performed on the original copy of a
 relocated pointer.  Assuming that control flow follows the safepoint,
 there is no way to observe externally whether the null comparison is
@@ -580,7 +748,7 @@ Value is unmodified by the safepoint.)  The compiler is free to make
 either scheduling choice.</p>
 <p>The actual correctness property implemented is slightly stronger than
 this.  We require that there be no <em>static path</em> on which a
-potentially relocated pointer is &#8216;observably-after&#8217; it may have been
+potentially relocated pointer is ‘observably-after’ it may have been
 relocated.  This is slightly stronger than is strictly necessary (and
 thus may disallow some otherwise valid programs), but greatly
 simplifies reasoning about correctness of the compiled code.</p>
@@ -591,78 +759,106 @@ the design.</p>
 local restrictions on the intrinsics mentioned in their respective
 documentation.  The current implementation in LLVM does not check the
 key relocation invariant, but this is ongoing work on developing such
-a verifier.  Please ask on llvm-dev if you&#8217;re interested in
+a verifier.  Please ask on llvm-dev if you’re interested in
 experimenting with the current version.</p>
 </div>
 <div class="section" id="utility-passes-for-safepoint-insertion">
-<span id="statepoint-utilities"></span><h2><a class="toc-backref" href="#id21">Utility Passes for Safepoint Insertion</a><a class="headerlink" href="#utility-passes-for-safepoint-insertion" title="Permalink to this headline">¶</a></h2>
+<span id="statepoint-utilities"></span><h2><a class="toc-backref" href="#id25">Utility Passes for Safepoint Insertion</a><a class="headerlink" href="#utility-passes-for-safepoint-insertion" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="rewritestatepointsforgc">
-<span id="id10"></span><h3><a class="toc-backref" href="#id22">RewriteStatepointsForGC</a><a class="headerlink" href="#rewritestatepointsforgc" title="Permalink to this headline">¶</a></h3>
-<p>The pass RewriteStatepointsForGC transforms a functions IR by replacing a
-<code class="docutils literal"><span class="pre">gc.statepoint</span></code> (with an optional <code class="docutils literal"><span class="pre">gc.result</span></code>) with a full relocation
-sequence, including all required <code class="docutils literal"><span class="pre">gc.relocates</span></code>.  To function, the pass
-requires that the GC strategy specified for the function be able to reliably
-distinguish between GC references and non-GC references in IR it is given.</p>
+<span id="id9"></span><h3><a class="toc-backref" href="#id26">RewriteStatepointsForGC</a><a class="headerlink" href="#rewritestatepointsforgc" title="Permalink to this headline">¶</a></h3>
+<p>The pass RewriteStatepointsForGC transforms a function’s IR to lower from the
+abstract machine model described above to the explicit statepoint model of
+relocations.  To do this, it replaces all calls or invokes of functions which
+might contain a safepoint poll with a <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code> and associated full
+relocation sequence, including all required <code class="docutils literal notranslate"><span class="pre">gc.relocates</span></code>.</p>
+<p>Note that by default, this pass only runs for the “statepoint-example” or
+“core-clr” gc strategies.  You will need to add your custom strategy to this
+whitelist or use one of the predefined ones.</p>
 <p>As an example, given this code:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
        <span class="k">gc</span> <span class="s">&quot;statepoint-example&quot;</span> <span class="p">{</span>
-  <span class="k">call</span> <span class="k">i32</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">2882400000</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">5</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">-1</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">)</span>
+  <span class="k">call</span> <span class="k">void</span> <span class="vg">@foo</span><span class="p">()</span>
   <span class="k">ret</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>The pass would produce this IR:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@test1</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
        <span class="k">gc</span> <span class="s">&quot;statepoint-example&quot;</span> <span class="p">{</span>
-  <span class="nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i32</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">2882400000</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">5</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">-1</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
-  <span class="nv">%obj.relocated</span> <span class="p">=</span> <span class="k">call</span> <span class="k">coldcc</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.experimental.gc.relocate.p1i8</span><span class="p">(</span><span class="k">i32</span> <span class="nv-Anonymous">%0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">12</span><span class="p">,</span> <span class="k">i32</span> <span class="m">12</span><span class="p">)</span>
+  <span class="nv nv-Anonymous">%0</span> <span class="p">=</span> <span class="k">call</span> <span class="k">token</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">2882400000</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">5</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">-1</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj</span><span class="p">)</span>
+  <span class="nv">%obj.relocated</span> <span class="p">=</span> <span class="k">call</span> <span class="k">coldcc</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.experimental.gc.relocate.p1i8</span><span class="p">(</span><span class="k">token</span> <span class="nv nv-Anonymous">%0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">12</span><span class="p">,</span> <span class="k">i32</span> <span class="m">12</span><span class="p">)</span>
   <span class="k">ret</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%obj.relocated</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>In the above examples, the addrspace(1) marker on the pointers is the mechanism
-that the <code class="docutils literal"><span class="pre">statepoint-example</span></code> GC strategy uses to distinguish references from
-non references.  Address space 1 is not globally reserved for this purpose.</p>
-<p>This pass can be used an utility function by a language frontend that doesn&#8217;t
+that the <code class="docutils literal notranslate"><span class="pre">statepoint-example</span></code> GC strategy uses to distinguish references from
+non references.  The pass assumes that all addrspace(1) pointers are non-integral
+pointer types.  Address space 1 is not globally reserved for this purpose.</p>
+<p>This pass can be used an utility function by a language frontend that doesn’t
 want to manually reason about liveness, base pointers, or relocation when
 constructing IR.  As currently implemented, RewriteStatepointsForGC must be
 run after SSA construction (i.e. mem2ref).</p>
-<p>In practice, RewriteStatepointsForGC can be run much later in the pass
+<p>RewriteStatepointsForGC will ensure that appropriate base pointers are listed
+for every relocation created.  It will do so by duplicating code as needed to
+propagate the base pointer associated with each pointer being relocated to
+the appropriate safepoints.  The implementation assumes that the following
+IR constructs produce base pointers: loads from the heap, addresses of global
+variables, function arguments, function return values. Constant pointers (such
+as null) are also assumed to be base pointers.  In practice, this constraint
+can be relaxed to producing interior derived pointers provided the target
+collector can find the associated allocation from an arbitrary interior
+derived pointer.</p>
+<p>By default RewriteStatepointsForGC passes in <code class="docutils literal notranslate"><span class="pre">0xABCDEF00</span></code> as the statepoint
+ID and <code class="docutils literal notranslate"><span class="pre">0</span></code> as the number of patchable bytes to the newly constructed
+<code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code>.  These values can be configured on a per-callsite
+basis using the attributes <code class="docutils literal notranslate"><span class="pre">&quot;statepoint-id&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">&quot;statepoint-num-patch-bytes&quot;</span></code>.  If a call site is marked with a
+<code class="docutils literal notranslate"><span class="pre">&quot;statepoint-id&quot;</span></code> function attribute and its value is a positive
+integer (represented as a string), then that value is used as the ID
+of the newly constructed <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code>.  If a call site is marked
+with a <code class="docutils literal notranslate"><span class="pre">&quot;statepoint-num-patch-bytes&quot;</span></code> function attribute and its
+value is a positive integer, then that value is used as the ‘num patch
+bytes’ parameter of the newly constructed <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code>.  The
+<code class="docutils literal notranslate"><span class="pre">&quot;statepoint-id&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;statepoint-num-patch-bytes&quot;</span></code> attributes
+are not propagated to the <code class="docutils literal notranslate"><span class="pre">gc.statepoint</span></code> call or invoke if they
+could be successfully parsed.</p>
+<p>In practice, RewriteStatepointsForGC should be run much later in the pass
 pipeline, after most optimization is already done.  This helps to improve
-the quality of the generated code when compiled with garbage collection support.
-In the long run, this is the intended usage model.  At this time, a few details
-have yet to be worked out about the semantic model required to guarantee this
-is always correct.  As such, please use with caution and report bugs.</p>
+the quality of the generated code when compiled with garbage collection support.</p>
 </div>
 <div class="section" id="placesafepoints">
-<span id="id11"></span><h3><a class="toc-backref" href="#id23">PlaceSafepoints</a><a class="headerlink" href="#placesafepoints" title="Permalink to this headline">¶</a></h3>
-<p>The pass PlaceSafepoints transforms a function&#8217;s IR by replacing any call or
-invoke instructions with appropriate <code class="docutils literal"><span class="pre">gc.statepoint</span></code> and <code class="docutils literal"><span class="pre">gc.result</span></code> pairs,
-and inserting safepoint polls sufficient to ensure running code checks for a
-safepoint request on a timely manner.  This pass is expected to be run before
-RewriteStatepointsForGC and thus does not produce full relocation sequences.</p>
+<span id="id10"></span><h3><a class="toc-backref" href="#id27">PlaceSafepoints</a><a class="headerlink" href="#placesafepoints" title="Permalink to this headline">¶</a></h3>
+<p>The pass PlaceSafepoints inserts safepoint polls sufficient to ensure running
+code checks for a safepoint request on a timely manner. This pass is expected
+to be run before RewriteStatepointsForGC and thus does not produce full
+relocation sequences.</p>
 <p>As an example, given input IR of the following:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="kt">void</span> <span class="vg">@test</span><span class="p">()</span> <span class="k">gc</span> <span class="s">&quot;statepoint-example&quot;</span> <span class="p">{</span>
-  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@foo</span><span class="p">()</span>
-  <span class="k">ret</span> <span class="kt">void</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">void</span> <span class="vg">@test</span><span class="p">()</span> <span class="k">gc</span> <span class="s">&quot;statepoint-example&quot;</span> <span class="p">{</span>
+  <span class="k">call</span> <span class="k">void</span> <span class="vg">@foo</span><span class="p">()</span>
+  <span class="k">ret</span> <span class="k">void</span>
 <span class="p">}</span>
 
-<span class="k">declare</span> <span class="kt">void</span> <span class="vg">@do_safepoint</span><span class="p">()</span>
-<span class="k">define</span> <span class="kt">void</span> <span class="vg">@gc.safepoint_poll</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">call</span> <span class="kt">void</span> <span class="vg">@do_safepoint</span><span class="p">()</span>
-  <span class="k">ret</span> <span class="kt">void</span>
+<span class="k">declare</span> <span class="k">void</span> <span class="vg">@do_safepoint</span><span class="p">()</span>
+<span class="k">define</span> <span class="k">void</span> <span class="vg">@gc.safepoint_poll</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">call</span> <span class="k">void</span> <span class="vg">@do_safepoint</span><span class="p">()</span>
+  <span class="k">ret</span> <span class="k">void</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>This pass would produce the following IR:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="kt">void</span> <span class="vg">@test</span><span class="p">()</span> <span class="k">gc</span> <span class="s">&quot;statepoint-example&quot;</span> <span class="p">{</span>
-  <span class="nv">%safepoint_token</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i32</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">2882400000</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*</span> <span class="vg">@do_safepoint</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">)</span>
-  <span class="nv">%safepoint_token1</span> <span class="p">=</span> <span class="k">call</span> <span class="k">i32</span> <span class="p">(</span><span class="k">i64</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*,</span> <span class="k">i32</span><span class="p">,</span> <span class="k">i32</span><span class="p">,</span> <span class="p">...)*</span> <span class="vg">@llvm.experimental.gc.statepoint.p0f_isVoidf</span><span class="p">(</span><span class="k">i64</span> <span class="m">2882400000</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="kt">void</span> <span class="p">()*</span> <span class="vg">@foo</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">0</span><span class="p">)</span>
-  <span class="k">ret</span> <span class="kt">void</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">void</span> <span class="vg">@test</span><span class="p">()</span> <span class="k">gc</span> <span class="s">&quot;statepoint-example&quot;</span> <span class="p">{</span>
+  <span class="k">call</span> <span class="k">void</span> <span class="vg">@do_safepoint</span><span class="p">()</span>
+  <span class="k">call</span> <span class="k">void</span> <span class="vg">@foo</span><span class="p">()</span>
+  <span class="k">ret</span> <span class="k">void</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>In this case, we&#8217;ve added an (unconditional) entry safepoint poll and converted the call into a <code class="docutils literal"><span class="pre">gc.statepoint</span></code>.  Note that despite appearances, the entry poll is not necessarily redundant.  We&#8217;d have to know that <code class="docutils literal"><span class="pre">foo</span></code> and <code class="docutils literal"><span class="pre">test</span></code> were not mutually recursive for the poll to be redundant.  In practice, you&#8217;d probably want to your poll definition to contain a conditional branch of some form.</p>
+<p>In this case, we’ve added an (unconditional) entry safepoint poll.  Note that
+despite appearances, the entry poll is not necessarily redundant.  We’d have to
+know that <code class="docutils literal notranslate"><span class="pre">foo</span></code> and <code class="docutils literal notranslate"><span class="pre">test</span></code> were not mutually recursive for the poll to be
+redundant.  In practice, you’d probably want to your poll definition to contain
+a conditional branch of some form.</p>
 <p>At the moment, PlaceSafepoints can insert safepoint polls at method entry and
 loop backedges locations.  Extending this to work with return polls would be
 straight forward if desired.</p>
@@ -671,35 +867,84 @@ polls at particular sites unless needed to ensure timely execution of a poll
 under normal conditions.  PlaceSafepoints does not attempt to ensure timely
 execution of a poll under worst case conditions such as heavy system paging.</p>
 <p>The implementation of a safepoint poll action is specified by looking up a
-function of the name <code class="docutils literal"><span class="pre">gc.safepoint_poll</span></code> in the containing Module.  The body
+function of the name <code class="docutils literal notranslate"><span class="pre">gc.safepoint_poll</span></code> in the containing Module.  The body
 of this function is inserted at each poll site desired.  While calls or invokes
-inside this method are transformed to a <code class="docutils literal"><span class="pre">gc.statepoints</span></code>, recursive poll
+inside this method are transformed to a <code class="docutils literal notranslate"><span class="pre">gc.statepoints</span></code>, recursive poll
 insertion is not performed.</p>
-<p>By default PlaceSafepoints passes in <code class="docutils literal"><span class="pre">0xABCDEF00</span></code> as the statepoint
-ID and <code class="docutils literal"><span class="pre">0</span></code> as the number of patchable bytes to the newly constructed
-<code class="docutils literal"><span class="pre">gc.statepoint</span></code>.  These values can be configured on a per-callsite
-basis using the attributes <code class="docutils literal"><span class="pre">&quot;statepoint-id&quot;</span></code> and
-<code class="docutils literal"><span class="pre">&quot;statepoint-num-patch-bytes&quot;</span></code>.  If a call site is marked with a
-<code class="docutils literal"><span class="pre">&quot;statepoint-id&quot;</span></code> function attribute and its value is a positive
-integer (represented as a string), then that value is used as the ID
-of the newly constructed <code class="docutils literal"><span class="pre">gc.statepoint</span></code>.  If a call site is marked
-with a <code class="docutils literal"><span class="pre">&quot;statepoint-num-patch-bytes&quot;</span></code> function attribute and its
-value is a positive integer, then that value is used as the &#8216;num patch
-bytes&#8217; parameter of the newly constructed <code class="docutils literal"><span class="pre">gc.statepoint</span></code>.  The
-<code class="docutils literal"><span class="pre">&quot;statepoint-id&quot;</span></code> and <code class="docutils literal"><span class="pre">&quot;statepoint-num-patch-bytes&quot;</span></code> attributes
-are not propagated to the <code class="docutils literal"><span class="pre">gc.statepoint</span></code> call or invoke if they
-could be successfully parsed.</p>
-<p>If you are scheduling the RewriteStatepointsForGC pass late in the pass order,
-you should probably schedule this pass immediately before it.  The exception
-would be if you need to preserve abstract frame information (e.g. for
-deoptimization or introspection) at safepoints.  In that case, ask on the
-llvm-dev mailing list for suggestions.</p>
+<p>This pass is useful for any language frontend which only has to support
+garbage collection semantics at safepoints.  If you need other abstract
+frame information at safepoints (e.g. for deoptimization or introspection),
+you can insert safepoint polls in the frontend.  If you have the later case,
+please ask on llvm-dev for suggestions.  There’s been a good amount of work
+done on making such a scheme work well in practice which is not yet documented
+here.</p>
+</div>
+</div>
+<div class="section" id="supported-architectures">
+<h2><a class="toc-backref" href="#id28">Supported Architectures</a><a class="headerlink" href="#supported-architectures" title="Permalink to this headline">¶</a></h2>
+<p>Support for statepoint generation requires some code for each backend.
+Today, only X86_64 is supported.</p>
+</div>
+<div class="section" id="limitations-and-half-baked-ideas">
+<span id="openwork"></span><h2><a class="toc-backref" href="#id29">Limitations and Half Baked Ideas</a><a class="headerlink" href="#limitations-and-half-baked-ideas" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="mixing-references-and-raw-pointers">
+<h3><a class="toc-backref" href="#id30">Mixing References and Raw Pointers</a><a class="headerlink" href="#mixing-references-and-raw-pointers" title="Permalink to this headline">¶</a></h3>
+<p>Support for languages which allow unmanaged pointers to garbage collected
+objects (i.e. pass a pointer to an object to a C routine) in the abstract
+machine model.  At the moment, the best idea on how to approach this
+involves an intrinsic or opaque function which hides the connection between
+the reference value and the raw pointer.  The problem is that having a
+ptrtoint or inttoptr cast (which is common for such use cases) breaks the
+rules used for inferring base pointers for arbitrary references when
+lowering out of the abstract model to the explicit physical model.  Note
+that a frontend which lowers directly to the physical model doesn’t have
+any problems here.</p>
+</div>
+<div class="section" id="objects-on-the-stack">
+<h3><a class="toc-backref" href="#id31">Objects on the Stack</a><a class="headerlink" href="#objects-on-the-stack" title="Permalink to this headline">¶</a></h3>
+<p>As noted above, the explicit lowering supports objects allocated on the
+stack provided the collector can find a heap map given the stack address.</p>
+<p>The missing pieces are a) integration with rewriting (RS4GC) from the
+abstract machine model and b) support for optionally decomposing on stack
+objects so as not to require heap maps for them.  The later is required
+for ease of integration with some collectors.</p>
+</div>
+<div class="section" id="lowering-quality-and-representation-overhead">
+<h3><a class="toc-backref" href="#id32">Lowering Quality and Representation Overhead</a><a class="headerlink" href="#lowering-quality-and-representation-overhead" title="Permalink to this headline">¶</a></h3>
+<p>The current statepoint lowering is known to be somewhat poor.  In the very
+long term, we’d like to integrate statepoints with the register allocator;
+in the near term this is unlikely to happen.  We’ve found the quality of
+lowering to be relatively unimportant as hot-statepoints are almost always
+inliner bugs.</p>
+<p>Concerns have been raised that the statepoint representation results in a
+large amount of IR being produced for some examples and that this
+contributes to higher than expected memory usage and compile times.  There’s
+no immediate plans to make changes due to this, but alternate models may be
+explored in the future.</p>
+</div>
+<div class="section" id="relocations-along-exceptional-edges">
+<h3><a class="toc-backref" href="#id33">Relocations Along Exceptional Edges</a><a class="headerlink" href="#relocations-along-exceptional-edges" title="Permalink to this headline">¶</a></h3>
+<p>Relocations along exceptional paths are currently broken in ToT.  In
+particular, there is current no way to represent a rethrow on a path which
+also has relocations.  See <a class="reference external" href="https://groups.google.com/forum/#!topic/llvm-dev/AE417XjgxvI">this llvm-dev discussion</a> for more
+detail.</p>
+</div>
+<div class="section" id="support-for-alternate-stackmap-formats">
+<h3><a class="toc-backref" href="#id34">Support for alternate stackmap formats</a><a class="headerlink" href="#support-for-alternate-stackmap-formats" title="Permalink to this headline">¶</a></h3>
+<p>For some use cases, it is
+desirable to directly encode a final memory efficient stackmap format for
+use by the runtime.  This is particularly relevant for ahead of time
+compilers which wish to directly link object files without the need for
+post processing of each individual object file.  While not implemented
+today for statepoints, there is precedent for a GCStrategy to be able to
+select a customer GCMetataPrinter for this purpose.  Patches to enable
+this functionality upstream are welcome.</p>
 </div>
 </div>
 <div class="section" id="bugs-and-enhancements">
-<h2><a class="toc-backref" href="#id24">Bugs and Enhancements</a><a class="headerlink" href="#bugs-and-enhancements" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id35">Bugs and Enhancements</a><a class="headerlink" href="#bugs-and-enhancements" title="Permalink to this headline">¶</a></h2>
 <p>Currently known bugs and enhancements under consideration can be
-tracked by performing a <a class="reference external" href="http://llvm.org/bugs/buglist.cgi?cmdtype=runnamed&amp;namedcmd=Statepoint%20Bugs&amp;list_id=64342">bugzilla search</a>
+tracked by performing a <a class="reference external" href="https://bugs.llvm.org/buglist.cgi?cmdtype=runnamed&amp;namedcmd=Statepoint%20Bugs&amp;list_id=64342">bugzilla search</a>
 for [Statepoint] in the summary field. When filing new bugs, please
 use this tag so that interested parties see the newly filed bug.  As
 with most LLVM features, design discussions take place on <a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">llvm-dev</a>, and patches
@@ -730,9 +975,9 @@ should be sent to <a class="reference external" href="http://lists.llvm.org/mail
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

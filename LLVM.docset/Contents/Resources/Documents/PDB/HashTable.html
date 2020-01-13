@@ -1,0 +1,171 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>The PDB Serialized Hash Table Format &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CodeView Symbol Records" href="CodeViewSymbols.html" />
+    <link rel="prev" title="The PDB Global Symbol Stream" href="GlobalStream.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="CodeViewSymbols.html" title="CodeView Symbol Records"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="GlobalStream.html" title="The PDB Global Symbol Stream"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The PDB File Format</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-pdb-serialized-hash-table-format">
+<h1>The PDB Serialized Hash Table Format<a class="headerlink" href="#the-pdb-serialized-hash-table-format" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="introduction">
+<span id="hash-intro"></span><h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>One of the design goals of the PDB format is to provide accelerated access to
+debug information, and for this reason there are several occasions where hash
+tables are serialized and embedded directly to the file, rather than requiring
+a consumer to read a list of values and reconstruct the hash table on the fly.</p>
+<p>The serialization format supports hash tables of arbitrarily large size and
+capacity, as well as value types and hash functions.  The only supported key
+value type is a uint32.  The only requirement is that the producer and consumer
+agree on the hash function.  As such, the hash function can is not discussed
+further in this document, it is assumed that for a particular instance of a PDB
+file hash table, the appropriate hash function is being used.</p>
+</div>
+<div class="section" id="on-disk-format">
+<h1>On-Disk Format<a class="headerlink" href="#on-disk-format" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.--------------------.-- +0
+|        Size        |
+.--------------------.-- +4
+|      Capacity      |
+.--------------------.-- +8
+| Present Bit Vector |
+.--------------------.-- +N
+| Deleted Bit Vector |
+.--------------------.-- +M                  ─╮
+|        Key         |                        │
+.--------------------.-- +M+4                 │
+|       Value        |                        │
+.--------------------.-- +M+4+sizeof(Value)   │
+         ...                                  ├─ |Capacity| Bucket entries
+.--------------------.                        │
+|        Key         |                        │
+.--------------------.                        │
+|       Value        |                        │
+.--------------------.                       ─╯
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Size</strong> - The number of values contained in the hash table.</p></li>
+<li><p><strong>Capacity</strong> - The number of buckets in the hash table.  Producers should
+maintain a load factor of no greater than <code class="docutils literal notranslate"><span class="pre">2/3*Capacity+1</span></code>.</p></li>
+<li><p><strong>Present Bit Vector</strong> - A serialized bit vector which contains information
+about which buckets have valid values.  If the bucket has a value, the
+corresponding bit will be set, and if the bucket doesn’t have a value (either
+because the bucket is empty or because the value is a tombstone value) the bit
+will be unset.</p></li>
+<li><p><strong>Deleted Bit Vector</strong> - A serialized bit vector which contains information
+about which buckets have tombstone values.  If the entry in this bucket is
+deleted, the bit will be set, otherwise it will be unset.</p></li>
+<li><p><strong>Keys and Values</strong> - A list of <code class="docutils literal notranslate"><span class="pre">Capacity</span></code> hash buckets, where the first
+entry is the key (always a uint32), and the second entry is the value.  The
+state of each bucket (valid, empty, deleted) can be determined by examining
+the present and deleted bit vectors.</p></li>
+</ul>
+</div>
+<div class="section" id="present-and-deleted-bit-vectors">
+<span id="hash-bit-vectors"></span><h1>Present and Deleted Bit Vectors<a class="headerlink" href="#present-and-deleted-bit-vectors" title="Permalink to this headline">¶</a></h1>
+<p>The bit vectors indicating the status of each bucket are serialized as follows:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.--------------------.-- +0
+|     Word Count     |
+.--------------------.-- +4
+|        Word_0      |        ─╮
+.--------------------.-- +8    │
+|        Word_1      |         │
+.--------------------.-- +12   ├─ |Word Count| values
+         ...                   │
+.--------------------.         │
+|       Word_N       |         │
+.--------------------.        ─╯
+</pre></div>
+</div>
+<p>The words, when viewed as a contiguous block of bytes, represent a bit vector
+with the following layout:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>  .------------.         .------------.------------.
+  |   Word_N   |   ...   |   Word_1   |   Word_0   |
+  .------------.         .------------.------------.
+  |            |         |            |            |
++N*32      +(N-1)*32    +64          +32          +0
+</pre></div>
+</div>
+<p>where the k’th bit of this bit vector represents the status of the k’th bucket
+in the hash table.</p>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="CodeViewSymbols.html" title="CodeView Symbol Records"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="GlobalStream.html" title="The PDB Global Symbol Stream"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >The PDB File Format</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

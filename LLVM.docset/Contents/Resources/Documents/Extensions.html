@@ -1,39 +1,28 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LLVM Extensions &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>LLVM Extensions &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
-    <link rel="next" title="LibFuzzer – a library for coverage-guided fuzz testing." href="LibFuzzer.html" />
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="libFuzzer – a library for coverage-guided fuzz testing." href="LibFuzzer.html" />
     <link rel="prev" title="LLVM Programmer’s Manual" href="ProgrammersManual.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -47,7 +36,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="LibFuzzer.html" title="LibFuzzer – a library for coverage-guided fuzz testing."
+          <a href="LibFuzzer.html" title="libFuzzer – a library for coverage-guided fuzz testing."
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="ProgrammersManual.html" title="LLVM Programmer’s Manual"
@@ -67,28 +56,69 @@
 <h1>LLVM Extensions<a class="headerlink" href="#llvm-extensions" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id2">Introduction</a></li>
-<li><a class="reference internal" href="#general-assembly-syntax" id="id3">General Assembly Syntax</a><ul>
-<li><a class="reference internal" href="#c99-style-hexadecimal-floating-point-constants" id="id4">C99-style Hexadecimal Floating-point Constants</a></li>
+<li><p><a class="reference internal" href="#introduction" id="id5">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#general-assembly-syntax" id="id6">General Assembly Syntax</a></p>
+<ul>
+<li><p><a class="reference internal" href="#c99-style-hexadecimal-floating-point-constants" id="id7">C99-style Hexadecimal Floating-point Constants</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#machine-specific-assembly-syntax" id="id5">Machine-specific Assembly Syntax</a><ul>
-<li><a class="reference internal" href="#x86-coff-dependent" id="id6">X86/COFF-Dependent</a><ul>
-<li><a class="reference internal" href="#relocations" id="id7">Relocations</a></li>
-<li><a class="reference internal" href="#linkonce-directive" id="id8"><code class="docutils literal"><span class="pre">.linkonce</span></code> Directive</a></li>
-<li><a class="reference internal" href="#section-directive" id="id9"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a></li>
+<li><p><a class="reference internal" href="#machine-specific-assembly-syntax" id="id8">Machine-specific Assembly Syntax</a></p>
+<ul>
+<li><p><a class="reference internal" href="#x86-coff-dependent" id="id9">X86/COFF-Dependent</a></p>
+<ul>
+<li><p><a class="reference internal" href="#relocations" id="id10">Relocations</a></p></li>
+<li><p><a class="reference internal" href="#linkonce-directive" id="id11"><code class="docutils literal notranslate"><span class="pre">.linkonce</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#section-directive" id="id12"><code class="docutils literal notranslate"><span class="pre">.section</span></code> Directive</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#elf-dependent" id="id10">ELF-Dependent</a><ul>
-<li><a class="reference internal" href="#id1" id="id11"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a></li>
+<li><p><a class="reference internal" href="#arm64-coff-dependent" id="id13">ARM64/COFF-Dependent</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id1" id="id14">Relocations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#elf-dependent" id="id15">ELF-Dependent</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id16"><code class="docutils literal notranslate"><span class="pre">.section</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#linker-options-section-linker-options" id="id17"><code class="docutils literal notranslate"><span class="pre">.linker-options</span></code> Section (linker options)</a></p></li>
+<li><p><a class="reference internal" href="#sht-llvm-dependent-libraries-section-dependent-libraries" id="id18"><code class="docutils literal notranslate"><span class="pre">SHT_LLVM_DEPENDENT_LIBRARIES</span></code> Section (Dependent Libraries)</a></p></li>
+<li><p><a class="reference internal" href="#sht-llvm-call-graph-profile-section-call-graph-profile" id="id19"><code class="docutils literal notranslate"><span class="pre">SHT_LLVM_CALL_GRAPH_PROFILE</span></code> Section (Call Graph Profile)</a></p></li>
+<li><p><a class="reference internal" href="#sht-llvm-addrsig-section-address-significance-table" id="id20"><code class="docutils literal notranslate"><span class="pre">SHT_LLVM_ADDRSIG</span></code> Section (address-significance table)</a></p></li>
+<li><p><a class="reference internal" href="#sht-llvm-sympart-section-symbol-partition-specification" id="id21"><code class="docutils literal notranslate"><span class="pre">SHT_LLVM_SYMPART</span></code> Section (symbol partition specification)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#codeview-dependent" id="id22">CodeView-Dependent</a></p>
+<ul>
+<li><p><a class="reference internal" href="#cv-file-directive" id="id23"><code class="docutils literal notranslate"><span class="pre">.cv_file</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#cv-func-id-directive" id="id24"><code class="docutils literal notranslate"><span class="pre">.cv_func_id</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#cv-inline-site-id-directive" id="id25"><code class="docutils literal notranslate"><span class="pre">.cv_inline_site_id</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#cv-loc-directive" id="id26"><code class="docutils literal notranslate"><span class="pre">.cv_loc</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#cv-linetable-directive" id="id27"><code class="docutils literal notranslate"><span class="pre">.cv_linetable</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#cv-inline-linetable-directive" id="id28"><code class="docutils literal notranslate"><span class="pre">.cv_inline_linetable</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#cv-def-range-directive" id="id29"><code class="docutils literal notranslate"><span class="pre">.cv_def_range</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#cv-stringtable-directive" id="id30"><code class="docutils literal notranslate"><span class="pre">.cv_stringtable</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#cv-filechecksums-directive" id="id31"><code class="docutils literal notranslate"><span class="pre">.cv_filechecksums</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#cv-filechecksumoffset-directive" id="id32"><code class="docutils literal notranslate"><span class="pre">.cv_filechecksumoffset</span></code> Directive</a></p></li>
+<li><p><a class="reference internal" href="#cv-fpo-data-directive" id="id33"><code class="docutils literal notranslate"><span class="pre">.cv_fpo_data</span></code> Directive</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#target-specific-behaviour" id="id12">Target Specific Behaviour</a><ul>
-<li><a class="reference internal" href="#windows-on-arm" id="id13">Windows on ARM</a><ul>
-<li><a class="reference internal" href="#stack-probe-emission" id="id14">Stack Probe Emission</a></li>
-<li><a class="reference internal" href="#variable-length-arrays" id="id15">Variable Length Arrays</a></li>
+<li><p><a class="reference internal" href="#target-specific-behaviour" id="id34">Target Specific Behaviour</a></p>
+<ul>
+<li><p><a class="reference internal" href="#x86" id="id35">X86</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id3" id="id36">Relocations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#windows-on-arm" id="id37">Windows on ARM</a></p>
+<ul>
+<li><p><a class="reference internal" href="#stack-probe-emission" id="id38">Stack Probe Emission</a></p></li>
+<li><p><a class="reference internal" href="#variable-length-arrays" id="id39">Variable Length Arrays</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#windows-on-arm64" id="id40">Windows on ARM64</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id4" id="id41">Stack Probe Emission</a></p></li>
 </ul>
 </li>
 </ul>
@@ -98,33 +128,33 @@
 <div class="toctree-wrapper compound">
 </div>
 <div class="section" id="introduction">
-<h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>This document describes extensions to tools and formats LLVM seeks compatibility
 with.</p>
 </div>
 <div class="section" id="general-assembly-syntax">
-<h2><a class="toc-backref" href="#id3">General Assembly Syntax</a><a class="headerlink" href="#general-assembly-syntax" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">General Assembly Syntax</a><a class="headerlink" href="#general-assembly-syntax" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="c99-style-hexadecimal-floating-point-constants">
-<h3><a class="toc-backref" href="#id4">C99-style Hexadecimal Floating-point Constants</a><a class="headerlink" href="#c99-style-hexadecimal-floating-point-constants" title="Permalink to this headline">¶</a></h3>
-<p>LLVM&#8217;s assemblers allow floating-point constants to be written in C99&#8217;s
+<h3><a class="toc-backref" href="#id7">C99-style Hexadecimal Floating-point Constants</a><a class="headerlink" href="#c99-style-hexadecimal-floating-point-constants" title="Permalink to this headline">¶</a></h3>
+<p>LLVM’s assemblers allow floating-point constants to be written in C99’s
 hexadecimal format instead of decimal if desired.</p>
-<div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span> <span class="no">.data</span>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="no">.data</span>
 <span class="na">.float</span> <span class="mi">0x1c2</span><span class="no">.2ap3</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="machine-specific-assembly-syntax">
-<h2><a class="toc-backref" href="#id5">Machine-specific Assembly Syntax</a><a class="headerlink" href="#machine-specific-assembly-syntax" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id8">Machine-specific Assembly Syntax</a><a class="headerlink" href="#machine-specific-assembly-syntax" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="x86-coff-dependent">
-<h3><a class="toc-backref" href="#id6">X86/COFF-Dependent</a><a class="headerlink" href="#x86-coff-dependent" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">X86/COFF-Dependent</a><a class="headerlink" href="#x86-coff-dependent" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="relocations">
-<h4><a class="toc-backref" href="#id7">Relocations</a><a class="headerlink" href="#relocations" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id10">Relocations</a><a class="headerlink" href="#relocations" title="Permalink to this headline">¶</a></h4>
 <p>The following additional relocation types are supported:</p>
 <p><strong>&#64;IMGREL</strong> (AT&amp;T syntax only) generates an image-relative relocation that
-corresponds to the COFF relocation types <code class="docutils literal"><span class="pre">IMAGE_REL_I386_DIR32NB</span></code> (32-bit) or
-<code class="docutils literal"><span class="pre">IMAGE_REL_AMD64_ADDR32NB</span></code> (64-bit).</p>
-<div class="highlight-gas"><div class="highlight"><pre>.text
+corresponds to the COFF relocation types <code class="docutils literal notranslate"><span class="pre">IMAGE_REL_I386_DIR32NB</span></code> (32-bit) or
+<code class="docutils literal notranslate"><span class="pre">IMAGE_REL_AMD64_ADDR32NB</span></code> (64-bit).</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>.text
 fun:
   mov foo@IMGREL(%ebx, %ecx, 4), %eax
 
@@ -135,60 +165,61 @@ fun:
 </pre></div>
 </div>
 <p><strong>.secrel32</strong> generates a relocation that corresponds to the COFF relocation
-types <code class="docutils literal"><span class="pre">IMAGE_REL_I386_SECREL</span></code> (32-bit) or <code class="docutils literal"><span class="pre">IMAGE_REL_AMD64_SECREL</span></code> (64-bit).</p>
+types <code class="docutils literal notranslate"><span class="pre">IMAGE_REL_I386_SECREL</span></code> (32-bit) or <code class="docutils literal notranslate"><span class="pre">IMAGE_REL_AMD64_SECREL</span></code> (64-bit).</p>
 <p><strong>.secidx</strong> relocation generates an index of the section that contains
 the target.  It corresponds to the COFF relocation types
-<code class="docutils literal"><span class="pre">IMAGE_REL_I386_SECTION</span></code> (32-bit) or <code class="docutils literal"><span class="pre">IMAGE_REL_AMD64_SECTION</span></code> (64-bit).</p>
-<div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span> <span class="no">.debug$S</span><span class="p">,</span><span class="s">&quot;rn&quot;</span>
-  <span class="na">.long</span> <span class="mi">4</span>
-  <span class="na">.long</span> <span class="mi">242</span>
-  <span class="na">.long</span> <span class="mi">40</span>
-  <span class="na">.secrel32</span> <span class="no">_function_name</span>
-  <span class="na">.secidx</span>   <span class="no">_function_name</span>
-  <span class="na">...</span>
+<code class="docutils literal notranslate"><span class="pre">IMAGE_REL_I386_SECTION</span></code> (32-bit) or <code class="docutils literal notranslate"><span class="pre">IMAGE_REL_AMD64_SECTION</span></code> (64-bit).</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.section .debug$S,&quot;rn&quot;
+  .long 4
+  .long 242
+  .long 40
+  .secrel32 _function_name + 0
+  .secidx   _function_name
+  ...
 </pre></div>
 </div>
 </div>
 <div class="section" id="linkonce-directive">
-<h4><a class="toc-backref" href="#id8"><code class="docutils literal"><span class="pre">.linkonce</span></code> Directive</a><a class="headerlink" href="#linkonce-directive" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id11"><code class="docutils literal notranslate"><span class="pre">.linkonce</span></code> Directive</a><a class="headerlink" href="#linkonce-directive" title="Permalink to this headline">¶</a></h4>
 <p>Syntax:</p>
 <blockquote>
-<div><code class="docutils literal"><span class="pre">.linkonce</span> <span class="pre">[</span> <span class="pre">comdat</span> <span class="pre">type</span> <span class="pre">]</span></code></div></blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">.linkonce</span> <span class="pre">[</span> <span class="pre">comdat</span> <span class="pre">type</span> <span class="pre">]</span></code></p>
+</div></blockquote>
 <p>Supported COMDAT types:</p>
-<dl class="docutils">
-<dt><code class="docutils literal"><span class="pre">discard</span></code></dt>
-<dd>Discards duplicate sections with the same COMDAT symbol. This is the default
-if no type is specified.</dd>
-<dt><code class="docutils literal"><span class="pre">one_only</span></code></dt>
-<dd>If the symbol is defined multiple times, the linker issues an error.</dd>
-<dt><code class="docutils literal"><span class="pre">same_size</span></code></dt>
-<dd>Duplicates are discarded, but the linker issues an error if any have
-different sizes.</dd>
-<dt><code class="docutils literal"><span class="pre">same_contents</span></code></dt>
-<dd>Duplicates are discarded, but the linker issues an error if any duplicates
-do not have exactly the same content.</dd>
-<dt><code class="docutils literal"><span class="pre">largest</span></code></dt>
-<dd>Links the largest section from among the duplicates.</dd>
-<dt><code class="docutils literal"><span class="pre">newest</span></code></dt>
-<dd>Links the newest section from among the duplicates.</dd>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">discard</span></code></dt><dd><p>Discards duplicate sections with the same COMDAT symbol. This is the default
+if no type is specified.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">one_only</span></code></dt><dd><p>If the symbol is defined multiple times, the linker issues an error.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">same_size</span></code></dt><dd><p>Duplicates are discarded, but the linker issues an error if any have
+different sizes.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">same_contents</span></code></dt><dd><p>Duplicates are discarded, but the linker issues an error if any duplicates
+do not have exactly the same content.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">largest</span></code></dt><dd><p>Links the largest section from among the duplicates.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">newest</span></code></dt><dd><p>Links the newest section from among the duplicates.</p>
+</dd>
 </dl>
-<div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span> <span class="no">.text$foo</span>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="no">.text$foo</span>
 <span class="na">.linkonce</span>
   <span class="na">...</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="section-directive">
-<h4><a class="toc-backref" href="#id9"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a><a class="headerlink" href="#section-directive" title="Permalink to this headline">¶</a></h4>
-<p>MC supports passing the information in <code class="docutils literal"><span class="pre">.linkonce</span></code> at the end of
-<code class="docutils literal"><span class="pre">.section</span></code>. For example,  these two codes are equivalent</p>
-<div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span> <span class="no">secName</span><span class="p">,</span> <span class="s">&quot;dr&quot;</span><span class="p">,</span> <span class="no">discard</span><span class="p">,</span> <span class="s">&quot;Symbol1&quot;</span>
+<h4><a class="toc-backref" href="#id12"><code class="docutils literal notranslate"><span class="pre">.section</span></code> Directive</a><a class="headerlink" href="#section-directive" title="Permalink to this headline">¶</a></h4>
+<p>MC supports passing the information in <code class="docutils literal notranslate"><span class="pre">.linkonce</span></code> at the end of
+<code class="docutils literal notranslate"><span class="pre">.section</span></code>. For example,  these two codes are equivalent</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="no">secName</span><span class="p">,</span> <span class="s">&quot;dr&quot;</span><span class="p">,</span> <span class="no">discard</span><span class="p">,</span> <span class="s">&quot;Symbol1&quot;</span>
 <span class="na">.globl</span> <span class="no">Symbol1</span>
 <span class="nl">Symbol1:</span>
 <span class="na">.long</span> <span class="mi">1</span>
 </pre></div>
 </div>
-<div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span> <span class="no">secName</span><span class="p">,</span> <span class="s">&quot;dr&quot;</span>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="no">secName</span><span class="p">,</span> <span class="s">&quot;dr&quot;</span>
 <span class="na">.linkonce</span> <span class="no">discard</span>
 <span class="na">.globl</span> <span class="no">Symbol1</span>
 <span class="nl">Symbol1:</span>
@@ -198,7 +229,7 @@ do not have exactly the same content.</dd>
 <p>Note that in the combined form the COMDAT symbol is explicit. This
 extension exists to support multiple sections with the same name in
 different COMDATs:</p>
-<div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span> <span class="no">secName</span><span class="p">,</span> <span class="s">&quot;dr&quot;</span><span class="p">,</span> <span class="no">discard</span><span class="p">,</span> <span class="s">&quot;Symbol1&quot;</span>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="no">secName</span><span class="p">,</span> <span class="s">&quot;dr&quot;</span><span class="p">,</span> <span class="no">discard</span><span class="p">,</span> <span class="s">&quot;Symbol1&quot;</span>
 <span class="na">.globl</span> <span class="no">Symbol1</span>
 <span class="nl">Symbol1:</span>
 <span class="na">.long</span> <span class="mi">1</span>
@@ -209,34 +240,70 @@ different COMDATs:</p>
 <span class="na">.long</span> <span class="mi">1</span>
 </pre></div>
 </div>
-<p>In addition to the types allowed with <code class="docutils literal"><span class="pre">.linkonce</span></code>, <code class="docutils literal"><span class="pre">.section</span></code> also accepts
-<code class="docutils literal"><span class="pre">associative</span></code>. The meaning is that the section is linked  if a certain other
+<p>In addition to the types allowed with <code class="docutils literal notranslate"><span class="pre">.linkonce</span></code>, <code class="docutils literal notranslate"><span class="pre">.section</span></code> also accepts
+<code class="docutils literal notranslate"><span class="pre">associative</span></code>. The meaning is that the section is linked  if a certain other
 COMDAT section is linked. This other section is indicated by the comdat symbol
 in this directive. It can be any symbol defined in the associated section, but
-is usually the associated section&#8217;s comdat.</p>
+is usually the associated section’s comdat.</p>
 <blockquote>
 <div><p>The following restrictions apply to the associated section:</p>
 <ol class="arabic simple">
-<li>It must be a COMDAT section.</li>
-<li>It cannot be another associative COMDAT section.</li>
+<li><p>It must be a COMDAT section.</p></li>
+<li><p>It cannot be another associative COMDAT section.</p></li>
 </ol>
 </div></blockquote>
-<p>In the following example the symobl <code class="docutils literal"><span class="pre">sym</span></code> is the comdat symbol of <code class="docutils literal"><span class="pre">.foo</span></code>
-and <code class="docutils literal"><span class="pre">.bar</span></code> is associated to <code class="docutils literal"><span class="pre">.foo</span></code>.</p>
-<div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span>        <span class="no">.foo</span><span class="p">,</span><span class="s">&quot;bw&quot;</span><span class="p">,</span><span class="no">discard</span><span class="p">,</span> <span class="s">&quot;sym&quot;</span>
+<p>In the following example the symobl <code class="docutils literal notranslate"><span class="pre">sym</span></code> is the comdat symbol of <code class="docutils literal notranslate"><span class="pre">.foo</span></code>
+and <code class="docutils literal notranslate"><span class="pre">.bar</span></code> is associated to <code class="docutils literal notranslate"><span class="pre">.foo</span></code>.</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span>        <span class="no">.foo</span><span class="p">,</span><span class="s">&quot;bw&quot;</span><span class="p">,</span><span class="no">discard</span><span class="p">,</span> <span class="s">&quot;sym&quot;</span>
 <span class="na">.section</span>        <span class="no">.bar</span><span class="p">,</span><span class="s">&quot;rd&quot;</span><span class="p">,</span><span class="no">associative</span><span class="p">,</span> <span class="s">&quot;sym&quot;</span>
+</pre></div>
+</div>
+<p>MC supports these flags in the COFF <code class="docutils literal notranslate"><span class="pre">.section</span></code> directive:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">b</span></code>: BSS section (<code class="docutils literal notranslate"><span class="pre">IMAGE_SCN_CNT_INITIALIZED_DATA</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">d</span></code>: Data section (<code class="docutils literal notranslate"><span class="pre">IMAGE_SCN_CNT_UNINITIALIZED_DATA</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n</span></code>: Section is not loaded (<code class="docutils literal notranslate"><span class="pre">IMAGE_SCN_LNK_REMOVE</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r</span></code>: Read-only</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span></code>: Shared section</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">w</span></code>: Writable</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: Executable section</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">y</span></code>: Not readable</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">D</span></code>: Discardable (<code class="docutils literal notranslate"><span class="pre">IMAGE_SCN_MEM_DISCARDABLE</span></code>)</p></li>
+</ul>
+</div></blockquote>
+<p>These flags are all compatible with gas, with the exception of the <code class="docutils literal notranslate"><span class="pre">D</span></code> flag,
+which gnu as does not support. For gas compatibility, sections with a name
+starting with “.debug” are implicitly discardable.</p>
+</div>
+</div>
+<div class="section" id="arm64-coff-dependent">
+<h3><a class="toc-backref" href="#id13">ARM64/COFF-Dependent</a><a class="headerlink" href="#arm64-coff-dependent" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h4><a class="toc-backref" href="#id14">Relocations</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>The following additional symbol variants are supported:</p>
+<p><strong>:secrel_lo12:</strong> generates a relocation that corresponds to the COFF relocation
+types <code class="docutils literal notranslate"><span class="pre">IMAGE_REL_ARM64_SECREL_LOW12A</span></code> or <code class="docutils literal notranslate"><span class="pre">IMAGE_REL_ARM64_SECREL_LOW12L</span></code>.</p>
+<p><strong>:secrel_hi12:</strong> generates a relocation that corresponds to the COFF relocation
+type <code class="docutils literal notranslate"><span class="pre">IMAGE_REL_ARM64_SECREL_HIGH12A</span></code>.</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="nf">add</span> <span class="no">x0</span><span class="p">,</span> <span class="no">x0</span><span class="p">,</span> <span class="p">:</span><span class="no">secrel_hi12</span><span class="p">:</span><span class="no">symbol</span>
+<span class="nf">ldr</span> <span class="no">x0</span><span class="p">,</span> <span class="p">[</span><span class="no">x0</span><span class="p">,</span> <span class="p">:</span><span class="no">secrel_lo12</span><span class="p">:</span><span class="no">symbol</span><span class="p">]</span>
+
+<span class="nf">add</span> <span class="no">x1</span><span class="p">,</span> <span class="no">x1</span><span class="p">,</span> <span class="p">:</span><span class="no">secrel_hi12</span><span class="p">:</span><span class="no">symbol</span>
+<span class="nf">add</span> <span class="no">x1</span><span class="p">,</span> <span class="no">x1</span><span class="p">,</span> <span class="p">:</span><span class="no">secrel_lo12</span><span class="p">:</span><span class="no">symbol</span>
+<span class="na">...</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="elf-dependent">
-<h3><a class="toc-backref" href="#id10">ELF-Dependent</a><a class="headerlink" href="#elf-dependent" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="id1">
-<h4><a class="toc-backref" href="#id11"><code class="docutils literal"><span class="pre">.section</span></code> Directive</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<h3><a class="toc-backref" href="#id15">ELF-Dependent</a><a class="headerlink" href="#elf-dependent" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h4><a class="toc-backref" href="#id16"><code class="docutils literal notranslate"><span class="pre">.section</span></code> Directive</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
 <p>In order to support creating multiple sections with the same name and comdat,
-it is possible to add an unique number at the end of the <code class="docutils literal"><span class="pre">.seciton</span></code> directive.
-For example, the following code creates two sections named <code class="docutils literal"><span class="pre">.text</span></code>.</p>
-<div class="highlight-gas"><div class="highlight"><pre><span class="na">.section</span>        <span class="no">.text</span><span class="p">,</span><span class="s">&quot;ax&quot;</span><span class="p">,</span><span class="na">@progbits</span><span class="p">,</span><span class="no">unique</span><span class="p">,</span><span class="mi">1</span>
+it is possible to add an unique number at the end of the <code class="docutils literal notranslate"><span class="pre">.seciton</span></code> directive.
+For example, the following code creates two sections named <code class="docutils literal notranslate"><span class="pre">.text</span></code>.</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span>        <span class="no">.text</span><span class="p">,</span><span class="s">&quot;ax&quot;</span><span class="p">,</span><span class="na">@progbits</span><span class="p">,</span><span class="no">unique</span><span class="p">,</span><span class="mi">1</span>
 <span class="nf">nop</span>
 
 <span class="na">.section</span>        <span class="no">.text</span><span class="p">,</span><span class="s">&quot;ax&quot;</span><span class="p">,</span><span class="na">@progbits</span><span class="p">,</span><span class="no">unique</span><span class="p">,</span><span class="mi">2</span>
@@ -245,26 +312,259 @@ For example, the following code creates two sections named <code class="docutils
 </div>
 <p>The unique number is not present in the resulting object at all. It is just used
 in the assembler to differentiate the sections.</p>
+<p>The ‘o’ flag is mapped to SHF_LINK_ORDER. If it is present, a symbol
+must be given that identifies the section to be placed is the
+.sh_link.</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="no">.foo</span><span class="p">,</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="na">@progbits</span>
+<span class="nl">.Ltmp:</span>
+<span class="na">.section</span> <span class="no">.bar</span><span class="p">,</span><span class="s">&quot;ao&quot;</span><span class="p">,</span><span class="na">@progbits</span><span class="p">,.</span><span class="no">Ltmp</span>
+</pre></div>
+</div>
+<p>which is equivalent to just</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="no">.foo</span><span class="p">,</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="na">@progbits</span>
+<span class="na">.section</span> <span class="no">.bar</span><span class="p">,</span><span class="s">&quot;ao&quot;</span><span class="p">,</span><span class="na">@progbits</span><span class="p">,.</span><span class="no">foo</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="linker-options-section-linker-options">
+<h4><a class="toc-backref" href="#id17"><code class="docutils literal notranslate"><span class="pre">.linker-options</span></code> Section (linker options)</a><a class="headerlink" href="#linker-options-section-linker-options" title="Permalink to this headline">¶</a></h4>
+<p>In order to support passing linker options from the frontend to the linker, a
+special section of type <code class="docutils literal notranslate"><span class="pre">SHT_LLVM_LINKER_OPTIONS</span></code> (usually named
+<code class="docutils literal notranslate"><span class="pre">.linker-options</span></code> though the name is not significant as it is identified by
+the type).  The contents of this section is a simple pair-wise encoding of
+directives for consideration by the linker.  The strings are encoded as standard
+null-terminated UTF-8 strings.  They are emitted inline to avoid having the
+linker traverse the object file for retrieving the value.  The linker is
+permitted to not honour the option and instead provide a warning/error to the
+user that the requested option was not honoured.</p>
+<p>The section has type <code class="docutils literal notranslate"><span class="pre">SHT_LLVM_LINKER_OPTIONS</span></code> and has the <code class="docutils literal notranslate"><span class="pre">SHF_EXCLUDE</span></code>
+flag to ensure that the section is treated as opaque by linkers which do not
+support the feature and will not be emitted into the final linked binary.</p>
+<p>This would be equivalent to the follow raw assembly:</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="s">&quot;.linker-options&quot;</span><span class="p">,</span><span class="s">&quot;e&quot;</span><span class="p">,</span><span class="na">@llvm_linker_options</span>
+<span class="na">.asciz</span> <span class="s">&quot;option 1&quot;</span>
+<span class="na">.asciz</span> <span class="s">&quot;value 1&quot;</span>
+<span class="na">.asciz</span> <span class="s">&quot;option 2&quot;</span>
+<span class="na">.asciz</span> <span class="s">&quot;value 2&quot;</span>
+</pre></div>
+</div>
+<p>The following directives are specified:</p>
+<blockquote>
+<div><ul>
+<li><p>lib</p>
+<p>The parameter identifies a library to be linked against.  The library will
+be looked up in the default and any specified library search paths
+(specified to this point).</p>
+</li>
+<li><p>libpath</p>
+<p>The paramter identifies an additional library search path to be considered
+when looking up libraries after the inclusion of this option.</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="sht-llvm-dependent-libraries-section-dependent-libraries">
+<h4><a class="toc-backref" href="#id18"><code class="docutils literal notranslate"><span class="pre">SHT_LLVM_DEPENDENT_LIBRARIES</span></code> Section (Dependent Libraries)</a><a class="headerlink" href="#sht-llvm-dependent-libraries-section-dependent-libraries" title="Permalink to this headline">¶</a></h4>
+<p>This section contains strings specifying libraries to be added to the link by
+the linker.</p>
+<p>The section should be consumed by the linker and not written to the output.</p>
+<p>The strings are encoded as standard null-terminated UTF-8 strings.</p>
+<p>For example:</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="s">&quot;.deplibs&quot;</span><span class="p">,</span><span class="s">&quot;MS&quot;</span><span class="p">,</span><span class="na">@llvm_dependent_libraries</span><span class="p">,</span><span class="mi">1</span>
+<span class="na">.asciz</span> <span class="s">&quot;library specifier 1&quot;</span>
+<span class="na">.asciz</span> <span class="s">&quot;library specifier 2&quot;</span>
+</pre></div>
+</div>
+<p>The interpretation of the library specifiers is defined by the consuming linker.</p>
+</div>
+<div class="section" id="sht-llvm-call-graph-profile-section-call-graph-profile">
+<h4><a class="toc-backref" href="#id19"><code class="docutils literal notranslate"><span class="pre">SHT_LLVM_CALL_GRAPH_PROFILE</span></code> Section (Call Graph Profile)</a><a class="headerlink" href="#sht-llvm-call-graph-profile-section-call-graph-profile" title="Permalink to this headline">¶</a></h4>
+<p>This section is used to pass a call graph profile to the linker which can be
+used to optimize the placement of sections.  It contains a sequence of
+(from symbol, to symbol, weight) tuples.</p>
+<p>It shall have a type of <code class="docutils literal notranslate"><span class="pre">SHT_LLVM_CALL_GRAPH_PROFILE</span></code> (0x6fff4c02), shall
+have the <code class="docutils literal notranslate"><span class="pre">SHF_EXCLUDE</span></code> flag set, the <code class="docutils literal notranslate"><span class="pre">sh_link</span></code> member shall hold the section
+header index of the associated symbol table, and shall have a <code class="docutils literal notranslate"><span class="pre">sh_entsize</span></code> of
+16.  It should be named <code class="docutils literal notranslate"><span class="pre">.llvm.call-graph-profile</span></code>.</p>
+<p>The contents of the section shall be a sequence of <code class="docutils literal notranslate"><span class="pre">Elf_CGProfile</span></code> entries.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="n">Elf_Word</span> <span class="n">cgp_from</span><span class="p">;</span>
+  <span class="n">Elf_Word</span> <span class="n">cgp_to</span><span class="p">;</span>
+  <span class="n">Elf_Xword</span> <span class="n">cgp_weight</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">Elf_CGProfile</span><span class="p">;</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>cgp_from</dt><dd><p>The symbol index of the source of the edge.</p>
+</dd>
+<dt>cgp_to</dt><dd><p>The symbol index of the destination of the edge.</p>
+</dd>
+<dt>cgp_weight</dt><dd><p>The weight of the edge.</p>
+</dd>
+</dl>
+<p>This is represented in assembly as:</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.cg_profile</span> <span class="no">from</span><span class="p">,</span> <span class="no">to</span><span class="p">,</span> <span class="mi">42</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">.cg_profile</span></code> directives are processed at the end of the file.  It is an error
+if either <code class="docutils literal notranslate"><span class="pre">from</span></code> or <code class="docutils literal notranslate"><span class="pre">to</span></code> are undefined temporary symbols.  If either symbol
+is a temporary symbol, then the section symbol is used instead.  If either
+symbol is undefined, then that symbol is defined as if <code class="docutils literal notranslate"><span class="pre">.weak</span> <span class="pre">symbol</span></code> has been
+written at the end of the file.  This forces the symbol to show up in the symbol
+table.</p>
+</div>
+<div class="section" id="sht-llvm-addrsig-section-address-significance-table">
+<h4><a class="toc-backref" href="#id20"><code class="docutils literal notranslate"><span class="pre">SHT_LLVM_ADDRSIG</span></code> Section (address-significance table)</a><a class="headerlink" href="#sht-llvm-addrsig-section-address-significance-table" title="Permalink to this headline">¶</a></h4>
+<p>This section is used to mark symbols as address-significant, i.e. the address
+of the symbol is used in a comparison or leaks outside the translation unit. It
+has the same meaning as the absence of the LLVM attributes <code class="docutils literal notranslate"><span class="pre">unnamed_addr</span></code>
+and <code class="docutils literal notranslate"><span class="pre">local_unnamed_addr</span></code>.</p>
+<p>Any sections referred to by symbols that are not marked as address-significant
+in any object file may be safely merged by a linker without breaking the
+address uniqueness guarantee provided by the C and C++ language standards.</p>
+<p>The contents of the section are a sequence of ULEB128-encoded integers
+referring to the symbol table indexes of the address-significant symbols.</p>
+<p>There are two associated assembly directives:</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.addrsig</span>
+</pre></div>
+</div>
+<p>This instructs the assembler to emit an address-significance table. Without
+this directive, all symbols are considered address-significant.</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.addrsig_sym</span> <span class="no">sym</span>
+</pre></div>
+</div>
+<p>This marks <code class="docutils literal notranslate"><span class="pre">sym</span></code> as address-significant.</p>
+</div>
+<div class="section" id="sht-llvm-sympart-section-symbol-partition-specification">
+<h4><a class="toc-backref" href="#id21"><code class="docutils literal notranslate"><span class="pre">SHT_LLVM_SYMPART</span></code> Section (symbol partition specification)</a><a class="headerlink" href="#sht-llvm-sympart-section-symbol-partition-specification" title="Permalink to this headline">¶</a></h4>
+<p>This section is used to mark symbols with the <a class="reference external" href="https://lld.llvm.org/Partitions.html">partition</a> that they
+belong to. An <code class="docutils literal notranslate"><span class="pre">.llvm_sympart</span></code> section consists of a null-terminated string
+specifying the name of the partition followed by a relocation referring to
+the symbol that belongs to the partition. It may be constructed as follows:</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="na">.section</span> <span class="s">&quot;.llvm_sympart&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="na">@llvm_sympart</span>
+<span class="na">.asciz</span> <span class="s">&quot;libpartition.so&quot;</span>
+<span class="na">.word</span> <span class="no">symbol_in_partition</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="codeview-dependent">
+<h3><a class="toc-backref" href="#id22">CodeView-Dependent</a><a class="headerlink" href="#codeview-dependent" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="cv-file-directive">
+<h4><a class="toc-backref" href="#id23"><code class="docutils literal notranslate"><span class="pre">.cv_file</span></code> Directive</a><a class="headerlink" href="#cv-file-directive" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>Syntax:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">.cv_file</span></code> <em>FileNumber FileName</em> [ <em>checksum</em> ] [ <em>checksumkind</em> ]</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="cv-func-id-directive">
+<h4><a class="toc-backref" href="#id24"><code class="docutils literal notranslate"><span class="pre">.cv_func_id</span></code> Directive</a><a class="headerlink" href="#cv-func-id-directive" title="Permalink to this headline">¶</a></h4>
+<p>Introduces a function ID that can be used with <code class="docutils literal notranslate"><span class="pre">.cv_loc</span></code>.</p>
+<dl class="simple">
+<dt>Syntax:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">.cv_func_id</span></code> <em>FunctionId</em></p>
+</dd>
+</dl>
+</div>
+<div class="section" id="cv-inline-site-id-directive">
+<h4><a class="toc-backref" href="#id25"><code class="docutils literal notranslate"><span class="pre">.cv_inline_site_id</span></code> Directive</a><a class="headerlink" href="#cv-inline-site-id-directive" title="Permalink to this headline">¶</a></h4>
+<p>Introduces a function ID that can be used with <code class="docutils literal notranslate"><span class="pre">.cv_loc</span></code>. Includes
+<code class="docutils literal notranslate"><span class="pre">inlined</span> <span class="pre">at</span></code> source location information for use in the line table of the
+caller, whether the caller is a real function or another inlined call site.</p>
+<dl class="simple">
+<dt>Syntax:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">.cv_inline_site_id</span></code> <em>FunctionId</em> <code class="docutils literal notranslate"><span class="pre">within</span></code> <em>Function</em> <code class="docutils literal notranslate"><span class="pre">inlined_at</span></code> <em>FileNumber Line</em> [ <em>Colomn</em> ]</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="cv-loc-directive">
+<h4><a class="toc-backref" href="#id26"><code class="docutils literal notranslate"><span class="pre">.cv_loc</span></code> Directive</a><a class="headerlink" href="#cv-loc-directive" title="Permalink to this headline">¶</a></h4>
+<p>The first number is a file number, must have been previously assigned with a
+<code class="docutils literal notranslate"><span class="pre">.file</span></code> directive, the second number is the line number and optionally the
+third number is a column position (zero if not specified).  The remaining
+optional items are <code class="docutils literal notranslate"><span class="pre">.loc</span></code> sub-directives.</p>
+<dl class="simple">
+<dt>Syntax:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">.cv_loc</span></code> <em>FunctionId FileNumber</em> [ <em>Line</em> ] [ <em>Column</em> ] [ <em>prologue_end</em> ] [ <code class="docutils literal notranslate"><span class="pre">is_stmt</span></code> <em>value</em> ]</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="cv-linetable-directive">
+<h4><a class="toc-backref" href="#id27"><code class="docutils literal notranslate"><span class="pre">.cv_linetable</span></code> Directive</a><a class="headerlink" href="#cv-linetable-directive" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>Syntax:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">.cv_linetable</span></code> <em>FunctionId</em> <code class="docutils literal notranslate"><span class="pre">,</span></code> <em>FunctionStart</em> <code class="docutils literal notranslate"><span class="pre">,</span></code> <em>FunctionEnd</em></p>
+</dd>
+</dl>
+</div>
+<div class="section" id="cv-inline-linetable-directive">
+<h4><a class="toc-backref" href="#id28"><code class="docutils literal notranslate"><span class="pre">.cv_inline_linetable</span></code> Directive</a><a class="headerlink" href="#cv-inline-linetable-directive" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>Syntax:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">.cv_inline_linetable</span></code> <em>PrimaryFunctionId</em> <code class="docutils literal notranslate"><span class="pre">,</span></code> <em>FileNumber Line FunctionStart FunctionEnd</em></p>
+</dd>
+</dl>
+</div>
+<div class="section" id="cv-def-range-directive">
+<h4><a class="toc-backref" href="#id29"><code class="docutils literal notranslate"><span class="pre">.cv_def_range</span></code> Directive</a><a class="headerlink" href="#cv-def-range-directive" title="Permalink to this headline">¶</a></h4>
+<p>The <em>GapStart</em> and <em>GapEnd</em> options may be repeated as needed.</p>
+<dl class="simple">
+<dt>Syntax:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">.cv_def_range</span></code> <em>RangeStart RangeEnd</em> [ <em>GapStart GapEnd</em> ] <code class="docutils literal notranslate"><span class="pre">,</span></code> <em>bytes</em></p>
+</dd>
+</dl>
+</div>
+<div class="section" id="cv-stringtable-directive">
+<h4><a class="toc-backref" href="#id30"><code class="docutils literal notranslate"><span class="pre">.cv_stringtable</span></code> Directive</a><a class="headerlink" href="#cv-stringtable-directive" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="cv-filechecksums-directive">
+<h4><a class="toc-backref" href="#id31"><code class="docutils literal notranslate"><span class="pre">.cv_filechecksums</span></code> Directive</a><a class="headerlink" href="#cv-filechecksums-directive" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="cv-filechecksumoffset-directive">
+<h4><a class="toc-backref" href="#id32"><code class="docutils literal notranslate"><span class="pre">.cv_filechecksumoffset</span></code> Directive</a><a class="headerlink" href="#cv-filechecksumoffset-directive" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>Syntax:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">.cv_filechecksumoffset</span></code> <em>FileNumber</em></p>
+</dd>
+</dl>
+</div>
+<div class="section" id="cv-fpo-data-directive">
+<h4><a class="toc-backref" href="#id33"><code class="docutils literal notranslate"><span class="pre">.cv_fpo_data</span></code> Directive</a><a class="headerlink" href="#cv-fpo-data-directive" title="Permalink to this headline">¶</a></h4>
+<dl class="simple">
+<dt>Syntax:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">.cv_fpo_data</span></code> <em>procsym</em></p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="section" id="target-specific-behaviour">
-<h2><a class="toc-backref" href="#id12">Target Specific Behaviour</a><a class="headerlink" href="#target-specific-behaviour" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id34">Target Specific Behaviour</a><a class="headerlink" href="#target-specific-behaviour" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="x86">
+<h3><a class="toc-backref" href="#id35">X86</a><a class="headerlink" href="#x86" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id3">
+<h4><a class="toc-backref" href="#id36">Relocations</a><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">&#64;ABS8</span></code> can be applied to symbols which appear as immediate operands to
+instructions that have an 8-bit immediate form for that operand. It causes
+the assembler to use the 8-bit form and an 8-bit relocation (e.g. <code class="docutils literal notranslate"><span class="pre">R_386_8</span></code>
+or <code class="docutils literal notranslate"><span class="pre">R_X86_64_8</span></code>) for the symbol.</p>
+<p>For example:</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="nf">cmpq</span> <span class="no">$foo@ABS8</span><span class="p">,</span> <span class="nv">%rdi</span>
+</pre></div>
+</div>
+<p>This causes the assembler to select the form of the 64-bit <code class="docutils literal notranslate"><span class="pre">cmpq</span></code> instruction
+that takes an 8-bit immediate operand that is sign extended to 64 bits, as
+opposed to <code class="docutils literal notranslate"><span class="pre">cmpq</span> <span class="pre">$foo,</span> <span class="pre">%rdi</span></code> which takes a 32-bit immediate operand. This
+is also not the same as <code class="docutils literal notranslate"><span class="pre">cmpb</span> <span class="pre">$foo,</span> <span class="pre">%dil</span></code>, which is an 8-bit comparison.</p>
+</div>
+</div>
 <div class="section" id="windows-on-arm">
-<h3><a class="toc-backref" href="#id13">Windows on ARM</a><a class="headerlink" href="#windows-on-arm" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id37">Windows on ARM</a><a class="headerlink" href="#windows-on-arm" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="stack-probe-emission">
-<h4><a class="toc-backref" href="#id14">Stack Probe Emission</a><a class="headerlink" href="#stack-probe-emission" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id38">Stack Probe Emission</a><a class="headerlink" href="#stack-probe-emission" title="Permalink to this headline">¶</a></h4>
 <p>The reference implementation (Microsoft Visual Studio 2012) emits stack probes
 in the following fashion:</p>
-<div class="highlight-gas"><div class="highlight"><pre><span class="nf">movw</span> <span class="no">r4</span><span class="p">,</span> <span class="c">#constant</span>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="nf">movw</span> <span class="no">r4</span><span class="p">,</span> <span class="c">#constant</span>
 <span class="nf">bl</span> <span class="no">__chkstk</span>
 <span class="nf">sub.w</span> <span class="no">sp</span><span class="p">,</span> <span class="no">sp</span><span class="p">,</span> <span class="no">r4</span>
 </pre></div>
 </div>
 <p>However, this has the limitation of 32 MiB (±16MiB).  In order to accommodate
-larger binaries, LLVM supports the use of <code class="docutils literal"><span class="pre">-mcode-model=large</span></code> to allow a 4GiB
+larger binaries, LLVM supports the use of <code class="docutils literal notranslate"><span class="pre">-mcode-model=large</span></code> to allow a 4GiB
 range via a slight deviation.  It will generate an indirect jump as follows:</p>
-<div class="highlight-gas"><div class="highlight"><pre><span class="nf">movw</span> <span class="no">r4</span><span class="p">,</span> <span class="c">#constant</span>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="nf">movw</span> <span class="no">r4</span><span class="p">,</span> <span class="c">#constant</span>
 <span class="nf">movw</span> <span class="no">r12</span><span class="p">,</span> <span class="p">:</span><span class="no">lower16</span><span class="p">:</span><span class="no">__chkstk</span>
 <span class="nf">movt</span> <span class="no">r12</span><span class="p">,</span> <span class="p">:</span><span class="no">upper16</span><span class="p">:</span><span class="no">__chkstk</span>
 <span class="nf">blx</span> <span class="no">r12</span>
@@ -273,15 +573,39 @@ range via a slight deviation.  It will generate an indirect jump as follows:</p>
 </div>
 </div>
 <div class="section" id="variable-length-arrays">
-<h4><a class="toc-backref" href="#id15">Variable Length Arrays</a><a class="headerlink" href="#variable-length-arrays" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id39">Variable Length Arrays</a><a class="headerlink" href="#variable-length-arrays" title="Permalink to this headline">¶</a></h4>
 <p>The reference implementation (Microsoft Visual Studio 2012) does not permit the
 emission of Variable Length Arrays (VLAs).</p>
 <p>The Windows ARM Itanium ABI extends the base ABI by adding support for emitting
 a dynamic stack allocation.  When emitting a variable stack allocation, a call
-to <code class="docutils literal"><span class="pre">__chkstk</span></code> is emitted unconditionally to ensure that guard pages are setup
+to <code class="docutils literal notranslate"><span class="pre">__chkstk</span></code> is emitted unconditionally to ensure that guard pages are setup
 properly.  The emission of this stack probe emission is handled similar to the
 standard stack probe emission.</p>
 <p>The MSVC environment does not emit code for VLAs currently.</p>
+</div>
+</div>
+<div class="section" id="windows-on-arm64">
+<h3><a class="toc-backref" href="#id40">Windows on ARM64</a><a class="headerlink" href="#windows-on-arm64" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h4><a class="toc-backref" href="#id41">Stack Probe Emission</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>The reference implementation (Microsoft Visual Studio 2017) emits stack probes
+in the following fashion:</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="nf">mov</span> <span class="no">x15</span><span class="p">,</span> <span class="c">#constant</span>
+<span class="nf">bl</span> <span class="no">__chkstk</span>
+<span class="nf">sub</span> <span class="no">sp</span><span class="p">,</span> <span class="no">sp</span><span class="p">,</span> <span class="no">x15</span><span class="p">,</span> <span class="no">lsl</span> <span class="c">#4</span>
+</pre></div>
+</div>
+<p>However, this has the limitation of 256 MiB (±128MiB).  In order to accommodate
+larger binaries, LLVM supports the use of <code class="docutils literal notranslate"><span class="pre">-mcode-model=large</span></code> to allow a 8GiB
+(±4GiB) range via a slight deviation.  It will generate an indirect jump as
+follows:</p>
+<div class="highlight-gas notranslate"><div class="highlight"><pre><span></span><span class="nf">mov</span> <span class="no">x15</span><span class="p">,</span> <span class="c">#constant</span>
+<span class="nf">adrp</span> <span class="no">x16</span><span class="p">,</span> <span class="no">__chkstk</span>
+<span class="nf">add</span> <span class="no">x16</span><span class="p">,</span> <span class="no">x16</span><span class="p">,</span> <span class="p">:</span><span class="no">lo12</span><span class="p">:</span><span class="no">__chkstk</span>
+<span class="nf">blr</span> <span class="no">x16</span>
+<span class="nf">sub</span> <span class="no">sp</span><span class="p">,</span> <span class="no">sp</span><span class="p">,</span> <span class="no">x15</span><span class="p">,</span> <span class="no">lsl</span> <span class="c">#4</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
@@ -299,7 +623,7 @@ standard stack probe emission.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="LibFuzzer.html" title="LibFuzzer – a library for coverage-guided fuzz testing."
+          <a href="LibFuzzer.html" title="libFuzzer – a library for coverage-guided fuzz testing."
              >next</a> |</li>
         <li class="right" >
           <a href="ProgrammersManual.html" title="LLVM Programmer’s Manual"
@@ -310,9 +634,9 @@ standard stack probe emission.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

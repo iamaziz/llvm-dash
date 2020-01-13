@@ -1,31 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>opt - LLVM optimizer &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>opt - LLVM optimizer &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="llc - LLVM static compiler" href="llc.html" />
     <link rel="prev" title="llvm-dis - LLVM disassembler" href="llvm-dis.html" />
 <style type="text/css">
@@ -33,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +44,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -76,127 +64,127 @@
 <p>The <strong class="program">opt</strong> command is the modular LLVM optimizer and analyzer.  It
 takes LLVM source files as input, runs the specified optimizations or analyses
 on it, and then outputs the optimized file or the analysis results.  The
-function of <strong class="program">opt</strong> depends on whether the <code class="xref std std-option docutils literal"><span class="pre">-analyze</span></code> option is
+function of <strong class="program">opt</strong> depends on whether the <cite>-analyze</cite> option is
 given.</p>
-<p>When <code class="xref std std-option docutils literal"><span class="pre">-analyze</span></code> is specified, <strong class="program">opt</strong> performs various analyses
+<p>When <cite>-analyze</cite> is specified, <strong class="program">opt</strong> performs various analyses
 of the input source.  It will usually print the results on standard output, but
 in a few cases, it will print output to standard error or generate a file with
 the analysis output, which is usually done when the output is meant for another
 program.</p>
-<p>While <code class="xref std std-option docutils literal"><span class="pre">-analyze</span></code> is <em>not</em> given, <strong class="program">opt</strong> attempts to produce an
+<p>While <cite>-analyze</cite> is <em>not</em> given, <strong class="program">opt</strong> attempts to produce an
 optimized output file.  The optimizations available via <strong class="program">opt</strong> depend
 upon what libraries were linked into it as well as any additional libraries
-that have been loaded with the <a class="reference internal" href="#cmdoption-load"><code class="xref std std-option docutils literal"><span class="pre">-load</span></code></a> option.  Use the <a class="reference internal" href="#cmdoption-help"><code class="xref std std-option docutils literal"><span class="pre">-help</span></code></a>
+that have been loaded with the <a class="reference internal" href="#cmdoption-opt-load"><code class="xref std std-option docutils literal notranslate"><span class="pre">-load</span></code></a> option.  Use the <a class="reference internal" href="#cmdoption-opt-help"><code class="xref std std-option docutils literal notranslate"><span class="pre">-help</span></code></a>
 option to determine what optimizations you can use.</p>
-<p>If <code class="docutils literal"><span class="pre">filename</span></code> is omitted from the command line or is &#8220;<code class="docutils literal"><span class="pre">-</span></code>&#8221;, <strong class="program">opt</strong>
+<p>If <code class="docutils literal notranslate"><span class="pre">filename</span></code> is omitted from the command line or is “<code class="docutils literal notranslate"><span class="pre">-</span></code>“, <strong class="program">opt</strong>
 reads its input from standard input.  Inputs can be in either the LLVM assembly
-language format (<code class="docutils literal"><span class="pre">.ll</span></code>) or the LLVM bitcode format (<code class="docutils literal"><span class="pre">.bc</span></code>).</p>
-<p>If an output filename is not specified with the <a class="reference internal" href="#cmdoption-o"><code class="xref std std-option docutils literal"><span class="pre">-o</span></code></a> option,
+language format (<code class="docutils literal notranslate"><span class="pre">.ll</span></code>) or the LLVM bitcode format (<code class="docutils literal notranslate"><span class="pre">.bc</span></code>).</p>
+<p>If an output filename is not specified with the <a class="reference internal" href="#cmdoption-opt-o"><code class="xref std std-option docutils literal notranslate"><span class="pre">-o</span></code></a> option,
 <strong class="program">opt</strong> writes its output to the standard output.</p>
 </div>
 <div class="section" id="options">
 <h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption-f">
-<code class="descname">-f</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-f" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-f">
+<code class="sig-name descname">-f</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-f" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enable binary output on terminals.  Normally, <strong class="program">opt</strong> will refuse to
 write raw bitcode output if the output stream is a terminal.  With this option,
 <strong class="program">opt</strong> will write raw bitcode regardless of the output device.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-help">
-<code class="descname">-help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-help" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-help">
+<code class="sig-name descname">-help</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-help" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print a summary of command line options.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-o">
-<code class="descname">-o</code><code class="descclassname"> &lt;filename&gt;</code><a class="headerlink" href="#cmdoption-o" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-o">
+<code class="sig-name descname">-o</code><code class="sig-prename descclassname"> &lt;filename&gt;</code><a class="headerlink" href="#cmdoption-opt-o" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specify the output filename.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-S">
-<code class="descname">-S</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-S" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-s">
+<code class="sig-name descname">-S</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-s" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write output in LLVM intermediate language (instead of bitcode).</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-">
-<code class="descname">-</code><code class="descclassname">{passname}</code><a class="headerlink" href="#cmdoption-" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong class="program">opt</strong> provides the ability to run any of LLVM&#8217;s optimization or
-analysis passes in any order.  The <a class="reference internal" href="#cmdoption-help"><code class="xref std std-option docutils literal"><span class="pre">-help</span></code></a> option lists all the passes
+<dt id="cmdoption-opt-passname">
+<code class="sig-name descname">-{passname}</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-passname" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong class="program">opt</strong> provides the ability to run any of LLVM’s optimization or
+analysis passes in any order.  The <a class="reference internal" href="#cmdoption-opt-help"><code class="xref std std-option docutils literal notranslate"><span class="pre">-help</span></code></a> option lists all the passes
 available.  The order in which the options occur on the command line are the
 order in which they are executed (within pass constraints).</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-disable-inlining">
-<code class="descname">-disable-inlining</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-disable-inlining" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-disable-inlining">
+<code class="sig-name descname">-disable-inlining</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-disable-inlining" title="Permalink to this definition">¶</a></dt>
 <dd><p>This option simply removes the inlining pass from the standard list.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-disable-opt">
-<code class="descname">-disable-opt</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-disable-opt" title="Permalink to this definition">¶</a></dt>
-<dd><p>This option is only meaningful when <code class="xref std std-option docutils literal"><span class="pre">-std-link-opts</span></code> is given.  It
+<dt id="cmdoption-opt-disable-opt">
+<code class="sig-name descname">-disable-opt</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-disable-opt" title="Permalink to this definition">¶</a></dt>
+<dd><p>This option is only meaningful when <cite>-std-link-opts</cite> is given.  It
 disables most passes.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-strip-debug">
-<code class="descname">-strip-debug</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-strip-debug" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-strip-debug">
+<code class="sig-name descname">-strip-debug</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-strip-debug" title="Permalink to this definition">¶</a></dt>
 <dd><p>This option causes opt to strip debug information from the module before
-applying other optimizations.  It is essentially the same as <code class="xref std std-option docutils literal"><span class="pre">-strip</span></code>
+applying other optimizations.  It is essentially the same as <cite>-strip</cite>
 but it ensures that stripping of debug information is done first.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-verify-each">
-<code class="descname">-verify-each</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-verify-each" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-verify-each">
+<code class="sig-name descname">-verify-each</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-verify-each" title="Permalink to this definition">¶</a></dt>
 <dd><p>This option causes opt to add a verify pass after every pass otherwise
-specified on the command line (including <code class="xref std std-option docutils literal"><span class="pre">-verify</span></code>).  This is useful
+specified on the command line (including <cite>-verify</cite>).  This is useful
 for cases where it is suspected that a pass is creating an invalid module but
 it is not clear which pass is doing it.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-stats">
-<code class="descname">-stats</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-stats" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-stats">
+<code class="sig-name descname">-stats</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-stats" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print statistics.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-time-passes">
-<code class="descname">-time-passes</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-time-passes" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-time-passes">
+<code class="sig-name descname">-time-passes</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-time-passes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Record the amount of time needed for each pass and print it to standard
 error.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-debug">
-<code class="descname">-debug</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-debug" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-debug">
+<code class="sig-name descname">-debug</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-debug" title="Permalink to this definition">¶</a></dt>
 <dd><p>If this is a debug build, this option will enable debug printouts from passes
-which use the <code class="docutils literal"><span class="pre">DEBUG()</span></code> macro.  See the <a class="reference external" href="../ProgrammersManual.html">LLVM Programmer&#8217;s Manual</a>, section <code class="docutils literal"><span class="pre">#DEBUG</span></code> for more information.</p>
+which use the <code class="docutils literal notranslate"><span class="pre">LLVM_DEBUG()</span></code> macro.  See the <a class="reference external" href="../ProgrammersManual.html">LLVM Programmer’s Manual</a>, section <code class="docutils literal notranslate"><span class="pre">#DEBUG</span></code> for more information.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-load">
-<code class="descname">-load</code><code class="descclassname">=&lt;plugin&gt;</code><a class="headerlink" href="#cmdoption-load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the dynamic object <code class="docutils literal"><span class="pre">plugin</span></code>.  This object should register new
+<dt id="cmdoption-opt-load">
+<code class="sig-name descname">-load</code><code class="sig-prename descclassname">=&lt;plugin&gt;</code><a class="headerlink" href="#cmdoption-opt-load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the dynamic object <code class="docutils literal notranslate"><span class="pre">plugin</span></code>.  This object should register new
 optimization or analysis passes.  Once loaded, the object will add new command
 line options to enable various optimizations or analyses.  To see the new
-complete list of optimizations, use the <a class="reference internal" href="#cmdoption-help"><code class="xref std std-option docutils literal"><span class="pre">-help</span></code></a> and <a class="reference internal" href="#cmdoption-load"><code class="xref std std-option docutils literal"><span class="pre">-load</span></code></a>
+complete list of optimizations, use the <a class="reference internal" href="#cmdoption-opt-help"><code class="xref std std-option docutils literal notranslate"><span class="pre">-help</span></code></a> and <a class="reference internal" href="#cmdoption-opt-load"><code class="xref std std-option docutils literal notranslate"><span class="pre">-load</span></code></a>
 options together.  For example:</p>
-<div class="highlight-sh"><div class="highlight"><pre>opt -load<span class="o">=</span>plugin.so -help
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>opt -load<span class="o">=</span>plugin.so -help
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-p">
-<code class="descname">-p</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-p" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-opt-p">
+<code class="sig-name descname">-p</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-opt-p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print module after each transformation.</p>
 </dd></dl>
 
@@ -228,13 +216,13 @@ occurs, it will exit with a non-zero value.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

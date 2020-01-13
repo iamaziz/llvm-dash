@@ -1,0 +1,1092 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Moving LLVM Projects to GitHub &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Test-Suite Extentions" href="TestSuite.html" />
+    <link rel="prev" title="How to start LLVM Social in your town" href="../MeetupGuidelines.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="TestSuite.html" title="Test-Suite Extentions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../MeetupGuidelines.html" title="How to start LLVM Social in your town"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="moving-llvm-projects-to-github">
+<h1>Moving LLVM Projects to GitHub<a class="headerlink" href="#moving-llvm-projects-to-github" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="current-status">
+<h2>Current Status<a class="headerlink" href="#current-status" title="Permalink to this headline">¶</a></h2>
+<p>We are planning to complete the transition to GitHub by Oct 21, 2019.  See
+the GitHub migration <a class="reference external" href="https://llvm.org/GitHubMigrationStatus.html">status page</a>
+for the latest updates and instructions for how to migrate your workflows.</p>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This is a proposal to move our current revision control system from our own
+hosted Subversion to GitHub. Below are the financial and technical arguments as
+to why we are proposing such a move and how people (and validation
+infrastructure) will continue to work with a Git-based LLVM.</p>
+</div>
+<div class="section" id="what-this-proposal-is-not-about">
+<h2>What This Proposal is <em>Not</em> About<a class="headerlink" href="#what-this-proposal-is-not-about" title="Permalink to this headline">¶</a></h2>
+<p>Changing the development policy.</p>
+<p>This proposal relates only to moving the hosting of our source-code repository
+from SVN hosted on our own servers to Git hosted on GitHub. We are not proposing
+using GitHub’s issue tracker, pull-requests, or code-review.</p>
+<p>Contributors will continue to earn commit access on demand under the Developer
+Policy, except that that a GitHub account will be required instead of SVN
+username/password-hash.</p>
+</div>
+<div class="section" id="why-git-and-why-github">
+<h2>Why Git, and Why GitHub?<a class="headerlink" href="#why-git-and-why-github" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="why-move-at-all">
+<h3>Why Move At All?<a class="headerlink" href="#why-move-at-all" title="Permalink to this headline">¶</a></h3>
+<p>This discussion began because we currently host our own Subversion server
+and Git mirror on a voluntary basis. The LLVM Foundation sponsors the server and
+provides limited support, but there is only so much it can do.</p>
+<p>Volunteers are not sysadmins themselves, but compiler engineers that happen
+to know a thing or two about hosting servers. We also don’t have 24/7 support,
+and we sometimes wake up to see that continuous integration is broken because
+the SVN server is either down or unresponsive.</p>
+<p>We should take advantage of one of the services out there (GitHub, GitLab,
+and BitBucket, among others) that offer better service (24/7 stability, disk
+space, Git server, code browsing, forking facilities, etc) for free.</p>
+</div>
+<div class="section" id="why-git">
+<h3>Why Git?<a class="headerlink" href="#why-git" title="Permalink to this headline">¶</a></h3>
+<p>Many new coders nowadays start with Git, and a lot of people have never used
+SVN, CVS, or anything else. Websites like GitHub have changed the landscape
+of open source contributions, reducing the cost of first contribution and
+fostering collaboration.</p>
+<p>Git is also the version control many LLVM developers use. Despite the
+sources being stored in a SVN server, these developers are already using Git
+through the Git-SVN integration.</p>
+<p>Git allows you to:</p>
+<ul class="simple">
+<li><p>Commit, squash, merge, and fork locally without touching the remote server.</p></li>
+<li><p>Maintain local branches, enabling multiple threads of development.</p></li>
+<li><p>Collaborate on these branches (e.g. through your own fork of llvm on GitHub).</p></li>
+<li><p>Inspect the repository history (blame, log, bisect) without Internet access.</p></li>
+<li><p>Maintain remote forks and branches on Git hosting services and
+integrate back to the main repository.</p></li>
+</ul>
+<p>In addition, because Git seems to be replacing many OSS projects’ version
+control systems, there are many tools that are built over Git.
+Future tooling may support Git first (if not only).</p>
+</div>
+<div class="section" id="why-github">
+<h3>Why GitHub?<a class="headerlink" href="#why-github" title="Permalink to this headline">¶</a></h3>
+<p>GitHub, like GitLab and BitBucket, provides free code hosting for open source
+projects. Any of these could replace the code-hosting infrastructure that we
+have today.</p>
+<p>These services also have a dedicated team to monitor, migrate, improve and
+distribute the contents of the repositories depending on region and load.</p>
+<p>GitHub has one important advantage over GitLab and
+BitBucket: it offers read-write <strong>SVN</strong> access to the repository
+(<a class="reference external" href="https://github.com/blog/626-announcing-svn-support">https://github.com/blog/626-announcing-svn-support</a>).
+This would enable people to continue working post-migration as though our code
+were still canonically in an SVN repository.</p>
+<p>In addition, there are already multiple LLVM mirrors on GitHub, indicating that
+part of our community has already settled there.</p>
+</div>
+<div class="section" id="on-managing-revision-numbers-with-git">
+<h3>On Managing Revision Numbers with Git<a class="headerlink" href="#on-managing-revision-numbers-with-git" title="Permalink to this headline">¶</a></h3>
+<p>The current SVN repository hosts all the LLVM sub-projects alongside each other.
+A single revision number (e.g. r123456) thus identifies a consistent version of
+all LLVM sub-projects.</p>
+<p>Git does not use sequential integer revision number but instead uses a hash to
+identify each commit.</p>
+<p>The loss of a sequential integer revision number has been a sticking point in
+past discussions about Git:</p>
+<ul class="simple">
+<li><p>“The ‘branch’ I most care about is mainline, and losing the ability to say
+‘fixed in r1234’ (with some sort of monotonically increasing number) would
+be a tragic loss.” <a class="reference internal" href="#lattnerrevnum" id="id1"><span>[LattnerRevNum]</span></a></p></li>
+<li><p>“I like those results sorted by time and the chronology should be obvious, but
+timestamps are incredibly cumbersome and make it difficult to verify that a
+given checkout matches a given set of results.” <a class="reference internal" href="#trickrevnum" id="id2"><span>[TrickRevNum]</span></a></p></li>
+<li><p>“There is still the major regression with unreadable version numbers.
+Given the amount of Bugzilla traffic with ‘Fixed in…’, that’s a
+non-trivial issue.” <a class="reference internal" href="#jsonnrevnum" id="id3"><span>[JSonnRevNum]</span></a></p></li>
+<li><p>“Sequential IDs are important for LNT and llvmlab bisection tool.” <a class="reference internal" href="#matthewsrevnum" id="id4"><span>[MatthewsRevNum]</span></a>.</p></li>
+</ul>
+<p>However, Git can emulate this increasing revision number:
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">rev-list</span> <span class="pre">--count</span> <span class="pre">&lt;commit-hash&gt;</span></code>. This identifier is unique only
+within a single branch, but this means the tuple <cite>(num, branch-name)</cite> uniquely
+identifies a commit.</p>
+<p>We can thus use this revision number to ensure that e.g. <cite>clang -v</cite> reports a
+user-friendly revision number (e.g. <cite>master-12345</cite> or <cite>4.0-5321</cite>), addressing
+the objections raised above with respect to this aspect of Git.</p>
+</div>
+<div class="section" id="what-about-branches-and-merges">
+<h3>What About Branches and Merges?<a class="headerlink" href="#what-about-branches-and-merges" title="Permalink to this headline">¶</a></h3>
+<p>In contrast to SVN, Git makes branching easy. Git’s commit history is
+represented as a DAG, a departure from SVN’s linear history. However, we propose
+to mandate making merge commits illegal in our canonical Git repository.</p>
+<p>Unfortunately, GitHub does not support server side hooks to enforce such a
+policy.  We must rely on the community to avoid pushing merge commits.</p>
+<p>GitHub offers a feature called <cite>Status Checks</cite>: a branch protected by
+<cite>status checks</cite> requires commits to be whitelisted before the push can happen.
+We could supply a pre-push hook on the client side that would run and check the
+history, before whitelisting the commit being pushed <a class="reference internal" href="#statuschecks" id="id5"><span>[statuschecks]</span></a>.
+However this solution would be somewhat fragile (how do you update a script
+installed on every developer machine?) and prevents SVN access to the
+repository.</p>
+</div>
+<div class="section" id="what-about-commit-emails">
+<h3>What About Commit Emails?<a class="headerlink" href="#what-about-commit-emails" title="Permalink to this headline">¶</a></h3>
+<p>We will need a new bot to send emails for each commit. This proposal leaves the
+email format unchanged besides the commit URL.</p>
+</div>
+</div>
+<div class="section" id="straw-man-migration-plan">
+<h2>Straw Man Migration Plan<a class="headerlink" href="#straw-man-migration-plan" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="step-1-before-the-move">
+<h3>Step #1 : Before The Move<a class="headerlink" href="#step-1-before-the-move" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Update docs to mention the move, so people are aware of what is going on.</p></li>
+<li><p>Set up a read-only version of the GitHub project, mirroring our current SVN
+repository.</p></li>
+<li><p>Add the required bots to implement the commit emails, as well as the
+umbrella repository update (if the multirepo is selected) or the read-only
+Git views for the sub-projects (if the monorepo is selected).</p></li>
+</ol>
+</div>
+<div class="section" id="step-2-git-move">
+<h3>Step #2 : Git Move<a class="headerlink" href="#step-2-git-move" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple" start="4">
+<li><p>Update the buildbots to pick up updates and commits from the GitHub
+repository. Not all bots have to migrate at this point, but it’ll help
+provide infrastructure testing.</p></li>
+<li><p>Update Phabricator to pick up commits from the GitHub repository.</p></li>
+<li><p>LNT and llvmlab have to be updated: they rely on unique monotonically
+increasing integer across branch <a class="reference internal" href="#matthewsrevnum" id="id6"><span>[MatthewsRevNum]</span></a>.</p></li>
+<li><p>Instruct downstream integrators to pick up commits from the GitHub
+repository.</p></li>
+<li><p>Review and prepare an update for the LLVM documentation.</p></li>
+</ol>
+<p>Until this point nothing has changed for developers, it will just
+boil down to a lot of work for buildbot and other infrastructure
+owners.</p>
+<p>The migration will pause here until all dependencies have cleared, and all
+problems have been solved.</p>
+</div>
+<div class="section" id="step-3-write-access-move">
+<h3>Step #3: Write Access Move<a class="headerlink" href="#step-3-write-access-move" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple" start="9">
+<li><p>Collect developers’ GitHub account information, and add them to the project.</p></li>
+<li><p>Switch the SVN repository to read-only and allow pushes to the GitHub repository.</p></li>
+<li><p>Update the documentation.</p></li>
+<li><p>Mirror Git to SVN.</p></li>
+</ol>
+</div>
+<div class="section" id="step-4-post-move">
+<h3>Step #4 : Post Move<a class="headerlink" href="#step-4-post-move" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple" start="13">
+<li><p>Archive the SVN repository.</p></li>
+<li><p>Update links on the LLVM website pointing to viewvc/klaus/phab etc. to
+point to GitHub instead.</p></li>
+</ol>
+</div>
+</div>
+<div class="section" id="github-repository-description">
+<h2>Github Repository Description<a class="headerlink" href="#github-repository-description" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="monorepo">
+<h3>Monorepo<a class="headerlink" href="#monorepo" title="Permalink to this headline">¶</a></h3>
+<p>The LLVM git repository hosted at <a class="reference external" href="https://github.com/llvm/llvm-project">https://github.com/llvm/llvm-project</a> contains all
+sub-projects in a single source tree.  It is often refered to as a monorepo and
+mimics an export of the current SVN repository, with each sub-project having its
+own top-level directory. Not all sub-projects are used for building toolchains.
+For example, www/ and test-suite/ are not part of the monorepo.</p>
+<p>Putting all sub-projects in a single checkout makes cross-project refactoring
+naturally simple:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>New sub-projects can be trivially split out for better reuse and/or layering
+(e.g., to allow libSupport and/or LIT to be used by runtimes without adding a
+dependency on LLVM).</p></li>
+<li><p>Changing an API in LLVM and upgrading the sub-projects will always be done in
+a single commit, designing away a common source of temporary build breakage.</p></li>
+<li><p>Moving code across sub-project (during refactoring for instance) in a single
+commit enables accurate <cite>git blame</cite> when tracking code change history.</p></li>
+<li><p>Tooling based on <cite>git grep</cite> works natively across sub-projects, allowing to
+easier find refactoring opportunities across projects (for example reusing a
+datastructure initially in LLDB by moving it into libSupport).</p></li>
+<li><p>Having all the sources present encourages maintaining the other sub-projects
+when changing API.</p></li>
+</ul>
+</div></blockquote>
+<p>Finally, the monorepo maintains the property of the existing SVN repository that
+the sub-projects move synchronously, and a single revision number (or commit
+hash) identifies the state of the development across all projects.</p>
+<div class="section" id="building-a-single-sub-project">
+<span id="build-single-project"></span><h4>Building a single sub-project<a class="headerlink" href="#building-a-single-sub-project" title="Permalink to this headline">¶</a></h4>
+<p>Even though there is a single source tree, you are not required to build
+all sub-projects together.  It is trivial to configure builds for a single
+sub-project.</p>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="n">build</span> <span class="o">&amp;&amp;</span> <span class="n">cd</span> <span class="n">build</span>
+<span class="c1"># Configure only LLVM (default)</span>
+<span class="n">cmake</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">monorepo</span>
+<span class="c1"># Configure LLVM and lld</span>
+<span class="n">cmake</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">monorepo</span> <span class="o">-</span><span class="n">DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="n">lld</span>
+<span class="c1"># Configure LLVM and clang</span>
+<span class="n">cmake</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">monorepo</span> <span class="o">-</span><span class="n">DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="n">clang</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="outstanding-questions">
+<span id="git-svn-mirror"></span><h3>Outstanding Questions<a class="headerlink" href="#outstanding-questions" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="read-only-sub-project-mirrors">
+<h4>Read-only sub-project mirrors<a class="headerlink" href="#read-only-sub-project-mirrors" title="Permalink to this headline">¶</a></h4>
+<p>With the Monorepo, it is undecided whether the existing single-subproject
+mirrors (e.g. <a class="reference external" href="https://git.llvm.org/git/compiler-rt.git">https://git.llvm.org/git/compiler-rt.git</a>) will continue to
+be maintained.</p>
+</div>
+<div class="section" id="read-write-svn-bridge">
+<h4>Read/write SVN bridge<a class="headerlink" href="#read-write-svn-bridge" title="Permalink to this headline">¶</a></h4>
+<p>GitHub supports a read/write SVN bridge for its repositories.  However,
+there have been issues with this bridge working correctly in the past,
+so it’s not clear if this is something that will be supported going forward.</p>
+</div>
+</div>
+<div class="section" id="monorepo-drawbacks">
+<h3>Monorepo Drawbacks<a class="headerlink" href="#monorepo-drawbacks" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><p>Using the monolithic repository may add overhead for those contributing to a
+standalone sub-project, particularly on runtimes like libcxx and compiler-rt
+that don’t rely on LLVM; currently, a fresh clone of libcxx is only 15MB (vs.
+1GB for the monorepo), and the commit rate of LLVM may cause more frequent
+<cite>git push</cite> collisions when upstreaming. Affected contributors may be able to
+use the SVN bridge or the single-subproject Git mirrors. However, it’s
+undecided if these projects will continue to be mantained.</p></li>
+<li><p>Using the monolithic repository may add overhead for those <em>integrating</em> a
+standalone sub-project, even if they aren’t contributing to it, due to the
+same disk space concern as the point above. The availability of the
+sub-project Git mirrors would addresses this.</p></li>
+<li><p>Preservation of the existing read/write SVN-based workflows relies on the
+GitHub SVN bridge, which is an extra dependency. Maintaining this locks us
+into GitHub and could restrict future workflow changes.</p></li>
+</ul>
+</div></blockquote>
+<div class="section" id="workflows">
+<h4>Workflows<a class="headerlink" href="#workflows" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="#workflow-checkout-commit"><span class="std std-ref">Checkout/Clone a Single Project, without Commit Access</span></a>.</p></li>
+<li><p><a class="reference internal" href="#workflow-monocheckout-multicommit"><span class="std std-ref">Checkout/Clone Multiple Projects, with Commit Access</span></a>.</p></li>
+<li><p><a class="reference internal" href="#workflow-cross-repo-commit"><span class="std std-ref">Commit an API Change in LLVM and Update the Sub-projects</span></a>.</p></li>
+<li><p><a class="reference internal" href="#workflow-mono-branching"><span class="std std-ref">Branching/Stashing/Updating for Local Development or Experiments</span></a>.</p></li>
+<li><p><a class="reference internal" href="#workflow-mono-bisecting"><span class="std std-ref">Bisecting</span></a>.</p></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+</div>
+<div class="section" id="workflow-before-after">
+<h2>Workflow Before/After<a class="headerlink" href="#workflow-before-after" title="Permalink to this headline">¶</a></h2>
+<p>This section goes through a few examples of workflows, intended to illustrate
+how end-users or developers would interact with the repository for
+various use-cases.</p>
+<div class="section" id="checkout-clone-a-single-project-with-commit-access">
+<span id="workflow-checkout-commit"></span><h3>Checkout/Clone a Single Project, with Commit Access<a class="headerlink" href="#checkout-clone-a-single-project-with-commit-access" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="currently">
+<h4>Currently<a class="headerlink" href="#currently" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># direct SVN checkout</span>
+<span class="n">svn</span> <span class="n">co</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">user</span><span class="nd">@llvm</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">svn</span><span class="o">/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">llvm</span><span class="o">/</span><span class="n">trunk</span> <span class="n">llvm</span>
+<span class="c1"># or using the read-only Git view, with git-svn</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">llvm</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">git</span><span class="o">/</span><span class="n">llvm</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">llvm</span>
+<span class="n">git</span> <span class="n">svn</span> <span class="n">init</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">llvm</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">svn</span><span class="o">/</span><span class="n">llvm</span><span class="o">-</span><span class="n">project</span><span class="o">/</span><span class="n">llvm</span><span class="o">/</span><span class="n">trunk</span> <span class="o">--</span><span class="n">username</span><span class="o">=&lt;</span><span class="n">username</span><span class="o">&gt;</span>
+<span class="n">git</span> <span class="n">config</span> <span class="n">svn</span><span class="o">-</span><span class="n">remote</span><span class="o">.</span><span class="n">svn</span><span class="o">.</span><span class="n">fetch</span> <span class="p">:</span><span class="n">refs</span><span class="o">/</span><span class="n">remotes</span><span class="o">/</span><span class="n">origin</span><span class="o">/</span><span class="n">master</span>
+<span class="n">git</span> <span class="n">svn</span> <span class="n">rebase</span> <span class="o">-</span><span class="n">l</span>  <span class="c1"># -l avoids fetching ahead of the git mirror.</span>
+</pre></div>
+</div>
+<p>Commits are performed using <cite>svn commit</cite> or with the sequence <cite>git commit</cite> and
+<cite>git svn dcommit</cite>.</p>
+</div>
+<div class="section" id="monorepo-variant">
+<span id="workflow-multicheckout-nocommit"></span><h4>Monorepo Variant<a class="headerlink" href="#monorepo-variant" title="Permalink to this headline">¶</a></h4>
+<p>With the monorepo variant, there are a few options, depending on your
+constraints. First, you could just clone the full repository:</p>
+<p>git clone <a class="reference external" href="https://github.com/llvm/llvm-project.git">https://github.com/llvm/llvm-project.git</a></p>
+<p>At this point you have every sub-project (llvm, clang, lld, lldb, …), which
+<a class="reference internal" href="#build-single-project"><span class="std std-ref">doesn’t imply you have to build all of them</span></a>. You
+can still build only compiler-rt for instance. In this way it’s not different
+from someone who would check out all the projects with SVN today.</p>
+<p>If you want to avoid checking out all the sources, you can hide the other
+directories using a Git sparse checkout:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">config</span> <span class="n">core</span><span class="o">.</span><span class="n">sparseCheckout</span> <span class="n">true</span>
+<span class="n">echo</span> <span class="o">/</span><span class="n">compiler</span><span class="o">-</span><span class="n">rt</span> <span class="o">&gt;</span> <span class="o">.</span><span class="n">git</span><span class="o">/</span><span class="n">info</span><span class="o">/</span><span class="n">sparse</span><span class="o">-</span><span class="n">checkout</span>
+<span class="n">git</span> <span class="n">read</span><span class="o">-</span><span class="n">tree</span> <span class="o">-</span><span class="n">mu</span> <span class="n">HEAD</span>
+</pre></div>
+</div>
+<p>The data for all sub-projects is still in your <cite>.git</cite> directory, but in your
+checkout, you only see <cite>compiler-rt</cite>.
+Before you push, you’ll need to fetch and rebase (<cite>git pull –rebase</cite>) as
+usual.</p>
+<p>Note that when you fetch you’ll likely pull in changes to sub-projects you don’t
+care about. If you are using spasre checkout, the files from other projects
+won’t appear on your disk. The only effect is that your commit hash changes.</p>
+<p>You can check whether the changes in the last fetch are relevant to your commit
+by running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">log</span> <span class="n">origin</span><span class="o">/</span><span class="n">master</span><span class="o">@</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span><span class="o">..</span><span class="n">origin</span><span class="o">/</span><span class="n">master</span> <span class="o">--</span> <span class="n">libcxx</span>
+</pre></div>
+</div>
+<p>This command can be hidden in a script so that <cite>git llvmpush</cite> would perform all
+these steps, fail only if such a dependent change exists, and show immediately
+the change that prevented the push. An immediate repeat of the command would
+(almost) certainly result in a successful push.
+Note that today with SVN or git-svn, this step is not possible since the
+“rebase” implicitly happens while committing (unless a conflict occurs).</p>
+</div>
+</div>
+<div class="section" id="checkout-clone-multiple-projects-with-commit-access">
+<h3>Checkout/Clone Multiple Projects, with Commit Access<a class="headerlink" href="#checkout-clone-multiple-projects-with-commit-access" title="Permalink to this headline">¶</a></h3>
+<p>Let’s look how to assemble llvm+clang+libcxx at a given revision.</p>
+<div class="section" id="id7">
+<h4>Currently<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm -r $REVISION
+cd llvm/tools
+svn co http://llvm.org/svn/llvm-project/clang/trunk clang -r $REVISION
+cd ../projects
+svn co http://llvm.org/svn/llvm-project/libcxx/trunk libcxx -r $REVISION
+</pre></div>
+</div>
+<p>Or using git-svn:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>git clone http://llvm.org/git/llvm.git
+cd llvm/
+git svn init https://llvm.org/svn/llvm-project/llvm/trunk --username=&lt;username&gt;
+git config svn-remote.svn.fetch :refs/remotes/origin/master
+git svn rebase -l
+git checkout `git svn find-rev -B r258109`
+cd tools
+git clone http://llvm.org/git/clang.git
+cd clang/
+git svn init https://llvm.org/svn/llvm-project/clang/trunk --username=&lt;username&gt;
+git config svn-remote.svn.fetch :refs/remotes/origin/master
+git svn rebase -l
+git checkout `git svn find-rev -B r258109`
+cd ../../projects/
+git clone http://llvm.org/git/libcxx.git
+cd libcxx
+git svn init https://llvm.org/svn/llvm-project/libcxx/trunk --username=&lt;username&gt;
+git config svn-remote.svn.fetch :refs/remotes/origin/master
+git svn rebase -l
+git checkout `git svn find-rev -B r258109`
+</pre></div>
+</div>
+<p>Note that the list would be longer with more sub-projects.</p>
+</div>
+<div class="section" id="workflow-monocheckout-multicommit">
+<span id="id8"></span><h4>Monorepo Variant<a class="headerlink" href="#workflow-monocheckout-multicommit" title="Permalink to this headline">¶</a></h4>
+<p>The repository contains natively the source for every sub-projects at the right
+revision, which makes this straightforward:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/llvm/llvm-project.git
+cd llvm-projects
+git checkout $REVISION
+</pre></div>
+</div>
+<p>As before, at this point clang, llvm, and libcxx are stored in directories
+alongside each other.</p>
+</div>
+</div>
+<div class="section" id="commit-an-api-change-in-llvm-and-update-the-sub-projects">
+<span id="workflow-cross-repo-commit"></span><h3>Commit an API Change in LLVM and Update the Sub-projects<a class="headerlink" href="#commit-an-api-change-in-llvm-and-update-the-sub-projects" title="Permalink to this headline">¶</a></h3>
+<p>Today this is possible, even though not common (at least not documented) for
+subversion users and for git-svn users. For example, few Git users try to update
+LLD or Clang in the same commit as they change an LLVM API.</p>
+<p>The multirepo variant does not address this: one would have to commit and push
+separately in every individual repository. It would be possible to establish a
+protocol whereby users add a special token to their commit messages that causes
+the umbrella repo’s updater bot to group all of them into a single revision.</p>
+<p>The monorepo variant handles this natively.</p>
+</div>
+<div class="section" id="branching-stashing-updating-for-local-development-or-experiments">
+<h3>Branching/Stashing/Updating for Local Development or Experiments<a class="headerlink" href="#branching-stashing-updating-for-local-development-or-experiments" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h4>Currently<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<p>SVN does not allow this use case, but developers that are currently using
+git-svn can do it. Let’s look in practice what it means when dealing with
+multiple sub-projects.</p>
+<p>To update the repository to tip of trunk:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">pull</span>
+<span class="n">cd</span> <span class="n">tools</span><span class="o">/</span><span class="n">clang</span>
+<span class="n">git</span> <span class="n">pull</span>
+<span class="n">cd</span> <span class="o">../../</span><span class="n">projects</span><span class="o">/</span><span class="n">libcxx</span>
+<span class="n">git</span> <span class="n">pull</span>
+</pre></div>
+</div>
+<p>To create a new branch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">MyBranch</span>
+<span class="n">cd</span> <span class="n">tools</span><span class="o">/</span><span class="n">clang</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">MyBranch</span>
+<span class="n">cd</span> <span class="o">../../</span><span class="n">projects</span><span class="o">/</span><span class="n">libcxx</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">MyBranch</span>
+</pre></div>
+</div>
+<p>To switch branches:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">AnotherBranch</span>
+<span class="n">cd</span> <span class="n">tools</span><span class="o">/</span><span class="n">clang</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">AnotherBranch</span>
+<span class="n">cd</span> <span class="o">../../</span><span class="n">projects</span><span class="o">/</span><span class="n">libcxx</span>
+<span class="n">git</span> <span class="n">checkout</span> <span class="n">AnotherBranch</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="workflow-mono-branching">
+<span id="id10"></span><h4>Monorepo Variant<a class="headerlink" href="#workflow-mono-branching" title="Permalink to this headline">¶</a></h4>
+<p>Regular Git commands are sufficient, because everything is in a single
+repository:</p>
+<p>To update the repository to tip of trunk:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">pull</span>
+</pre></div>
+</div>
+<p>To create a new branch:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="n">MyBranch</span>
+</pre></div>
+</div>
+<p>To switch branches:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="n">AnotherBranch</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="bisecting">
+<h3>Bisecting<a class="headerlink" href="#bisecting" title="Permalink to this headline">¶</a></h3>
+<p>Assuming a developer is looking for a bug in clang (or lld, or lldb, …).</p>
+<div class="section" id="id11">
+<h4>Currently<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<p>SVN does not have builtin bisection support, but the single revision across
+sub-projects makes it possible to script around.</p>
+<p>Using the existing Git read-only view of the repositories, it is possible to use
+the native Git bisection script over the llvm repository, and use some scripting
+to synchronize the clang repository to match the llvm revision.</p>
+</div>
+<div class="section" id="workflow-mono-bisecting">
+<span id="id12"></span><h4>Monorepo Variant<a class="headerlink" href="#workflow-mono-bisecting" title="Permalink to this headline">¶</a></h4>
+<p>Bisecting on the monorepo is straightforward, and very similar to the above,
+except that the bisection script does not need to include the
+<cite>git submodule update</cite> step.</p>
+<p>The same example, finding which commit introduces a regression where clang-3.9
+crashes but not clang-3.8 passes, will look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">bisect</span> <span class="n">start</span> <span class="n">releases</span><span class="o">/</span><span class="mf">3.9</span><span class="o">.</span><span class="n">x</span> <span class="n">releases</span><span class="o">/</span><span class="mf">3.8</span><span class="o">.</span><span class="n">x</span>
+<span class="n">git</span> <span class="n">bisect</span> <span class="n">run</span> <span class="o">./</span><span class="n">bisect_script</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+<p>With the <cite>bisect_script.sh</cite> script being:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/bin/sh
+cd $BUILD_DIR
+
+ninja clang || exit 125   # an exit code of 125 asks &quot;git bisect&quot;
+                          # to &quot;skip&quot; the current commit
+
+./bin/clang some_crash_test.cpp
+</pre></div>
+</div>
+<p>Also, since the monorepo handles commits update across multiple projects, you’re
+less like to encounter a build failure where a commit change an API in LLVM and
+another later one “fixes” the build in clang.</p>
+</div>
+</div>
+</div>
+<div class="section" id="moving-local-branches-to-the-monorepo">
+<h2>Moving Local Branches to the Monorepo<a class="headerlink" href="#moving-local-branches-to-the-monorepo" title="Permalink to this headline">¶</a></h2>
+<p>Suppose you have been developing against the existing LLVM git
+mirrors.  You have one or more git branches that you want to migrate
+to the “final monorepo”.</p>
+<p>The simplest way to migrate such branches is with the
+<code class="docutils literal notranslate"><span class="pre">migrate-downstream-fork.py</span></code> tool at
+<a class="reference external" href="https://github.com/jyknight/llvm-git-migration">https://github.com/jyknight/llvm-git-migration</a>.</p>
+<div class="section" id="basic-migration">
+<h3>Basic migration<a class="headerlink" href="#basic-migration" title="Permalink to this headline">¶</a></h3>
+<p>Basic instructions for <code class="docutils literal notranslate"><span class="pre">migrate-downstream-fork.py</span></code> are in the
+Python script and are expanded on below to a more general recipe:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Make a repository which will become your final local mirror of the
+# monorepo.
+mkdir my-monorepo
+git -C my-monorepo init
+
+# Add a remote to the monorepo.
+git -C my-monorepo remote add upstream/monorepo https://github.com/llvm/llvm-project.git
+
+# Add remotes for each git mirror you use, from upstream as well as
+# your local mirror.  All projects are listed here but you need only
+# import those for which you have local branches.
+my_projects=( clang
+              clang-tools-extra
+              compiler-rt
+              debuginfo-tests
+              libcxx
+              libcxxabi
+              libunwind
+              lld
+              lldb
+              llvm
+              openmp
+              polly )
+for p in ${my_projects[@]}; do
+  git -C my-monorepo remote add upstream/split/${p} https://github.com/llvm-mirror/${p}.git
+  git -C my-monorepo remote add local/split/${p} https://my.local.mirror.org/${p}.git
+done
+
+# Pull in all the commits.
+git -C my-monorepo fetch --all
+
+# Run migrate-downstream-fork to rewrite local branches on top of
+# the upstream monorepo.
+(
+   cd my-monorepo
+   migrate-downstream-fork.py \
+     refs/remotes/local \
+     refs/tags \
+     --new-repo-prefix=refs/remotes/upstream/monorepo \
+     --old-repo-prefix=refs/remotes/upstream/split \
+     --source-kind=split \
+     --revmap-out=monorepo-map.txt
+)
+
+# Octopus-merge the resulting local split histories to unify them.
+
+# Assumes local work on local split mirrors is on master (and
+# upstream is presumably represented by some other branch like
+# upstream/master).
+my_local_branch=&quot;master&quot;
+
+git -C my-monorepo branch --no-track local/octopus/master \
+  $(git -C my-monorepo merge-base refs/remotes/upstream/monorepo/master \
+                                  refs/remotes/local/split/llvm/${my_local_branch})
+git -C my-monorepo checkout local/octopus/${my_local_branch}
+
+subproject_branches=()
+for p in ${my_projects[@]}; do
+  subproject_branch=${p}/local/monorepo/${my_local_branch}
+  git -C my-monorepo branch ${subproject_branch} \
+    refs/remotes/local/split/${p}/${my_local_branch}
+  if [[ &quot;${p}&quot; != &quot;llvm&quot; ]]; then
+    subproject_branches+=( ${subproject_branch} )
+  fi
+done
+
+git -C my-monorepo merge ${subproject_branches[@]}
+
+for p in ${my_projects[@]}; do
+  subproject_branch=${p}/local/monorepo/${my_local_branch}
+  git -C my-monorepo branch -d ${subproject_branch}
+done
+
+# Create local branches for upstream monorepo branches.
+for ref in $(git -C my-monorepo for-each-ref --format=&quot;%(refname)&quot; \
+                 refs/remotes/upstream/monorepo); do
+  upstream_branch=${ref#refs/remotes/upstream/monorepo/}
+  git -C my-monorepo branch upstream/${upstream_branch} ${ref}
+done
+</pre></div>
+</div>
+<p>The above gets you to a state like the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U1</span> <span class="o">-</span> <span class="n">U2</span> <span class="o">-</span> <span class="n">U3</span> <span class="o">&lt;-</span> <span class="n">upstream</span><span class="o">/</span><span class="n">master</span>
+  \   \    \
+   \   \    <span class="o">-</span> <span class="n">Llld1</span> <span class="o">-</span> <span class="n">Llld2</span> <span class="o">-</span>
+    \   \                    \
+     \   <span class="o">-</span> <span class="n">Lclang1</span> <span class="o">-</span> <span class="n">Lclang2</span><span class="o">--</span> <span class="n">Lmerge</span> <span class="o">&lt;-</span> <span class="n">local</span><span class="o">/</span><span class="n">octopus</span><span class="o">/</span><span class="n">master</span>
+      \                      <span class="o">/</span>
+       <span class="o">-</span> <span class="n">Lllvm1</span> <span class="o">-</span> <span class="n">Lllvm2</span><span class="o">-----</span>
+</pre></div>
+</div>
+<p>Each branched component has its branch rewritten on top of the
+monorepo and all components are unified by a giant octopus merge.</p>
+<p>If additional active local branches need to be preserved, the above
+operations following the assignment to <code class="docutils literal notranslate"><span class="pre">my_local_branch</span></code> should be
+done for each branch.  Ref paths will need to be updated to map the
+local branch to the corresponding upstream branch.  If local branches
+have no corresponding upstream branch, then the creation of
+<code class="docutils literal notranslate"><span class="pre">local/octopus/&lt;local</span> <span class="pre">branch&gt;</span></code> need not use <code class="docutils literal notranslate"><span class="pre">git-merge-base</span></code> to
+pinpont its root commit; it may simply be branched from the
+appropriate component branch (say, <code class="docutils literal notranslate"><span class="pre">llvm/local_release_X</span></code>).</p>
+</div>
+<div class="section" id="zipping-local-history">
+<h3>Zipping local history<a class="headerlink" href="#zipping-local-history" title="Permalink to this headline">¶</a></h3>
+<p>The octopus merge is suboptimal for many cases, because walking back
+through the history of one component leaves the other components fixed
+at a history that likely makes things unbuildable.</p>
+<p>Some downstream users track the order commits were made to subprojects
+with some kind of “umbrella” project that imports the project git
+mirrors as submodules, similar to the multirepo umbrella proposed
+above.  Such an umbrella repository looks something like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">UM1</span> <span class="o">----</span> <span class="n">UM2</span> <span class="o">--</span> <span class="n">UM3</span> <span class="o">--</span> <span class="n">UM4</span> <span class="o">----</span> <span class="n">UM5</span> <span class="o">----</span> <span class="n">UM6</span> <span class="o">----</span> <span class="n">UM7</span> <span class="o">----</span> <span class="n">UM8</span> <span class="o">&lt;-</span> <span class="n">master</span>
+ <span class="o">|</span>        <span class="o">|</span>             <span class="o">|</span>        <span class="o">|</span>        <span class="o">|</span>        <span class="o">|</span>        <span class="o">|</span>
+<span class="n">Lllvm1</span>   <span class="n">Llld1</span>         <span class="n">Lclang1</span>  <span class="n">Lclang2</span>  <span class="n">Lllvm2</span>   <span class="n">Llld2</span>     <span class="n">Lmyproj1</span>
+</pre></div>
+</div>
+<p>The vertical bars represent submodule updates to a particular local
+commit in the project mirror.  <code class="docutils literal notranslate"><span class="pre">UM3</span></code> in this case is a commit of
+some local umbrella repository state that is not a submodule update,
+perhaps a <code class="docutils literal notranslate"><span class="pre">README</span></code> or project build script update.  Commit <code class="docutils literal notranslate"><span class="pre">UM8</span></code>
+updates a submodule of local project <code class="docutils literal notranslate"><span class="pre">myproj</span></code>.</p>
+<p>The tool <code class="docutils literal notranslate"><span class="pre">zip-downstream-fork.py</span></code> at
+<a class="reference external" href="https://github.com/greened/llvm-git-migration/tree/zip">https://github.com/greened/llvm-git-migration/tree/zip</a> can be used to
+convert the umbrella history into a monorepo-based history with
+commits in the order implied by submodule updates:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U1</span> <span class="o">-</span> <span class="n">U2</span> <span class="o">-</span> <span class="n">U3</span> <span class="o">&lt;-</span> <span class="n">upstream</span><span class="o">/</span><span class="n">master</span>
+ \    \    \
+  \    <span class="o">-----</span>\<span class="o">---------------</span>                                    <span class="n">local</span><span class="o">/</span><span class="nb">zip</span><span class="o">--.</span>
+   \         \              \                                               <span class="o">|</span>
+  <span class="o">-</span> <span class="n">Lllvm1</span> <span class="o">-</span> <span class="n">Llld1</span> <span class="o">-</span> <span class="n">UM3</span> <span class="o">-</span>  <span class="n">Lclang1</span> <span class="o">-</span> <span class="n">Lclang2</span> <span class="o">-</span> <span class="n">Lllvm2</span> <span class="o">-</span> <span class="n">Llld2</span> <span class="o">-</span> <span class="n">Lmyproj1</span> <span class="o">&lt;-</span><span class="s1">&#39;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">U*</span></code> commits represent upstream commits to the monorepo master
+branch.  Each submodule update in the local <code class="docutils literal notranslate"><span class="pre">UM*</span></code> commits brought in
+a subproject tree at some local commit.  The trees in the <code class="docutils literal notranslate"><span class="pre">L*1</span></code>
+commits represent merges from upstream.  These result in edges from
+the <code class="docutils literal notranslate"><span class="pre">U*</span></code> commits to their corresponding rewritten <code class="docutils literal notranslate"><span class="pre">L*1</span></code> commits.
+The <code class="docutils literal notranslate"><span class="pre">L*2</span></code> commits did not do any merges from upstream.</p>
+<p>Note that the merge from <code class="docutils literal notranslate"><span class="pre">U2</span></code> to <code class="docutils literal notranslate"><span class="pre">Lclang1</span></code> appears redundant, but
+if, say, <code class="docutils literal notranslate"><span class="pre">U3</span></code> changed some files in upstream clang, the <code class="docutils literal notranslate"><span class="pre">Lclang1</span></code>
+commit appearing after the <code class="docutils literal notranslate"><span class="pre">Llld1</span></code> commit would actually represent a
+clang tree <em>earlier</em> in the upstream clang history.  We want the
+<code class="docutils literal notranslate"><span class="pre">local/zip</span></code> branch to accurately represent the state of our umbrella
+history and so the edge <code class="docutils literal notranslate"><span class="pre">U2</span> <span class="pre">-&gt;</span> <span class="pre">Lclang1</span></code> is a visual reminder of what
+clang’s tree actually looks like in <code class="docutils literal notranslate"><span class="pre">Lclang1</span></code>.</p>
+<p>Even so, the edge <code class="docutils literal notranslate"><span class="pre">U3</span> <span class="pre">-&gt;</span> <span class="pre">Llld1</span></code> could be problematic for future
+merges from upstream.  git will think that we’ve already merged from
+<code class="docutils literal notranslate"><span class="pre">U3</span></code>, and we have, except for the state of the clang tree.  One
+possible migitation strategy is to manually diff clang between <code class="docutils literal notranslate"><span class="pre">U2</span></code>
+and <code class="docutils literal notranslate"><span class="pre">U3</span></code> and apply those updates to <code class="docutils literal notranslate"><span class="pre">local/zip</span></code>.  Another,
+possibly simpler strategy is to freeze local work on downstream
+branches and merge all submodules from the latest upstream before
+running <code class="docutils literal notranslate"><span class="pre">zip-downstream-fork.py</span></code>.  If downstream merged each project
+from upstream in lockstep without any intervening local commits, then
+things should be fine without any special action.  We anticipate this
+to be the common case.</p>
+<p>The tree for <code class="docutils literal notranslate"><span class="pre">Lclang1</span></code> outside of clang will represent the state of
+things at <code class="docutils literal notranslate"><span class="pre">U3</span></code> since all of the upstream projects not participating
+in the umbrella history should be in a state respecting the commit
+<code class="docutils literal notranslate"><span class="pre">U3</span></code>.  The trees for llvm and lld should correctly represent commits
+<code class="docutils literal notranslate"><span class="pre">Lllvm1</span></code> and <code class="docutils literal notranslate"><span class="pre">Llld1</span></code>, respectively.</p>
+<p>Commit <code class="docutils literal notranslate"><span class="pre">UM3</span></code> changed files not related to submodules and we need
+somewhere to put them.  It is not safe in general to put them in the
+monorepo root directory because they may conflict with files in the
+monorepo.  Let’s assume we want them in a directory <code class="docutils literal notranslate"><span class="pre">local</span></code> in the
+monorepo.</p>
+<p><strong>Example 1: Umbrella looks like the monorepo</strong></p>
+<p>For this example, we’ll assume that each subproject appears in its own
+top-level directory in the umbrella, just as they do in the monorepo .
+Let’s also assume that we want the files in directory <code class="docutils literal notranslate"><span class="pre">myproj</span></code> to
+appear in <code class="docutils literal notranslate"><span class="pre">local/myproj</span></code>.</p>
+<p>Given the above run of <code class="docutils literal notranslate"><span class="pre">migrate-downstream-fork.py</span></code>, a recipe to
+create the zipped history is below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Import any non-LLVM repositories the umbrella references.
+git -C my-monorepo remote add localrepo \
+                              https://my.local.mirror.org/localrepo.git
+git fetch localrepo
+
+subprojects=( clang clang-tools-extra compiler-rt debuginfo-tests libclc
+              libcxx libcxxabi libunwind lld lldb llgo llvm openmp
+              parallel-libs polly pstl )
+
+# Import histories for upstream split projects (this was probably
+# already done for the ``migrate-downstream-fork.py`` run).
+for project in ${subprojects[@]}; do
+  git remote add upstream/split/${project} \
+                 https://github.com/llvm-mirror/${subproject}.git
+  git fetch umbrella/split/${project}
+done
+
+# Import histories for downstream split projects (this was probably
+# already done for the ``migrate-downstream-fork.py`` run).
+for project in ${subprojects[@]}; do
+  git remote add local/split/${project} \
+                 https://my.local.mirror.org/${subproject}.git
+  git fetch local/split/${project}
+done
+
+# Import umbrella history.
+git -C my-monorepo remote add umbrella \
+                              https://my.local.mirror.org/umbrella.git
+git fetch umbrella
+
+# Put myproj in local/myproj
+echo &quot;myproj local/myproj&quot; &gt; my-monorepo/submodule-map.txt
+
+# Rewrite history
+(
+  cd my-monorepo
+  zip-downstream-fork.py \
+    refs/remotes/umbrella \
+    --new-repo-prefix=refs/remotes/upstream/monorepo \
+    --old-repo-prefix=refs/remotes/upstream/split \
+    --revmap-in=monorepo-map.txt \
+    --revmap-out=zip-map.txt \
+    --subdir=local \
+    --submodule-map=submodule-map.txt \
+    --update-tags
+ )
+
+ # Create the zip branch (assuming umbrella master is wanted).
+ git -C my-monorepo branch --no-track local/zip/master refs/remotes/umbrella/master
+</pre></div>
+</div>
+<p>Note that if the umbrella has submodules to non-LLVM repositories,
+<code class="docutils literal notranslate"><span class="pre">zip-downstream-fork.py</span></code> needs to know about them to be able to
+rewrite commits.  That is why the first step above is to fetch commits
+from such repositories.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">--update-tags</span></code> the tool will migrate annotated tags pointing
+to submodule commits that were inlined into the zipped history.  If
+the umbrella pulled in an upstream commit that happened to have a tag
+pointing to it, that tag will be migrated, which is almost certainly
+not what is wanted.  The tag can always be moved back to its original
+commit after rewriting, or the <code class="docutils literal notranslate"><span class="pre">--update-tags</span></code> option may be
+discarded and any local tags would then be migrated manually.</p>
+<p><strong>Example 2: Nested sources layout</strong></p>
+<p>The tool handles nested submodules (e.g. llvm is a submodule in
+umbrella and clang is a submodule in llvm).  The file
+<code class="docutils literal notranslate"><span class="pre">submodule-map.txt</span></code> is a list of pairs, one per line.  The first
+pair item describes the path to a submodule in the umbrella
+repository.  The second pair item secribes the path where trees for
+that submodule should be written in the zipped history.</p>
+<p>Let’s say your umbrella repository is actually the llvm repository and
+it has submodules in the “nested sources” layout (clang in
+tools/clang, etc.).  Let’s also say <code class="docutils literal notranslate"><span class="pre">projects/myproj</span></code> is a submodule
+pointing to some downstream repository.  The submodule map file should
+look like this (we still want myproj mapped the same way as
+previously):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tools</span><span class="o">/</span><span class="n">clang</span> <span class="n">clang</span>
+<span class="n">tools</span><span class="o">/</span><span class="n">clang</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">extra</span> <span class="n">clang</span><span class="o">-</span><span class="n">tools</span><span class="o">-</span><span class="n">extra</span>
+<span class="n">projects</span><span class="o">/</span><span class="n">compiler</span><span class="o">-</span><span class="n">rt</span> <span class="n">compiler</span><span class="o">-</span><span class="n">rt</span>
+<span class="n">projects</span><span class="o">/</span><span class="n">debuginfo</span><span class="o">-</span><span class="n">tests</span> <span class="n">debuginfo</span><span class="o">-</span><span class="n">tests</span>
+<span class="n">projects</span><span class="o">/</span><span class="n">libclc</span> <span class="n">libclc</span>
+<span class="n">projects</span><span class="o">/</span><span class="n">libcxx</span> <span class="n">libcxx</span>
+<span class="n">projects</span><span class="o">/</span><span class="n">libcxxabi</span> <span class="n">libcxxabi</span>
+<span class="n">projects</span><span class="o">/</span><span class="n">libunwind</span> <span class="n">libunwind</span>
+<span class="n">tools</span><span class="o">/</span><span class="n">lld</span> <span class="n">lld</span>
+<span class="n">tools</span><span class="o">/</span><span class="n">lldb</span> <span class="n">lldb</span>
+<span class="n">projects</span><span class="o">/</span><span class="n">openmp</span> <span class="n">openmp</span>
+<span class="n">tools</span><span class="o">/</span><span class="n">polly</span> <span class="n">polly</span>
+<span class="n">projects</span><span class="o">/</span><span class="n">myproj</span> <span class="n">local</span><span class="o">/</span><span class="n">myproj</span>
+</pre></div>
+</div>
+<p>If a submodule path does not appear in the map, the tools assumes it
+should be placed in the same place in the monorepo.  That means if you
+use the “nested sources” layout in your umrella, you <em>must</em> provide
+map entries for all of the projects in your umbrella (except llvm).
+Otherwise trees from submodule updates will appear underneath llvm in
+the zippped history.</p>
+<p>Because llvm is itself the umbrella, we use –subdir to write its
+content into <code class="docutils literal notranslate"><span class="pre">llvm</span></code> in the zippped history:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Import any non-LLVM repositories the umbrella references.
+git -C my-monorepo remote add localrepo \
+                              https://my.local.mirror.org/localrepo.git
+git fetch localrepo
+
+subprojects=( clang clang-tools-extra compiler-rt debuginfo-tests libclc
+              libcxx libcxxabi libunwind lld lldb llgo llvm openmp
+              parallel-libs polly pstl )
+
+# Import histories for upstream split projects (this was probably
+# already done for the ``migrate-downstream-fork.py`` run).
+for project in ${subprojects[@]}; do
+  git remote add upstream/split/${project} \
+                 https://github.com/llvm-mirror/${subproject}.git
+  git fetch umbrella/split/${project}
+done
+
+# Import histories for downstream split projects (this was probably
+# already done for the ``migrate-downstream-fork.py`` run).
+for project in ${subprojects[@]}; do
+  git remote add local/split/${project} \
+                 https://my.local.mirror.org/${subproject}.git
+  git fetch local/split/${project}
+done
+
+# Import umbrella history.  We want this under a different refspec
+# so zip-downstream-fork.py knows what it is.
+git -C my-monorepo remote add umbrella \
+                               https://my.local.mirror.org/llvm.git
+git fetch umbrella
+
+# Create the submodule map.
+echo &quot;tools/clang clang&quot; &gt; my-monorepo/submodule-map.txt
+echo &quot;tools/clang/tools/extra clang-tools-extra&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;projects/compiler-rt compiler-rt&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;projects/debuginfo-tests debuginfo-tests&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;projects/libclc libclc&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;projects/libcxx libcxx&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;projects/libcxxabi libcxxabi&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;projects/libunwind libunwind&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;tools/lld lld&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;tools/lldb lldb&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;projects/openmp openmp&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;tools/polly polly&quot; &gt;&gt; my-monorepo/submodule-map.txt
+echo &quot;projects/myproj local/myproj&quot; &gt;&gt; my-monorepo/submodule-map.txt
+
+# Rewrite history
+(
+  cd my-monorepo
+  zip-downstream-fork.py \
+    refs/remotes/umbrella \
+    --new-repo-prefix=refs/remotes/upstream/monorepo \
+    --old-repo-prefix=refs/remotes/upstream/split \
+    --revmap-in=monorepo-map.txt \
+    --revmap-out=zip-map.txt \
+    --subdir=llvm \
+    --submodule-map=submodule-map.txt \
+    --update-tags
+ )
+
+ # Create the zip branch (assuming umbrella master is wanted).
+ git -C my-monorepo branch --no-track local/zip/master refs/remotes/umbrella/master
+</pre></div>
+</div>
+<p>Comments at the top of <code class="docutils literal notranslate"><span class="pre">zip-downstream-fork.py</span></code> describe in more
+detail how the tool works and various implications of its operation.</p>
+</div>
+<div class="section" id="importing-local-repositories">
+<h3>Importing local repositories<a class="headerlink" href="#importing-local-repositories" title="Permalink to this headline">¶</a></h3>
+<p>You may have additional repositories that integrate with the LLVM
+ecosystem, essentially extending it with new tools.  If such
+repositories are tightly coupled with LLVM, it may make sense to
+import them into your local mirror of the monorepo.</p>
+<p>If such repositores participated in the umbrella repository used
+during the zipping process above, they will automatically be added to
+the monorepo.  For downstream repositories that don’t participate in
+an umbrella setup, the <code class="docutils literal notranslate"><span class="pre">import-downstream-repo.py</span></code> tool at
+<a class="reference external" href="https://github.com/greened/llvm-git-migration/tree/import">https://github.com/greened/llvm-git-migration/tree/import</a> can help with
+getting them into the monorepo.  A recipe follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Import downstream repo history into the monorepo.
+git -C my-monorepo remote add myrepo https://my.local.mirror.org/myrepo.git
+git fetch myrepo
+
+my_local_tags=( refs/tags/release
+                refs/tags/hotfix )
+
+(
+  cd my-monorepo
+  import-downstream-repo.py \
+    refs/remotes/myrepo \
+    ${my_local_tags[@]} \
+    --new-repo-prefix=refs/remotes/upstream/monorepo \
+    --subdir=myrepo \
+    --tag-prefix=&quot;myrepo-&quot;
+ )
+
+ # Preserve release braches.
+ for ref in $(git -C my-monorepo for-each-ref --format=&quot;%(refname)&quot; \
+                refs/remotes/myrepo/release); do
+   branch=${ref#refs/remotes/myrepo/}
+   git -C my-monorepo branch --no-track myrepo/${branch} ${ref}
+ done
+
+ # Preserve master.
+ git -C my-monorepo branch --no-track myrepo/master refs/remotes/myrepo/master
+
+ # Merge master.
+ git -C my-monorepo checkout local/zip/master  # Or local/octopus/master
+ git -C my-monorepo merge myrepo/master
+</pre></div>
+</div>
+<p>You may want to merge other corresponding branches, for example
+<code class="docutils literal notranslate"><span class="pre">myrepo</span></code> release branches if they were in lockstep with LLVM project
+releases.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--tag-prefix</span></code> tells <code class="docutils literal notranslate"><span class="pre">import-downstream-repo.py</span></code> to rename
+annotated tags with the given prefix.  Due to limitations with
+<code class="docutils literal notranslate"><span class="pre">fast_filter_branch.py</span></code>, unannotated tags cannot be renamed
+(<code class="docutils literal notranslate"><span class="pre">fast_filter_branch.py</span></code> considers them branches, not tags).  Since
+the upstream monorepo had its tags rewritten with an “llvmorg-”
+prefix, name conflicts should not be an issue.  <code class="docutils literal notranslate"><span class="pre">--tag-prefix</span></code> can
+be used to more clearly indicate which tags correspond to various
+imported repositories.</p>
+<p>Given this repository history:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">R1</span> <span class="o">-</span> <span class="n">R2</span> <span class="o">-</span> <span class="n">R3</span> <span class="o">&lt;-</span> <span class="n">master</span>
+     <span class="o">^</span>
+     <span class="o">|</span>
+  <span class="n">release</span><span class="o">/</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>The above recipe results in a history like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">U1</span> <span class="o">-</span> <span class="n">U2</span> <span class="o">-</span> <span class="n">U3</span> <span class="o">&lt;-</span> <span class="n">upstream</span><span class="o">/</span><span class="n">master</span>
+ \    \    \
+  \    <span class="o">-----</span>\<span class="o">---------------</span>                                         <span class="n">local</span><span class="o">/</span><span class="nb">zip</span><span class="o">--.</span>
+   \         \              \                                                    <span class="o">|</span>
+  <span class="o">-</span> <span class="n">Lllvm1</span> <span class="o">-</span> <span class="n">Llld1</span> <span class="o">-</span> <span class="n">UM3</span> <span class="o">-</span>  <span class="n">Lclang1</span> <span class="o">-</span> <span class="n">Lclang2</span> <span class="o">-</span> <span class="n">Lllvm2</span> <span class="o">-</span> <span class="n">Llld2</span> <span class="o">-</span> <span class="n">Lmyproj1</span> <span class="o">-</span> <span class="n">M1</span> <span class="o">&lt;-</span><span class="s1">&#39;</span>
+                                                                           <span class="o">/</span>
+                                                               <span class="n">R1</span> <span class="o">-</span> <span class="n">R2</span> <span class="o">-</span> <span class="n">R3</span>  <span class="o">&lt;-.</span>
+                                                                    <span class="o">^</span>           <span class="o">|</span>
+                                                                    <span class="o">|</span>           <span class="o">|</span>
+                                                             <span class="n">myrepo</span><span class="o">-</span><span class="n">release</span><span class="o">/</span><span class="mi">1</span>   <span class="o">|</span>
+                                                                                <span class="o">|</span>
+                                                                 <span class="n">myrepo</span><span class="o">/</span><span class="n">master</span><span class="o">--</span><span class="s1">&#39;</span>
+</pre></div>
+</div>
+<p>Commits <code class="docutils literal notranslate"><span class="pre">R1</span></code>, <code class="docutils literal notranslate"><span class="pre">R2</span></code> and <code class="docutils literal notranslate"><span class="pre">R3</span></code> have trees that <em>only</em> contain blobs
+from <code class="docutils literal notranslate"><span class="pre">myrepo</span></code>.  If you require commits from <code class="docutils literal notranslate"><span class="pre">myrepo</span></code> to be
+interleaved with commits on local project branches (for example,
+interleaved with <code class="docutils literal notranslate"><span class="pre">llvm1</span></code>, <code class="docutils literal notranslate"><span class="pre">llvm2</span></code>, etc. above) and myrepo doesn’t
+appear in an umbrella repository, a new tool will need to be
+developed.  Creating such a tool would involve:</p>
+<ol class="arabic simple">
+<li><p>Modifying <code class="docutils literal notranslate"><span class="pre">fast_filter_branch.py</span></code> to optionally take a
+revlist directly rather than generating it itself</p></li>
+<li><p>Creating a tool to generate an interleaved ordering of local
+commits based on some criteria (<code class="docutils literal notranslate"><span class="pre">zip-downstream-fork.py</span></code> uses the
+umbrella history as its criterion)</p></li>
+<li><p>Generating such an ordering and feeding it to
+<code class="docutils literal notranslate"><span class="pre">fast_filter_branch.py</span></code> as a revlist</p></li>
+</ol>
+<p>Some care will also likely need to be taken to handle merge commits,
+to ensure the parents of such commits migrate correctly.</p>
+</div>
+<div class="section" id="scrubbing-the-local-monorepo">
+<h3>Scrubbing the Local Monorepo<a class="headerlink" href="#scrubbing-the-local-monorepo" title="Permalink to this headline">¶</a></h3>
+<p>Once all of the migrating, zipping and importing is done, it’s time to
+clean up.  The python tools use <code class="docutils literal notranslate"><span class="pre">git-fast-import</span></code> which leaves a lot
+of cruft around and we want to shrink our new monorepo mirror as much
+as possible.  Here is one way to do it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>git -C my-monorepo checkout master
+
+# Delete branches we no longer need.  Do this for any other branches
+# you merged above.
+git -C my-monorepo branch -D local/zip/master || true
+git -C my-monorepo branch -D local/octopus/master || true
+
+# Remove remotes.
+git -C my-monorepo remote remove upstream/monorepo
+
+for p in ${my_projects[@]}; do
+  git -C my-monorepo remote remove upstream/split/${p}
+  git -C my-monorepo remote remove local/split/${p}
+done
+
+git -C my-monorepo remote remove localrepo
+git -C my-monorepo remote remove umbrella
+git -C my-monorepo remote remove myrepo
+
+# Add anything else here you don&#39;t need.  refs/tags/release is
+# listed below assuming tags have been rewritten with a local prefix.
+# If not, remove it from this list.
+refs_to_clean=(
+  refs/original
+  refs/remotes
+  refs/tags/backups
+  refs/tags/release
+)
+
+git -C my-monorepo for-each-ref --format=&quot;%(refname)&quot; ${refs_to_clean[@]} |
+  xargs -n1 --no-run-if-empty git -C my-monorepo update-ref -d
+
+git -C my-monorepo reflog expire --all --expire=now
+
+# fast_filter_branch.py might have gc running in the background.
+while ! git -C my-monorepo \
+  -c gc.reflogExpire=0 \
+  -c gc.reflogExpireUnreachable=0 \
+  -c gc.rerereresolved=0 \
+  -c gc.rerereunresolved=0 \
+  -c gc.pruneExpire=now \
+  gc --prune=now; do
+  continue
+done
+
+# Takes a LOOOONG time!
+git -C my-monorepo repack -A -d -f --depth=250 --window=250
+
+git -C my-monorepo prune-packed
+git -C my-monorepo prune
+</pre></div>
+</div>
+<p>You should now have a trim monorepo.  Upload it to your git server and
+happy hacking!</p>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<dl class="citation">
+<dt class="label" id="lattnerrevnum"><span class="brackets"><a class="fn-backref" href="#id1">LattnerRevNum</a></span></dt>
+<dd><p>Chris Lattner, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2011-July/041739.html">http://lists.llvm.org/pipermail/llvm-dev/2011-July/041739.html</a></p>
+</dd>
+<dt class="label" id="trickrevnum"><span class="brackets"><a class="fn-backref" href="#id2">TrickRevNum</a></span></dt>
+<dd><p>Andrew Trick, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2011-July/041721.html">http://lists.llvm.org/pipermail/llvm-dev/2011-July/041721.html</a></p>
+</dd>
+<dt class="label" id="jsonnrevnum"><span class="brackets"><a class="fn-backref" href="#id3">JSonnRevNum</a></span></dt>
+<dd><p>Joerg Sonnenberg, <a class="reference external" href="http://lists.llvm.org/pipermail/llvm-dev/2011-July/041688.html">http://lists.llvm.org/pipermail/llvm-dev/2011-July/041688.html</a></p>
+</dd>
+<dt class="label" id="matthewsrevnum"><span class="brackets">MatthewsRevNum</span><span class="fn-backref">(<a href="#id4">1</a>,<a href="#id6">2</a>)</span></dt>
+<dd><p>Chris Matthews, <a class="reference external" href="http://lists.llvm.org/pipermail/cfe-dev/2016-July/049886.html">http://lists.llvm.org/pipermail/cfe-dev/2016-July/049886.html</a></p>
+</dd>
+<dt class="label" id="statuschecks"><span class="brackets"><a class="fn-backref" href="#id5">statuschecks</a></span></dt>
+<dd><p>GitHub status-checks, <a class="reference external" href="https://help.github.com/articles/about-required-status-checks/">https://help.github.com/articles/about-required-status-checks/</a></p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="TestSuite.html" title="Test-Suite Extentions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../MeetupGuidelines.html" title="How to start LLVM Social in your town"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

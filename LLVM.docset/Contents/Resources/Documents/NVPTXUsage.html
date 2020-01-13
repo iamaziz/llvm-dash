@@ -1,39 +1,28 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>User Guide for NVPTX Back-end &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>User Guide for NVPTX Back-end &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
-    <link rel="next" title="User Guide for AMDGPU Back-end" href="AMDGPUUsage.html" />
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User Guide for AMDGPU Backend" href="AMDGPUUsage.html" />
     <link rel="prev" title="How To Use Attributes" href="HowToUseAttributes.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -47,7 +36,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="AMDGPUUsage.html" title="User Guide for AMDGPU Back-end"
+          <a href="AMDGPUUsage.html" title="User Guide for AMDGPU Backend"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="HowToUseAttributes.html" title="How To Use Attributes"
@@ -67,53 +56,61 @@
 <h1>User Guide for NVPTX Back-end<a class="headerlink" href="#user-guide-for-nvptx-back-end" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id11">Introduction</a></li>
-<li><a class="reference internal" href="#conventions" id="id12">Conventions</a><ul>
-<li><a class="reference internal" href="#marking-functions-as-kernels" id="id13">Marking Functions as Kernels</a></li>
-<li><a class="reference internal" href="#address-spaces" id="id14">Address Spaces</a></li>
-<li><a class="reference internal" href="#triples" id="id15">Triples</a></li>
+<li><p><a class="reference internal" href="#introduction" id="id11">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#conventions" id="id12">Conventions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#marking-functions-as-kernels" id="id13">Marking Functions as Kernels</a></p></li>
+<li><p><a class="reference internal" href="#address-spaces" id="id14">Address Spaces</a></p></li>
+<li><p><a class="reference internal" href="#triples" id="id15">Triples</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#nvptx-intrinsics" id="id16">NVPTX Intrinsics</a><ul>
-<li><a class="reference internal" href="#address-space-conversion" id="id17">Address Space Conversion</a><ul>
-<li><a class="reference internal" href="#llvm-nvvm-ptr-to-gen-intrinsics" id="id18">&#8216;<code class="docutils literal"><span class="pre">llvm.nvvm.ptr.*.to.gen</span></code>&#8216; Intrinsics</a></li>
-<li><a class="reference internal" href="#llvm-nvvm-ptr-gen-to-intrinsics" id="id19">&#8216;<code class="docutils literal"><span class="pre">llvm.nvvm.ptr.gen.to.*</span></code>&#8216; Intrinsics</a></li>
+<li><p><a class="reference internal" href="#nvptx-intrinsics" id="id16">NVPTX Intrinsics</a></p>
+<ul>
+<li><p><a class="reference internal" href="#address-space-conversion" id="id17">Address Space Conversion</a></p>
+<ul>
+<li><p><a class="reference internal" href="#llvm-nvvm-ptr-to-gen-intrinsics" id="id18">‘<code class="docutils literal notranslate"><span class="pre">llvm.nvvm.ptr.*.to.gen</span></code>’ Intrinsics</a></p></li>
+<li><p><a class="reference internal" href="#llvm-nvvm-ptr-gen-to-intrinsics" id="id19">‘<code class="docutils literal notranslate"><span class="pre">llvm.nvvm.ptr.gen.to.*</span></code>’ Intrinsics</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#reading-ptx-special-registers" id="id20">Reading PTX Special Registers</a><ul>
-<li><a class="reference internal" href="#llvm-nvvm-read-ptx-sreg" id="id21">&#8216;<code class="docutils literal"><span class="pre">llvm.nvvm.read.ptx.sreg.*</span></code>&#8216;</a></li>
+<li><p><a class="reference internal" href="#reading-ptx-special-registers" id="id20">Reading PTX Special Registers</a></p>
+<ul>
+<li><p><a class="reference internal" href="#llvm-nvvm-read-ptx-sreg" id="id21">‘<code class="docutils literal notranslate"><span class="pre">llvm.nvvm.read.ptx.sreg.*</span></code>’</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#barriers" id="id22">Barriers</a><ul>
-<li><a class="reference internal" href="#llvm-nvvm-barrier0" id="id23">&#8216;<code class="docutils literal"><span class="pre">llvm.nvvm.barrier0</span></code>&#8216;</a></li>
+<li><p><a class="reference internal" href="#barriers" id="id22">Barriers</a></p>
+<ul>
+<li><p><a class="reference internal" href="#llvm-nvvm-barrier0" id="id23">‘<code class="docutils literal notranslate"><span class="pre">llvm.nvvm.barrier0</span></code>’</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#other-intrinsics" id="id24">Other Intrinsics</a></li>
+<li><p><a class="reference internal" href="#other-intrinsics" id="id24">Other Intrinsics</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#linking-with-libdevice" id="id25">Linking with Libdevice</a><ul>
-<li><a class="reference internal" href="#reflection-parameters" id="id26">Reflection Parameters</a></li>
-<li><a class="reference internal" href="#invoking-nvvmreflect" id="id27">Invoking NVVMReflect</a></li>
+<li><p><a class="reference internal" href="#linking-with-libdevice" id="id25">Linking with Libdevice</a></p>
+<ul>
+<li><p><a class="reference internal" href="#reflection-parameters" id="id26">Reflection Parameters</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#executing-ptx" id="id28">Executing PTX</a></li>
-<li><a class="reference internal" href="#common-issues" id="id29">Common Issues</a><ul>
-<li><a class="reference internal" href="#ptxas-complains-of-undefined-function-nvvm-reflect" id="id30">ptxas complains of undefined function: __nvvm_reflect</a></li>
+<li><p><a class="reference internal" href="#executing-ptx" id="id27">Executing PTX</a></p></li>
+<li><p><a class="reference internal" href="#common-issues" id="id28">Common Issues</a></p>
+<ul>
+<li><p><a class="reference internal" href="#ptxas-complains-of-undefined-function-nvvm-reflect" id="id29">ptxas complains of undefined function: __nvvm_reflect</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#tutorial-a-simple-compute-kernel" id="id31">Tutorial: A Simple Compute Kernel</a><ul>
-<li><a class="reference internal" href="#the-kernel" id="id32">The Kernel</a></li>
-<li><a class="reference internal" href="#dissecting-the-kernel" id="id33">Dissecting the Kernel</a><ul>
-<li><a class="reference internal" href="#data-layout" id="id34">Data Layout</a></li>
-<li><a class="reference internal" href="#target-intrinsics" id="id35">Target Intrinsics</a></li>
-<li><a class="reference internal" href="#id10" id="id36">Address Spaces</a></li>
-<li><a class="reference internal" href="#kernel-metadata" id="id37">Kernel Metadata</a></li>
+<li><p><a class="reference internal" href="#tutorial-a-simple-compute-kernel" id="id30">Tutorial: A Simple Compute Kernel</a></p>
+<ul>
+<li><p><a class="reference internal" href="#the-kernel" id="id31">The Kernel</a></p></li>
+<li><p><a class="reference internal" href="#dissecting-the-kernel" id="id32">Dissecting the Kernel</a></p>
+<ul>
+<li><p><a class="reference internal" href="#data-layout" id="id33">Data Layout</a></p></li>
+<li><p><a class="reference internal" href="#target-intrinsics" id="id34">Target Intrinsics</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id35">Address Spaces</a></p></li>
+<li><p><a class="reference internal" href="#kernel-metadata" id="id36">Kernel Metadata</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#running-the-kernel" id="id38">Running the Kernel</a></li>
+<li><p><a class="reference internal" href="#running-the-kernel" id="id37">Running the Kernel</a></p></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#tutorial-linking-with-libdevice" id="id39">Tutorial: Linking with Libdevice</a></li>
+<li><p><a class="reference internal" href="#tutorial-linking-with-libdevice" id="id38">Tutorial: Linking with Libdevice</a></p></li>
 </ul>
 </div>
 <div class="section" id="introduction">
@@ -124,8 +121,8 @@ concepts. This document provides an overview of the general usage of the back-
 end, including a description of the conventions used and the set of accepted
 LLVM IR.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This document assumes a basic familiarity with CUDA and the PTX
+<p class="admonition-title">Note</p>
+<p>This document assumes a basic familiarity with CUDA and the PTX
 assembly language. Information about the CUDA Driver API and the PTX assembly
 language can be found in the <a class="reference external" href="http://docs.nvidia.com/cuda/index.html">CUDA documentation</a>.</p>
 </div>
@@ -138,28 +135,28 @@ language can be found in the <a class="reference external" href="http://docs.nvi
 callable by device code, and <em>kernel functions</em>, which are callable by host
 code. By default, the back-end will emit device functions. Metadata is used to
 declare a function as a kernel function. This metadata is attached to the
-<code class="docutils literal"><span class="pre">nvvm.annotations</span></code> named metadata object, and has the following format:</p>
-<div class="highlight-llvm"><div class="highlight"><pre>!0 = metadata !{&lt;function-ref&gt;, metadata !&quot;kernel&quot;, i32 1}
+<code class="docutils literal notranslate"><span class="pre">nvvm.annotations</span></code> named metadata object, and has the following format:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>!0 = !{&lt;function-ref&gt;, metadata !&quot;kernel&quot;, i32 1}
 </pre></div>
 </div>
 <p>The first parameter is a reference to the kernel function. The following
 example shows a kernel function calling a device function in LLVM IR. The
-function <code class="docutils literal"><span class="pre">&#64;my_kernel</span></code> is callable from host code, but <code class="docutils literal"><span class="pre">&#64;my_fmad</span></code> is not.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">define</span> <span class="kt">float</span> <span class="vg">@my_fmad</span><span class="p">(</span><span class="kt">float</span> <span class="nv">%x</span><span class="p">,</span> <span class="kt">float</span> <span class="nv">%y</span><span class="p">,</span> <span class="kt">float</span> <span class="nv">%z</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nv">%mul</span> <span class="p">=</span> <span class="k">fmul</span> <span class="kt">float</span> <span class="nv">%x</span><span class="p">,</span> <span class="nv">%y</span>
-  <span class="nv">%add</span> <span class="p">=</span> <span class="k">fadd</span> <span class="kt">float</span> <span class="nv">%mul</span><span class="p">,</span> <span class="nv">%z</span>
-  <span class="k">ret</span> <span class="kt">float</span> <span class="nv">%add</span>
+function <code class="docutils literal notranslate"><span class="pre">&#64;my_kernel</span></code> is callable from host code, but <code class="docutils literal notranslate"><span class="pre">&#64;my_fmad</span></code> is not.</p>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="k">float</span> <span class="vg">@my_fmad</span><span class="p">(</span><span class="k">float</span> <span class="nv">%x</span><span class="p">,</span> <span class="k">float</span> <span class="nv">%y</span><span class="p">,</span> <span class="k">float</span> <span class="nv">%z</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">%mul</span> <span class="p">=</span> <span class="k">fmul</span> <span class="k">float</span> <span class="nv">%x</span><span class="p">,</span> <span class="nv">%y</span>
+  <span class="nv">%add</span> <span class="p">=</span> <span class="k">fadd</span> <span class="k">float</span> <span class="nv">%mul</span><span class="p">,</span> <span class="nv">%z</span>
+  <span class="k">ret</span> <span class="k">float</span> <span class="nv">%add</span>
 <span class="p">}</span>
 
-<span class="k">define</span> <span class="kt">void</span> <span class="vg">@my_kernel</span><span class="p">(</span><span class="kt">float</span><span class="p">*</span> <span class="nv">%ptr</span><span class="p">)</span> <span class="p">{</span>
-  <span class="nv">%val</span> <span class="p">=</span> <span class="k">load</span> <span class="kt">float</span><span class="p">*</span> <span class="nv">%ptr</span>
-  <span class="nv">%ret</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">float</span> <span class="vg">@my_fmad</span><span class="p">(</span><span class="kt">float</span> <span class="nv">%val</span><span class="p">,</span> <span class="kt">float</span> <span class="nv">%val</span><span class="p">,</span> <span class="kt">float</span> <span class="nv">%val</span><span class="p">)</span>
-  <span class="k">store</span> <span class="kt">float</span> <span class="nv">%ret</span><span class="p">,</span> <span class="kt">float</span><span class="p">*</span> <span class="nv">%ptr</span>
-  <span class="k">ret</span> <span class="kt">void</span>
+<span class="k">define</span> <span class="k">void</span> <span class="vg">@my_kernel</span><span class="p">(</span><span class="k">float</span><span class="p">*</span> <span class="nv">%ptr</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">%val</span> <span class="p">=</span> <span class="k">load</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span><span class="p">*</span> <span class="nv">%ptr</span>
+  <span class="nv">%ret</span> <span class="p">=</span> <span class="k">call</span> <span class="k">float</span> <span class="vg">@my_fmad</span><span class="p">(</span><span class="k">float</span> <span class="nv">%val</span><span class="p">,</span> <span class="k">float</span> <span class="nv">%val</span><span class="p">,</span> <span class="k">float</span> <span class="nv">%val</span><span class="p">)</span>
+  <span class="k">store</span> <span class="k">float</span> <span class="nv">%ret</span><span class="p">,</span> <span class="k">float</span><span class="p">*</span> <span class="nv">%ptr</span>
+  <span class="k">ret</span> <span class="k">void</span>
 <span class="p">}</span>
 
-<span class="nv">!nvvm.annotations</span> <span class="p">=</span> <span class="p">!{</span><span class="nv-Anonymous">!1</span><span class="p">}</span>
-<span class="nv-Anonymous">!1</span> <span class="p">=</span> <span class="kt">metadata</span> <span class="p">!{</span><span class="kt">void</span> <span class="p">(</span><span class="kt">float</span><span class="p">*)*</span> <span class="vg">@my_kernel</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv">!&quot;kernel&quot;</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">}</span>
+<span class="nv">!nvvm.annotations</span> <span class="p">=</span> <span class="p">!{</span><span class="nv nv-Anonymous">!1</span><span class="p">}</span>
+<span class="nv nv-Anonymous">!1</span> <span class="p">=</span> <span class="p">!{</span><span class="k">void</span> <span class="p">(</span><span class="k">float</span><span class="p">*)*</span> <span class="vg">@my_kernel</span><span class="p">,</span> <span class="nv">!&quot;kernel&quot;</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>When compiled, the PTX kernel functions are callable by host-side code.</p>
@@ -168,34 +165,34 @@ function <code class="docutils literal"><span class="pre">&#64;my_kernel</span><
 <span id="id1"></span><h3><a class="toc-backref" href="#id14">Address Spaces</a><a class="headerlink" href="#address-spaces" title="Permalink to this headline">¶</a></h3>
 <p>The NVPTX back-end uses the following address space mapping:</p>
 <blockquote>
-<div><table border="1" class="docutils">
+<div><table class="docutils align-default">
 <colgroup>
-<col width="37%" />
-<col width="63%" />
+<col style="width: 37%" />
+<col style="width: 63%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Address Space</th>
-<th class="head">Memory Space</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Address Space</p></th>
+<th class="head"><p>Memory Space</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>0</td>
-<td>Generic</td>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>Generic</p></td>
 </tr>
-<tr class="row-odd"><td>1</td>
-<td>Global</td>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>Global</p></td>
 </tr>
-<tr class="row-even"><td>2</td>
-<td>Internal Use</td>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>Internal Use</p></td>
 </tr>
-<tr class="row-odd"><td>3</td>
-<td>Shared</td>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>Shared</p></td>
 </tr>
-<tr class="row-even"><td>4</td>
-<td>Constant</td>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>Constant</p></td>
 </tr>
-<tr class="row-odd"><td>5</td>
-<td>Local</td>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>Local</p></td>
 </tr>
 </tbody>
 </table>
@@ -204,29 +201,29 @@ function <code class="docutils literal"><span class="pre">&#64;my_kernel</span><
 spaces, with 0 being the default address space. Intrinsics are provided which
 can be used to convert pointers between the generic and non-generic address
 spaces.</p>
-<p>As an example, the following IR will define an array <code class="docutils literal"><span class="pre">&#64;g</span></code> that resides in
+<p>As an example, the following IR will define an array <code class="docutils literal notranslate"><span class="pre">&#64;g</span></code> that resides in
 global device memory.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="vg">@g</span> <span class="p">=</span> <span class="k">internal</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)</span> <span class="k">global</span> <span class="p">[</span><span class="m">4</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">[</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">,</span> <span class="k">i32</span> <span class="m">2</span><span class="p">,</span> <span class="k">i32</span> <span class="m">3</span> <span class="p">]</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="vg">@g</span> <span class="p">=</span> <span class="k">internal</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)</span> <span class="k">global</span> <span class="p">[</span><span class="m">4</span> <span class="k">x</span> <span class="k">i32</span><span class="p">]</span> <span class="p">[</span> <span class="k">i32</span> <span class="m">0</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">,</span> <span class="k">i32</span> <span class="m">2</span><span class="p">,</span> <span class="k">i32</span> <span class="m">3</span> <span class="p">]</span>
 </pre></div>
 </div>
 <p>LLVM IR functions can read and write to this array, and host-side code can
 copy data to it by name with the CUDA Driver API.</p>
 <p>Note that since address space 0 is the generic space, it is illegal to have
 global variables in address space 0.  Address space 0 is the default address
-space in LLVM, so the <code class="docutils literal"><span class="pre">addrspace(N)</span></code> annotation is <em>required</em> for global
+space in LLVM, so the <code class="docutils literal notranslate"><span class="pre">addrspace(N)</span></code> annotation is <em>required</em> for global
 variables.</p>
 </div>
 <div class="section" id="triples">
 <h3><a class="toc-backref" href="#id15">Triples</a><a class="headerlink" href="#triples" title="Permalink to this headline">¶</a></h3>
 <p>The NVPTX target uses the module triple to select between 32/64-bit code
 generation and the driver-compiler interface to use. The triple architecture
-can be one of <code class="docutils literal"><span class="pre">nvptx</span></code> (32-bit PTX) or <code class="docutils literal"><span class="pre">nvptx64</span></code> (64-bit PTX). The
-operating system should be one of <code class="docutils literal"><span class="pre">cuda</span></code> or <code class="docutils literal"><span class="pre">nvcl</span></code>, which determines the
+can be one of <code class="docutils literal notranslate"><span class="pre">nvptx</span></code> (32-bit PTX) or <code class="docutils literal notranslate"><span class="pre">nvptx64</span></code> (64-bit PTX). The
+operating system should be one of <code class="docutils literal notranslate"><span class="pre">cuda</span></code> or <code class="docutils literal notranslate"><span class="pre">nvcl</span></code>, which determines the
 interface used by the generated code to communicate with the driver.  Most
-users will want to use <code class="docutils literal"><span class="pre">cuda</span></code> as the operating system, which makes the
+users will want to use <code class="docutils literal notranslate"><span class="pre">cuda</span></code> as the operating system, which makes the
 generated PTX compatible with the CUDA Driver API.</p>
-<p>Example: 32-bit PTX for CUDA Driver API: <code class="docutils literal"><span class="pre">nvptx-nvidia-cuda</span></code></p>
-<p>Example: 64-bit PTX for CUDA Driver API: <code class="docutils literal"><span class="pre">nvptx64-nvidia-cuda</span></code></p>
+<p>Example: 32-bit PTX for CUDA Driver API: <code class="docutils literal notranslate"><span class="pre">nvptx-nvidia-cuda</span></code></p>
+<p>Example: 64-bit PTX for CUDA Driver API: <code class="docutils literal notranslate"><span class="pre">nvptx64-nvidia-cuda</span></code></p>
 </div>
 </div>
 <div class="section" id="nvptx-intrinsics">
@@ -234,11 +231,11 @@ generated PTX compatible with the CUDA Driver API.</p>
 <div class="section" id="address-space-conversion">
 <h3><a class="toc-backref" href="#id17">Address Space Conversion</a><a class="headerlink" href="#address-space-conversion" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="llvm-nvvm-ptr-to-gen-intrinsics">
-<h4><a class="toc-backref" href="#id18">&#8216;<code class="docutils literal"><span class="pre">llvm.nvvm.ptr.*.to.gen</span></code>&#8216; Intrinsics</a><a class="headerlink" href="#llvm-nvvm-ptr-to-gen-intrinsics" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id18">‘<code class="docutils literal notranslate"><span class="pre">llvm.nvvm.ptr.*.to.gen</span></code>’ Intrinsics</a><a class="headerlink" href="#llvm-nvvm-ptr-to-gen-intrinsics" title="Permalink to this headline">¶</a></h4>
 <div class="section" id="syntax">
 <h5>Syntax:<a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h5>
 <p>These are overloaded intrinsics.  You can use these on any pointer types.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">declare</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.nvvm.ptr.global.to.gen.p0i8.p1i8</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*)</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">declare</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.nvvm.ptr.global.to.gen.p0i8.p1i8</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*)</span>
 <span class="k">declare</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.nvvm.ptr.shared.to.gen.p0i8.p3i8</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">3</span><span class="p">)*)</span>
 <span class="k">declare</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.nvvm.ptr.constant.to.gen.p0i8.p4i8</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">4</span><span class="p">)*)</span>
 <span class="k">declare</span> <span class="k">i8</span><span class="p">*</span> <span class="vg">@llvm.nvvm.ptr.local.to.gen.p0i8.p5i8</span><span class="p">(</span><span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">5</span><span class="p">)*)</span>
@@ -247,7 +244,7 @@ generated PTX compatible with the CUDA Driver API.</p>
 </div>
 <div class="section" id="overview">
 <h5>Overview:<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.nvvm.ptr.*.to.gen</span></code>&#8216; intrinsics convert a pointer in a non-generic
+<p>The ‘<code class="docutils literal notranslate"><span class="pre">llvm.nvvm.ptr.*.to.gen</span></code>’ intrinsics convert a pointer in a non-generic
 address space to a generic address space pointer.</p>
 </div>
 <div class="section" id="semantics">
@@ -257,11 +254,11 @@ pointer.</p>
 </div>
 </div>
 <div class="section" id="llvm-nvvm-ptr-gen-to-intrinsics">
-<h4><a class="toc-backref" href="#id19">&#8216;<code class="docutils literal"><span class="pre">llvm.nvvm.ptr.gen.to.*</span></code>&#8216; Intrinsics</a><a class="headerlink" href="#llvm-nvvm-ptr-gen-to-intrinsics" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id19">‘<code class="docutils literal notranslate"><span class="pre">llvm.nvvm.ptr.gen.to.*</span></code>’ Intrinsics</a><a class="headerlink" href="#llvm-nvvm-ptr-gen-to-intrinsics" title="Permalink to this headline">¶</a></h4>
 <div class="section" id="id3">
 <h5>Syntax:<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h5>
 <p>These are overloaded intrinsics.  You can use these on any pointer types.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">declare</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.global.p1i8.p0i8</span><span class="p">(</span><span class="k">i8</span><span class="p">*)</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">declare</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.global.p1i8.p0i8</span><span class="p">(</span><span class="k">i8</span><span class="p">*)</span>
 <span class="k">declare</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">3</span><span class="p">)*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.shared.p3i8.p0i8</span><span class="p">(</span><span class="k">i8</span><span class="p">*)</span>
 <span class="k">declare</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">4</span><span class="p">)*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.constant.p4i8.p0i8</span><span class="p">(</span><span class="k">i8</span><span class="p">*)</span>
 <span class="k">declare</span> <span class="k">i8</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">5</span><span class="p">)*</span> <span class="vg">@llvm.nvvm.ptr.gen.to.local.p5i8.p0i8</span><span class="p">(</span><span class="k">i8</span><span class="p">*)</span>
@@ -270,7 +267,7 @@ pointer.</p>
 </div>
 <div class="section" id="id4">
 <h5>Overview:<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">llvm.nvvm.ptr.gen.to.*</span></code>&#8216; intrinsics convert a pointer in the generic
+<p>The ‘<code class="docutils literal notranslate"><span class="pre">llvm.nvvm.ptr.gen.to.*</span></code>’ intrinsics convert a pointer in the generic
 address space to a pointer in the target address space.  Note that these
 intrinsics are only useful if the address space of the target address space of
 the pointer is known.  It is not legal to use address space conversion
@@ -287,10 +284,10 @@ non-generic address space.</p>
 <div class="section" id="reading-ptx-special-registers">
 <h3><a class="toc-backref" href="#id20">Reading PTX Special Registers</a><a class="headerlink" href="#reading-ptx-special-registers" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="llvm-nvvm-read-ptx-sreg">
-<h4><a class="toc-backref" href="#id21">&#8216;<code class="docutils literal"><span class="pre">llvm.nvvm.read.ptx.sreg.*</span></code>&#8216;</a><a class="headerlink" href="#llvm-nvvm-read-ptx-sreg" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id21">‘<code class="docutils literal notranslate"><span class="pre">llvm.nvvm.read.ptx.sreg.*</span></code>’</a><a class="headerlink" href="#llvm-nvvm-read-ptx-sreg" title="Permalink to this headline">¶</a></h4>
 <div class="section" id="id6">
 <h5>Syntax:<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">declare</span> <span class="k">i32</span> <span class="vg">@llvm.nvvm.read.ptx.sreg.tid.x</span><span class="p">()</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">declare</span> <span class="k">i32</span> <span class="vg">@llvm.nvvm.read.ptx.sreg.tid.x</span><span class="p">()</span>
 <span class="k">declare</span> <span class="k">i32</span> <span class="vg">@llvm.nvvm.read.ptx.sreg.tid.y</span><span class="p">()</span>
 <span class="k">declare</span> <span class="k">i32</span> <span class="vg">@llvm.nvvm.read.ptx.sreg.tid.z</span><span class="p">()</span>
 <span class="k">declare</span> <span class="k">i32</span> <span class="vg">@llvm.nvvm.read.ptx.sreg.ntid.x</span><span class="p">()</span>
@@ -308,32 +305,32 @@ non-generic address space.</p>
 </div>
 <div class="section" id="id7">
 <h5>Overview:<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.*</span></code>&#8216; intrinsics provide access to the PTX
+<p>The ‘<code class="docutils literal notranslate"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.*</span></code>’ intrinsics provide access to the PTX
 special registers, in particular the kernel launch bounds.  These registers
 map in the following way to CUDA builtins:</p>
 <blockquote>
-<div><table border="1" class="docutils">
+<div><table class="docutils align-default">
 <colgroup>
-<col width="24%" />
-<col width="76%" />
+<col style="width: 24%" />
+<col style="width: 76%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">CUDA Builtin</th>
-<th class="head">PTX Special Register Intrinsic</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>CUDA Builtin</p></th>
+<th class="head"><p>PTX Special Register Intrinsic</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">threadId</span></code></td>
-<td><code class="docutils literal"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.tid.*</span></code></td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">threadId</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.tid.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">blockIdx</span></code></td>
-<td><code class="docutils literal"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.ctaid.*</span></code></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">blockIdx</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.ctaid.*</span></code></p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">blockDim</span></code></td>
-<td><code class="docutils literal"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.ntid.*</span></code></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">blockDim</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.ntid.*</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">gridDim</span></code></td>
-<td><code class="docutils literal"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.nctaid.*</span></code></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gridDim</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.nctaid.*</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -344,42 +341,42 @@ map in the following way to CUDA builtins:</p>
 <div class="section" id="barriers">
 <h3><a class="toc-backref" href="#id22">Barriers</a><a class="headerlink" href="#barriers" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="llvm-nvvm-barrier0">
-<h4><a class="toc-backref" href="#id23">&#8216;<code class="docutils literal"><span class="pre">llvm.nvvm.barrier0</span></code>&#8216;</a><a class="headerlink" href="#llvm-nvvm-barrier0" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id23">‘<code class="docutils literal notranslate"><span class="pre">llvm.nvvm.barrier0</span></code>’</a><a class="headerlink" href="#llvm-nvvm-barrier0" title="Permalink to this headline">¶</a></h4>
 <div class="section" id="id8">
 <h5>Syntax:<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h5>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">declare</span> <span class="kt">void</span> <span class="vg">@llvm.nvvm.barrier0</span><span class="p">()</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">declare</span> <span class="k">void</span> <span class="vg">@llvm.nvvm.barrier0</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="id9">
 <h5>Overview:<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h5>
-<p>The &#8216;<code class="docutils literal"><span class="pre">&#64;llvm.nvvm.barrier0()</span></code>&#8216; intrinsic emits a PTX <code class="docutils literal"><span class="pre">bar.sync</span> <span class="pre">0</span></code>
-instruction, equivalent to the <code class="docutils literal"><span class="pre">__syncthreads()</span></code> call in CUDA.</p>
+<p>The ‘<code class="docutils literal notranslate"><span class="pre">&#64;llvm.nvvm.barrier0()</span></code>’ intrinsic emits a PTX <code class="docutils literal notranslate"><span class="pre">bar.sync</span> <span class="pre">0</span></code>
+instruction, equivalent to the <code class="docutils literal notranslate"><span class="pre">__syncthreads()</span></code> call in CUDA.</p>
 </div>
 </div>
 </div>
 <div class="section" id="other-intrinsics">
 <h3><a class="toc-backref" href="#id24">Other Intrinsics</a><a class="headerlink" href="#other-intrinsics" title="Permalink to this headline">¶</a></h3>
 <p>For the full set of NVPTX intrinsics, please see the
-<code class="docutils literal"><span class="pre">include/llvm/IR/IntrinsicsNVVM.td</span></code> file in the LLVM source tree.</p>
+<code class="docutils literal notranslate"><span class="pre">include/llvm/IR/IntrinsicsNVVM.td</span></code> file in the LLVM source tree.</p>
 </div>
 </div>
 <div class="section" id="linking-with-libdevice">
 <span id="libdevice"></span><h2><a class="toc-backref" href="#id25">Linking with Libdevice</a><a class="headerlink" href="#linking-with-libdevice" title="Permalink to this headline">¶</a></h2>
-<p>The CUDA Toolkit comes with an LLVM bitcode library called <code class="docutils literal"><span class="pre">libdevice</span></code> that
+<p>The CUDA Toolkit comes with an LLVM bitcode library called <code class="docutils literal notranslate"><span class="pre">libdevice</span></code> that
 implements many common mathematical functions. This library can be used as a
 high-performance math library for any compilers using the LLVM NVPTX target.
-The library can be found under <code class="docutils literal"><span class="pre">nvvm/libdevice/</span></code> in the CUDA Toolkit and
+The library can be found under <code class="docutils literal notranslate"><span class="pre">nvvm/libdevice/</span></code> in the CUDA Toolkit and
 there is a separate version for each compute architecture.</p>
 <p>For a list of all math functions implemented in libdevice, see
 <a class="reference external" href="http://docs.nvidia.com/cuda/libdevice-users-guide/index.html">libdevice Users Guide</a>.</p>
 <p>To accommodate various math-related compiler flags that can affect code
 generation of libdevice code, the library code depends on a special LLVM IR
-pass (<code class="docutils literal"><span class="pre">NVVMReflect</span></code>) to handle conditional compilation within LLVM IR. This
-pass looks for calls to the <code class="docutils literal"><span class="pre">&#64;__nvvm_reflect</span></code> function and replaces them
+pass (<code class="docutils literal notranslate"><span class="pre">NVVMReflect</span></code>) to handle conditional compilation within LLVM IR. This
+pass looks for calls to the <code class="docutils literal notranslate"><span class="pre">&#64;__nvvm_reflect</span></code> function and replaces them
 with constants based on the defined reflection parameters. Such conditional
 code often follows a pattern:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="kt">float</span> <span class="nf">my_function</span><span class="p">(</span><span class="kt">float</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">float</span> <span class="nf">my_function</span><span class="p">(</span><span class="kt">float</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">__nvvm_reflect</span><span class="p">(</span><span class="s">&quot;FASTMATH&quot;</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">my_function_fast</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
   <span class="k">else</span>
@@ -388,29 +385,29 @@ code often follows a pattern:</p>
 </pre></div>
 </div>
 <p>The default value for all unspecified reflection parameters is zero.</p>
-<p>The <code class="docutils literal"><span class="pre">NVVMReflect</span></code> pass should be executed early in the optimization
-pipeline, immediately after the link stage. The <code class="docutils literal"><span class="pre">internalize</span></code> pass is also
+<p>The <code class="docutils literal notranslate"><span class="pre">NVVMReflect</span></code> pass should be executed early in the optimization
+pipeline, immediately after the link stage. The <code class="docutils literal notranslate"><span class="pre">internalize</span></code> pass is also
 recommended to remove unused math functions from the resulting PTX. For an
-input IR module <code class="docutils literal"><span class="pre">module.bc</span></code>, the following compilation flow is recommended:</p>
+input IR module <code class="docutils literal notranslate"><span class="pre">module.bc</span></code>, the following compilation flow is recommended:</p>
 <ol class="arabic simple">
-<li>Save list of external functions in <code class="docutils literal"><span class="pre">module.bc</span></code></li>
-<li>Link <code class="docutils literal"><span class="pre">module.bc</span></code> with <code class="docutils literal"><span class="pre">libdevice.compute_XX.YY.bc</span></code></li>
-<li>Internalize all functions not in list from (1)</li>
-<li>Eliminate all unused internal functions</li>
-<li>Run <code class="docutils literal"><span class="pre">NVVMReflect</span></code> pass</li>
-<li>Run standard optimization pipeline</li>
+<li><p>Save list of external functions in <code class="docutils literal notranslate"><span class="pre">module.bc</span></code></p></li>
+<li><p>Link <code class="docutils literal notranslate"><span class="pre">module.bc</span></code> with <code class="docutils literal notranslate"><span class="pre">libdevice.compute_XX.YY.bc</span></code></p></li>
+<li><p>Internalize all functions not in list from (1)</p></li>
+<li><p>Eliminate all unused internal functions</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">NVVMReflect</span></code> pass</p></li>
+<li><p>Run standard optimization pipeline</p></li>
 </ol>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><code class="docutils literal"><span class="pre">linkonce</span></code> and <code class="docutils literal"><span class="pre">linkonce_odr</span></code> linkage types are not suitable for the
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">linkonce</span></code> and <code class="docutils literal notranslate"><span class="pre">linkonce_odr</span></code> linkage types are not suitable for the
 libdevice functions. It is possible to link two IR modules that have been
 linked against libdevice using different reflection variables.</p>
 </div>
-<p>Since the <code class="docutils literal"><span class="pre">NVVMReflect</span></code> pass replaces conditionals with constants, it will
+<p>Since the <code class="docutils literal notranslate"><span class="pre">NVVMReflect</span></code> pass replaces conditionals with constants, it will
 often leave behind dead code of the form:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="nl">entry:</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="nl">entry:</span>
   <span class="p">..</span>
-  <span class="k">br</span> <span class="k">i1</span> <span class="k">true</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%foo</span><span class="p">,</span> <span class="kt">label</span> <span class="nv">%bar</span>
+  <span class="k">br</span> <span class="k">i1</span> <span class="k">true</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%foo</span><span class="p">,</span> <span class="k">label</span> <span class="nv">%bar</span>
 <span class="nl">foo:</span>
   <span class="p">..</span>
 <span class="nl">bar:</span>
@@ -418,58 +415,55 @@ often leave behind dead code of the form:</p>
   <span class="p">..</span>
 </pre></div>
 </div>
-<p>Therefore, it is recommended that <code class="docutils literal"><span class="pre">NVVMReflect</span></code> is executed early in the
+<p>Therefore, it is recommended that <code class="docutils literal notranslate"><span class="pre">NVVMReflect</span></code> is executed early in the
 optimization pipeline before dead-code elimination.</p>
+<p>The NVPTX TargetMachine knows how to schedule <code class="docutils literal notranslate"><span class="pre">NVVMReflect</span></code> at the beginning
+of your pass manager; just use the following code when setting up your pass
+manager:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">TargetMachine</span><span class="o">&gt;</span> <span class="n">TM</span> <span class="o">=</span> <span class="p">...;</span>
+<span class="n">PassManagerBuilder</span> <span class="nf">PMBuilder</span><span class="p">(...);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">TM</span><span class="p">)</span>
+  <span class="n">TM</span><span class="o">-&gt;</span><span class="n">adjustPassManager</span><span class="p">(</span><span class="n">PMBuilder</span><span class="p">);</span>
+</pre></div>
+</div>
 <div class="section" id="reflection-parameters">
 <h3><a class="toc-backref" href="#id26">Reflection Parameters</a><a class="headerlink" href="#reflection-parameters" title="Permalink to this headline">¶</a></h3>
 <p>The libdevice library currently uses the following reflection parameters to
 control code generation:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="27%" />
-<col width="73%" />
+<col style="width: 27%" />
+<col style="width: 73%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Flag</th>
-<th class="head">Description</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Flag</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">__CUDA_FTZ=[0,1]</span></code></td>
-<td>Use optimized code paths that flush subnormals to zero</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">__CUDA_FTZ=[0,1]</span></code></p></td>
+<td><p>Use optimized code paths that flush subnormals to zero</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="invoking-nvvmreflect">
-<h3><a class="toc-backref" href="#id27">Invoking NVVMReflect</a><a class="headerlink" href="#invoking-nvvmreflect" title="Permalink to this headline">¶</a></h3>
-<p>To ensure that all dead code caused by the reflection pass is eliminated, it
-is recommended that the reflection pass is executed early in the LLVM IR
-optimization pipeline. The pass takes an optional mapping of reflection
-parameter name to an integer value. This mapping can be specified as either a
-command-line option to <code class="docutils literal"><span class="pre">opt</span></code> or as an LLVM <code class="docutils literal"><span class="pre">StringMap&lt;int&gt;</span></code> object when
-programmatically creating a pass pipeline.</p>
-<p>With <code class="docutils literal"><span class="pre">opt</span></code>:</p>
-<div class="highlight-text"><div class="highlight"><pre># opt -nvvm-reflect -nvvm-reflect-list=&lt;var&gt;=&lt;value&gt;,&lt;var&gt;=&lt;value&gt; module.bc -o module.reflect.bc
+<p>The value of this flag is determined by the “nvvm-reflect-ftz” module flag.
+The following sets the ftz flag to 1.</p>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="nv">!llvm.module.flag</span> <span class="p">=</span> <span class="p">!{</span><span class="nv nv-Anonymous">!0</span><span class="p">}</span>
+<span class="nv nv-Anonymous">!0</span> <span class="p">=</span> <span class="p">!{</span><span class="k">i32</span> <span class="m">4</span><span class="p">,</span> <span class="nv">!&quot;nvvm-reflect-ftz&quot;</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>With programmatic pass pipeline:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="k">extern</span> <span class="n">ModulePass</span> <span class="o">*</span><span class="n">llvm</span><span class="o">::</span><span class="n">createNVVMReflectPass</span><span class="p">(</span><span class="k">const</span> <span class="n">StringMap</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">Mapping</span><span class="p">);</span>
-
-<span class="n">StringMap</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ReflectParams</span><span class="p">;</span>
-<span class="n">ReflectParams</span><span class="p">[</span><span class="s">&quot;__CUDA_FTZ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<span class="n">Passes</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">createNVVMReflectPass</span><span class="p">(</span><span class="n">ReflectParams</span><span class="p">));</span>
-</pre></div>
-</div>
+<p>(<code class="docutils literal notranslate"><span class="pre">i32</span> <span class="pre">4</span></code> indicates that the value set here overrides the value in another
+module we link with.  See the <cite>LangRef &lt;LangRef.html#module-flags-metadata&gt;</cite>
+for details.)</p>
 </div>
 </div>
 <div class="section" id="executing-ptx">
-<h2><a class="toc-backref" href="#id28">Executing PTX</a><a class="headerlink" href="#executing-ptx" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id27">Executing PTX</a><a class="headerlink" href="#executing-ptx" title="Permalink to this headline">¶</a></h2>
 <p>The most common way to execute PTX assembly on a GPU device is to use the CUDA
 Driver API. This API is a low-level interface to the GPU driver and allows for
 JIT compilation of PTX code to native GPU machine code.</p>
 <p>Initializing the Driver API:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">CUdevice</span> <span class="n">device</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUdevice</span> <span class="n">device</span><span class="p">;</span>
 <span class="n">CUcontext</span> <span class="n">context</span><span class="p">;</span>
 
 <span class="c1">// Initialize the driver API</span>
@@ -481,8 +475,8 @@ JIT compilation of PTX code to native GPU machine code.</p>
 </pre></div>
 </div>
 <p>JIT compiling a PTX string to a device binary:</p>
-<div class="highlight-c++"><div class="highlight"><pre><span class="n">CUmodule</span> <span class="n">module</span><span class="p">;</span>
-<span class="n">CUfunction</span> <span class="n">funcion</span><span class="p">;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">CUmodule</span> <span class="n">module</span><span class="p">;</span>
+<span class="n">CUfunction</span> <span class="n">function</span><span class="p">;</span>
 
 <span class="c1">// JIT compile a null-terminated PTX string</span>
 <span class="n">cuModuleLoadData</span><span class="p">(</span><span class="o">&amp;</span><span class="n">module</span><span class="p">,</span> <span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">PTXString</span><span class="p">);</span>
@@ -494,71 +488,71 @@ JIT compilation of PTX code to native GPU machine code.</p>
 <p>For full examples of executing PTX assembly, please see the <a class="reference external" href="https://developer.nvidia.com/cuda-downloads">CUDA Samples</a> distribution.</p>
 </div>
 <div class="section" id="common-issues">
-<h2><a class="toc-backref" href="#id29">Common Issues</a><a class="headerlink" href="#common-issues" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id28">Common Issues</a><a class="headerlink" href="#common-issues" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="ptxas-complains-of-undefined-function-nvvm-reflect">
-<h3><a class="toc-backref" href="#id30">ptxas complains of undefined function: __nvvm_reflect</a><a class="headerlink" href="#ptxas-complains-of-undefined-function-nvvm-reflect" title="Permalink to this headline">¶</a></h3>
-<p>When linking with libdevice, the <code class="docutils literal"><span class="pre">NVVMReflect</span></code> pass must be used. See
-<a class="reference internal" href="#libdevice"><span>Linking with Libdevice</span></a> for more information.</p>
+<h3><a class="toc-backref" href="#id29">ptxas complains of undefined function: __nvvm_reflect</a><a class="headerlink" href="#ptxas-complains-of-undefined-function-nvvm-reflect" title="Permalink to this headline">¶</a></h3>
+<p>When linking with libdevice, the <code class="docutils literal notranslate"><span class="pre">NVVMReflect</span></code> pass must be used. See
+<a class="reference internal" href="#libdevice"><span class="std std-ref">Linking with Libdevice</span></a> for more information.</p>
 </div>
 </div>
 <div class="section" id="tutorial-a-simple-compute-kernel">
-<h2><a class="toc-backref" href="#id31">Tutorial: A Simple Compute Kernel</a><a class="headerlink" href="#tutorial-a-simple-compute-kernel" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id30">Tutorial: A Simple Compute Kernel</a><a class="headerlink" href="#tutorial-a-simple-compute-kernel" title="Permalink to this headline">¶</a></h2>
 <p>To start, let us take a look at a simple compute kernel written directly in
 LLVM IR. The kernel implements vector addition, where each thread computes one
 element of the output vector C from the input vectors A and B.  To make this
 easier, we also assume that only a single CTA (thread block) will be launched,
 and that it will be one dimensional.</p>
 <div class="section" id="the-kernel">
-<h3><a class="toc-backref" href="#id32">The Kernel</a><a class="headerlink" href="#the-kernel" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">target</span> <span class="k">datalayout</span> <span class="p">=</span> <span class="s">&quot;e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v16:16:16-v32:32:32-v64:64:64-v128:128:128-n16:32:64&quot;</span>
+<h3><a class="toc-backref" href="#id31">The Kernel</a><a class="headerlink" href="#the-kernel" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">target</span> <span class="k">datalayout</span> <span class="p">=</span> <span class="s">&quot;e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v16:16:16-v32:32:32-v64:64:64-v128:128:128-n16:32:64&quot;</span>
 <span class="k">target</span> <span class="k">triple</span> <span class="p">=</span> <span class="s">&quot;nvptx64-nvidia-cuda&quot;</span>
 
 <span class="c">; Intrinsic to read X component of thread ID</span>
 <span class="k">declare</span> <span class="k">i32</span> <span class="vg">@llvm.nvvm.read.ptx.sreg.tid.x</span><span class="p">()</span> <span class="k">readnone</span> <span class="k">nounwind</span>
 
-<span class="k">define</span> <span class="kt">void</span> <span class="vg">@kernel</span><span class="p">(</span><span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%A</span><span class="p">,</span>
-                    <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%B</span><span class="p">,</span>
-                    <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%C</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">define</span> <span class="k">void</span> <span class="vg">@kernel</span><span class="p">(</span><span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%A</span><span class="p">,</span>
+                    <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%B</span><span class="p">,</span>
+                    <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%C</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="c">; What is my ID?</span>
   <span class="nv">%id</span> <span class="p">=</span> <span class="k">tail</span> <span class="k">call</span> <span class="k">i32</span> <span class="vg">@llvm.nvvm.read.ptx.sreg.tid.x</span><span class="p">()</span> <span class="k">readnone</span> <span class="k">nounwind</span>
 
   <span class="c">; Compute pointers into A, B, and C</span>
-  <span class="nv">%ptrA</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%A</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
-  <span class="nv">%ptrB</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%B</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
-  <span class="nv">%ptrC</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%C</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
+  <span class="nv">%ptrA</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%A</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
+  <span class="nv">%ptrB</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%B</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
+  <span class="nv">%ptrC</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%C</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
 
   <span class="c">; Read A, B</span>
-  <span class="nv">%valA</span> <span class="p">=</span> <span class="k">load</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrA</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
-  <span class="nv">%valB</span> <span class="p">=</span> <span class="k">load</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrB</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
+  <span class="nv">%valA</span> <span class="p">=</span> <span class="k">load</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrA</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
+  <span class="nv">%valB</span> <span class="p">=</span> <span class="k">load</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrB</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
 
   <span class="c">; Compute C = A + B</span>
-  <span class="nv">%valC</span> <span class="p">=</span> <span class="k">fadd</span> <span class="kt">float</span> <span class="nv">%valA</span><span class="p">,</span> <span class="nv">%valB</span>
+  <span class="nv">%valC</span> <span class="p">=</span> <span class="k">fadd</span> <span class="k">float</span> <span class="nv">%valA</span><span class="p">,</span> <span class="nv">%valB</span>
 
   <span class="c">; Store back to C</span>
-  <span class="k">store</span> <span class="kt">float</span> <span class="nv">%valC</span><span class="p">,</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrC</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
+  <span class="k">store</span> <span class="k">float</span> <span class="nv">%valC</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrC</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
 
-  <span class="k">ret</span> <span class="kt">void</span>
+  <span class="k">ret</span> <span class="k">void</span>
 <span class="p">}</span>
 
-<span class="nv">!nvvm.annotations</span> <span class="p">=</span> <span class="p">!{</span><span class="nv-Anonymous">!0</span><span class="p">}</span>
-<span class="nv-Anonymous">!0</span> <span class="p">=</span> <span class="kt">metadata</span> <span class="p">!{</span><span class="kt">void</span> <span class="p">(</span><span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
-                      <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
-                      <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*)*</span> <span class="vg">@kernel</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv">!&quot;kernel&quot;</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">}</span>
+<span class="nv">!nvvm.annotations</span> <span class="p">=</span> <span class="p">!{</span><span class="nv nv-Anonymous">!0</span><span class="p">}</span>
+<span class="nv nv-Anonymous">!0</span> <span class="p">=</span> <span class="p">!{</span><span class="k">void</span> <span class="p">(</span><span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
+             <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
+             <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*)*</span> <span class="vg">@kernel</span><span class="p">,</span> <span class="nv">!&quot;kernel&quot;</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>We can use the LLVM <code class="docutils literal"><span class="pre">llc</span></code> tool to directly run the NVPTX code generator:</p>
-<div class="highlight-text"><div class="highlight"><pre># llc -mcpu=sm_20 kernel.ll -o kernel.ptx
+<p>We can use the LLVM <code class="docutils literal notranslate"><span class="pre">llc</span></code> tool to directly run the NVPTX code generator:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># llc -mcpu=sm_20 kernel.ll -o kernel.ptx
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">If you want to generate 32-bit code, change <code class="docutils literal"><span class="pre">p:64:64:64</span></code> to <code class="docutils literal"><span class="pre">p:32:32:32</span></code>
-in the module data layout string and use <code class="docutils literal"><span class="pre">nvptx-nvidia-cuda</span></code> as the
+<p class="admonition-title">Note</p>
+<p>If you want to generate 32-bit code, change <code class="docutils literal notranslate"><span class="pre">p:64:64:64</span></code> to <code class="docutils literal notranslate"><span class="pre">p:32:32:32</span></code>
+in the module data layout string and use <code class="docutils literal notranslate"><span class="pre">nvptx-nvidia-cuda</span></code> as the
 target triple.</p>
 </div>
-<p>The output we get from <code class="docutils literal"><span class="pre">llc</span></code> (as of LLVM 3.4):</p>
-<div class="highlight-text"><div class="highlight"><pre>//
+<p>The output we get from <code class="docutils literal notranslate"><span class="pre">llc</span></code> (as of LLVM 3.4):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>//
 // Generated by LLVM NVPTX Back-End
 //
 
@@ -578,7 +572,7 @@ target triple.</p>
   .reg .s32   %r&lt;2&gt;;
   .reg .s64   %rl&lt;8&gt;;
 
-// BB#0:                                // %entry
+// %bb.0:                                // %entry
   ld.param.u64    %rl1, [kernel_param_0];
   mov.u32         %r1, %tid.x;
   mul.wide.s32    %rl2, %r1, 4;
@@ -597,105 +591,105 @@ target triple.</p>
 </div>
 </div>
 <div class="section" id="dissecting-the-kernel">
-<h3><a class="toc-backref" href="#id33">Dissecting the Kernel</a><a class="headerlink" href="#dissecting-the-kernel" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id32">Dissecting the Kernel</a><a class="headerlink" href="#dissecting-the-kernel" title="Permalink to this headline">¶</a></h3>
 <p>Now let us dissect the LLVM IR that makes up this kernel.</p>
 <div class="section" id="data-layout">
-<h4><a class="toc-backref" href="#id34">Data Layout</a><a class="headerlink" href="#data-layout" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id33">Data Layout</a><a class="headerlink" href="#data-layout" title="Permalink to this headline">¶</a></h4>
 <p>The data layout string determines the size in bits of common data types, their
 ABI alignment, and their storage size.  For NVPTX, you should use one of the
 following:</p>
 <p>32-bit PTX:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">target</span> <span class="k">datalayout</span> <span class="p">=</span> <span class="s">&quot;e-p:32:32:32-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v16:16:16-v32:32:32-v64:64:64-v128:128:128-n16:32:64&quot;</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">target</span> <span class="k">datalayout</span> <span class="p">=</span> <span class="s">&quot;e-p:32:32:32-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v16:16:16-v32:32:32-v64:64:64-v128:128:128-n16:32:64&quot;</span>
 </pre></div>
 </div>
 <p>64-bit PTX:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">target</span> <span class="k">datalayout</span> <span class="p">=</span> <span class="s">&quot;e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v16:16:16-v32:32:32-v64:64:64-v128:128:128-n16:32:64&quot;</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">target</span> <span class="k">datalayout</span> <span class="p">=</span> <span class="s">&quot;e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v16:16:16-v32:32:32-v64:64:64-v128:128:128-n16:32:64&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="target-intrinsics">
-<h4><a class="toc-backref" href="#id35">Target Intrinsics</a><a class="headerlink" href="#target-intrinsics" title="Permalink to this headline">¶</a></h4>
-<p>In this example, we use the <code class="docutils literal"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.tid.x</span></code> intrinsic to
-read the X component of the current thread&#8217;s ID, which corresponds to a read
-of register <code class="docutils literal"><span class="pre">%tid.x</span></code> in PTX. The NVPTX back-end supports a large set of
+<h4><a class="toc-backref" href="#id34">Target Intrinsics</a><a class="headerlink" href="#target-intrinsics" title="Permalink to this headline">¶</a></h4>
+<p>In this example, we use the <code class="docutils literal notranslate"><span class="pre">&#64;llvm.nvvm.read.ptx.sreg.tid.x</span></code> intrinsic to
+read the X component of the current thread’s ID, which corresponds to a read
+of register <code class="docutils literal notranslate"><span class="pre">%tid.x</span></code> in PTX. The NVPTX back-end supports a large set of
 intrinsics.  A short list is shown below; please see
-<code class="docutils literal"><span class="pre">include/llvm/IR/IntrinsicsNVVM.td</span></code> for the full list.</p>
-<table border="1" class="docutils">
+<code class="docutils literal notranslate"><span class="pre">include/llvm/IR/IntrinsicsNVVM.td</span></code> for the full list.</p>
+<table class="docutils align-default">
 <colgroup>
-<col width="71%" />
-<col width="29%" />
+<col style="width: 71%" />
+<col style="width: 29%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Intrinsic</th>
-<th class="head">CUDA Equivalent</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Intrinsic</p></th>
+<th class="head"><p>CUDA Equivalent</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">i32</span> <span class="pre">&#64;llvm.nvvm.read.ptx.sreg.tid.{x,y,z}</span></code></td>
-<td>threadIdx.{x,y,z}</td>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i32</span> <span class="pre">&#64;llvm.nvvm.read.ptx.sreg.tid.{x,y,z}</span></code></p></td>
+<td><p>threadIdx.{x,y,z}</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">i32</span> <span class="pre">&#64;llvm.nvvm.read.ptx.sreg.ctaid.{x,y,z}</span></code></td>
-<td>blockIdx.{x,y,z}</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i32</span> <span class="pre">&#64;llvm.nvvm.read.ptx.sreg.ctaid.{x,y,z}</span></code></p></td>
+<td><p>blockIdx.{x,y,z}</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">i32</span> <span class="pre">&#64;llvm.nvvm.read.ptx.sreg.ntid.{x,y,z}</span></code></td>
-<td>blockDim.{x,y,z}</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">i32</span> <span class="pre">&#64;llvm.nvvm.read.ptx.sreg.ntid.{x,y,z}</span></code></p></td>
+<td><p>blockDim.{x,y,z}</p></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">i32</span> <span class="pre">&#64;llvm.nvvm.read.ptx.sreg.nctaid.{x,y,z}</span></code></td>
-<td>gridDim.{x,y,z}</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">i32</span> <span class="pre">&#64;llvm.nvvm.read.ptx.sreg.nctaid.{x,y,z}</span></code></p></td>
+<td><p>gridDim.{x,y,z}</p></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">void</span> <span class="pre">&#64;llvm.cuda.syncthreads()</span></code></td>
-<td>__syncthreads()</td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">&#64;llvm.nvvm.barrier0()</span></code></p></td>
+<td><p>__syncthreads()</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="id10">
-<h4><a class="toc-backref" href="#id36">Address Spaces</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id35">Address Spaces</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
 <p>You may have noticed that all of the pointer types in the LLVM IR example had
 an explicit address space specifier. What is address space 1? NVIDIA GPU
 devices (generally) have four types of memory:</p>
 <ul class="simple">
-<li>Global: Large, off-chip memory</li>
-<li>Shared: Small, on-chip memory shared among all threads in a CTA</li>
-<li>Local: Per-thread, private memory</li>
-<li>Constant: Read-only memory shared across all threads</li>
+<li><p>Global: Large, off-chip memory</p></li>
+<li><p>Shared: Small, on-chip memory shared among all threads in a CTA</p></li>
+<li><p>Local: Per-thread, private memory</p></li>
+<li><p>Constant: Read-only memory shared across all threads</p></li>
 </ul>
 <p>These different types of memory are represented in LLVM IR as address spaces.
 There is also a fifth address space used by the NVPTX code generator that
-corresponds to the &#8220;generic&#8221; address space.  This address space can represent
+corresponds to the “generic” address space.  This address space can represent
 addresses in any other address space (with a few exceptions).  This allows
 users to write IR functions that can load/store memory using the same
 instructions. Intrinsics are provided to convert pointers between the generic
 and non-generic address spaces.</p>
-<p>See <a class="reference internal" href="#address-spaces"><span>Address Spaces</span></a> and <a class="reference internal" href="#nvptx-intrinsics"><span>NVPTX Intrinsics</span></a> for more information.</p>
+<p>See <a class="reference internal" href="#address-spaces"><span class="std std-ref">Address Spaces</span></a> and <a class="reference internal" href="#nvptx-intrinsics"><span class="std std-ref">NVPTX Intrinsics</span></a> for more information.</p>
 </div>
 <div class="section" id="kernel-metadata">
-<h4><a class="toc-backref" href="#id37">Kernel Metadata</a><a class="headerlink" href="#kernel-metadata" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id36">Kernel Metadata</a><a class="headerlink" href="#kernel-metadata" title="Permalink to this headline">¶</a></h4>
 <p>In PTX, a function can be either a <cite>kernel</cite> function (callable from the host
 program), or a <cite>device</cite> function (callable only from GPU code). You can think
 of <cite>kernel</cite> functions as entry-points in the GPU program. To mark an LLVM IR
 function as a <cite>kernel</cite> function, we make use of special LLVM metadata. The
 NVPTX back-end will look for a named metadata node called
-<code class="docutils literal"><span class="pre">nvvm.annotations</span></code>. This named metadata must contain a list of metadata that
+<code class="docutils literal notranslate"><span class="pre">nvvm.annotations</span></code>. This named metadata must contain a list of metadata that
 describe the IR. For our purposes, we need to declare a metadata node that
-assigns the &#8220;kernel&#8221; attribute to the LLVM IR function that should be emitted
+assigns the “kernel” attribute to the LLVM IR function that should be emitted
 as a PTX <cite>kernel</cite> function. These metadata nodes take the form:</p>
-<div class="highlight-text"><div class="highlight"><pre>metadata !{&lt;function ref&gt;, metadata !&quot;kernel&quot;, i32 1}
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>!{&lt;function ref&gt;, metadata !&quot;kernel&quot;, i32 1}
 </pre></div>
 </div>
 <p>For the previous example, we have:</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="nv">!nvvm.annotations</span> <span class="p">=</span> <span class="p">!{</span><span class="nv-Anonymous">!0</span><span class="p">}</span>
-<span class="nv-Anonymous">!0</span> <span class="p">=</span> <span class="kt">metadata</span> <span class="p">!{</span><span class="kt">void</span> <span class="p">(</span><span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
-                      <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
-                      <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*)*</span> <span class="vg">@kernel</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv">!&quot;kernel&quot;</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">}</span>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="nv">!nvvm.annotations</span> <span class="p">=</span> <span class="p">!{</span><span class="nv nv-Anonymous">!0</span><span class="p">}</span>
+<span class="nv nv-Anonymous">!0</span> <span class="p">=</span> <span class="p">!{</span><span class="k">void</span> <span class="p">(</span><span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
+             <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
+             <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*)*</span> <span class="vg">@kernel</span><span class="p">,</span> <span class="nv">!&quot;kernel&quot;</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>Here, we have a single metadata declaration in <code class="docutils literal"><span class="pre">nvvm.annotations</span></code>. This
-metadata annotates our <code class="docutils literal"><span class="pre">&#64;kernel</span></code> function with the <code class="docutils literal"><span class="pre">kernel</span></code> attribute.</p>
+<p>Here, we have a single metadata declaration in <code class="docutils literal notranslate"><span class="pre">nvvm.annotations</span></code>. This
+metadata annotates our <code class="docutils literal notranslate"><span class="pre">&#64;kernel</span></code> function with the <code class="docutils literal notranslate"><span class="pre">kernel</span></code> attribute.</p>
 </div>
 </div>
 <div class="section" id="running-the-kernel">
-<h3><a class="toc-backref" href="#id38">Running the Kernel</a><a class="headerlink" href="#running-the-kernel" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id37">Running the Kernel</a><a class="headerlink" href="#running-the-kernel" title="Permalink to this headline">¶</a></h3>
 <p>Generating PTX from LLVM IR is all well and good, but how do we execute it on
 a real GPU device? The CUDA Driver API provides a convenient mechanism for
 loading and JIT compiling PTX to a native GPU device, and launching a kernel.
@@ -703,16 +697,16 @@ The API is similar to OpenCL.  A simple example showing how to load and
 execute our vector addition code is shown below. Note that for brevity this
 code does not perform much error checking!</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">You can also use the <code class="docutils literal"><span class="pre">ptxas</span></code> tool provided by the CUDA Toolkit to offline
+<p class="admonition-title">Note</p>
+<p>You can also use the <code class="docutils literal notranslate"><span class="pre">ptxas</span></code> tool provided by the CUDA Toolkit to offline
 compile PTX to machine code (SASS) for a specific GPU architecture. Such
 binaries can be loaded by the CUDA Driver API in the same way as PTX. This
 can be useful for reducing startup time by precompiling the PTX kernels.</p>
 </div>
-<div class="highlight-c++"><div class="highlight"><pre><span class="cp">#include &lt;iostream&gt;</span>
-<span class="cp">#include &lt;fstream&gt;</span>
-<span class="cp">#include &lt;cassert&gt;</span>
-<span class="cp">#include &quot;cuda.h&quot;</span>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;cuda.h&quot;</span><span class="cp"></span>
 
 
 <span class="kt">void</span> <span class="nf">checkCudaErrors</span><span class="p">(</span><span class="n">CUresult</span> <span class="n">err</span><span class="p">)</span> <span class="p">{</span>
@@ -831,14 +825,14 @@ can be useful for reducing startup time by precompiling the PTX kernels.</p>
 </pre></div>
 </div>
 <p>You will need to link with the CUDA driver and specify the path to cuda.h.</p>
-<div class="highlight-text"><div class="highlight"><pre># clang++ sample.cpp -o sample -O2 -g -I/usr/local/cuda-5.5/include -lcuda
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># clang++ sample.cpp -o sample -O2 -g -I/usr/local/cuda-5.5/include -lcuda
 </pre></div>
 </div>
-<p>We don&#8217;t need to specify a path to <code class="docutils literal"><span class="pre">libcuda.so</span></code> since this is installed in a
+<p>We don’t need to specify a path to <code class="docutils literal notranslate"><span class="pre">libcuda.so</span></code> since this is installed in a
 system location by the driver, not the CUDA toolkit.</p>
 <p>If everything goes as planned, you should see the following output when
 running the compiled program:</p>
-<div class="highlight-text"><div class="highlight"><pre>Using CUDA Device [0]: GeForce GTX 680
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Using CUDA Device [0]: GeForce GTX 680
 Device Compute Capability: 3.0
 Launching kernel
 Results:
@@ -861,81 +855,81 @@ Results:
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">You will likely see a different device identifier based on your hardware</p>
+<p class="admonition-title">Note</p>
+<p>You will likely see a different device identifier based on your hardware</p>
 </div>
 </div>
 </div>
 <div class="section" id="tutorial-linking-with-libdevice">
-<h2><a class="toc-backref" href="#id39">Tutorial: Linking with Libdevice</a><a class="headerlink" href="#tutorial-linking-with-libdevice" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id38">Tutorial: Linking with Libdevice</a><a class="headerlink" href="#tutorial-linking-with-libdevice" title="Permalink to this headline">¶</a></h2>
 <p>In this tutorial, we show a simple example of linking LLVM IR with the
 libdevice library. We will use the same kernel as the previous tutorial,
-except that we will compute <code class="docutils literal"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">pow(A,</span> <span class="pre">B)</span></code> instead of <code class="docutils literal"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">A</span> <span class="pre">+</span> <span class="pre">B</span></code>.
-Libdevice provides an <code class="docutils literal"><span class="pre">__nv_powf</span></code> function that we will use.</p>
-<div class="highlight-llvm"><div class="highlight"><pre><span class="k">target</span> <span class="k">datalayout</span> <span class="p">=</span> <span class="s">&quot;e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v16:16:16-v32:32:32-v64:64:64-v128:128:128-n16:32:64&quot;</span>
+except that we will compute <code class="docutils literal notranslate"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">pow(A,</span> <span class="pre">B)</span></code> instead of <code class="docutils literal notranslate"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">A</span> <span class="pre">+</span> <span class="pre">B</span></code>.
+Libdevice provides an <code class="docutils literal notranslate"><span class="pre">__nv_powf</span></code> function that we will use.</p>
+<div class="highlight-llvm notranslate"><div class="highlight"><pre><span></span><span class="k">target</span> <span class="k">datalayout</span> <span class="p">=</span> <span class="s">&quot;e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v16:16:16-v32:32:32-v64:64:64-v128:128:128-n16:32:64&quot;</span>
 <span class="k">target</span> <span class="k">triple</span> <span class="p">=</span> <span class="s">&quot;nvptx64-nvidia-cuda&quot;</span>
 
 <span class="c">; Intrinsic to read X component of thread ID</span>
 <span class="k">declare</span> <span class="k">i32</span> <span class="vg">@llvm.nvvm.read.ptx.sreg.tid.x</span><span class="p">()</span> <span class="k">readnone</span> <span class="k">nounwind</span>
 <span class="c">; libdevice function</span>
-<span class="k">declare</span> <span class="kt">float</span> <span class="vg">@__nv_powf</span><span class="p">(</span><span class="kt">float</span><span class="p">,</span> <span class="kt">float</span><span class="p">)</span>
+<span class="k">declare</span> <span class="k">float</span> <span class="vg">@__nv_powf</span><span class="p">(</span><span class="k">float</span><span class="p">,</span> <span class="k">float</span><span class="p">)</span>
 
-<span class="k">define</span> <span class="kt">void</span> <span class="vg">@kernel</span><span class="p">(</span><span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%A</span><span class="p">,</span>
-                    <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%B</span><span class="p">,</span>
-                    <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%C</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">define</span> <span class="k">void</span> <span class="vg">@kernel</span><span class="p">(</span><span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%A</span><span class="p">,</span>
+                    <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%B</span><span class="p">,</span>
+                    <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%C</span><span class="p">)</span> <span class="p">{</span>
 <span class="nl">entry:</span>
   <span class="c">; What is my ID?</span>
   <span class="nv">%id</span> <span class="p">=</span> <span class="k">tail</span> <span class="k">call</span> <span class="k">i32</span> <span class="vg">@llvm.nvvm.read.ptx.sreg.tid.x</span><span class="p">()</span> <span class="k">readnone</span> <span class="k">nounwind</span>
 
   <span class="c">; Compute pointers into A, B, and C</span>
-  <span class="nv">%ptrA</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%A</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
-  <span class="nv">%ptrB</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%B</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
-  <span class="nv">%ptrC</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%C</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
+  <span class="nv">%ptrA</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%A</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
+  <span class="nv">%ptrB</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%B</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
+  <span class="nv">%ptrC</span> <span class="p">=</span> <span class="k">getelementptr</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%C</span><span class="p">,</span> <span class="k">i32</span> <span class="nv">%id</span>
 
   <span class="c">; Read A, B</span>
-  <span class="nv">%valA</span> <span class="p">=</span> <span class="k">load</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrA</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
-  <span class="nv">%valB</span> <span class="p">=</span> <span class="k">load</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrB</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
+  <span class="nv">%valA</span> <span class="p">=</span> <span class="k">load</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrA</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
+  <span class="nv">%valB</span> <span class="p">=</span> <span class="k">load</span> <span class="k">float</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrB</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
 
   <span class="c">; Compute C = pow(A, B)</span>
-  <span class="nv">%valC</span> <span class="p">=</span> <span class="k">call</span> <span class="kt">float</span> <span class="vg">@__nv_powf</span><span class="p">(</span><span class="kt">float</span> <span class="nv">%valA</span><span class="p">,</span> <span class="kt">float</span> <span class="nv">%valB</span><span class="p">)</span>
+  <span class="nv">%valC</span> <span class="p">=</span> <span class="k">call</span> <span class="k">float</span> <span class="vg">@__nv_powf</span><span class="p">(</span><span class="k">float</span> <span class="nv">%valA</span><span class="p">,</span> <span class="k">float</span> <span class="nv">%valB</span><span class="p">)</span>
 
   <span class="c">; Store back to C</span>
-  <span class="k">store</span> <span class="kt">float</span> <span class="nv">%valC</span><span class="p">,</span> <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrC</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
+  <span class="k">store</span> <span class="k">float</span> <span class="nv">%valC</span><span class="p">,</span> <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*</span> <span class="nv">%ptrC</span><span class="p">,</span> <span class="k">align</span> <span class="m">4</span>
 
-  <span class="k">ret</span> <span class="kt">void</span>
+  <span class="k">ret</span> <span class="k">void</span>
 <span class="p">}</span>
 
-<span class="nv">!nvvm.annotations</span> <span class="p">=</span> <span class="p">!{</span><span class="nv-Anonymous">!0</span><span class="p">}</span>
-<span class="nv-Anonymous">!0</span> <span class="p">=</span> <span class="kt">metadata</span> <span class="p">!{</span><span class="kt">void</span> <span class="p">(</span><span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
-                      <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
-                      <span class="kt">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*)*</span> <span class="vg">@kernel</span><span class="p">,</span> <span class="kt">metadata</span> <span class="nv">!&quot;kernel&quot;</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">}</span>
+<span class="nv">!nvvm.annotations</span> <span class="p">=</span> <span class="p">!{</span><span class="nv nv-Anonymous">!0</span><span class="p">}</span>
+<span class="nv nv-Anonymous">!0</span> <span class="p">=</span> <span class="p">!{</span><span class="k">void</span> <span class="p">(</span><span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
+             <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*,</span>
+             <span class="k">float</span> <span class="k">addrspace</span><span class="p">(</span><span class="m">1</span><span class="p">)*)*</span> <span class="vg">@kernel</span><span class="p">,</span> <span class="nv">!&quot;kernel&quot;</span><span class="p">,</span> <span class="k">i32</span> <span class="m">1</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>To compile this kernel, we perform the following steps:</p>
 <ol class="arabic simple">
-<li>Link with libdevice</li>
-<li>Internalize all but the public kernel function</li>
-<li>Run <code class="docutils literal"><span class="pre">NVVMReflect</span></code> and set <code class="docutils literal"><span class="pre">__CUDA_FTZ</span></code> to 0</li>
-<li>Optimize the linked module</li>
-<li>Codegen the module</li>
+<li><p>Link with libdevice</p></li>
+<li><p>Internalize all but the public kernel function</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">NVVMReflect</span></code> and set <code class="docutils literal notranslate"><span class="pre">__CUDA_FTZ</span></code> to 0</p></li>
+<li><p>Optimize the linked module</p></li>
+<li><p>Codegen the module</p></li>
 </ol>
-<p>These steps can be performed by the LLVM <code class="docutils literal"><span class="pre">llvm-link</span></code>, <code class="docutils literal"><span class="pre">opt</span></code>, and <code class="docutils literal"><span class="pre">llc</span></code>
+<p>These steps can be performed by the LLVM <code class="docutils literal notranslate"><span class="pre">llvm-link</span></code>, <code class="docutils literal notranslate"><span class="pre">opt</span></code>, and <code class="docutils literal notranslate"><span class="pre">llc</span></code>
 tools. In a complete compiler, these steps can also be performed entirely
 programmatically by setting up an appropriate pass configuration (see
-<a class="reference internal" href="#libdevice"><span>Linking with Libdevice</span></a>).</p>
-<div class="highlight-text"><div class="highlight"><pre># llvm-link t2.bc libdevice.compute_20.10.bc -o t2.linked.bc
+<a class="reference internal" href="#libdevice"><span class="std std-ref">Linking with Libdevice</span></a>).</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span># llvm-link t2.bc libdevice.compute_20.10.bc -o t2.linked.bc
 # opt -internalize -internalize-public-api-list=kernel -nvvm-reflect-list=__CUDA_FTZ=0 -nvvm-reflect -O3 t2.linked.bc -o t2.opt.bc
 # llc -mcpu=sm_20 t2.opt.bc -o t2.ptx
 </pre></div>
 </div>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The <code class="docutils literal"><span class="pre">-nvvm-reflect-list=_CUDA_FTZ=0</span></code> is not strictly required, as any
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">-nvvm-reflect-list=_CUDA_FTZ=0</span></code> is not strictly required, as any
 undefined variables will default to zero. It is shown here for evaluation
 purposes.</p>
 </div>
 <p>This gives us the following PTX (excerpt):</p>
-<div class="highlight-text"><div class="highlight"><pre>//
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>//
 // Generated by LLVM NVPTX Back-End
 //
 
@@ -956,7 +950,7 @@ purposes.</p>
   .reg .s32   %r&lt;21&gt;;
   .reg .s64   %rl&lt;8&gt;;
 
-// BB#0:                                // %entry
+// %bb.0:                                // %entry
   ld.param.u64  %rl2, [kernel_param_0];
   mov.u32   %r3, %tid.x;
   ld.param.u64  %rl3, [kernel_param_1];
@@ -980,7 +974,7 @@ BB0_2:                                  // %__nv_isnanf.exit.i
   abs.f32   %f4, %f1;
   setp.gtu.f32  %p4, %f4, 0f7F800000;
   @%p4 bra  BB0_4;
-// BB#3:                                // %__nv_isnanf.exit5.i
+// %bb.3:                                // %__nv_isnanf.exit5.i
   abs.f32   %f5, %f2;
   setp.le.f32 %p5, %f5, 0f7F800000;
   @%p5 bra  BB0_5;
@@ -1012,7 +1006,7 @@ BB0_26:                                 // %__nv_truncf.exit.i.i.i.i.i
   selp.f32  %f110, 0f7F800000, %f99, %p16;
   setp.eq.f32 %p17, %f110, 0f7F800000;
   @%p17 bra   BB0_28;
-// BB#27:
+// %bb.27:
   fma.rn.f32  %f110, %f110, %f108, %f110;
 BB0_28:                                 // %__internal_accurate_powf.exit.i
   setp.lt.f32 %p18, %f1, 0f00000000;
@@ -1045,7 +1039,7 @@ BB0_30:                                 // %__nv_powf.exit
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="AMDGPUUsage.html" title="User Guide for AMDGPU Back-end"
+          <a href="AMDGPUUsage.html" title="User Guide for AMDGPU Backend"
              >next</a> |</li>
         <li class="right" >
           <a href="HowToUseAttributes.html" title="How To Use Attributes"
@@ -1056,9 +1050,9 @@ BB0_30:                                 // %__nv_powf.exit
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

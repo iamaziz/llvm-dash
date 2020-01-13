@@ -1,0 +1,452 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>2. Building a JIT: Adding Optimizations – An introduction to ORC Layers &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. Building a JIT: Per-function Lazy Compilation" href="BuildingAJIT3.html" />
+    <link rel="prev" title="1. Building a JIT: Starting out with KaleidoscopeJIT" href="BuildingAJIT1.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="BuildingAJIT3.html" title="3. Building a JIT: Per-function Lazy Compilation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="BuildingAJIT1.html" title="1. Building a JIT: Starting out with KaleidoscopeJIT"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="building-a-jit-adding-optimizations-an-introduction-to-orc-layers">
+<h1><span class="section-number">2. </span>Building a JIT: Adding Optimizations – An introduction to ORC Layers<a class="headerlink" href="#building-a-jit-adding-optimizations-an-introduction-to-orc-layers" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#chapter-2-introduction" id="id2">Chapter 2 Introduction</a></p></li>
+<li><p><a class="reference internal" href="#optimizing-modules-using-the-irtransformlayer" id="id3">Optimizing Modules using the IRTransformLayer</a></p></li>
+<li><p><a class="reference internal" href="#full-code-listing" id="id4">Full Code Listing</a></p></li>
+</ul>
+</div>
+<p><strong>This tutorial is under active development. It is incomplete and details may
+change frequently.</strong> Nonetheless we invite you to try it out as it stands, and
+we welcome any feedback.</p>
+<div class="section" id="chapter-2-introduction">
+<h2><a class="toc-backref" href="#id2"><span class="section-number">2.1. </span>Chapter 2 Introduction</a><a class="headerlink" href="#chapter-2-introduction" title="Permalink to this headline">¶</a></h2>
+<p><strong>Warning: This tutorial is currently being updated to account for ORC API
+changes. Only Chapters 1 and 2 are up-to-date.</strong></p>
+<p><strong>Example code from Chapters 3 to 5 will compile and run, but has not been
+updated</strong></p>
+<p>Welcome to Chapter 2 of the “Building an ORC-based JIT in LLVM” tutorial. In
+<a class="reference external" href="BuildingAJIT1.html">Chapter 1</a> of this series we examined a basic JIT
+class, KaleidoscopeJIT, that could take LLVM IR modules as input and produce
+executable code in memory. KaleidoscopeJIT was able to do this with relatively
+little code by composing two off-the-shelf <em>ORC layers</em>: IRCompileLayer and
+ObjectLinkingLayer, to do much of the heavy lifting.</p>
+<p>In this layer we’ll learn more about the ORC layer concept by using a new layer,
+IRTransformLayer, to add IR optimization support to KaleidoscopeJIT.</p>
+</div>
+<div class="section" id="optimizing-modules-using-the-irtransformlayer">
+<h2><a class="toc-backref" href="#id3"><span class="section-number">2.2. </span>Optimizing Modules using the IRTransformLayer</a><a class="headerlink" href="#optimizing-modules-using-the-irtransformlayer" title="Permalink to this headline">¶</a></h2>
+<p>In <a class="reference external" href="LangImpl04.html">Chapter 4</a> of the “Implementing a language with LLVM”
+tutorial series the llvm <em>FunctionPassManager</em> is introduced as a means for
+optimizing LLVM IR. Interested readers may read that chapter for details, but
+in short: to optimize a Module we create an llvm::FunctionPassManager
+instance, configure it with a set of optimizations, then run the PassManager on
+a Module to mutate it into a (hopefully) more optimized but semantically
+equivalent form. In the original tutorial series the FunctionPassManager was
+created outside the KaleidoscopeJIT and modules were optimized before being
+added to it. In this Chapter we will make optimization a phase of our JIT
+instead. For now this will provide us a motivation to learn more about ORC
+layers, but in the long term making optimization part of our JIT will yield an
+important benefit: When we begin lazily compiling code (i.e. deferring
+compilation of each function until the first time it’s run) having
+optimization managed by our JIT will allow us to optimize lazily too, rather
+than having to do all our optimization up-front.</p>
+<p>To add optimization support to our JIT we will take the KaleidoscopeJIT from
+Chapter 1 and compose an ORC <em>IRTransformLayer</em> on top. We will look at how the
+IRTransformLayer works in more detail below, but the interface is simple: the
+constructor for this layer takes a reference to the execution session and the
+layer below (as all layers do) plus an <em>IR optimization function</em> that it will
+apply to each Module that is added via addModule:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">KaleidoscopeJIT</span> <span class="p">{</span>
+<span class="k">private</span><span class="o">:</span>
+  <span class="n">ExecutionSession</span> <span class="n">ES</span><span class="p">;</span>
+  <span class="n">RTDyldObjectLinkingLayer</span> <span class="n">ObjectLayer</span><span class="p">;</span>
+  <span class="n">IRCompileLayer</span> <span class="n">CompileLayer</span><span class="p">;</span>
+  <span class="n">IRTransformLayer</span> <span class="n">TransformLayer</span><span class="p">;</span>
+
+  <span class="n">DataLayout</span> <span class="n">DL</span><span class="p">;</span>
+  <span class="n">MangleAndInterner</span> <span class="n">Mangle</span><span class="p">;</span>
+  <span class="n">ThreadSafeContext</span> <span class="n">Ctx</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+
+  <span class="n">KaleidoscopeJIT</span><span class="p">(</span><span class="n">JITTargetMachineBuilder</span> <span class="n">JTMB</span><span class="p">,</span> <span class="n">DataLayout</span> <span class="n">DL</span><span class="p">)</span>
+      <span class="o">:</span> <span class="n">ObjectLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span>
+                    <span class="p">[]()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">SectionMemoryManager</span><span class="o">&gt;</span><span class="p">();</span> <span class="p">}),</span>
+        <span class="n">CompileLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span> <span class="n">ObjectLayer</span><span class="p">,</span> <span class="n">ConcurrentIRCompiler</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">JTMB</span><span class="p">))),</span>
+        <span class="n">TransformLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span> <span class="n">CompileLayer</span><span class="p">,</span> <span class="n">optimizeModule</span><span class="p">),</span>
+        <span class="n">DL</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">DL</span><span class="p">)),</span> <span class="n">Mangle</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">DL</span><span class="p">),</span>
+        <span class="n">Ctx</span><span class="p">(</span><span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">LLVMContext</span><span class="o">&gt;</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">ES</span><span class="p">.</span><span class="n">getMainJITDylib</span><span class="p">().</span><span class="n">setGenerator</span><span class="p">(</span>
+        <span class="n">cantFail</span><span class="p">(</span><span class="n">DynamicLibrarySearchGenerator</span><span class="o">::</span><span class="n">GetForCurrentProcess</span><span class="p">(</span><span class="n">DL</span><span class="p">)));</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+<p>Our extended KaleidoscopeJIT class starts out the same as it did in Chapter 1,
+but after the CompileLayer we introduce a new member, TransformLayer, which sits
+on top of our CompileLayer. We initialize our OptimizeLayer with a reference to
+the ExecutionSession and output layer (standard practice for layers), along with
+a <em>transform function</em>. For our transform function we supply our classes
+optimizeModule static method.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// ...</span>
+<span class="k">return</span> <span class="nf">cantFail</span><span class="p">(</span><span class="n">OptimizeLayer</span><span class="p">.</span><span class="n">addModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">M</span><span class="p">),</span>
+                                        <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Resolver</span><span class="p">)));</span>
+<span class="c1">// ...</span>
+</pre></div>
+</div>
+<p>Next we need to update our addModule method to replace the call to
+<code class="docutils literal notranslate"><span class="pre">CompileLayer::add</span></code> with a call to <code class="docutils literal notranslate"><span class="pre">OptimizeLayer::add</span></code> instead.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">Expected</span><span class="o">&lt;</span><span class="n">ThreadSafeModule</span><span class="o">&gt;</span>
+<span class="n">optimizeModule</span><span class="p">(</span><span class="n">ThreadSafeModule</span> <span class="n">M</span><span class="p">,</span> <span class="k">const</span> <span class="n">MaterializationResponsibility</span> <span class="o">&amp;</span><span class="n">R</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// Create a function pass manager.</span>
+  <span class="k">auto</span> <span class="n">FPM</span> <span class="o">=</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">legacy</span><span class="o">::</span><span class="n">FunctionPassManager</span><span class="o">&gt;</span><span class="p">(</span><span class="n">M</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+
+  <span class="c1">// Add some optimizations.</span>
+  <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">add</span><span class="p">(</span><span class="n">createInstructionCombiningPass</span><span class="p">());</span>
+  <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">add</span><span class="p">(</span><span class="n">createReassociatePass</span><span class="p">());</span>
+  <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">add</span><span class="p">(</span><span class="n">createGVNPass</span><span class="p">());</span>
+  <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">add</span><span class="p">(</span><span class="n">createCFGSimplificationPass</span><span class="p">());</span>
+  <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">doInitialization</span><span class="p">();</span>
+
+  <span class="c1">// Run the optimizations over all functions in the module being added to</span>
+  <span class="c1">// the JIT.</span>
+  <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="nl">F</span> <span class="p">:</span> <span class="o">*</span><span class="n">M</span><span class="p">)</span>
+    <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">run</span><span class="p">(</span><span class="n">F</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="n">M</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>At the bottom of our JIT we add a private method to do the actual optimization:
+<em>optimizeModule</em>. This function takes the module to be transformed as input (as
+a ThreadSafeModule) along with a reference to a reference to a new class:
+<code class="docutils literal notranslate"><span class="pre">MaterializationResponsibility</span></code>. The MaterializationResponsibility argument
+can be used to query JIT state for the module being transformed, such as the set
+of definitions in the module that JIT’d code is actively trying to call/access.
+For now we will ignore this argument and use a standard optimization
+pipeline. To do this we set up a FunctionPassManager, add some passes to it, run
+it over every function in the module, and then return the mutated module. The
+specific optimizations are the same ones used in <a class="reference external" href="LangImpl04.html">Chapter 4</a>
+of the “Implementing a language with LLVM” tutorial series. Readers may visit
+that chapter for a more in-depth discussion of these, and of IR optimization in
+general.</p>
+<p>And that’s it in terms of changes to KaleidoscopeJIT: When a module is added via
+addModule the OptimizeLayer will call our optimizeModule function before passing
+the transformed module on to the CompileLayer below. Of course, we could have
+called optimizeModule directly in our addModule function and not gone to the
+bother of using the IRTransformLayer, but doing so gives us another opportunity
+to see how layers compose. It also provides a neat entry point to the <em>layer</em>
+concept itself, because IRTransformLayer is one of the simplest layers that
+can be implemented.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// From IRTransformLayer.h:</span>
+<span class="k">class</span> <span class="nc">IRTransformLayer</span> <span class="o">:</span> <span class="k">public</span> <span class="n">IRLayer</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+  <span class="k">using</span> <span class="n">TransformFunction</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="n">Expected</span><span class="o">&lt;</span><span class="n">ThreadSafeModule</span><span class="o">&gt;</span><span class="p">(</span>
+      <span class="n">ThreadSafeModule</span><span class="p">,</span> <span class="k">const</span> <span class="n">MaterializationResponsibility</span> <span class="o">&amp;</span><span class="n">R</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+
+  <span class="n">IRTransformLayer</span><span class="p">(</span><span class="n">ExecutionSession</span> <span class="o">&amp;</span><span class="n">ES</span><span class="p">,</span> <span class="n">IRLayer</span> <span class="o">&amp;</span><span class="n">BaseLayer</span><span class="p">,</span>
+                   <span class="n">TransformFunction</span> <span class="n">Transform</span> <span class="o">=</span> <span class="n">identityTransform</span><span class="p">);</span>
+
+  <span class="kt">void</span> <span class="nf">setTransform</span><span class="p">(</span><span class="n">TransformFunction</span> <span class="n">Transform</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">Transform</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Transform</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="k">static</span> <span class="n">ThreadSafeModule</span>
+  <span class="nf">identityTransform</span><span class="p">(</span><span class="n">ThreadSafeModule</span> <span class="n">TSM</span><span class="p">,</span>
+                    <span class="k">const</span> <span class="n">MaterializationResponsibility</span> <span class="o">&amp;</span><span class="n">R</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">TSM</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="kt">void</span> <span class="nf">emit</span><span class="p">(</span><span class="n">MaterializationResponsibility</span> <span class="n">R</span><span class="p">,</span> <span class="n">ThreadSafeModule</span> <span class="n">TSM</span><span class="p">)</span> <span class="k">override</span><span class="p">;</span>
+
+<span class="k">private</span><span class="o">:</span>
+  <span class="n">IRLayer</span> <span class="o">&amp;</span><span class="n">BaseLayer</span><span class="p">;</span>
+  <span class="n">TransformFunction</span> <span class="n">Transform</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// From IRTransfomrLayer.cpp:</span>
+
+<span class="n">IRTransformLayer</span><span class="o">::</span><span class="n">IRTransformLayer</span><span class="p">(</span><span class="n">ExecutionSession</span> <span class="o">&amp;</span><span class="n">ES</span><span class="p">,</span>
+                                   <span class="n">IRLayer</span> <span class="o">&amp;</span><span class="n">BaseLayer</span><span class="p">,</span>
+                                   <span class="n">TransformFunction</span> <span class="n">Transform</span><span class="p">)</span>
+    <span class="o">:</span> <span class="n">IRLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">),</span> <span class="n">BaseLayer</span><span class="p">(</span><span class="n">BaseLayer</span><span class="p">),</span> <span class="n">Transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Transform</span><span class="p">))</span> <span class="p">{}</span>
+
+<span class="kt">void</span> <span class="n">IRTransformLayer</span><span class="o">::</span><span class="n">emit</span><span class="p">(</span><span class="n">MaterializationResponsibility</span> <span class="n">R</span><span class="p">,</span>
+                            <span class="n">ThreadSafeModule</span> <span class="n">TSM</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">TSM</span><span class="p">.</span><span class="n">getModule</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="s">&quot;Module must not be null&quot;</span><span class="p">);</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="k">auto</span> <span class="n">TransformedTSM</span> <span class="o">=</span> <span class="n">Transform</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">TSM</span><span class="p">),</span> <span class="n">R</span><span class="p">))</span>
+    <span class="n">BaseLayer</span><span class="p">.</span><span class="n">emit</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="n">TransformedTSM</span><span class="p">));</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="n">R</span><span class="p">.</span><span class="n">failMaterialization</span><span class="p">();</span>
+    <span class="n">getExecutionSession</span><span class="p">().</span><span class="n">reportError</span><span class="p">(</span><span class="n">TransformedTSM</span><span class="p">.</span><span class="n">takeError</span><span class="p">());</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is the whole definition of IRTransformLayer, from
+<code class="docutils literal notranslate"><span class="pre">llvm/include/llvm/ExecutionEngine/Orc/IRTransformLayer.h</span></code> and
+<code class="docutils literal notranslate"><span class="pre">llvm/lib/ExecutionEngine/Orc/IRTransformLayer.cpp</span></code>.  This class is concerned
+with two very simple jobs: (1) Running every IR Module that is emitted via this
+layer through the transform function object, and (2) implementing the ORC
+<code class="docutils literal notranslate"><span class="pre">IRLayer</span></code> interface (which itself conforms to the general ORC Layer concept,
+more on that below). Most of the class is straightforward: a typedef for the
+transform function, a constructor to initialize the members, a setter for the
+transform function value, and a default no-op transform. The most important
+method is <code class="docutils literal notranslate"><span class="pre">emit</span></code> as this is half of our IRLayer interface. The emit method
+applies our transform to each module that it is called on and, if the transform
+succeeds, passes the transformed module to the base layer. If the transform
+fails, our emit function calls
+<code class="docutils literal notranslate"><span class="pre">MaterializationResponsibility::failMaterialization</span></code> (this JIT clients who
+may be waiting on other threads know that the code they were waiting for has
+failed to compile) and logs the error with the execution session before bailing
+out.</p>
+<p>The other half of the IRLayer interface we inherit unmodified from the IRLayer
+class:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span> <span class="n">IRLayer</span><span class="o">::</span><span class="n">add</span><span class="p">(</span><span class="n">JITDylib</span> <span class="o">&amp;</span><span class="n">JD</span><span class="p">,</span> <span class="n">ThreadSafeModule</span> <span class="n">TSM</span><span class="p">,</span> <span class="n">VModuleKey</span> <span class="n">K</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">JD</span><span class="p">.</span><span class="n">define</span><span class="p">(</span><span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">BasicIRLayerMaterializationUnit</span><span class="o">&gt;</span><span class="p">(</span>
+      <span class="o">*</span><span class="k">this</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">K</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">TSM</span><span class="p">)));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This code, from <code class="docutils literal notranslate"><span class="pre">llvm/lib/ExecutionEngine/Orc/Layer.cpp</span></code>, adds a
+ThreadSafeModule to a given JITDylib by wrapping it up in a
+<code class="docutils literal notranslate"><span class="pre">MaterializationUnit</span></code> (in this case a <code class="docutils literal notranslate"><span class="pre">BasicIRLayerMaterializationUnit</span></code>).
+Most layers that derived from IRLayer can rely on this default implementation
+of the <code class="docutils literal notranslate"><span class="pre">add</span></code> method.</p>
+<p>These two operations, <code class="docutils literal notranslate"><span class="pre">add</span></code> and <code class="docutils literal notranslate"><span class="pre">emit</span></code>, together constitute the layer
+concept: A layer is a way to wrap a portion of a compiler pipeline (in this case
+the “opt” phase of an LLVM compiler) whose API is is opaque to ORC in an
+interface that allows ORC to invoke it when needed. The add method takes an
+module in some input program representation (in this case an LLVM IR module) and
+stores it in the target JITDylib, arranging for it to be passed back to the
+Layer’s emit method when any symbol defined by that module is requested. Layers
+can compose neatly by calling the ‘emit’ method of a base layer to complete
+their work. For example, in this tutorial our IRTransformLayer calls through to
+our IRCompileLayer to compile the transformed IR, and our IRCompileLayer in turn
+calls our ObjectLayer to link the object file produced by our compiler.</p>
+<p>So far we have learned how to optimize and compile our LLVM IR, but we have not
+focused on when compilation happens. Our current REPL is eager: Each function
+definition is optimized and compiled as soon as it is referenced by any other
+code, regardless of whether it is ever called at runtime. In the next chapter we
+will introduce fully lazy compilation, in which functions are not compiled until
+they are first called at run-time. At this point the trade-offs get much more
+interesting: the lazier we are, the quicker we can start executing the first
+function, but the more often we will have to pause to compile newly encountered
+functions. If we only code-gen lazily, but optimize eagerly, we will have a
+longer startup time (as everything is optimized) but relatively short pauses as
+each function just passes through code-gen. If we both optimize and code-gen
+lazily we can start executing the first function more quickly, but we will have
+longer pauses as each function has to be both optimized and code-gen’d when it
+is first executed. Things become even more interesting if we consider
+interproceedural optimizations like inlining, which must be performed eagerly.
+These are complex trade-offs, and there is no one-size-fits all solution to
+them, but by providing composable layers we leave the decisions to the person
+implementing the JIT, and make it easy for them to experiment with different
+configurations.</p>
+<p><a class="reference external" href="BuildingAJIT3.html">Next: Adding Per-function Lazy Compilation</a></p>
+</div>
+<div class="section" id="full-code-listing">
+<h2><a class="toc-backref" href="#id4"><span class="section-number">2.3. </span>Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
+<p>Here is the complete code listing for our running example with an
+IRTransformLayer added to enable optimization. To build this example, use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
+clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native<span class="sb">`</span> -O3 -o toy
+<span class="c1"># Run</span>
+./toy
+</pre></div>
+</div>
+<p>Here is the code:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">//===- KaleidoscopeJIT.h - A simple JIT for Kaleidoscope --------*- C++ -*-===//</span>
+<span class="c1">//</span>
+<span class="c1">// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.</span>
+<span class="c1">// See https://llvm.org/LICENSE.txt for license information.</span>
+<span class="c1">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception</span>
+<span class="c1">//</span>
+<span class="c1">//===----------------------------------------------------------------------===//</span>
+<span class="c1">//</span>
+<span class="c1">// Contains a simple JIT definition for use in the kaleidoscope tutorials.</span>
+<span class="c1">//</span>
+<span class="c1">//===----------------------------------------------------------------------===//</span>
+
+<span class="cp">#ifndef LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H</span>
+<span class="cp">#define LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H</span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ADT/StringRef.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/JITSymbol.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/CompileUtils.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/Core.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/ExecutionUtils.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/IRCompileLayer.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/IRTransformLayer.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/JITTargetMachineBuilder.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/SectionMemoryManager.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/DataLayout.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/LLVMContext.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/LegacyPassManager.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/Transforms/InstCombine/InstCombine.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/Transforms/Scalar.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/Transforms/Scalar/GVN.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
+
+<span class="k">namespace</span> <span class="n">llvm</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">orc</span> <span class="p">{</span>
+
+<span class="k">class</span> <span class="nc">KaleidoscopeJIT</span> <span class="p">{</span>
+<span class="k">private</span><span class="o">:</span>
+  <span class="n">ExecutionSession</span> <span class="n">ES</span><span class="p">;</span>
+  <span class="n">RTDyldObjectLinkingLayer</span> <span class="n">ObjectLayer</span><span class="p">;</span>
+  <span class="n">IRCompileLayer</span> <span class="n">CompileLayer</span><span class="p">;</span>
+  <span class="n">IRTransformLayer</span> <span class="n">OptimizeLayer</span><span class="p">;</span>
+
+  <span class="n">DataLayout</span> <span class="n">DL</span><span class="p">;</span>
+  <span class="n">MangleAndInterner</span> <span class="n">Mangle</span><span class="p">;</span>
+  <span class="n">ThreadSafeContext</span> <span class="n">Ctx</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+  <span class="n">KaleidoscopeJIT</span><span class="p">(</span><span class="n">JITTargetMachineBuilder</span> <span class="n">JTMB</span><span class="p">,</span> <span class="n">DataLayout</span> <span class="n">DL</span><span class="p">)</span>
+      <span class="o">:</span> <span class="n">ObjectLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span>
+                    <span class="p">[]()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">SectionMemoryManager</span><span class="o">&gt;</span><span class="p">();</span> <span class="p">}),</span>
+        <span class="n">CompileLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span> <span class="n">ObjectLayer</span><span class="p">,</span> <span class="n">ConcurrentIRCompiler</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">JTMB</span><span class="p">))),</span>
+        <span class="n">OptimizeLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span> <span class="n">CompileLayer</span><span class="p">,</span> <span class="n">optimizeModule</span><span class="p">),</span>
+        <span class="n">DL</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">DL</span><span class="p">)),</span> <span class="n">Mangle</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">DL</span><span class="p">),</span>
+        <span class="n">Ctx</span><span class="p">(</span><span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">LLVMContext</span><span class="o">&gt;</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">ES</span><span class="p">.</span><span class="n">getMainJITDylib</span><span class="p">().</span><span class="n">setGenerator</span><span class="p">(</span>
+        <span class="n">cantFail</span><span class="p">(</span><span class="n">DynamicLibrarySearchGenerator</span><span class="o">::</span><span class="n">GetForCurrentProcess</span><span class="p">(</span>
+            <span class="n">DL</span><span class="p">.</span><span class="n">getGlobalPrefix</span><span class="p">())));</span>
+  <span class="p">}</span>
+
+  <span class="k">const</span> <span class="n">DataLayout</span> <span class="o">&amp;</span><span class="n">getDataLayout</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">DL</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="n">LLVMContext</span> <span class="o">&amp;</span><span class="n">getContext</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="n">Ctx</span><span class="p">.</span><span class="n">getContext</span><span class="p">();</span> <span class="p">}</span>
+
+  <span class="k">static</span> <span class="n">Expected</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">KaleidoscopeJIT</span><span class="o">&gt;&gt;</span> <span class="n">Create</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">JTMB</span> <span class="o">=</span> <span class="n">JITTargetMachineBuilder</span><span class="o">::</span><span class="n">detectHost</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">JTMB</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">JTMB</span><span class="p">.</span><span class="n">takeError</span><span class="p">();</span>
+
+    <span class="k">auto</span> <span class="n">DL</span> <span class="o">=</span> <span class="n">JTMB</span><span class="o">-&gt;</span><span class="n">getDefaultDataLayoutForTarget</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">DL</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">DL</span><span class="p">.</span><span class="n">takeError</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">KaleidoscopeJIT</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="n">JTMB</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="n">DL</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="n">Error</span> <span class="n">addModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">OptimizeLayer</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">ES</span><span class="p">.</span><span class="n">getMainJITDylib</span><span class="p">(),</span>
+                             <span class="n">ThreadSafeModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">M</span><span class="p">),</span> <span class="n">Ctx</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="n">Expected</span><span class="o">&lt;</span><span class="n">JITEvaluatedSymbol</span><span class="o">&gt;</span> <span class="n">lookup</span><span class="p">(</span><span class="n">StringRef</span> <span class="n">Name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">ES</span><span class="p">.</span><span class="n">lookup</span><span class="p">({</span><span class="o">&amp;</span><span class="n">ES</span><span class="p">.</span><span class="n">getMainJITDylib</span><span class="p">()},</span> <span class="n">Mangle</span><span class="p">(</span><span class="n">Name</span><span class="p">.</span><span class="n">str</span><span class="p">()));</span>
+  <span class="p">}</span>
+
+<span class="k">private</span><span class="o">:</span>
+  <span class="k">static</span> <span class="n">Expected</span><span class="o">&lt;</span><span class="n">ThreadSafeModule</span><span class="o">&gt;</span>
+  <span class="n">optimizeModule</span><span class="p">(</span><span class="n">ThreadSafeModule</span> <span class="n">TSM</span><span class="p">,</span> <span class="k">const</span> <span class="n">MaterializationResponsibility</span> <span class="o">&amp;</span><span class="n">R</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Create a function pass manager.</span>
+    <span class="k">auto</span> <span class="n">FPM</span> <span class="o">=</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">legacy</span><span class="o">::</span><span class="n">FunctionPassManager</span><span class="o">&gt;</span><span class="p">(</span><span class="n">TSM</span><span class="p">.</span><span class="n">getModule</span><span class="p">());</span>
+
+    <span class="c1">// Add some optimizations.</span>
+    <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">add</span><span class="p">(</span><span class="n">createInstructionCombiningPass</span><span class="p">());</span>
+    <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">add</span><span class="p">(</span><span class="n">createReassociatePass</span><span class="p">());</span>
+    <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">add</span><span class="p">(</span><span class="n">createGVNPass</span><span class="p">());</span>
+    <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">add</span><span class="p">(</span><span class="n">createCFGSimplificationPass</span><span class="p">());</span>
+    <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">doInitialization</span><span class="p">();</span>
+
+    <span class="c1">// Run the optimizations over all functions in the module being added to</span>
+    <span class="c1">// the JIT.</span>
+    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="nl">F</span> <span class="p">:</span> <span class="o">*</span><span class="n">TSM</span><span class="p">.</span><span class="n">getModule</span><span class="p">())</span>
+      <span class="n">FPM</span><span class="o">-&gt;</span><span class="n">run</span><span class="p">(</span><span class="n">F</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">TSM</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="p">}</span> <span class="c1">// end namespace orc</span>
+<span class="p">}</span> <span class="c1">// end namespace llvm</span>
+
+<span class="cp">#endif </span><span class="c1">// LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="BuildingAJIT3.html" title="3. Building a JIT: Per-function Lazy Compilation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="BuildingAJIT1.html" title="1. Building a JIT: Starting out with KaleidoscopeJIT"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

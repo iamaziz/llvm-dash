@@ -1,0 +1,379 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>CodeView Type Records &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Control Flow Verification Tool Design Document" href="../CFIVerify.html" />
+    <link rel="prev" title="CodeView Symbol Records" href="CodeViewSymbols.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../CFIVerify.html" title="Control Flow Verification Tool Design Document"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="CodeViewSymbols.html" title="CodeView Symbol Records"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The PDB File Format</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="codeview-type-records">
+<h1>CodeView Type Records<a class="headerlink" href="#codeview-type-records" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#introduction" id="id2">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#record-categories" id="id3">Record Categories</a></p>
+<ul>
+<li><p><a class="reference internal" href="#leaf-records" id="id4">Leaf Records</a></p>
+<ul>
+<li><p><a class="reference internal" href="#lf-pointer-0x1002" id="id5">LF_POINTER (0x1002)</a></p></li>
+<li><p><a class="reference internal" href="#lf-modifier-0x1001" id="id6">LF_MODIFIER (0x1001)</a></p></li>
+<li><p><a class="reference internal" href="#lf-procedure-0x1008" id="id7">LF_PROCEDURE (0x1008)</a></p></li>
+<li><p><a class="reference internal" href="#lf-mfunction-0x1009" id="id8">LF_MFUNCTION (0x1009)</a></p></li>
+<li><p><a class="reference internal" href="#lf-label-0x000e" id="id9">LF_LABEL (0x000e)</a></p></li>
+<li><p><a class="reference internal" href="#lf-arglist-0x1201" id="id10">LF_ARGLIST (0x1201)</a></p></li>
+<li><p><a class="reference internal" href="#lf-fieldlist-0x1203" id="id11">LF_FIELDLIST (0x1203)</a></p></li>
+<li><p><a class="reference internal" href="#lf-array-0x1503" id="id12">LF_ARRAY (0x1503)</a></p></li>
+<li><p><a class="reference internal" href="#lf-class-0x1504" id="id13">LF_CLASS (0x1504)</a></p></li>
+<li><p><a class="reference internal" href="#lf-structure-0x1505" id="id14">LF_STRUCTURE (0x1505)</a></p></li>
+<li><p><a class="reference internal" href="#lf-interface-0x1519" id="id15">LF_INTERFACE (0x1519)</a></p></li>
+<li><p><a class="reference internal" href="#lf-union-0x1506" id="id16">LF_UNION (0x1506)</a></p></li>
+<li><p><a class="reference internal" href="#lf-enum-0x1507" id="id17">LF_ENUM (0x1507)</a></p></li>
+<li><p><a class="reference internal" href="#lf-typeserver2-0x1515" id="id18">LF_TYPESERVER2 (0x1515)</a></p></li>
+<li><p><a class="reference internal" href="#lf-vftable-0x151d" id="id19">LF_VFTABLE (0x151d)</a></p></li>
+<li><p><a class="reference internal" href="#lf-vtshape-0x000a" id="id20">LF_VTSHAPE (0x000a)</a></p></li>
+<li><p><a class="reference internal" href="#lf-bitfield-0x1205" id="id21">LF_BITFIELD (0x1205)</a></p></li>
+<li><p><a class="reference internal" href="#lf-func-id-0x1601" id="id22">LF_FUNC_ID (0x1601)</a></p></li>
+<li><p><a class="reference internal" href="#lf-mfunc-id-0x1602" id="id23">LF_MFUNC_ID (0x1602)</a></p></li>
+<li><p><a class="reference internal" href="#lf-buildinfo-0x1603" id="id24">LF_BUILDINFO (0x1603)</a></p></li>
+<li><p><a class="reference internal" href="#lf-substr-list-0x1604" id="id25">LF_SUBSTR_LIST (0x1604)</a></p></li>
+<li><p><a class="reference internal" href="#lf-string-id-0x1605" id="id26">LF_STRING_ID (0x1605)</a></p></li>
+<li><p><a class="reference internal" href="#lf-udt-src-line-0x1606" id="id27">LF_UDT_SRC_LINE (0x1606)</a></p></li>
+<li><p><a class="reference internal" href="#lf-udt-mod-src-line-0x1607" id="id28">LF_UDT_MOD_SRC_LINE (0x1607)</a></p></li>
+<li><p><a class="reference internal" href="#lf-methodlist-0x1206" id="id29">LF_METHODLIST (0x1206)</a></p></li>
+<li><p><a class="reference internal" href="#lf-precomp-0x1509" id="id30">LF_PRECOMP (0x1509)</a></p></li>
+<li><p><a class="reference internal" href="#lf-endprecomp-0x0014" id="id31">LF_ENDPRECOMP (0x0014)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#member-records" id="id32">Member Records</a></p>
+<ul>
+<li><p><a class="reference internal" href="#lf-bclass-0x1400" id="id33">LF_BCLASS (0x1400)</a></p></li>
+<li><p><a class="reference internal" href="#lf-binterface-0x151a" id="id34">LF_BINTERFACE (0x151a)</a></p></li>
+<li><p><a class="reference internal" href="#lf-vbclass-0x1401" id="id35">LF_VBCLASS (0x1401)</a></p></li>
+<li><p><a class="reference internal" href="#lf-ivbclass-0x1402" id="id36">LF_IVBCLASS (0x1402)</a></p></li>
+<li><p><a class="reference internal" href="#lf-vfunctab-0x1409" id="id37">LF_VFUNCTAB (0x1409)</a></p></li>
+<li><p><a class="reference internal" href="#lf-stmember-0x150e" id="id38">LF_STMEMBER (0x150e)</a></p></li>
+<li><p><a class="reference internal" href="#lf-method-0x150f" id="id39">LF_METHOD (0x150f)</a></p></li>
+<li><p><a class="reference internal" href="#lf-member-0x150d" id="id40">LF_MEMBER (0x150d)</a></p></li>
+<li><p><a class="reference internal" href="#lf-nesttype-0x1510" id="id41">LF_NESTTYPE (0x1510)</a></p></li>
+<li><p><a class="reference internal" href="#lf-onemethod-0x1511" id="id42">LF_ONEMETHOD (0x1511)</a></p></li>
+<li><p><a class="reference internal" href="#lf-enumerate-0x1502" id="id43">LF_ENUMERATE (0x1502)</a></p></li>
+<li><p><a class="reference internal" href="#lf-index-0x1404" id="id44">LF_INDEX (0x1404)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#padding-records" id="id45">Padding Records</a></p>
+<ul>
+<li><p><a class="reference internal" href="#lf-padn-0xf0-n" id="id46">LF_PADn (0xf0 + n)</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<span id="types-intro"></span><h2><a class="toc-backref" href="#id2">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This document describes the usage and serialization format of the various
+CodeView type records that LLVM understands.  This document does not describe
+every single CodeView type record that is defined.  In some cases, this is
+because the records are clearly deprecated and can only appear in very old
+software (e.g. the 16-bit types).  On other cases, it is because the records
+have never been observed in practice.  This could be because they are only
+generated for non-C++ code (e.g. Visual Basic, C#), or because they have been
+made obsolete by newer records, or any number of other reasons.  However, the
+records we describe here should cover 99% of type records that one can expect
+to encounter when dealing with modern C++ toolchains.</p>
+</div>
+<div class="section" id="record-categories">
+<h2><a class="toc-backref" href="#id3">Record Categories</a><a class="headerlink" href="#record-categories" title="Permalink to this headline">¶</a></h2>
+<p>We can think of a sequence of CodeView type records as an array of variable length
+<cite>leaf records</cite>.  Each such record describes its own length as part of a fixed-size
+header, as well as the kind of record it is.  Leaf records are either padded to 4
+bytes (if this type stream appears in a TPI/IPI stream of a PDB) or not padded at
+all (if this type stream appears in the <code class="docutils literal notranslate"><span class="pre">.debug$T</span></code> section of an object file).
+Padding is implemented by inserting a decreasing sequence of <cite>&lt;_padding_records&gt;</cite>
+that terminates with <code class="docutils literal notranslate"><span class="pre">LF_PAD0</span></code>.</p>
+<p>The final category of record is a <code class="docutils literal notranslate"><span class="pre">member</span> <span class="pre">record</span></code>.  One particular leaf type –
+<code class="docutils literal notranslate"><span class="pre">LF_FIELDLIST</span></code> – contains a series of embedded records.  While the outer
+<code class="docutils literal notranslate"><span class="pre">LF_FIELDLIST</span></code> describes its length (like any other leaf record), the embedded
+records – called <code class="docutils literal notranslate"><span class="pre">member</span> <span class="pre">records</span></code> do not.</p>
+<div class="section" id="leaf-records">
+<span id="leaf-types"></span><h3><a class="toc-backref" href="#id4">Leaf Records</a><a class="headerlink" href="#leaf-records" title="Permalink to this headline">¶</a></h3>
+<p>All leaf records begin with the following 4 byte prefix:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span> <span class="n">RecordHeader</span> <span class="p">{</span>
+  <span class="kt">uint16_t</span> <span class="n">RecordLen</span><span class="p">;</span>  <span class="c1">// Record length, not including this 2 byte field.</span>
+  <span class="kt">uint16_t</span> <span class="n">RecordKind</span><span class="p">;</span> <span class="c1">// Record kind enum.</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="section" id="lf-pointer-0x1002">
+<h4><a class="toc-backref" href="#id5">LF_POINTER (0x1002)</a><a class="headerlink" href="#lf-pointer-0x1002" title="Permalink to this headline">¶</a></h4>
+<p><strong>Usage:</strong> Describes a pointer to another type.</p>
+<p><strong>Layout:</strong></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.--------------------.-- +0
+|    Referent Type   |
+.--------------------.-- +4
+|     Attributes     |
+.--------------------.-- +8
+|  Member Ptr Info   |       Only present if |Attributes| indicates this is a member pointer.
+.--------------------.-- +E
+</pre></div>
+</div>
+<p>Attributes is a bitfield with the following layout:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> .-----------------------------------------------------------------------------------------------------.
+ |     Unused                   |  Flags  |       Size       |   Modifiers   |  Mode   |      Kind     |
+ .-----------------------------------------------------------------------------------------------------.
+ |                              |         |                  |               |         |               |
+0x100                         +0x16     +0x13               +0xD            +0x8      +0x5            +0x0
+</pre></div>
+</div>
+<p>where the various fields are defined by the following enums:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">PointerKind</span> <span class="o">:</span> <span class="kt">uint8_t</span> <span class="p">{</span>
+  <span class="n">Near16</span> <span class="o">=</span> <span class="mh">0x00</span><span class="p">,</span>                <span class="c1">// 16 bit pointer</span>
+  <span class="n">Far16</span> <span class="o">=</span> <span class="mh">0x01</span><span class="p">,</span>                 <span class="c1">// 16:16 far pointer</span>
+  <span class="n">Huge16</span> <span class="o">=</span> <span class="mh">0x02</span><span class="p">,</span>                <span class="c1">// 16:16 huge pointer</span>
+  <span class="n">BasedOnSegment</span> <span class="o">=</span> <span class="mh">0x03</span><span class="p">,</span>        <span class="c1">// based on segment</span>
+  <span class="n">BasedOnValue</span> <span class="o">=</span> <span class="mh">0x04</span><span class="p">,</span>          <span class="c1">// based on value of base</span>
+  <span class="n">BasedOnSegmentValue</span> <span class="o">=</span> <span class="mh">0x05</span><span class="p">,</span>   <span class="c1">// based on segment value of base</span>
+  <span class="n">BasedOnAddress</span> <span class="o">=</span> <span class="mh">0x06</span><span class="p">,</span>        <span class="c1">// based on address of base</span>
+  <span class="n">BasedOnSegmentAddress</span> <span class="o">=</span> <span class="mh">0x07</span><span class="p">,</span> <span class="c1">// based on segment address of base</span>
+  <span class="n">BasedOnType</span> <span class="o">=</span> <span class="mh">0x08</span><span class="p">,</span>           <span class="c1">// based on type</span>
+  <span class="n">BasedOnSelf</span> <span class="o">=</span> <span class="mh">0x09</span><span class="p">,</span>           <span class="c1">// based on self</span>
+  <span class="n">Near32</span> <span class="o">=</span> <span class="mh">0x0a</span><span class="p">,</span>                <span class="c1">// 32 bit pointer</span>
+  <span class="n">Far32</span> <span class="o">=</span> <span class="mh">0x0b</span><span class="p">,</span>                 <span class="c1">// 16:32 pointer</span>
+  <span class="n">Near64</span> <span class="o">=</span> <span class="mh">0x0c</span>                 <span class="c1">// 64 bit pointer</span>
+<span class="p">};</span>
+<span class="k">enum</span> <span class="k">class</span> <span class="nc">PointerMode</span> <span class="o">:</span> <span class="kt">uint8_t</span> <span class="p">{</span>
+  <span class="n">Pointer</span> <span class="o">=</span> <span class="mh">0x00</span><span class="p">,</span>                 <span class="c1">// &quot;normal&quot; pointer</span>
+  <span class="n">LValueReference</span> <span class="o">=</span> <span class="mh">0x01</span><span class="p">,</span>         <span class="c1">// &quot;old&quot; reference</span>
+  <span class="n">PointerToDataMember</span> <span class="o">=</span> <span class="mh">0x02</span><span class="p">,</span>     <span class="c1">// pointer to data member</span>
+  <span class="n">PointerToMemberFunction</span> <span class="o">=</span> <span class="mh">0x03</span><span class="p">,</span> <span class="c1">// pointer to member function</span>
+  <span class="n">RValueReference</span> <span class="o">=</span> <span class="mh">0x04</span>          <span class="c1">// r-value reference</span>
+<span class="p">};</span>
+<span class="k">enum</span> <span class="k">class</span> <span class="nc">PointerModifiers</span> <span class="o">:</span> <span class="kt">uint8_t</span> <span class="p">{</span>
+  <span class="n">None</span> <span class="o">=</span> <span class="mh">0x00</span><span class="p">,</span>                    <span class="c1">// &quot;normal&quot; pointer</span>
+  <span class="n">Flat32</span> <span class="o">=</span> <span class="mh">0x01</span><span class="p">,</span>                  <span class="c1">// &quot;flat&quot; pointer</span>
+  <span class="n">Volatile</span> <span class="o">=</span> <span class="mh">0x02</span><span class="p">,</span>                <span class="c1">// pointer is marked volatile</span>
+  <span class="n">Const</span> <span class="o">=</span> <span class="mh">0x04</span><span class="p">,</span>                   <span class="c1">// pointer is marked const</span>
+  <span class="n">Unaligned</span> <span class="o">=</span> <span class="mh">0x08</span><span class="p">,</span>               <span class="c1">// pointer is marked unaligned</span>
+  <span class="n">Restrict</span> <span class="o">=</span> <span class="mh">0x10</span><span class="p">,</span>                <span class="c1">// pointer is marked restrict</span>
+<span class="p">};</span>
+<span class="k">enum</span> <span class="k">class</span> <span class="nc">PointerFlags</span> <span class="o">:</span> <span class="kt">uint8_t</span> <span class="p">{</span>
+  <span class="n">WinRTSmartPointer</span> <span class="o">=</span> <span class="mh">0x01</span><span class="p">,</span>       <span class="c1">// pointer is a WinRT smart pointer</span>
+  <span class="n">LValueRefThisPointer</span> <span class="o">=</span> <span class="mh">0x02</span><span class="p">,</span>    <span class="c1">// pointer is a &#39;this&#39; pointer of a member function with ref qualifier (e.g. void X::foo() &amp;)</span>
+  <span class="n">RValueRefThisPointer</span> <span class="o">=</span> <span class="mh">0x04</span>     <span class="c1">// pointer is a &#39;this&#39; pointer of a member function with ref qualifier (e.g. void X::foo() &amp;&amp;)</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">Size</span></code> field of the Attributes bitmask is a 1-byte value indicating the
+pointer size.  For example, a <cite>void*</cite> would have a size of either 4 or 8 depending
+on the target architecture.  On the other hand, if <code class="docutils literal notranslate"><span class="pre">Mode</span></code> indicates that this is
+a pointer to member function or pointer to data member, then the size can be any
+implementation defined number.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Member</span> <span class="pre">Ptr</span> <span class="pre">Info</span></code> field of the <code class="docutils literal notranslate"><span class="pre">LF_POINTER</span></code> record is only present if the
+attributes indicate that this is a pointer to member.</p>
+<p>Note that “plain” pointers to primitive types are not represented by <code class="docutils literal notranslate"><span class="pre">LF_POINTER</span></code>
+records, they are indicated by special reserved <a class="reference internal" href="TpiStream.html#type-indices"><span class="std std-ref">TypeIndex values</span></a>.</p>
+</div>
+<div class="section" id="lf-modifier-0x1001">
+<h4><a class="toc-backref" href="#id6">LF_MODIFIER (0x1001)</a><a class="headerlink" href="#lf-modifier-0x1001" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-procedure-0x1008">
+<h4><a class="toc-backref" href="#id7">LF_PROCEDURE (0x1008)</a><a class="headerlink" href="#lf-procedure-0x1008" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-mfunction-0x1009">
+<h4><a class="toc-backref" href="#id8">LF_MFUNCTION (0x1009)</a><a class="headerlink" href="#lf-mfunction-0x1009" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-label-0x000e">
+<h4><a class="toc-backref" href="#id9">LF_LABEL (0x000e)</a><a class="headerlink" href="#lf-label-0x000e" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-arglist-0x1201">
+<h4><a class="toc-backref" href="#id10">LF_ARGLIST (0x1201)</a><a class="headerlink" href="#lf-arglist-0x1201" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-fieldlist-0x1203">
+<h4><a class="toc-backref" href="#id11">LF_FIELDLIST (0x1203)</a><a class="headerlink" href="#lf-fieldlist-0x1203" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-array-0x1503">
+<h4><a class="toc-backref" href="#id12">LF_ARRAY (0x1503)</a><a class="headerlink" href="#lf-array-0x1503" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-class-0x1504">
+<h4><a class="toc-backref" href="#id13">LF_CLASS (0x1504)</a><a class="headerlink" href="#lf-class-0x1504" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-structure-0x1505">
+<h4><a class="toc-backref" href="#id14">LF_STRUCTURE (0x1505)</a><a class="headerlink" href="#lf-structure-0x1505" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-interface-0x1519">
+<h4><a class="toc-backref" href="#id15">LF_INTERFACE (0x1519)</a><a class="headerlink" href="#lf-interface-0x1519" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-union-0x1506">
+<h4><a class="toc-backref" href="#id16">LF_UNION (0x1506)</a><a class="headerlink" href="#lf-union-0x1506" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-enum-0x1507">
+<h4><a class="toc-backref" href="#id17">LF_ENUM (0x1507)</a><a class="headerlink" href="#lf-enum-0x1507" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-typeserver2-0x1515">
+<h4><a class="toc-backref" href="#id18">LF_TYPESERVER2 (0x1515)</a><a class="headerlink" href="#lf-typeserver2-0x1515" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-vftable-0x151d">
+<h4><a class="toc-backref" href="#id19">LF_VFTABLE (0x151d)</a><a class="headerlink" href="#lf-vftable-0x151d" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-vtshape-0x000a">
+<h4><a class="toc-backref" href="#id20">LF_VTSHAPE (0x000a)</a><a class="headerlink" href="#lf-vtshape-0x000a" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-bitfield-0x1205">
+<h4><a class="toc-backref" href="#id21">LF_BITFIELD (0x1205)</a><a class="headerlink" href="#lf-bitfield-0x1205" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-func-id-0x1601">
+<h4><a class="toc-backref" href="#id22">LF_FUNC_ID (0x1601)</a><a class="headerlink" href="#lf-func-id-0x1601" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-mfunc-id-0x1602">
+<h4><a class="toc-backref" href="#id23">LF_MFUNC_ID (0x1602)</a><a class="headerlink" href="#lf-mfunc-id-0x1602" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-buildinfo-0x1603">
+<h4><a class="toc-backref" href="#id24">LF_BUILDINFO (0x1603)</a><a class="headerlink" href="#lf-buildinfo-0x1603" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-substr-list-0x1604">
+<h4><a class="toc-backref" href="#id25">LF_SUBSTR_LIST (0x1604)</a><a class="headerlink" href="#lf-substr-list-0x1604" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-string-id-0x1605">
+<h4><a class="toc-backref" href="#id26">LF_STRING_ID (0x1605)</a><a class="headerlink" href="#lf-string-id-0x1605" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-udt-src-line-0x1606">
+<h4><a class="toc-backref" href="#id27">LF_UDT_SRC_LINE (0x1606)</a><a class="headerlink" href="#lf-udt-src-line-0x1606" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-udt-mod-src-line-0x1607">
+<h4><a class="toc-backref" href="#id28">LF_UDT_MOD_SRC_LINE (0x1607)</a><a class="headerlink" href="#lf-udt-mod-src-line-0x1607" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-methodlist-0x1206">
+<h4><a class="toc-backref" href="#id29">LF_METHODLIST (0x1206)</a><a class="headerlink" href="#lf-methodlist-0x1206" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-precomp-0x1509">
+<h4><a class="toc-backref" href="#id30">LF_PRECOMP (0x1509)</a><a class="headerlink" href="#lf-precomp-0x1509" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-endprecomp-0x0014">
+<h4><a class="toc-backref" href="#id31">LF_ENDPRECOMP (0x0014)</a><a class="headerlink" href="#lf-endprecomp-0x0014" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+<div class="section" id="member-records">
+<span id="member-types"></span><h3><a class="toc-backref" href="#id32">Member Records</a><a class="headerlink" href="#member-records" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="lf-bclass-0x1400">
+<h4><a class="toc-backref" href="#id33">LF_BCLASS (0x1400)</a><a class="headerlink" href="#lf-bclass-0x1400" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-binterface-0x151a">
+<h4><a class="toc-backref" href="#id34">LF_BINTERFACE (0x151a)</a><a class="headerlink" href="#lf-binterface-0x151a" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-vbclass-0x1401">
+<h4><a class="toc-backref" href="#id35">LF_VBCLASS (0x1401)</a><a class="headerlink" href="#lf-vbclass-0x1401" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-ivbclass-0x1402">
+<h4><a class="toc-backref" href="#id36">LF_IVBCLASS (0x1402)</a><a class="headerlink" href="#lf-ivbclass-0x1402" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-vfunctab-0x1409">
+<h4><a class="toc-backref" href="#id37">LF_VFUNCTAB (0x1409)</a><a class="headerlink" href="#lf-vfunctab-0x1409" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-stmember-0x150e">
+<h4><a class="toc-backref" href="#id38">LF_STMEMBER (0x150e)</a><a class="headerlink" href="#lf-stmember-0x150e" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-method-0x150f">
+<h4><a class="toc-backref" href="#id39">LF_METHOD (0x150f)</a><a class="headerlink" href="#lf-method-0x150f" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-member-0x150d">
+<h4><a class="toc-backref" href="#id40">LF_MEMBER (0x150d)</a><a class="headerlink" href="#lf-member-0x150d" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-nesttype-0x1510">
+<h4><a class="toc-backref" href="#id41">LF_NESTTYPE (0x1510)</a><a class="headerlink" href="#lf-nesttype-0x1510" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-onemethod-0x1511">
+<h4><a class="toc-backref" href="#id42">LF_ONEMETHOD (0x1511)</a><a class="headerlink" href="#lf-onemethod-0x1511" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-enumerate-0x1502">
+<h4><a class="toc-backref" href="#id43">LF_ENUMERATE (0x1502)</a><a class="headerlink" href="#lf-enumerate-0x1502" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="lf-index-0x1404">
+<h4><a class="toc-backref" href="#id44">LF_INDEX (0x1404)</a><a class="headerlink" href="#lf-index-0x1404" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+<div class="section" id="padding-records">
+<span id="id1"></span><h3><a class="toc-backref" href="#id45">Padding Records</a><a class="headerlink" href="#padding-records" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="lf-padn-0xf0-n">
+<h4><a class="toc-backref" href="#id46">LF_PADn (0xf0 + n)</a><a class="headerlink" href="#lf-padn-0xf0-n" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../CFIVerify.html" title="Control Flow Verification Tool Design Document"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="CodeViewSymbols.html" title="CodeView Symbol Records"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >The PDB File Format</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

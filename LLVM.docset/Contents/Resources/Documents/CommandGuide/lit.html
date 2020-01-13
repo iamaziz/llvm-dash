@@ -1,31 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>lit - LLVM Integrated Tester &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>lit - LLVM Integrated Tester &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="llvm-build - LLVM Project Build Utility" href="llvm-build.html" />
     <link rel="prev" title="tblgen - Target Description To C++ Code Generator" href="tblgen.html" />
 <style type="text/css">
@@ -33,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +44,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -79,50 +67,54 @@ suites, summarizing their results, and providing indication of failures.
 user interface as possible.</p>
 <p><strong class="program">lit</strong> should be run with one or more <em>tests</em> to run specified on the
 command line.  Tests can be either individual test files or directories to
-search for tests (see <a class="reference internal" href="#test-discovery"><span>TEST DISCOVERY</span></a>).</p>
+search for tests (see <a class="reference internal" href="#test-discovery"><span class="std std-ref">TEST DISCOVERY</span></a>).</p>
 <p>Each specified test will be executed (potentially in parallel) and once all
 tests have been run <strong class="program">lit</strong> will print summary information on the number
-of tests which passed or failed (see <a class="reference internal" href="#test-status-results"><span>TEST STATUS RESULTS</span></a>).  The
+of tests which passed or failed (see <a class="reference internal" href="#test-status-results"><span class="std std-ref">TEST STATUS RESULTS</span></a>).  The
 <strong class="program">lit</strong> program will execute with a non-zero exit code if any tests
 fail.</p>
 <p>By default <strong class="program">lit</strong> will use a succinct progress display and will only
-print summary information for test failures.  See <a class="reference internal" href="#output-options"><span>OUTPUT OPTIONS</span></a> for
+print summary information for test failures.  See <a class="reference internal" href="#output-options"><span class="std std-ref">OUTPUT OPTIONS</span></a> for
 options controlling the <strong class="program">lit</strong> progress display and output.</p>
 <p><strong class="program">lit</strong> also includes a number of options for controlling how tests are
 executed (specific features may depend on the particular test format).  See
-<a class="reference internal" href="#execution-options"><span>EXECUTION OPTIONS</span></a> for more information.</p>
+<a class="reference internal" href="#execution-options"><span class="std std-ref">EXECUTION OPTIONS</span></a> for more information.</p>
 <p>Finally, <strong class="program">lit</strong> also supports additional options for only running a
 subset of the options specified on the command line, see
-<a class="reference internal" href="#selection-options"><span>SELECTION OPTIONS</span></a> for more information.</p>
+<a class="reference internal" href="#selection-options"><span class="std std-ref">SELECTION OPTIONS</span></a> for more information.</p>
+<p><strong class="program">lit</strong> parses options from the environment variable <code class="docutils literal notranslate"><span class="pre">LIT_OPTS</span></code> after
+parsing options from the command line.  <code class="docutils literal notranslate"><span class="pre">LIT_OPTS</span></code> is primarily useful for
+supplementing or overriding the command-line options supplied to <strong class="program">lit</strong>
+by <code class="docutils literal notranslate"><span class="pre">check</span></code> targets defined by a project’s build system.</p>
 <p>Users interested in the <strong class="program">lit</strong> architecture or designing a
-<strong class="program">lit</strong> testing implementation should see <a class="reference internal" href="#lit-infrastructure"><span>LIT INFRASTRUCTURE</span></a>.</p>
+<strong class="program">lit</strong> testing implementation should see <a class="reference internal" href="#lit-infrastructure"><span class="std std-ref">LIT INFRASTRUCTURE</span></a>.</p>
 </div>
 <div class="section" id="general-options">
 <h2>GENERAL OPTIONS<a class="headerlink" href="#general-options" title="Permalink to this headline">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption-h">
-<span id="cmdoption--help"></span><code class="descname">-h</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--help</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-h" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-h">
+<code class="sig-name descname">-h</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--help</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-h" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the <strong class="program">lit</strong> help message.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-j">
-<span id="cmdoption--threads"></span><code class="descname">-j</code><code class="descclassname"> N</code><code class="descclassname">, </code><code class="descname">--threads</code><code class="descclassname">=N</code><a class="headerlink" href="#cmdoption-j" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run <code class="docutils literal"><span class="pre">N</span></code> tests in parallel.  By default, this is automatically chosen to
+<dt id="cmdoption-lit-j">
+<code class="sig-name descname">-j</code><code class="sig-prename descclassname"> N</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--threads</code><code class="sig-prename descclassname">=N</code><a class="headerlink" href="#cmdoption-lit-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run <code class="docutils literal notranslate"><span class="pre">N</span></code> tests in parallel.  By default, this is automatically chosen to
 match the number of detected available CPUs.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--config-prefix">
-<code class="descname">--config-prefix</code><code class="descclassname">=NAME</code><a class="headerlink" href="#cmdoption--config-prefix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Search for <code class="file docutils literal"><em><span class="pre">NAME</span></em><span class="pre">.cfg</span></code> and <code class="file docutils literal"><em><span class="pre">NAME</span></em><span class="pre">.site.cfg</span></code> when searching for
-test suites, instead of <code class="file docutils literal"><span class="pre">lit.cfg</span></code> and <code class="file docutils literal"><span class="pre">lit.site.cfg</span></code>.</p>
+<dt id="cmdoption-lit-config-prefix">
+<code class="sig-name descname">--config-prefix</code><code class="sig-prename descclassname">=NAME</code><a class="headerlink" href="#cmdoption-lit-config-prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for <code class="file docutils literal notranslate"><em><span class="pre">NAME</span></em><span class="pre">.cfg</span></code> and <code class="file docutils literal notranslate"><em><span class="pre">NAME</span></em><span class="pre">.site.cfg</span></code> when searching for
+test suites, instead of <code class="file docutils literal notranslate"><span class="pre">lit.cfg</span></code> and <code class="file docutils literal notranslate"><span class="pre">lit.site.cfg</span></code>.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-D">
-<span id="cmdoption-D"></span><span id="cmdoption--param"></span><span id="cmdoption--param"></span><code class="descname">-D</code><code class="descclassname"> NAME</code><code class="descclassname">, </code><code class="descname">-D</code><code class="descclassname"> NAME=VALUE</code><code class="descclassname">, </code><code class="descname">--param</code><code class="descclassname"> NAME</code><code class="descclassname">, </code><code class="descname">--param</code><code class="descclassname"> NAME=VALUE</code><a class="headerlink" href="#cmdoption-D" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a user defined parameter <code class="docutils literal"><span class="pre">NAME</span></code> with the given <code class="docutils literal"><span class="pre">VALUE</span></code> (or the empty
+<dt id="cmdoption-lit-d">
+<code class="sig-name descname">-D</code><code class="sig-prename descclassname"> NAME[=VALUE]</code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--param</code><code class="sig-prename descclassname"> NAME[=VALUE]</code><a class="headerlink" href="#cmdoption-lit-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a user defined parameter <code class="docutils literal notranslate"><span class="pre">NAME</span></code> with the given <code class="docutils literal notranslate"><span class="pre">VALUE</span></code> (or the empty
 string if not given).  The meaning and use of these parameters is test suite
 dependent.</p>
 </dd></dl>
@@ -131,39 +123,59 @@ dependent.</p>
 <div class="section" id="output-options">
 <span id="id1"></span><h2>OUTPUT OPTIONS<a class="headerlink" href="#output-options" title="Permalink to this headline">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption-q">
-<span id="cmdoption--quiet"></span><code class="descname">-q</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--quiet</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-q" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-q">
+<code class="sig-name descname">-q</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--quiet</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-q" title="Permalink to this definition">¶</a></dt>
 <dd><p>Suppress any output except for test failures.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-s">
-<span id="cmdoption--succinct"></span><code class="descname">-s</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--succinct</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Show less output, for example don&#8217;t show information on tests that pass.</p>
+<dt id="cmdoption-lit-s">
+<code class="sig-name descname">-s</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--succinct</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show less output, for example don’t show information on tests that pass.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-v">
-<span id="cmdoption--verbose"></span><code class="descname">-v</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--verbose</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-v" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-v">
+<code class="sig-name descname">-v</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--verbose</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-v" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show more information on test failures, for example the entire test output
 instead of just the test result.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--no-progress-bar">
-<code class="descname">--no-progress-bar</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--no-progress-bar" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-vv">
+<code class="sig-name descname">-vv</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--echo-all-commands</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-vv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Echo all commands to stdout, as they are being executed.
+This can be valuable for debugging test failures, as the last echoed command
+will be the one which has failed.
+<strong class="program">lit</strong> normally inserts a no-op command (<code class="docutils literal notranslate"><span class="pre">:</span></code> in the case of bash)
+with argument <code class="docutils literal notranslate"><span class="pre">'RUN:</span> <span class="pre">at</span> <span class="pre">line</span> <span class="pre">N'</span></code> before each command pipeline, and this
+option also causes those no-op commands to be echoed to stdout to help you
+locate the source line of the failed command.
+This option implies <code class="docutils literal notranslate"><span class="pre">--verbose</span></code>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-lit-a">
+<code class="sig-name descname">-a</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--show-all</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show more information about all tests, for example the entire test
+commandline and output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-lit-no-progress-bar">
+<code class="sig-name descname">--no-progress-bar</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-no-progress-bar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Do not use curses based progress bar.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--show-unsupported">
-<code class="descname">--show-unsupported</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--show-unsupported" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-show-unsupported">
+<code class="sig-name descname">--show-unsupported</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-show-unsupported" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the names of unsupported tests.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--show-xfail">
-<code class="descname">--show-xfail</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--show-xfail" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-show-xfail">
+<code class="sig-name descname">--show-xfail</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-show-xfail" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the names of tests that were expected to fail.</p>
 </dd></dl>
 
@@ -171,87 +183,117 @@ instead of just the test result.</p>
 <div class="section" id="execution-options">
 <span id="id2"></span><h2>EXECUTION OPTIONS<a class="headerlink" href="#execution-options" title="Permalink to this headline">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption--path">
-<code class="descname">--path</code><code class="descclassname">=PATH</code><a class="headerlink" href="#cmdoption--path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Specify an additional <code class="docutils literal"><span class="pre">PATH</span></code> to use when searching for executables in tests.</p>
+<dt id="cmdoption-lit-path">
+<code class="sig-name descname">--path</code><code class="sig-prename descclassname">=PATH</code><a class="headerlink" href="#cmdoption-lit-path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify an additional <code class="docutils literal notranslate"><span class="pre">PATH</span></code> to use when searching for executables in tests.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--vg">
-<code class="descname">--vg</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--vg" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-vg">
+<code class="sig-name descname">--vg</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-vg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run individual tests under valgrind (using the memcheck tool).  The
-<code class="docutils literal"><span class="pre">--error-exitcode</span></code> argument for valgrind is used so that valgrind failures
+<code class="docutils literal notranslate"><span class="pre">--error-exitcode</span></code> argument for valgrind is used so that valgrind failures
 will cause the program to exit with a non-zero status.</p>
 <p>When this option is enabled, <strong class="program">lit</strong> will also automatically provide a
-&#8220;<code class="docutils literal"><span class="pre">valgrind</span></code>&#8221; feature that can be used to conditionally disable (or expect
+“<code class="docutils literal notranslate"><span class="pre">valgrind</span></code>” feature that can be used to conditionally disable (or expect
 failure in) certain tests.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--vg-arg">
-<code class="descname">--vg-arg</code><code class="descclassname">=ARG</code><a class="headerlink" href="#cmdoption--vg-arg" title="Permalink to this definition">¶</a></dt>
-<dd><p>When <a class="reference internal" href="#cmdoption--vg"><code class="xref std std-option docutils literal"><span class="pre">--vg</span></code></a> is used, specify an additional argument to pass to
+<dt id="cmdoption-lit-vg-arg">
+<code class="sig-name descname">--vg-arg</code><code class="sig-prename descclassname">=ARG</code><a class="headerlink" href="#cmdoption-lit-vg-arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>When <a class="reference internal" href="#cmdoption-lit-vg"><code class="xref std std-option docutils literal notranslate"><span class="pre">--vg</span></code></a> is used, specify an additional argument to pass to
 <strong class="program">valgrind</strong> itself.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--vg-leak">
-<code class="descname">--vg-leak</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--vg-leak" title="Permalink to this definition">¶</a></dt>
-<dd><p>When <a class="reference internal" href="#cmdoption--vg"><code class="xref std std-option docutils literal"><span class="pre">--vg</span></code></a> is used, enable memory leak checks.  When this option is
-enabled, <strong class="program">lit</strong> will also automatically provide a &#8220;<code class="docutils literal"><span class="pre">vg_leak</span></code>&#8221;
+<dt id="cmdoption-lit-vg-leak">
+<code class="sig-name descname">--vg-leak</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-vg-leak" title="Permalink to this definition">¶</a></dt>
+<dd><p>When <a class="reference internal" href="#cmdoption-lit-vg"><code class="xref std std-option docutils literal notranslate"><span class="pre">--vg</span></code></a> is used, enable memory leak checks.  When this option is
+enabled, <strong class="program">lit</strong> will also automatically provide a “<code class="docutils literal notranslate"><span class="pre">vg_leak</span></code>”
 feature that can be used to conditionally disable (or expect failure in)
 certain tests.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--time-tests">
-<code class="descname">--time-tests</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--time-tests" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-time-tests">
+<code class="sig-name descname">--time-tests</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-time-tests" title="Permalink to this definition">¶</a></dt>
 <dd><p>Track the wall time individual tests take to execute and includes the results
 in the summary output.  This is useful for determining which tests in a test
 suite take the most time to execute.  Note that this option is most useful
-with <code class="docutils literal"><span class="pre">-j</span> <span class="pre">1</span></code>.</p>
+with <code class="docutils literal notranslate"><span class="pre">-j</span> <span class="pre">1</span></code>.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="selection-options">
 <span id="id3"></span><h2>SELECTION OPTIONS<a class="headerlink" href="#selection-options" title="Permalink to this headline">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption--max-tests">
-<code class="descname">--max-tests</code><code class="descclassname">=N</code><a class="headerlink" href="#cmdoption--max-tests" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run at most <code class="docutils literal"><span class="pre">N</span></code> tests and then terminate.</p>
+<dt id="cmdoption-lit-max-tests">
+<code class="sig-name descname">--max-tests</code><code class="sig-prename descclassname">=N</code><a class="headerlink" href="#cmdoption-lit-max-tests" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run at most <code class="docutils literal notranslate"><span class="pre">N</span></code> tests and then terminate.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--max-time">
-<code class="descname">--max-time</code><code class="descclassname">=N</code><a class="headerlink" href="#cmdoption--max-time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Spend at most <code class="docutils literal"><span class="pre">N</span></code> seconds (approximately) running tests and then terminate.</p>
+<dt id="cmdoption-lit-max-time">
+<code class="sig-name descname">--max-time</code><code class="sig-prename descclassname">=N</code><a class="headerlink" href="#cmdoption-lit-max-time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spend at most <code class="docutils literal notranslate"><span class="pre">N</span></code> seconds (approximately) running tests and then terminate.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--shuffle">
-<code class="descname">--shuffle</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--shuffle" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-shuffle">
+<code class="sig-name descname">--shuffle</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-shuffle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the tests in a random order.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-lit-num-shards">
+<code class="sig-name descname">--num-shards</code><code class="sig-prename descclassname">=M</code><a class="headerlink" href="#cmdoption-lit-num-shards" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide the set of selected tests into <code class="docutils literal notranslate"><span class="pre">M</span></code> equal-sized subsets or
+“shards”, and run only one of them.  Must be used with the
+<code class="docutils literal notranslate"><span class="pre">--run-shard=N</span></code> option, which selects the shard to run. The environment
+variable <code class="docutils literal notranslate"><span class="pre">LIT_NUM_SHARDS</span></code> can also be used in place of this
+option. These two options provide a coarse mechanism for paritioning large
+testsuites, for parallel execution on separate machines (say in a large
+testing farm).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-lit-run-shard">
+<code class="sig-name descname">--run-shard</code><code class="sig-prename descclassname">=N</code><a class="headerlink" href="#cmdoption-lit-run-shard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select which shard to run, assuming the <code class="docutils literal notranslate"><span class="pre">--num-shards=M</span></code> option was
+provided. The two options must be used together, and the value of <code class="docutils literal notranslate"><span class="pre">N</span></code>
+must be in the range <code class="docutils literal notranslate"><span class="pre">1..M</span></code>. The environment variable
+<code class="docutils literal notranslate"><span class="pre">LIT_RUN_SHARD</span></code> can also be used in place of this option.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-lit-filter">
+<code class="sig-name descname">--filter</code><code class="sig-prename descclassname">=REGEXP</code><a class="headerlink" href="#cmdoption-lit-filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run only those tests whose name matches the regular expression specified in
+<code class="docutils literal notranslate"><span class="pre">REGEXP</span></code>. The environment variable <code class="docutils literal notranslate"><span class="pre">LIT_FILTER</span></code> can be also used in place
+of this option, which is especially useful in environments where the call
+to <code class="docutils literal notranslate"><span class="pre">lit</span></code> is issued indirectly.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="additional-options">
 <h2>ADDITIONAL OPTIONS<a class="headerlink" href="#additional-options" title="Permalink to this headline">¶</a></h2>
 <dl class="option">
-<dt id="cmdoption--debug">
-<code class="descname">--debug</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--debug" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-debug">
+<code class="sig-name descname">--debug</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-debug" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run <strong class="program">lit</strong> in debug mode, for debugging configuration issues and
 <strong class="program">lit</strong> itself.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--show-suites">
-<code class="descname">--show-suites</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--show-suites" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-show-suites">
+<code class="sig-name descname">--show-suites</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-show-suites" title="Permalink to this definition">¶</a></dt>
 <dd><p>List the discovered test suites and exit.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption--show-tests">
-<code class="descname">--show-tests</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption--show-tests" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-lit-show-tests">
+<code class="sig-name descname">--show-tests</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-lit-show-tests" title="Permalink to this definition">¶</a></dt>
 <dd><p>List all of the discovered tests and exit.</p>
 </dd></dl>
 
@@ -271,8 +313,8 @@ first thing it does is convert the inputs into a complete list of tests to run
 as part of <em>test discovery</em>.</p>
 <p>In the <strong class="program">lit</strong> model, every test must exist inside some <em>test suite</em>.
 <strong class="program">lit</strong> resolves the inputs specified on the command line to test suites
-by searching upwards from the input path until it finds a <code class="file docutils literal"><span class="pre">lit.cfg</span></code> or
-<code class="file docutils literal"><span class="pre">lit.site.cfg</span></code> file.  These files serve as both a marker of test suites
+by searching upwards from the input path until it finds a <code class="file docutils literal notranslate"><span class="pre">lit.cfg</span></code> or
+<code class="file docutils literal notranslate"><span class="pre">lit.site.cfg</span></code> file.  These files serve as both a marker of test suites
 and as configuration files which <strong class="program">lit</strong> loads in order to understand
 how to find and run the tests inside the test suite.</p>
 <p>Once <strong class="program">lit</strong> has mapped the inputs into test suites it traverses the
@@ -290,30 +332,36 @@ convenient and flexible support for out-of-tree builds.</p>
 <p>Each test ultimately produces one of the following six results:</p>
 <p><strong>PASS</strong></p>
 <blockquote>
-<div>The test succeeded.</div></blockquote>
+<div><p>The test succeeded.</p>
+</div></blockquote>
 <p><strong>XFAIL</strong></p>
 <blockquote>
-<div>The test failed, but that is expected.  This is used for test formats which allow
+<div><p>The test failed, but that is expected.  This is used for test formats which allow
 specifying that a test does not currently work, but wish to leave it in the test
-suite.</div></blockquote>
+suite.</p>
+</div></blockquote>
 <p><strong>XPASS</strong></p>
 <blockquote>
-<div>The test succeeded, but it was expected to fail.  This is used for tests which
+<div><p>The test succeeded, but it was expected to fail.  This is used for tests which
 were specified as expected to fail, but are now succeeding (generally because
-the feature they test was broken and has been fixed).</div></blockquote>
+the feature they test was broken and has been fixed).</p>
+</div></blockquote>
 <p><strong>FAIL</strong></p>
 <blockquote>
-<div>The test failed.</div></blockquote>
+<div><p>The test failed.</p>
+</div></blockquote>
 <p><strong>UNRESOLVED</strong></p>
 <blockquote>
-<div>The test result could not be determined.  For example, this occurs when the test
-could not be run, the test itself is invalid, or the test was interrupted.</div></blockquote>
+<div><p>The test result could not be determined.  For example, this occurs when the test
+could not be run, the test itself is invalid, or the test was interrupted.</p>
+</div></blockquote>
 <p><strong>UNSUPPORTED</strong></p>
 <blockquote>
-<div>The test is not supported in this environment.  This is used by test formats
-which can report unsupported tests.</div></blockquote>
+<div><p>The test is not supported in this environment.  This is used by test formats
+which can report unsupported tests.</p>
+</div></blockquote>
 <p>Depending on the test format tests may produce additional information about
-their status (generally only for failures).  See the <a class="reference internal" href="#output-options"><span>OUTPUT OPTIONS</span></a>
+their status (generally only for failures).  See the <a class="reference internal" href="#output-options"><span class="std std-ref">OUTPUT OPTIONS</span></a>
 section for more information.</p>
 </div>
 <div class="section" id="lit-infrastructure">
@@ -322,26 +370,27 @@ section for more information.</p>
 creating a new <strong class="program">lit</strong> testing implementation, or extending an existing one.</p>
 <p><strong class="program">lit</strong> proper is primarily an infrastructure for discovering and running
 arbitrary tests, and to expose a single convenient interface to these
-tests. <strong class="program">lit</strong> itself doesn&#8217;t know how to run tests, rather this logic is
+tests. <strong class="program">lit</strong> itself doesn’t know how to run tests, rather this logic is
 defined by <em>test suites</em>.</p>
 <div class="section" id="test-suites">
 <h3>TEST SUITES<a class="headerlink" href="#test-suites" title="Permalink to this headline">¶</a></h3>
-<p>As described in <a class="reference internal" href="#test-discovery"><span>TEST DISCOVERY</span></a>, tests are always located inside a <em>test
+<p>As described in <a class="reference internal" href="#test-discovery"><span class="std std-ref">TEST DISCOVERY</span></a>, tests are always located inside a <em>test
 suite</em>.  Test suites serve to define the format of the tests they contain, the
 logic for finding those tests, and any additional information to run the tests.</p>
-<p><strong class="program">lit</strong> identifies test suites as directories containing <code class="docutils literal"><span class="pre">lit.cfg</span></code> or
-<code class="docutils literal"><span class="pre">lit.site.cfg</span></code> files (see also <a class="reference internal" href="#cmdoption--config-prefix"><code class="xref std std-option docutils literal"><span class="pre">--config-prefix</span></code></a>).  Test suites are
+<p><strong class="program">lit</strong> identifies test suites as directories containing <code class="docutils literal notranslate"><span class="pre">lit.cfg</span></code> or
+<code class="docutils literal notranslate"><span class="pre">lit.site.cfg</span></code> files (see also <a class="reference internal" href="#cmdoption-lit-config-prefix"><code class="xref std std-option docutils literal notranslate"><span class="pre">--config-prefix</span></code></a>).  Test suites are
 initially discovered by recursively searching up the directory hierarchy for
 all the input files passed on the command line.  You can use
-<a class="reference internal" href="#cmdoption--show-suites"><code class="xref std std-option docutils literal"><span class="pre">--show-suites</span></code></a> to display the discovered test suites at startup.</p>
+<a class="reference internal" href="#cmdoption-lit-show-suites"><code class="xref std std-option docutils literal notranslate"><span class="pre">--show-suites</span></code></a> to display the discovered test suites at startup.</p>
 <p>Once a test suite is discovered, its config file is loaded.  Config files
 themselves are Python modules which will be executed.  When the config file is
 executed, two important global variables are predefined:</p>
 <p><strong>lit_config</strong></p>
 <blockquote>
-<div>The global <strong>lit</strong> configuration object (a <em>LitConfig</em> instance), which defines
+<div><p>The global <strong>lit</strong> configuration object (a <em>LitConfig</em> instance), which defines
 the builtin test formats, global configuration parameters, and other helper
-routines for implementing test configurations.</div></blockquote>
+routines for implementing test configurations.</p>
+</div></blockquote>
 <p><strong>config</strong></p>
 <blockquote>
 <div><p>This is the config object (a <em>TestingConfig</em> instance) for the test suite,
@@ -373,6 +422,8 @@ the project.</p>
 <p><strong>pipefail</strong> Normally a test using a shell pipe fails if any of the commands
 on the pipe fail. If this is not desired, setting this variable to false
 makes the test fail only if the last command in the pipe fails.</p>
+<p><strong>available_features</strong> A set of features that can be used in <cite>XFAIL</cite>,
+<cite>REQUIRES</cite>, and <cite>UNSUPPORTED</cite> directives.</p>
 </div></blockquote>
 </div>
 <div class="section" id="id7">
@@ -382,24 +433,70 @@ directory (following <em>test_source_root</em>) looking for tests.  When <strong
 enters a sub-directory, it first checks to see if a nested test suite is
 defined in that directory.  If so, it loads that test suite recursively,
 otherwise it instantiates a local test config for the directory (see
-<a class="reference internal" href="#local-configuration-files"><span>LOCAL CONFIGURATION FILES</span></a>).</p>
+<a class="reference internal" href="#local-configuration-files"><span class="std std-ref">LOCAL CONFIGURATION FILES</span></a>).</p>
 <p>Tests are identified by the test suite they are contained within, and the
 relative path inside that suite.  Note that the relative path may not refer to
 an actual file on disk; some test formats (such as <em>GoogleTest</em>) define
-&#8220;virtual tests&#8221; which have a path that contains both the path to the actual
+“virtual tests” which have a path that contains both the path to the actual
 test file and a subpath to identify the virtual test.</p>
 </div>
 <div class="section" id="local-configuration-files">
 <span id="id8"></span><h3>LOCAL CONFIGURATION FILES<a class="headerlink" href="#local-configuration-files" title="Permalink to this headline">¶</a></h3>
 <p>When <strong class="program">lit</strong> loads a subdirectory in a test suite, it instantiates a
 local test configuration by cloning the configuration for the parent directory
-&#8212; the root of this configuration chain will always be a test suite.  Once the
+— the root of this configuration chain will always be a test suite.  Once the
 test configuration is cloned <strong class="program">lit</strong> checks for a <em>lit.local.cfg</em> file
 in the subdirectory.  If present, this file will be loaded and can be used to
 specialize the configuration for each individual directory.  This facility can
 be used to define subdirectories of optional tests, or to change other
-configuration parameters &#8212; for example, to change the test format, or the
+configuration parameters — for example, to change the test format, or the
 suffixes which identify test files.</p>
+</div>
+<div class="section" id="pre-defined-substitutions">
+<h3>PRE-DEFINED SUBSTITUTIONS<a class="headerlink" href="#pre-defined-substitutions" title="Permalink to this headline">¶</a></h3>
+<p><strong class="program">lit</strong> provides various patterns that can be used with the RUN command.
+These are defined in TestRunner.py. The base set of substitutions are:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 86%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Macro</p></th>
+<th class="head"><p>Substitution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>%s</p></td>
+<td><p>source path (path to the file currently being run)</p></td>
+</tr>
+<tr class="row-odd"><td><p>%S</p></td>
+<td><p>source dir (directory of the file currently being run)</p></td>
+</tr>
+<tr class="row-even"><td><p>%p</p></td>
+<td><p>same as %S</p></td>
+</tr>
+<tr class="row-odd"><td><p>%{pathsep}</p></td>
+<td><p>path separator</p></td>
+</tr>
+<tr class="row-even"><td><p>%t</p></td>
+<td><p>temporary file name unique to the test</p></td>
+</tr>
+<tr class="row-odd"><td><p>%T</p></td>
+<td><p>parent directory of %t (not unique, deprecated, do not use)</p></td>
+</tr>
+<tr class="row-even"><td><p>%%</p></td>
+<td><p>%</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Other substitutions are provided that are variations on this base set and
+further substitution patterns can be defined by each test module. See the
+modules <a class="reference internal" href="#local-configuration-files"><span class="std std-ref">LOCAL CONFIGURATION FILES</span></a>.</p>
+<p>More detailed information on substitutions can be found in the
+<a class="reference internal" href="../TestingGuide.html"><span class="doc">LLVM Testing Infrastructure Guide</span></a>.</p>
 </div>
 <div class="section" id="test-run-output-format">
 <h3>TEST RUN OUTPUT FORMAT<a class="headerlink" href="#test-run-output-format" title="Permalink to this headline">¶</a></h3>
@@ -409,30 +506,30 @@ shown).  This schema has been chosen to be relatively easy to reliably parse by
 a machine (for example in buildbot log scraping), and for other tools to
 generate.</p>
 <p>Each test result is expected to appear on a line that matches:</p>
-<div class="highlight-none"><div class="highlight"><pre>&lt;result code&gt;: &lt;test name&gt; (&lt;progress info&gt;)
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;result code&gt;: &lt;test name&gt; (&lt;progress info&gt;)
 </pre></div>
 </div>
-<p>where <code class="docutils literal"><span class="pre">&lt;result-code&gt;</span></code> is a standard test result such as PASS, FAIL, XFAIL,
+<p>where <code class="docutils literal notranslate"><span class="pre">&lt;result-code&gt;</span></code> is a standard test result such as PASS, FAIL, XFAIL,
 XPASS, UNRESOLVED, or UNSUPPORTED.  The performance result codes of IMPROVED and
 REGRESSED are also allowed.</p>
-<p>The <code class="docutils literal"><span class="pre">&lt;test</span> <span class="pre">name&gt;</span></code> field can consist of an arbitrary string containing no
+<p>The <code class="docutils literal notranslate"><span class="pre">&lt;test</span> <span class="pre">name&gt;</span></code> field can consist of an arbitrary string containing no
 newline.</p>
-<p>The <code class="docutils literal"><span class="pre">&lt;progress</span> <span class="pre">info&gt;</span></code> field can be used to report progress information such
+<p>The <code class="docutils literal notranslate"><span class="pre">&lt;progress</span> <span class="pre">info&gt;</span></code> field can be used to report progress information such
 as (1/300) or can be empty, but even when empty the parentheses are required.</p>
 <p>Each test result may include additional (multiline) log information in the
 following format:</p>
-<div class="highlight-none"><div class="highlight"><pre>&lt;log delineator&gt; TEST &#39;(&lt;test name&gt;)&#39; &lt;trailing delineator&gt;
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;log delineator&gt; TEST &#39;(&lt;test name&gt;)&#39; &lt;trailing delineator&gt;
 ... log message ...
 &lt;log delineator&gt;
 </pre></div>
 </div>
-<p>where <code class="docutils literal"><span class="pre">&lt;test</span> <span class="pre">name&gt;</span></code> should be the name of a preceding reported test, <code class="docutils literal"><span class="pre">&lt;log</span>
-<span class="pre">delineator&gt;</span></code> is a string of &#8220;*&#8221; characters <em>at least</em> four characters long
-(the recommended length is 20), and <code class="docutils literal"><span class="pre">&lt;trailing</span> <span class="pre">delineator&gt;</span></code> is an arbitrary
+<p>where <code class="docutils literal notranslate"><span class="pre">&lt;test</span> <span class="pre">name&gt;</span></code> should be the name of a preceding reported test, <code class="docutils literal notranslate"><span class="pre">&lt;log</span>
+<span class="pre">delineator&gt;</span></code> is a string of “*” characters <em>at least</em> four characters long
+(the recommended length is 20), and <code class="docutils literal notranslate"><span class="pre">&lt;trailing</span> <span class="pre">delineator&gt;</span></code> is an arbitrary
 (unparsed) string.</p>
 <p>The following is an example of a test run output which consists of four tests A,
 B, C, and D, and a log message for the failing test C:</p>
-<div class="highlight-none"><div class="highlight"><pre>PASS: A (1 of 4)
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PASS: A (1 of 4)
 PASS: B (2 of 4)
 FAIL: C (3 of 4)
 ******************** TEST &#39;C&#39; FAILED ********************
@@ -474,13 +571,13 @@ test suites in the <em>ExampleTests</em> directory.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

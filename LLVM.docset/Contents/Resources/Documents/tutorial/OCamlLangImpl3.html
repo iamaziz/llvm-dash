@@ -1,31 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>3. Kaleidoscope: Code generation to LLVM IR &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>3. Kaleidoscope: Code generation to LLVM IR &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="4. Kaleidoscope: Adding JIT and Optimizer Support" href="OCamlLangImpl4.html" />
     <link rel="prev" title="2. Kaleidoscope: Implementing a Parser and AST" href="OCamlLangImpl2.html" />
 <style type="text/css">
@@ -33,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +44,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
 
@@ -66,54 +54,54 @@
           <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-code-generation-to-llvm-ir">
-<h1>3. Kaleidoscope: Code generation to LLVM IR<a class="headerlink" href="#kaleidoscope-code-generation-to-llvm-ir" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">3. </span>Kaleidoscope: Code generation to LLVM IR<a class="headerlink" href="#kaleidoscope-code-generation-to-llvm-ir" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#chapter-3-introduction" id="id1">Chapter 3 Introduction</a></li>
-<li><a class="reference internal" href="#code-generation-setup" id="id2">Code Generation Setup</a></li>
-<li><a class="reference internal" href="#expression-code-generation" id="id3">Expression Code Generation</a></li>
-<li><a class="reference internal" href="#function-code-generation" id="id4">Function Code Generation</a></li>
-<li><a class="reference internal" href="#driver-changes-and-closing-thoughts" id="id5">Driver Changes and Closing Thoughts</a></li>
-<li><a class="reference internal" href="#full-code-listing" id="id6">Full Code Listing</a></li>
+<li><p><a class="reference internal" href="#chapter-3-introduction" id="id1">Chapter 3 Introduction</a></p></li>
+<li><p><a class="reference internal" href="#code-generation-setup" id="id2">Code Generation Setup</a></p></li>
+<li><p><a class="reference internal" href="#expression-code-generation" id="id3">Expression Code Generation</a></p></li>
+<li><p><a class="reference internal" href="#function-code-generation" id="id4">Function Code Generation</a></p></li>
+<li><p><a class="reference internal" href="#driver-changes-and-closing-thoughts" id="id5">Driver Changes and Closing Thoughts</a></p></li>
+<li><p><a class="reference internal" href="#full-code-listing" id="id6">Full Code Listing</a></p></li>
 </ul>
 </div>
 <div class="section" id="chapter-3-introduction">
-<h2><a class="toc-backref" href="#id1">3.1. Chapter 3 Introduction</a><a class="headerlink" href="#chapter-3-introduction" title="Permalink to this headline">¶</a></h2>
-<p>Welcome to Chapter 3 of the &#8220;<a class="reference external" href="index.html">Implementing a language with
-LLVM</a>&#8221; tutorial. This chapter shows you how to transform
+<h2><a class="toc-backref" href="#id1"><span class="section-number">3.1. </span>Chapter 3 Introduction</a><a class="headerlink" href="#chapter-3-introduction" title="Permalink to this headline">¶</a></h2>
+<p>Welcome to Chapter 3 of the “<a class="reference external" href="index.html">Implementing a language with
+LLVM</a>” tutorial. This chapter shows you how to transform
 the <a class="reference external" href="OCamlLangImpl2.html">Abstract Syntax Tree</a>, built in Chapter 2,
 into LLVM IR. This will teach you a little bit about how LLVM does
-things, as well as demonstrate how easy it is to use. It&#8217;s much more
+things, as well as demonstrate how easy it is to use. It’s much more
 work to build a lexer and parser than it is to generate LLVM IR code. :)</p>
 <p><strong>Please note</strong>: the code in this chapter and later require LLVM 2.3 or
 LLVM SVN to work. LLVM 2.2 and before will not work with it.</p>
 </div>
 <div class="section" id="code-generation-setup">
-<h2><a class="toc-backref" href="#id2">3.2. Code Generation Setup</a><a class="headerlink" href="#code-generation-setup" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2"><span class="section-number">3.2. </span>Code Generation Setup</a><a class="headerlink" href="#code-generation-setup" title="Permalink to this headline">¶</a></h2>
 <p>In order to generate LLVM IR, we want some simple setup to get started.
 First we define virtual code generation (codegen) methods in each AST
 class:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
   <span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Number</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="o">...</span>
   <span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Variable</span> <span class="n">name</span> <span class="o">-&gt;</span> <span class="o">...</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">Codegen.codegen_expr</span></code> function says to emit IR for that AST node
+<p>The <code class="docutils literal notranslate"><span class="pre">Codegen.codegen_expr</span></code> function says to emit IR for that AST node
 along with all the things it depends on, and they all return an LLVM
-Value object. &#8220;Value&#8221; is the class used to represent a &#8220;<a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">Static Single
+Value object. “Value” is the class used to represent a “<a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">Static Single
 Assignment
 (SSA)</a>
-register&#8221; or &#8220;SSA value&#8221; in LLVM. The most distinct aspect of SSA values
+register” or “SSA value” in LLVM. The most distinct aspect of SSA values
 is that their value is computed as the related instruction executes, and
 it does not get a new value until (and if) the instruction re-executes.
-In other words, there is no way to &#8220;change&#8221; an SSA value. For more
+In other words, there is no way to “change” an SSA value. For more
 information, please read up on <a class="reference external" href="http://en.wikipedia.org/wiki/Static_single_assignment_form">Static Single
 Assignment</a>
 - the concepts are really quite natural once you grok them.</p>
-<p>The second thing we want is an &#8220;Error&#8221; exception like we used for the
+<p>The second thing we want is an “Error” exception like we used for the
 parser, which will be used to report errors found during code generation
 (for example, use of an undeclared parameter):</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">exception</span> <span class="nc">Error</span> <span class="k">of</span> <span class="kt">string</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">exception</span> <span class="nc">Error</span> <span class="k">of</span> <span class="kt">string</span>
 
 <span class="k">let</span> <span class="n">context</span> <span class="o">=</span> <span class="n">global_context</span> <span class="bp">()</span>
 <span class="k">let</span> <span class="n">the_module</span> <span class="o">=</span> <span class="n">create_module</span> <span class="n">context</span> <span class="s2">&quot;my cool jit&quot;</span>
@@ -123,15 +111,15 @@ parser, which will be used to report errors found during code generation
 </pre></div>
 </div>
 <p>The static variables will be used during code generation.
-<code class="docutils literal"><span class="pre">Codgen.the_module</span></code> is the LLVM construct that contains all of the
+<code class="docutils literal notranslate"><span class="pre">Codgen.the_module</span></code> is the LLVM construct that contains all of the
 functions and global variables in a chunk of code. In many ways, it is
 the top-level structure that the LLVM IR uses to contain code.</p>
-<p>The <code class="docutils literal"><span class="pre">Codegen.builder</span></code> object is a helper object that makes it easy to
+<p>The <code class="docutils literal notranslate"><span class="pre">Codegen.builder</span></code> object is a helper object that makes it easy to
 generate LLVM instructions. Instances of the
 <a class="reference external" href="http://llvm.org/doxygen/IRBuilder_8h-source.html">IRBuilder</a>
 class keep track of the current place to insert instructions and has
 methods to create new instructions.</p>
-<p>The <code class="docutils literal"><span class="pre">Codegen.named_values</span></code> map keeps track of which values are defined
+<p>The <code class="docutils literal notranslate"><span class="pre">Codegen.named_values</span></code> map keeps track of which values are defined
 in the current scope and what their LLVM representation is. (In other
 words, it is a symbol table for the code). In this form of Kaleidoscope,
 the only things that can be referenced are function parameters. As such,
@@ -139,26 +127,26 @@ function parameters will be in this map when generating code for their
 function body.</p>
 <p>With these basics in place, we can start talking about how to generate
 code for each expression. Note that this assumes that the
-<code class="docutils literal"><span class="pre">Codgen.builder</span></code> has been set up to generate code <em>into</em> something.
-For now, we&#8217;ll assume that this has already been done, and we&#8217;ll just
+<code class="docutils literal notranslate"><span class="pre">Codgen.builder</span></code> has been set up to generate code <em>into</em> something.
+For now, we’ll assume that this has already been done, and we’ll just
 use it to emit code.</p>
 </div>
 <div class="section" id="expression-code-generation">
-<h2><a class="toc-backref" href="#id3">3.3. Expression Code Generation</a><a class="headerlink" href="#expression-code-generation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3"><span class="section-number">3.3. </span>Expression Code Generation</a><a class="headerlink" href="#expression-code-generation" title="Permalink to this headline">¶</a></h2>
 <p>Generating LLVM code for expression nodes is very straightforward: less
 than 30 lines of commented code for all four of our expression nodes.
-First we&#8217;ll do numeric literals:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Number</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">const_float</span> <span class="n">double_type</span> <span class="n">n</span>
+First we’ll do numeric literals:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Number</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">const_float</span> <span class="n">double_type</span> <span class="n">n</span>
 </pre></div>
 </div>
 <p>In the LLVM IR, numeric constants are represented with the
-<code class="docutils literal"><span class="pre">ConstantFP</span></code> class, which holds the numeric value in an <code class="docutils literal"><span class="pre">APFloat</span></code>
-internally (<code class="docutils literal"><span class="pre">APFloat</span></code> has the capability of holding floating point
+<code class="docutils literal notranslate"><span class="pre">ConstantFP</span></code> class, which holds the numeric value in an <code class="docutils literal notranslate"><span class="pre">APFloat</span></code>
+internally (<code class="docutils literal notranslate"><span class="pre">APFloat</span></code> has the capability of holding floating point
 constants of Arbitrary Precision). This code basically just creates
-and returns a <code class="docutils literal"><span class="pre">ConstantFP</span></code>. Note that in the LLVM IR that constants
-are all uniqued together and shared. For this reason, the API uses &#8220;the
-foo::get(..)&#8221; idiom instead of &#8220;new foo(..)&#8221; or &#8220;foo::Create(..)&#8221;.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Variable</span> <span class="n">name</span> <span class="o">-&gt;</span>
+and returns a <code class="docutils literal notranslate"><span class="pre">ConstantFP</span></code>. Note that in the LLVM IR that constants
+are all uniqued together and shared. For this reason, the API uses “the
+foo::get(..)” idiom instead of “new foo(..)” or “foo::Create(..)”.</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Variable</span> <span class="n">name</span> <span class="o">-&gt;</span>
     <span class="o">(</span><span class="k">try</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">find</span> <span class="n">named_values</span> <span class="n">name</span> <span class="k">with</span>
       <span class="o">|</span> <span class="nc">Not_found</span> <span class="o">-&gt;</span> <span class="k">raise</span> <span class="o">(</span><span class="nc">Error</span> <span class="s2">&quot;unknown variable name&quot;</span><span class="o">))</span>
 </pre></div>
@@ -166,13 +154,13 @@ foo::get(..)&#8221; idiom instead of &#8220;new foo(..)&#8221; or &#8220;foo::Cr
 <p>References to variables are also quite simple using LLVM. In the simple
 version of Kaleidoscope, we assume that the variable has already been
 emitted somewhere and its value is available. In practice, the only
-values that can be in the <code class="docutils literal"><span class="pre">Codegen.named_values</span></code> map are function
+values that can be in the <code class="docutils literal notranslate"><span class="pre">Codegen.named_values</span></code> map are function
 arguments. This code simply checks to see that the specified name is in
 the map (if not, an unknown variable is being referenced) and returns
-the value for it. In future chapters, we&#8217;ll add support for <a class="reference external" href="LangImpl5.html#for">loop
+the value for it. In future chapters, we’ll add support for <a class="reference external" href="LangImpl5.html#for-loop-expression">loop
 induction variables</a> in the symbol table, and for
-<a class="reference external" href="LangImpl7.html#localvars">local variables</a>.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Binary</span> <span class="o">(</span><span class="n">op</span><span class="o">,</span> <span class="n">lhs</span><span class="o">,</span> <span class="n">rhs</span><span class="o">)</span> <span class="o">-&gt;</span>
+<a class="reference external" href="LangImpl7.html#user-defined-local-variables">local variables</a>.</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Binary</span> <span class="o">(</span><span class="n">op</span><span class="o">,</span> <span class="n">lhs</span><span class="o">,</span> <span class="n">rhs</span><span class="o">)</span> <span class="o">-&gt;</span>
     <span class="k">let</span> <span class="n">lhs_val</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">lhs</span> <span class="k">in</span>
     <span class="k">let</span> <span class="n">rhs_val</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">rhs</span> <span class="k">in</span>
     <span class="k">begin</span>
@@ -196,30 +184,30 @@ the right LLVM instruction.</p>
 <p>In the example above, the LLVM builder class is starting to show its
 value. IRBuilder knows where to insert the newly created instruction,
 all you have to do is specify what instruction to create (e.g. with
-<code class="docutils literal"><span class="pre">Llvm.create_add</span></code>), which operands to use (<code class="docutils literal"><span class="pre">lhs</span></code> and <code class="docutils literal"><span class="pre">rhs</span></code> here)
+<code class="docutils literal notranslate"><span class="pre">Llvm.create_add</span></code>), which operands to use (<code class="docutils literal notranslate"><span class="pre">lhs</span></code> and <code class="docutils literal notranslate"><span class="pre">rhs</span></code> here)
 and optionally provide a name for the generated instruction.</p>
 <p>One nice thing about LLVM is that the name is just a hint. For instance,
-if the code above emits multiple &#8220;addtmp&#8221; variables, LLVM will
+if the code above emits multiple “addtmp” variables, LLVM will
 automatically provide each one with an increasing, unique numeric
 suffix. Local value names for instructions are purely optional, but it
 makes it much easier to read the IR dumps.</p>
-<p><a class="reference external" href="../LangRef.html#instref">LLVM instructions</a> are constrained by strict
-rules: for example, the Left and Right operators of an <a class="reference external" href="../LangRef.html#i_add">add
+<p><a class="reference external" href="../LangRef.html#instruction-reference">LLVM instructions</a> are constrained by strict
+rules: for example, the Left and Right operators of an <a class="reference external" href="../LangRef.html#add-instruction">add
 instruction</a> must have the same type, and the
 result type of the add must match the operand types. Because all values
 in Kaleidoscope are doubles, this makes for very simple code for add,
 sub and mul.</p>
-<p>On the other hand, LLVM specifies that the <a class="reference external" href="../LangRef.html#i_fcmp">fcmp
-instruction</a> always returns an &#8216;i1&#8217; value (a
+<p>On the other hand, LLVM specifies that the <a class="reference external" href="../LangRef.html#fcmp-instruction">fcmp
+instruction</a> always returns an ‘i1’ value (a
 one bit integer). The problem with this is that Kaleidoscope wants the
 value to be a 0.0 or 1.0 value. In order to get these semantics, we
-combine the fcmp instruction with a <a class="reference external" href="../LangRef.html#i_uitofp">uitofp
+combine the fcmp instruction with a <a class="reference external" href="../LangRef.html#uitofp-to-instruction">uitofp
 instruction</a>. This instruction converts its
 input integer into a floating point value by treating the input as an
-unsigned value. In contrast, if we used the <a class="reference external" href="../LangRef.html#i_sitofp">sitofp
-instruction</a>, the Kaleidoscope &#8216;&lt;&#8217; operator
+unsigned value. In contrast, if we used the <a class="reference external" href="../LangRef.html#sitofp-to-instruction">sitofp
+instruction</a>, the Kaleidoscope ‘&lt;’ operator
 would return 0.0 and -1.0, depending on the input value.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Call</span> <span class="o">(</span><span class="n">callee</span><span class="o">,</span> <span class="n">args</span><span class="o">)</span> <span class="o">-&gt;</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Call</span> <span class="o">(</span><span class="n">callee</span><span class="o">,</span> <span class="n">args</span><span class="o">)</span> <span class="o">-&gt;</span>
     <span class="c">(* Look up the name in the module table. *)</span>
     <span class="k">let</span> <span class="n">callee</span> <span class="o">=</span>
       <span class="k">match</span> <span class="n">lookup_function</span> <span class="n">callee</span> <span class="n">the_module</span> <span class="k">with</span>
@@ -237,31 +225,31 @@ would return 0.0 and -1.0, depending on the input value.</p>
 </div>
 <p>Code generation for function calls is quite straightforward with LLVM.
 The code above initially does a function name lookup in the LLVM
-Module&#8217;s symbol table. Recall that the LLVM Module is the container that
-holds all of the functions we are JIT&#8217;ing. By giving each function the
+Module’s symbol table. Recall that the LLVM Module is the container that
+holds all of the functions we are JIT’ing. By giving each function the
 same name as what the user specifies, we can use the LLVM symbol table
 to resolve function names for us.</p>
 <p>Once we have the function to call, we recursively codegen each argument
-that is to be passed in, and create an LLVM <a class="reference external" href="../LangRef.html#i_call">call
+that is to be passed in, and create an LLVM <a class="reference external" href="../LangRef.html#call-instruction">call
 instruction</a>. Note that LLVM uses the native C
 calling conventions by default, allowing these calls to also call into
-standard library functions like &#8220;sin&#8221; and &#8220;cos&#8221;, with no additional
+standard library functions like “sin” and “cos”, with no additional
 effort.</p>
 <p>This wraps up our handling of the four basic expressions that we have so
 far in Kaleidoscope. Feel free to go in and add some more. For example,
-by browsing the <a class="reference external" href="../LangRef.html">LLVM language reference</a> you&#8217;ll find
+by browsing the <a class="reference external" href="../LangRef.html">LLVM language reference</a> you’ll find
 several other interesting instructions that are really easy to plug into
 our basic framework.</p>
 </div>
 <div class="section" id="function-code-generation">
-<h2><a class="toc-backref" href="#id4">3.4. Function Code Generation</a><a class="headerlink" href="#function-code-generation" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4"><span class="section-number">3.4. </span>Function Code Generation</a><a class="headerlink" href="#function-code-generation" title="Permalink to this headline">¶</a></h2>
 <p>Code generation for prototypes and functions must handle a number of
 details, which make their code less beautiful than expression code
 generation, but allows us to illustrate some important points. First,
 lets talk about code generation for prototypes: they are used both for
 function bodies and external function declarations. The code starts
 with:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="n">codegen_proto</span> <span class="o">=</span> <span class="k">function</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">codegen_proto</span> <span class="o">=</span> <span class="k">function</span>
   <span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Prototype</span> <span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">args</span><span class="o">)</span> <span class="o">-&gt;</span>
       <span class="c">(* Make the function type: double(double,double) etc. *)</span>
       <span class="k">let</span> <span class="n">doubles</span> <span class="o">=</span> <span class="nn">Array</span><span class="p">.</span><span class="n">make</span> <span class="o">(</span><span class="nn">Array</span><span class="p">.</span><span class="n">length</span> <span class="n">args</span><span class="o">)</span> <span class="n">double_type</span> <span class="k">in</span>
@@ -271,40 +259,40 @@ with:</p>
 </pre></div>
 </div>
 <p>This code packs a lot of power into a few lines. Note first that this
-function returns a &#8220;Function*&#8221; instead of a &#8220;Value*&#8221; (although at the
-moment they both are modeled by <code class="docutils literal"><span class="pre">llvalue</span></code> in ocaml). Because a
-&#8220;prototype&#8221; really talks about the external interface for a function
+function returns a “Function*” instead of a “Value*” (although at the
+moment they both are modeled by <code class="docutils literal notranslate"><span class="pre">llvalue</span></code> in ocaml). Because a
+“prototype” really talks about the external interface for a function
 (not the value computed by an expression), it makes sense for it to
-return the LLVM Function it corresponds to when codegen&#8217;d.</p>
-<p>The call to <code class="docutils literal"><span class="pre">Llvm.function_type</span></code> creates the <code class="docutils literal"><span class="pre">Llvm.llvalue</span></code> that
+return the LLVM Function it corresponds to when codegen’d.</p>
+<p>The call to <code class="docutils literal notranslate"><span class="pre">Llvm.function_type</span></code> creates the <code class="docutils literal notranslate"><span class="pre">Llvm.llvalue</span></code> that
 should be used for a given Prototype. Since all function arguments in
-Kaleidoscope are of type double, the first line creates a vector of &#8220;N&#8221;
-LLVM double types. It then uses the <code class="docutils literal"><span class="pre">Llvm.function_type</span></code> method to
-create a function type that takes &#8220;N&#8221; doubles as arguments, returns one
+Kaleidoscope are of type double, the first line creates a vector of “N”
+LLVM double types. It then uses the <code class="docutils literal notranslate"><span class="pre">Llvm.function_type</span></code> method to
+create a function type that takes “N” doubles as arguments, returns one
 double as a result, and that is not vararg (that uses the function
-<code class="docutils literal"><span class="pre">Llvm.var_arg_function_type</span></code>). Note that Types in LLVM are uniqued
-just like <code class="docutils literal"><span class="pre">Constant</span></code>&#8216;s are, so you don&#8217;t &#8220;new&#8221; a type, you &#8220;get&#8221; it.</p>
+<code class="docutils literal notranslate"><span class="pre">Llvm.var_arg_function_type</span></code>). Note that Types in LLVM are uniqued
+just like <code class="docutils literal notranslate"><span class="pre">Constant</span></code>’s are, so you don’t “new” a type, you “get” it.</p>
 <p>The final line above checks if the function has already been defined in
-<code class="docutils literal"><span class="pre">Codegen.the_module</span></code>. If not, we will create it.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="n">declare_function</span> <span class="n">name</span> <span class="n">ft</span> <span class="n">the_module</span>
+<code class="docutils literal notranslate"><span class="pre">Codegen.the_module</span></code>. If not, we will create it.</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="n">declare_function</span> <span class="n">name</span> <span class="n">ft</span> <span class="n">the_module</span>
 </pre></div>
 </div>
 <p>This indicates the type and name to use, as well as which module to
 insert into. By default we assume a function has
-<code class="docutils literal"><span class="pre">Llvm.Linkage.ExternalLinkage</span></code>. &#8220;<a class="reference external" href="LangRef.html#linkage">external
-linkage</a>&#8221; means that the function may be defined
+<code class="docutils literal notranslate"><span class="pre">Llvm.Linkage.ExternalLinkage</span></code>. “<a class="reference external" href="../LangRef.html#linkage">external
+linkage</a>” means that the function may be defined
 outside the current module and/or that it is callable by functions
-outside the module. The &#8220;<code class="docutils literal"><span class="pre">name</span></code>&#8221; passed in is the name the user
-specified: this name is registered in &#8220;<code class="docutils literal"><span class="pre">Codegen.the_module</span></code>&#8220;s symbol
+outside the module. The “<code class="docutils literal notranslate"><span class="pre">name</span></code>” passed in is the name the user
+specified: this name is registered in “<code class="docutils literal notranslate"><span class="pre">Codegen.the_module</span></code>”s symbol
 table, which is used by the function call code above.</p>
 <p>In Kaleidoscope, I choose to allow redefinitions of functions in two
-cases: first, we want to allow &#8216;extern&#8217;ing a function more than once, as
+cases: first, we want to allow ‘extern’ing a function more than once, as
 long as the prototypes for the externs match (since all arguments have
 the same type, we just have to check that the number of arguments
-match). Second, we want to allow &#8216;extern&#8217;ing a function and then
+match). Second, we want to allow ‘extern’ing a function and then
 defining a body for it. This is useful when defining mutually recursive
 functions.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre>  <span class="c">(* If &#39;f&#39; conflicted, there was already something named &#39;name&#39;. If it</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span>  <span class="c">(* If &#39;f&#39; conflicted, there was already something named &#39;name&#39;. If it</span>
 <span class="c">   * has a body, don&#39;t allow redefinition or reextern. *)</span>
   <span class="o">|</span> <span class="nc">Some</span> <span class="n">f</span> <span class="o">-&gt;</span>
       <span class="c">(* If &#39;f&#39; already has a body, reject this. *)</span>
@@ -319,14 +307,14 @@ functions.</p>
 </pre></div>
 </div>
 <p>In order to verify the logic above, we first check to see if the
-pre-existing function is &#8220;empty&#8221;. In this case, empty means that it has
+pre-existing function is “empty”. In this case, empty means that it has
 no basic blocks in it, which means it has no body. If it has no body, it
-is a forward declaration. Since we don&#8217;t allow anything after a full
+is a forward declaration. Since we don’t allow anything after a full
 definition of the function, the code rejects this case. If the previous
-reference to a function was an &#8216;extern&#8217;, we simply verify that the
+reference to a function was an ‘extern’, we simply verify that the
 number of arguments for that definition and this one match up. If not,
 we emit an error.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* Set names for all arguments. *)</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* Set names for all arguments. *)</span>
 <span class="nn">Array</span><span class="p">.</span><span class="n">iteri</span> <span class="o">(</span><span class="k">fun</span> <span class="n">i</span> <span class="n">a</span> <span class="o">-&gt;</span>
   <span class="k">let</span> <span class="n">n</span> <span class="o">=</span> <span class="n">args</span><span class="o">.(</span><span class="n">i</span><span class="o">)</span> <span class="k">in</span>
   <span class="n">set_value_name</span> <span class="n">n</span> <span class="n">a</span><span class="o">;</span>
@@ -337,13 +325,13 @@ we emit an error.</p>
 </div>
 <p>The last bit of code for prototypes loops over all of the arguments in
 the function, setting the name of the LLVM Argument objects to match,
-and registering the arguments in the <code class="docutils literal"><span class="pre">Codegen.named_values</span></code> map for
-future use by the <code class="docutils literal"><span class="pre">Ast.Variable</span></code> variant. Once this is set up, it
-returns the Function object to the caller. Note that we don&#8217;t check for
-conflicting argument names here (e.g. &#8220;extern foo(a b a)&#8221;). Doing so
+and registering the arguments in the <code class="docutils literal notranslate"><span class="pre">Codegen.named_values</span></code> map for
+future use by the <code class="docutils literal notranslate"><span class="pre">Ast.Variable</span></code> variant. Once this is set up, it
+returns the Function object to the caller. Note that we don’t check for
+conflicting argument names here (e.g. “extern foo(a b a)”). Doing so
 would be very straight-forward with the mechanics we have already used
 above.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="n">codegen_func</span> <span class="o">=</span> <span class="k">function</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">codegen_func</span> <span class="o">=</span> <span class="k">function</span>
   <span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Function</span> <span class="o">(</span><span class="n">proto</span><span class="o">,</span> <span class="n">body</span><span class="o">)</span> <span class="o">-&gt;</span>
       <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">clear</span> <span class="n">named_values</span><span class="o">;</span>
       <span class="k">let</span> <span class="n">the_function</span> <span class="o">=</span> <span class="n">codegen_proto</span> <span class="n">proto</span> <span class="k">in</span>
@@ -351,11 +339,11 @@ above.</p>
 </div>
 <p>Code generation for function definitions starts out simply enough: we
 just codegen the prototype (Proto) and verify that it is ok. We then
-clear out the <code class="docutils literal"><span class="pre">Codegen.named_values</span></code> map to make sure that there isn&#8217;t
+clear out the <code class="docutils literal notranslate"><span class="pre">Codegen.named_values</span></code> map to make sure that there isn’t
 anything in it from the last function we compiled. Code generation of
 the prototype ensures that there is an LLVM Function object that is
 ready to go for us.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* Create a new basic block to start insertion into. *)</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* Create a new basic block to start insertion into. *)</span>
 <span class="k">let</span> <span class="n">bb</span> <span class="o">=</span> <span class="n">append_block</span> <span class="n">context</span> <span class="s2">&quot;entry&quot;</span> <span class="n">the_function</span> <span class="k">in</span>
 <span class="n">position_at_end</span> <span class="n">bb</span> <span class="n">builder</span><span class="o">;</span>
 
@@ -363,17 +351,17 @@ ready to go for us.</p>
   <span class="k">let</span> <span class="n">ret_val</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">body</span> <span class="k">in</span>
 </pre></div>
 </div>
-<p>Now we get to the point where the <code class="docutils literal"><span class="pre">Codegen.builder</span></code> is set up. The
+<p>Now we get to the point where the <code class="docutils literal notranslate"><span class="pre">Codegen.builder</span></code> is set up. The
 first line creates a new <a class="reference external" href="http://en.wikipedia.org/wiki/Basic_block">basic
-block</a> (named &#8220;entry&#8221;),
-which is inserted into <code class="docutils literal"><span class="pre">the_function</span></code>. The second line then tells the
+block</a> (named “entry”),
+which is inserted into <code class="docutils literal notranslate"><span class="pre">the_function</span></code>. The second line then tells the
 builder that new instructions should be inserted into the end of the new
 basic block. Basic blocks in LLVM are an important part of functions
 that define the <a class="reference external" href="http://en.wikipedia.org/wiki/Control_flow_graph">Control Flow
 Graph</a>. Since we
-don&#8217;t have any control flow, our functions will only contain one block
-at this point. We&#8217;ll fix this in <a class="reference external" href="OCamlLangImpl5.html">Chapter 5</a> :).</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="n">ret_val</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">body</span> <span class="k">in</span>
+don’t have any control flow, our functions will only contain one block
+at this point. We’ll fix this in <a class="reference external" href="OCamlLangImpl5.html">Chapter 5</a> :).</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">ret_val</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">body</span> <span class="k">in</span>
 
 <span class="c">(* Finish off the function. *)</span>
 <span class="k">let</span> <span class="o">_</span> <span class="o">=</span> <span class="n">build_ret</span> <span class="n">ret_val</span> <span class="n">builder</span> <span class="k">in</span>
@@ -384,173 +372,171 @@ at this point. We&#8217;ll fix this in <a class="reference external" href="OCaml
 <span class="n">the_function</span>
 </pre></div>
 </div>
-<p>Once the insertion point is set up, we call the <code class="docutils literal"><span class="pre">Codegen.codegen_func</span></code>
+<p>Once the insertion point is set up, we call the <code class="docutils literal notranslate"><span class="pre">Codegen.codegen_func</span></code>
 method for the root expression of the function. If no error happens,
 this emits code to compute the expression into the entry block and
 returns the value that was computed. Assuming no error, we then create
-an LLVM <a class="reference external" href="../LangRef.html#i_ret">ret instruction</a>, which completes the
+an LLVM <a class="reference external" href="../LangRef.html#ret-instruction">ret instruction</a>, which completes the
 function. Once the function is built, we call
-<code class="docutils literal"><span class="pre">Llvm_analysis.assert_valid_function</span></code>, which is provided by LLVM. This
+<code class="docutils literal notranslate"><span class="pre">Llvm_analysis.assert_valid_function</span></code>, which is provided by LLVM. This
 function does a variety of consistency checks on the generated code, to
 determine if our compiler is doing everything right. Using this is
 important: it can catch a lot of bugs. Once the function is finished and
 validated, we return it.</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">with</span> <span class="n">e</span> <span class="o">-&gt;</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">e</span> <span class="o">-&gt;</span>
   <span class="n">delete_function</span> <span class="n">the_function</span><span class="o">;</span>
   <span class="k">raise</span> <span class="n">e</span>
 </pre></div>
 </div>
 <p>The only piece left here is handling of the error case. For simplicity,
 we handle this by merely deleting the function we produced with the
-<code class="docutils literal"><span class="pre">Llvm.delete_function</span></code> method. This allows the user to redefine a
-function that they incorrectly typed in before: if we didn&#8217;t delete it,
+<code class="docutils literal notranslate"><span class="pre">Llvm.delete_function</span></code> method. This allows the user to redefine a
+function that they incorrectly typed in before: if we didn’t delete it,
 it would live in the symbol table, with a body, preventing future
 redefinition.</p>
-<p>This code does have a bug, though. Since the <code class="docutils literal"><span class="pre">Codegen.codegen_proto</span></code>
+<p>This code does have a bug, though. Since the <code class="docutils literal notranslate"><span class="pre">Codegen.codegen_proto</span></code>
 can return a previously defined forward declaration, our code can
 actually delete a forward declaration. There are a number of ways to fix
 this bug, see what you can come up with! Here is a testcase:</p>
-<div class="highlight-python"><div class="highlight"><pre>extern foo(a b);     # ok, defines foo.
-def foo(a b) c;      # error, &#39;c&#39; is invalid.
-def bar() foo(1, 2); # error, unknown function &quot;foo&quot;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extern</span> <span class="n">foo</span><span class="p">(</span><span class="n">a</span> <span class="n">b</span><span class="p">);</span>     <span class="c1"># ok, defines foo.</span>
+<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span> <span class="n">b</span><span class="p">)</span> <span class="n">c</span><span class="p">;</span>      <span class="c1"># error, &#39;c&#39; is invalid.</span>
+<span class="k">def</span> <span class="nf">bar</span><span class="p">()</span> <span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="c1"># error, unknown function &quot;foo&quot;</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="driver-changes-and-closing-thoughts">
-<h2><a class="toc-backref" href="#id5">3.5. Driver Changes and Closing Thoughts</a><a class="headerlink" href="#driver-changes-and-closing-thoughts" title="Permalink to this headline">¶</a></h2>
-<p>For now, code generation to LLVM doesn&#8217;t really get us much, except that
+<h2><a class="toc-backref" href="#id5"><span class="section-number">3.5. </span>Driver Changes and Closing Thoughts</a><a class="headerlink" href="#driver-changes-and-closing-thoughts" title="Permalink to this headline">¶</a></h2>
+<p>For now, code generation to LLVM doesn’t really get us much, except that
 we can look at the pretty IR calls. The sample code inserts calls to
-Codegen into the &#8220;<code class="docutils literal"><span class="pre">Toplevel.main_loop</span></code>&#8221;, and then dumps out the LLVM
+Codegen into the “<code class="docutils literal notranslate"><span class="pre">Toplevel.main_loop</span></code>”, and then dumps out the LLVM
 IR. This gives a nice way to look at the LLVM IR for simple functions.
 For example:</p>
-<div class="highlight-python"><div class="highlight"><pre>ready&gt; 4+5;
-Read top-level expression:
-define double @&quot;&quot;() {
-entry:
-        %addtmp = fadd double 4.000000e+00, 5.000000e+00
-        ret double %addtmp
-}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="mi">4</span><span class="o">+</span><span class="mi">5</span><span class="p">;</span>
+<span class="n">Read</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">expression</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="o">@</span><span class="s2">&quot;&quot;</span><span class="p">()</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="mf">4.000000e+00</span><span class="p">,</span> <span class="mf">5.000000e+00</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>Note how the parser turns the top-level expression into anonymous
-functions for us. This will be handy when we add <a class="reference external" href="OCamlLangImpl4.html#jit">JIT
+functions for us. This will be handy when we add <a class="reference external" href="OCamlLangImpl4.html#adding-a-jit-compiler">JIT
 support</a> in the next chapter. Also note that
 the code is very literally transcribed, no optimizations are being
-performed. We will <a class="reference external" href="OCamlLangImpl4.html#trivialconstfold">add
+performed. We will <a class="reference external" href="OCamlLangImpl4.html#trivial-constant-folding">add
 optimizations</a> explicitly in the
 next chapter.</p>
-<div class="highlight-python"><div class="highlight"><pre>ready&gt; def foo(a b) a*a + 2*a*b + b*b;
-Read function definition:
-define double @foo(double %a, double %b) {
-entry:
-        %multmp = fmul double %a, %a
-        %multmp1 = fmul double 2.000000e+00, %a
-        %multmp2 = fmul double %multmp1, %b
-        %addtmp = fadd double %multmp, %multmp2
-        %multmp3 = fmul double %b, %b
-        %addtmp4 = fadd double %addtmp, %multmp3
-        ret double %addtmp4
-}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">a</span> <span class="n">b</span><span class="p">)</span> <span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">a</span><span class="o">*</span><span class="n">b</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">b</span><span class="p">;</span>
+<span class="n">Read</span> <span class="n">function</span> <span class="n">definition</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@foo</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">a</span><span class="p">,</span> <span class="n">double</span> <span class="o">%</span><span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">multmp</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="o">%</span><span class="n">a</span><span class="p">,</span> <span class="o">%</span><span class="n">a</span>
+        <span class="o">%</span><span class="n">multmp1</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="mf">2.000000e+00</span><span class="p">,</span> <span class="o">%</span><span class="n">a</span>
+        <span class="o">%</span><span class="n">multmp2</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="o">%</span><span class="n">multmp1</span><span class="p">,</span> <span class="o">%</span><span class="n">b</span>
+        <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">multmp</span><span class="p">,</span> <span class="o">%</span><span class="n">multmp2</span>
+        <span class="o">%</span><span class="n">multmp3</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="o">%</span><span class="n">b</span><span class="p">,</span> <span class="o">%</span><span class="n">b</span>
+        <span class="o">%</span><span class="n">addtmp4</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span><span class="p">,</span> <span class="o">%</span><span class="n">multmp3</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp4</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>This shows some simple arithmetic. Notice the striking similarity to the
 LLVM builder calls that we use to create the instructions.</p>
-<div class="highlight-python"><div class="highlight"><pre>ready&gt; def bar(a) foo(a, 4.0) + bar(31337);
-Read function definition:
-define double @bar(double %a) {
-entry:
-        %calltmp = call double @foo(double %a, double 4.000000e+00)
-        %calltmp1 = call double @bar(double 3.133700e+04)
-        %addtmp = fadd double %calltmp, %calltmp1
-        ret double %addtmp
-}
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">bar</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="n">foo</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span> <span class="o">+</span> <span class="n">bar</span><span class="p">(</span><span class="mi">31337</span><span class="p">);</span>
+<span class="n">Read</span> <span class="n">function</span> <span class="n">definition</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@bar</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">calltmp</span> <span class="o">=</span> <span class="n">call</span> <span class="n">double</span> <span class="nd">@foo</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">a</span><span class="p">,</span> <span class="n">double</span> <span class="mf">4.000000e+00</span><span class="p">)</span>
+        <span class="o">%</span><span class="n">calltmp1</span> <span class="o">=</span> <span class="n">call</span> <span class="n">double</span> <span class="nd">@bar</span><span class="p">(</span><span class="n">double</span> <span class="mf">3.133700e+04</span><span class="p">)</span>
+        <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">calltmp</span><span class="p">,</span> <span class="o">%</span><span class="n">calltmp1</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>This shows some function calls. Note that this function will take a long
-time to execute if you call it. In the future we&#8217;ll add conditional
+time to execute if you call it. In the future we’ll add conditional
 control flow to actually make recursion useful :).</p>
-<div class="highlight-python"><div class="highlight"><pre>ready&gt; extern cos(x);
-Read extern:
-declare double @cos(double)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="n">extern</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="n">Read</span> <span class="n">extern</span><span class="p">:</span>
+<span class="n">declare</span> <span class="n">double</span> <span class="nd">@cos</span><span class="p">(</span><span class="n">double</span><span class="p">)</span>
 
-ready&gt; cos(1.234);
-Read top-level expression:
-define double @&quot;&quot;() {
-entry:
-        %calltmp = call double @cos(double 1.234000e+00)
-        ret double %calltmp
-}
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">cos</span><span class="p">(</span><span class="mf">1.234</span><span class="p">);</span>
+<span class="n">Read</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">expression</span><span class="p">:</span>
+<span class="n">define</span> <span class="n">double</span> <span class="o">@</span><span class="s2">&quot;&quot;</span><span class="p">()</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">calltmp</span> <span class="o">=</span> <span class="n">call</span> <span class="n">double</span> <span class="nd">@cos</span><span class="p">(</span><span class="n">double</span> <span class="mf">1.234000e+00</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">calltmp</span>
+<span class="p">}</span>
 </pre></div>
 </div>
-<p>This shows an extern for the libm &#8220;cos&#8221; function, and a call to it.</p>
-<div class="highlight-python"><div class="highlight"><pre>ready&gt; ^D
-; ModuleID = &#39;my cool jit&#39;
+<p>This shows an extern for the libm “cos” function, and a call to it.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="o">^</span><span class="n">D</span>
+<span class="p">;</span> <span class="n">ModuleID</span> <span class="o">=</span> <span class="s1">&#39;my cool jit&#39;</span>
 
-define double @&quot;&quot;() {
-entry:
-        %addtmp = fadd double 4.000000e+00, 5.000000e+00
-        ret double %addtmp
-}
+<span class="n">define</span> <span class="n">double</span> <span class="o">@</span><span class="s2">&quot;&quot;</span><span class="p">()</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="mf">4.000000e+00</span><span class="p">,</span> <span class="mf">5.000000e+00</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span>
+<span class="p">}</span>
 
-define double @foo(double %a, double %b) {
-entry:
-        %multmp = fmul double %a, %a
-        %multmp1 = fmul double 2.000000e+00, %a
-        %multmp2 = fmul double %multmp1, %b
-        %addtmp = fadd double %multmp, %multmp2
-        %multmp3 = fmul double %b, %b
-        %addtmp4 = fadd double %addtmp, %multmp3
-        ret double %addtmp4
-}
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@foo</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">a</span><span class="p">,</span> <span class="n">double</span> <span class="o">%</span><span class="n">b</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">multmp</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="o">%</span><span class="n">a</span><span class="p">,</span> <span class="o">%</span><span class="n">a</span>
+        <span class="o">%</span><span class="n">multmp1</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="mf">2.000000e+00</span><span class="p">,</span> <span class="o">%</span><span class="n">a</span>
+        <span class="o">%</span><span class="n">multmp2</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="o">%</span><span class="n">multmp1</span><span class="p">,</span> <span class="o">%</span><span class="n">b</span>
+        <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">multmp</span><span class="p">,</span> <span class="o">%</span><span class="n">multmp2</span>
+        <span class="o">%</span><span class="n">multmp3</span> <span class="o">=</span> <span class="n">fmul</span> <span class="n">double</span> <span class="o">%</span><span class="n">b</span><span class="p">,</span> <span class="o">%</span><span class="n">b</span>
+        <span class="o">%</span><span class="n">addtmp4</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span><span class="p">,</span> <span class="o">%</span><span class="n">multmp3</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp4</span>
+<span class="p">}</span>
 
-define double @bar(double %a) {
-entry:
-        %calltmp = call double @foo(double %a, double 4.000000e+00)
-        %calltmp1 = call double @bar(double 3.133700e+04)
-        %addtmp = fadd double %calltmp, %calltmp1
-        ret double %addtmp
-}
+<span class="n">define</span> <span class="n">double</span> <span class="nd">@bar</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">calltmp</span> <span class="o">=</span> <span class="n">call</span> <span class="n">double</span> <span class="nd">@foo</span><span class="p">(</span><span class="n">double</span> <span class="o">%</span><span class="n">a</span><span class="p">,</span> <span class="n">double</span> <span class="mf">4.000000e+00</span><span class="p">)</span>
+        <span class="o">%</span><span class="n">calltmp1</span> <span class="o">=</span> <span class="n">call</span> <span class="n">double</span> <span class="nd">@bar</span><span class="p">(</span><span class="n">double</span> <span class="mf">3.133700e+04</span><span class="p">)</span>
+        <span class="o">%</span><span class="n">addtmp</span> <span class="o">=</span> <span class="n">fadd</span> <span class="n">double</span> <span class="o">%</span><span class="n">calltmp</span><span class="p">,</span> <span class="o">%</span><span class="n">calltmp1</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">addtmp</span>
+<span class="p">}</span>
 
-declare double @cos(double)
+<span class="n">declare</span> <span class="n">double</span> <span class="nd">@cos</span><span class="p">(</span><span class="n">double</span><span class="p">)</span>
 
-define double @&quot;&quot;() {
-entry:
-        %calltmp = call double @cos(double 1.234000e+00)
-        ret double %calltmp
-}
+<span class="n">define</span> <span class="n">double</span> <span class="o">@</span><span class="s2">&quot;&quot;</span><span class="p">()</span> <span class="p">{</span>
+<span class="n">entry</span><span class="p">:</span>
+        <span class="o">%</span><span class="n">calltmp</span> <span class="o">=</span> <span class="n">call</span> <span class="n">double</span> <span class="nd">@cos</span><span class="p">(</span><span class="n">double</span> <span class="mf">1.234000e+00</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="n">double</span> <span class="o">%</span><span class="n">calltmp</span>
+<span class="p">}</span>
 </pre></div>
 </div>
 <p>When you quit the current demo, it dumps out the IR for the entire
 module generated. Here you can see the big picture with all the
 functions referencing each other.</p>
 <p>This wraps up the third chapter of the Kaleidoscope tutorial. Up next,
-we&#8217;ll describe how to <a class="reference external" href="OCamlLangImpl4.html">add JIT codegen and optimizer
+we’ll describe how to <a class="reference external" href="OCamlLangImpl4.html">add JIT codegen and optimizer
 support</a> to this so we can actually start running
 code!</p>
 </div>
 <div class="section" id="full-code-listing">
-<h2><a class="toc-backref" href="#id6">3.6. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6"><span class="section-number">3.6. </span>Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
 <p>Here is the complete code listing for our running example, enhanced with
 the LLVM code generator. Because this uses the LLVM libraries, we need
 to link them in. To do this, we use the
 <a class="reference external" href="http://llvm.org/cmds/llvm-config.html">llvm-config</a> tool to inform
 our makefile/command line about which options to use:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="c"># Compile</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
 ocamlbuild toy.byte
-<span class="c"># Run</span>
+<span class="c1"># Run</span>
 ./toy.byte
 </pre></div>
 </div>
 <p>Here is the code:</p>
-<dl class="docutils">
-<dt>_tags:</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre>&lt;{lexer,parser}.ml&gt;: use_camlp4, pp(camlp4of)
-&lt;*.{byte,native}&gt;: g++, use_llvm, use_llvm_analysis
+<dl>
+<dt>_tags:</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="p">{</span><span class="n">lexer</span><span class="p">,</span><span class="n">parser</span><span class="p">}</span><span class="o">.</span><span class="n">ml</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">use_camlp4</span><span class="p">,</span> <span class="n">pp</span><span class="p">(</span><span class="n">camlp4of</span><span class="p">)</span>
+<span class="o">&lt;*.</span><span class="p">{</span><span class="n">byte</span><span class="p">,</span><span class="n">native</span><span class="p">}</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">g</span><span class="o">++</span><span class="p">,</span> <span class="n">use_llvm</span><span class="p">,</span> <span class="n">use_llvm_analysis</span>
 </pre></div>
 </div>
 </dd>
-<dt>myocamlbuild.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="k">open</span> <span class="nc">Ocamlbuild_plugin</span><span class="o">;;</span>
+<dt>myocamlbuild.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">open</span> <span class="nc">Ocamlbuild_plugin</span><span class="o">;;</span>
 
 <span class="n">ocaml_lib</span> <span class="o">~</span><span class="n">extern</span><span class="o">:</span><span class="bp">true</span> <span class="s2">&quot;llvm&quot;</span><span class="o">;;</span>
 <span class="n">ocaml_lib</span> <span class="o">~</span><span class="n">extern</span><span class="o">:</span><span class="bp">true</span> <span class="s2">&quot;llvm_analysis&quot;</span><span class="o">;;</span>
@@ -559,8 +545,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>token.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>token.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Lexer Tokens</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -578,8 +563,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>lexer.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>lexer.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Lexer</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -634,8 +618,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>ast.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>ast.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Abstract Syntax Tree (aka Parse Tree)</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -663,8 +646,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>parser.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===---------------------------------------------------------------------===</span>
+<dt>parser.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===---------------------------------------------------------------------===</span>
 <span class="c"> * Parser</span>
 <span class="c"> *===---------------------------------------------------------------------===*)</span>
 
@@ -789,8 +771,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>codegen.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>codegen.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Code Generation</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -893,8 +874,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>toplevel.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>toplevel.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Top-Level parsing and JIT Driver</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -936,8 +916,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>toy.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>toy.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Main driver code.</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -991,13 +970,13 @@ ocamlbuild toy.byte
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

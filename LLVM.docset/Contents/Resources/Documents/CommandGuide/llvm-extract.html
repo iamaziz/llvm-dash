@@ -1,31 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>llvm-extract - extract a function from an LLVM module &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>llvm-extract - extract a function from an LLVM module &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Command Guide" href="index.html" />
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="llvm-bcanalyzer - LLVM bitcode analyzer" href="llvm-bcanalyzer.html" />
     <link rel="prev" title="bugpoint - automatic test case reduction tool" href="bugpoint.html" />
 <style type="text/css">
@@ -33,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +44,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
 
@@ -69,7 +57,7 @@
 <h1>llvm-extract - extract a function from an LLVM module<a class="headerlink" href="#llvm-extract-extract-a-function-from-an-llvm-module" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="synopsis">
 <h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
-<p><strong class="program">llvm-extract</strong> [<em>options</em>] <strong>&#8211;func</strong> <em>function-name</em> [<em>filename</em>]</p>
+<p><strong class="program">llvm-extract</strong> [<em>options</em>] <strong>–func</strong> <em>function-name</em> [<em>filename</em>]</p>
 </div>
 <div class="section" id="description">
 <h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
@@ -80,45 +68,53 @@ tool to reduce test cases from larger programs that are triggering a bug.</p>
 <strong class="program">llvm-extract</strong> will also remove unreachable global variables,
 prototypes, and unused types.</p>
 <p>The <strong class="program">llvm-extract</strong> command reads its input from standard input if
-filename is omitted or if filename is <code class="docutils literal"><span class="pre">-</span></code>.  The output is always written to
+filename is omitted or if filename is <code class="docutils literal notranslate"><span class="pre">-</span></code>.  The output is always written to
 standard output, unless the <strong>-o</strong> option is specified (see below).</p>
 </div>
 <div class="section" id="options">
 <h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <p><strong>-f</strong></p>
 <blockquote>
-<div>Enable binary output on terminals.  Normally, <strong class="program">llvm-extract</strong> will
+<div><p>Enable binary output on terminals.  Normally, <strong class="program">llvm-extract</strong> will
 refuse to write raw bitcode output if the output stream is a terminal.  With
 this option, <strong class="program">llvm-extract</strong> will write raw bitcode regardless of the
-output device.</div></blockquote>
-<p><strong>&#8211;func</strong> <em>function-name</em></p>
+output device.</p>
+</div></blockquote>
+<p><strong>–func</strong> <em>function-name</em></p>
 <blockquote>
-<div>Extract the function named <em>function-name</em> from the LLVM bitcode.  May be
-specified multiple times to extract multiple functions at once.</div></blockquote>
-<p><strong>&#8211;rfunc</strong> <em>function-regular-expr</em></p>
+<div><p>Extract the function named <em>function-name</em> from the LLVM bitcode.  May be
+specified multiple times to extract multiple functions at once.</p>
+</div></blockquote>
+<p><strong>–rfunc</strong> <em>function-regular-expr</em></p>
 <blockquote>
-<div>Extract the function(s) matching <em>function-regular-expr</em> from the LLVM bitcode.
+<div><p>Extract the function(s) matching <em>function-regular-expr</em> from the LLVM bitcode.
 All functions matching the regular expression will be extracted.  May be
-specified multiple times.</div></blockquote>
-<p><strong>&#8211;glob</strong> <em>global-name</em></p>
+specified multiple times.</p>
+</div></blockquote>
+<p><strong>–glob</strong> <em>global-name</em></p>
 <blockquote>
-<div>Extract the global variable named <em>global-name</em> from the LLVM bitcode.  May be
-specified multiple times to extract multiple global variables at once.</div></blockquote>
-<p><strong>&#8211;rglob</strong> <em>glob-regular-expr</em></p>
+<div><p>Extract the global variable named <em>global-name</em> from the LLVM bitcode.  May be
+specified multiple times to extract multiple global variables at once.</p>
+</div></blockquote>
+<p><strong>–rglob</strong> <em>glob-regular-expr</em></p>
 <blockquote>
-<div>Extract the global variable(s) matching <em>global-regular-expr</em> from the LLVM
+<div><p>Extract the global variable(s) matching <em>global-regular-expr</em> from the LLVM
 bitcode.  All global variables matching the regular expression will be
-extracted.  May be specified multiple times.</div></blockquote>
+extracted.  May be specified multiple times.</p>
+</div></blockquote>
 <p><strong>-help</strong></p>
 <blockquote>
-<div>Print a summary of command line options.</div></blockquote>
+<div><p>Print a summary of command line options.</p>
+</div></blockquote>
 <p><strong>-o</strong> <em>filename</em></p>
 <blockquote>
-<div>Specify the output filename.  If filename is &#8220;-&#8221; (the default), then
-<strong class="program">llvm-extract</strong> sends its output to standard output.</div></blockquote>
+<div><p>Specify the output filename.  If filename is “-” (the default), then
+<strong class="program">llvm-extract</strong> sends its output to standard output.</p>
+</div></blockquote>
 <p><strong>-S</strong></p>
 <blockquote>
-<div>Write output in LLVM intermediate language (instead of bitcode).</div></blockquote>
+<div><p>Write output in LLVM intermediate language (instead of bitcode).</p>
+</div></blockquote>
 </div>
 <div class="section" id="exit-status">
 <h2>EXIT STATUS<a class="headerlink" href="#exit-status" title="Permalink to this headline">¶</a></h2>
@@ -127,7 +123,7 @@ occurs, it will exit with a non-zero value.</p>
 </div>
 <div class="section" id="see-also">
 <h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
-<p>bugpoint</p>
+<p><em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/bugpoint.html">bugpoint(1)</a></em></p>
 </div>
 </div>
 
@@ -151,13 +147,13 @@ occurs, it will exit with a non-zero value.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

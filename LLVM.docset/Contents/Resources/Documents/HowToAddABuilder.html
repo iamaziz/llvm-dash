@@ -1,30 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>How To Add Your Build Configuration To LLVM Buildbot Infrastructure &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>How To Add Your Build Configuration To LLVM Buildbot Infrastructure &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="yaml2obj" href="yaml2obj.html" />
     <link rel="prev" title="The LLVM Lexicon" href="Lexicon.html" />
 <style type="text/css">
@@ -32,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -68,8 +57,19 @@
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>This document contains information about adding a build configuration and
-buildslave to private slave builder to LLVM Buildbot Infrastructure
-<a class="reference external" href="http://lab.llvm.org:8011">http://lab.llvm.org:8011</a>.</p>
+buildslave to private slave builder to LLVM Buildbot Infrastructure.</p>
+</div>
+<div class="section" id="buildmasters">
+<h2>Buildmasters<a class="headerlink" href="#buildmasters" title="Permalink to this headline">¶</a></h2>
+<p>There are two buildmasters running.</p>
+<ul class="simple">
+<li><p>The main buildmaster at <a class="reference external" href="http://lab.llvm.org:8011">http://lab.llvm.org:8011</a>. All builders attached
+to this machine will notify commit authors every time they break the build.</p></li>
+<li><p>The staging buildbot at <a class="reference external" href="http://lab.llvm.org:8014">http://lab.llvm.org:8014</a>. All builders attached
+to this machine will be completely silent by default when the build is broken.
+Builders for experimental backends should generally be attached to this
+buildmaster.</p></li>
+</ul>
 </div>
 <div class="section" id="steps-to-add-builder-to-llvm-buildbot">
 <h2>Steps To Add Builder To LLVM Buildbot<a class="headerlink" href="#steps-to-add-builder-to-llvm-buildbot" title="Permalink to this headline">¶</a></h2>
@@ -77,75 +77,73 @@ buildslave to private slave builder to LLVM Buildbot Infrastructure
 public LLVM Buildbot.</p>
 <p>Here are the steps you can follow to do so:</p>
 <ol class="arabic">
-<li><p class="first">Check the existing build configurations to make sure the one you are
+<li><p>Check the existing build configurations to make sure the one you are
 interested in is not covered yet or gets built on your computer much
 faster than on the existing one. We prefer faster builds so developers
-will get feedback sooner after changes get committed.</p>
-</li>
-<li><p class="first">The computer you will be registering with the LLVM buildbot
+will get feedback sooner after changes get committed.</p></li>
+<li><p>The computer you will be registering with the LLVM buildbot
 infrastructure should have all dependencies installed and you can
 actually build your configuration successfully. Please check what degree
 of parallelism (-j param) would give the fastest build.  You can build
-multiple configurations on one computer.</p>
-</li>
-<li><p class="first">Install buildslave (currently we are using buildbot version 0.8.5).
+multiple configurations on one computer.</p></li>
+<li><p>Install buildslave (currently we are using buildbot version 0.8.5).
 Depending on the platform, buildslave could be available to download and
-install with your packet manager, or you can download it directly from
-<a class="reference external" href="http://trac.buildbot.net">http://trac.buildbot.net</a> and install it manually.</p>
-</li>
-<li><p class="first">Create a designated user account, your buildslave will be running under,
-and set appropriate permissions.</p>
-</li>
-<li><p class="first">Choose the buildslave root directory (all builds will be placed under
+install with your package manager, or you can download it directly from
+<a class="reference external" href="http://trac.buildbot.net">http://trac.buildbot.net</a> and install it manually.</p></li>
+<li><p>Create a designated user account, your buildslave will be running under,
+and set appropriate permissions.</p></li>
+<li><p>Choose the buildslave root directory (all builds will be placed under
 it), buildslave access name and password the build master will be using
-to authenticate your buildslave.</p>
-</li>
-<li><p class="first">Create a buildslave in context of that buildslave account.  Point it to
-the <strong>lab.llvm.org</strong> port <strong>9990</strong> (see <a class="reference external" href="http://buildbot.net/buildbot/docs/current/full.html#creating-a-slave">Buildbot documentation,
+to authenticate your buildslave.</p></li>
+<li><p>Create a buildslave in context of that buildslave account.  Point it to
+the <strong>lab.llvm.org</strong> port <strong>9990</strong> (see <a class="reference external" href="http://docs.buildbot.net/current/tutorial/firstrun.html#creating-a-slave">Buildbot documentation,
 Creating a slave</a>
 for more details) by running the following command:</p>
 <blockquote>
-<div><div class="highlight-bash"><div class="highlight"><pre><span class="nv">$ </span>buildslave create-slave &lt;buildslave-root-directory&gt; <span class="se">\</span>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ buildslave create-slave &lt;buildslave-root-directory&gt; <span class="se">\</span>
              lab.llvm.org:9990 <span class="se">\</span>
              &lt;buildslave-access-name&gt; &lt;buildslave-access-password&gt;
 </pre></div>
 </div>
 </div></blockquote>
+<p>To point a slave to silent master please use lab.llvm.org:9994 instead
+of lab.llvm.org:9990.</p>
 </li>
-<li><p class="first">Fill the buildslave description and admin name/e-mail.  Here is an
+<li><p>Fill the buildslave description and admin name/e-mail.  Here is an
 example of the buildslave description:</p>
-<div class="highlight-python"><div class="highlight"><pre>Windows 7 x64
-Core i7 (2.66GHz), 16GB of RAM
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Windows</span> <span class="mi">7</span> <span class="n">x64</span>
+<span class="n">Core</span> <span class="n">i7</span> <span class="p">(</span><span class="mf">2.66</span><span class="n">GHz</span><span class="p">),</span> <span class="mi">16</span><span class="n">GB</span> <span class="n">of</span> <span class="n">RAM</span>
 
-g++.exe (TDM-1 mingw32) 4.4.0
-GNU Binutils 2.19.1
-cmake version 2.8.4
-Microsoft(R) 32-bit C/C++ Optimizing Compiler Version 16.00.40219.01 for 80x86
+<span class="n">g</span><span class="o">++.</span><span class="n">exe</span> <span class="p">(</span><span class="n">TDM</span><span class="o">-</span><span class="mi">1</span> <span class="n">mingw32</span><span class="p">)</span> <span class="mf">4.4</span><span class="o">.</span><span class="mi">0</span>
+<span class="n">GNU</span> <span class="n">Binutils</span> <span class="mf">2.19</span><span class="o">.</span><span class="mi">1</span>
+<span class="n">cmake</span> <span class="n">version</span> <span class="mf">2.8</span><span class="o">.</span><span class="mi">4</span>
+<span class="n">Microsoft</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="mi">32</span><span class="o">-</span><span class="n">bit</span> <span class="n">C</span><span class="o">/</span><span class="n">C</span><span class="o">++</span> <span class="n">Optimizing</span> <span class="n">Compiler</span> <span class="n">Version</span> <span class="mf">16.00</span><span class="o">.</span><span class="mf">40219.01</span> <span class="k">for</span> <span class="mi">80</span><span class="n">x86</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">Make sure you can actually start the buildslave successfully. Then set
+<li><p>Make sure you can actually start the buildslave successfully. Then set
 up your buildslave to start automatically at the start up time.  See the
 buildbot documentation for help.  You may want to restart your computer
-to see if it works.</p>
-</li>
-<li><p class="first">Send a patch which adds your build slave and your builder to zorg.</p>
+to see if it works.</p></li>
+<li><p>Send a patch which adds your build slave and your builder to zorg.</p>
 <ul class="simple">
-<li>slaves are added to <code class="docutils literal"><span class="pre">buildbot/osuosl/master/config/slaves.py</span></code></li>
-<li>builders are added to <code class="docutils literal"><span class="pre">buildbot/osuosl/master/config/builders.py</span></code></li>
+<li><p>slaves are added to <code class="docutils literal notranslate"><span class="pre">buildbot/osuosl/master/config/slaves.py</span></code></p></li>
+<li><p>builders are added to <code class="docutils literal notranslate"><span class="pre">buildbot/osuosl/master/config/builders.py</span></code></p></li>
 </ul>
+<p>Please make sure your builder name and its builddir are unique through the file.</p>
+<p>It is possible to whitelist email addresses to unconditionally receive notifications
+on build failure; for this you’ll need to add an <code class="docutils literal notranslate"><span class="pre">InformativeMailNotifier</span></code> to
+<code class="docutils literal notranslate"><span class="pre">buildbot/osuosl/master/config/status.py</span></code>. This is particularly useful for the
+staging buildmaster which is silent otherwise.</p>
 </li>
-<li><p class="first">Send the buildslave access name and the access password directly to
+<li><p>Send the buildslave access name and the access password directly to
 <a class="reference external" href="mailto:gkistanova&#37;&#52;&#48;gmail&#46;com">Galina Kistanova</a>, and wait till she
 will let you know that your changes are applied and buildmaster is
-reconfigured.</p>
-</li>
-<li><p class="first">Check the status of your buildslave on the <a class="reference external" href="http://lab.llvm.org:8011/waterfall">Waterfall Display</a> to make sure it is connected, and
-<code class="docutils literal"><span class="pre">http://lab.llvm.org:8011/buildslaves/&lt;your-buildslave-name&gt;</span></code> to see
-if administrator contact and slave information are correct.</p>
-</li>
-<li><p class="first">Wait for the first build to succeed and enjoy.</p>
-</li>
+reconfigured.</p></li>
+<li><p>Check the status of your buildslave on the <a class="reference external" href="http://lab.llvm.org:8011/waterfall">Waterfall Display</a> to make sure it is connected, and
+<code class="docutils literal notranslate"><span class="pre">http://lab.llvm.org:8011/buildslaves/&lt;your-buildslave-name&gt;</span></code> to see
+if administrator contact and slave information are correct.</p></li>
+<li><p>Wait for the first build to succeed and enjoy.</p></li>
 </ol>
 </div>
 </div>
@@ -173,9 +171,9 @@ if administrator contact and slave information are correct.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

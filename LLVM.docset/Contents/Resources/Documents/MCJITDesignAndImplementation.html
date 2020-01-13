@@ -1,39 +1,28 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>MCJIT Design and Implementation &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>MCJIT Design and Implementation &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
-    <link rel="next" title="LLVM Atomic Instructions and Concurrency Guide" href="Atomics.html" />
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ORC Design and Implementation" href="ORCv2.html" />
     <link rel="prev" title="Performance Tips for Frontend Authors" href="Frontend/PerformanceTips.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -47,7 +36,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="Atomics.html" title="LLVM Atomic Instructions and Concurrency Guide"
+          <a href="ORCv2.html" title="ORC Design and Implementation"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="Frontend/PerformanceTips.html" title="Performance Tips for Frontend Authors"
@@ -157,7 +146,7 @@ memory manager and relocation information will have been prepared, but the
 relocations have not yet been applied and the generated code is still not
 ready to be executed.</p>
 <p>[Currently (as of August 2013) the MCJIT engine will immediately apply
-relocations when loadObject completes.  However, this shouldn&#8217;t be
+relocations when loadObject completes.  However, this shouldn’t be
 happening.  Because the code may have been generated for a remote target,
 the client should be given a chance to re-map the section addresses before
 relocations are applied.  It is possible to apply relocations multiple
@@ -169,7 +158,7 @@ application is wasted effort.]</p>
 <p>At any time after initial code has been generated and before
 finalizeObject is called, the client can remap the address of sections in
 the object.  Typically this is done because the code was generated for an
-external process and is being mapped into that process&#8217; address space.
+external process and is being mapped into that process’ address space.
 The client remaps the section address by calling MCJIT::mapSectionAddress.
 This should happen before the section memory is copied to its new
 location.</p>
@@ -185,7 +174,7 @@ MCJIT::finalizeObject to complete the remapping process.</p>
 <p>When MCJIT::finalizeObject is called, MCJIT calls
 RuntimeDyld::resolveRelocations.  This function will attempt to locate any
 external symbols and then apply all relocations for the object.</p>
-<p>External symbols are resolved by calling the memory manager&#8217;s
+<p>External symbols are resolved by calling the memory manager’s
 getPointerToNamedFunction method.  The memory manager will return the
 address of the requested symbol in the target address space.  (Note, this
 may not be a valid pointer in the host process.)  RuntimeDyld will then
@@ -204,10 +193,10 @@ likely located in a different section.</p>
 <img alt="_images/MCJIT-resolve-relocations.png" src="_images/MCJIT-resolve-relocations.png" />
 <p>Once relocations have been applied as described above, MCJIT calls
 RuntimeDyld::getEHFrameSection, and if a non-zero result is returned
-passes the section data to the memory manager&#8217;s registerEHFrames method.
+passes the section data to the memory manager’s registerEHFrames method.
 This allows the memory manager to call any desired target-specific
 functions, such as registering the EH frame information with a debugger.</p>
-<p>Finally, MCJIT calls the memory manager&#8217;s finalizeMemory method.  In this
+<p>Finally, MCJIT calls the memory manager’s finalizeMemory method.  In this
 method, the memory manager will invalidate the target code cache, if
 necessary, and apply final permissions to the memory pages it has
 allocated for code and data memory.</p>
@@ -226,7 +215,7 @@ allocated for code and data memory.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="Atomics.html" title="LLVM Atomic Instructions and Concurrency Guide"
+          <a href="ORCv2.html" title="ORC Design and Implementation"
              >next</a> |</li>
         <li class="right" >
           <a href="Frontend/PerformanceTips.html" title="Performance Tips for Frontend Authors"
@@ -237,9 +226,9 @@ allocated for code and data memory.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

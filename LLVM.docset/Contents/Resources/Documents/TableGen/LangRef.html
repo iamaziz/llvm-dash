@@ -1,31 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>TableGen Language Reference &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>TableGen Language Reference &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
-    <link rel="up" title="TableGen" href="index.html" />
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="TableGen Language Introduction" href="LangIntro.html" />
     <link rel="prev" title="TableGen BackEnds" href="BackEnds.html" />
 <style type="text/css">
@@ -33,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +44,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">TableGen</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">TableGen</a> &#187;</li> 
       </ul>
     </div>
 
@@ -69,27 +57,30 @@
 <h1>TableGen Language Reference<a class="headerlink" href="#tablegen-language-reference" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id10">Introduction</a></li>
-<li><a class="reference internal" href="#notation" id="id11">Notation</a></li>
-<li><a class="reference internal" href="#lexical-analysis" id="id12">Lexical Analysis</a></li>
-<li><a class="reference internal" href="#syntax" id="id13">Syntax</a><ul>
-<li><a class="reference internal" href="#classes" id="id14"><code class="docutils literal"><span class="pre">class</span></code>es</a></li>
-<li><a class="reference internal" href="#declarations" id="id15">Declarations</a></li>
-<li><a class="reference internal" href="#types" id="id16">Types</a></li>
-<li><a class="reference internal" href="#values" id="id17">Values</a></li>
-<li><a class="reference internal" href="#bodies" id="id18">Bodies</a></li>
-<li><a class="reference internal" href="#def" id="id19"><code class="docutils literal"><span class="pre">def</span></code></a></li>
-<li><a class="reference internal" href="#defm" id="id20"><code class="docutils literal"><span class="pre">defm</span></code></a></li>
-<li><a class="reference internal" href="#foreach" id="id21"><code class="docutils literal"><span class="pre">foreach</span></code></a></li>
-<li><a class="reference internal" href="#top-level-let" id="id22">Top-Level <code class="docutils literal"><span class="pre">let</span></code></a></li>
-<li><a class="reference internal" href="#multiclass" id="id23"><code class="docutils literal"><span class="pre">multiclass</span></code></a></li>
+<li><p><a class="reference internal" href="#introduction" id="id10">Introduction</a></p></li>
+<li><p><a class="reference internal" href="#notation" id="id11">Notation</a></p></li>
+<li><p><a class="reference internal" href="#lexical-analysis" id="id12">Lexical Analysis</a></p></li>
+<li><p><a class="reference internal" href="#syntax" id="id13">Syntax</a></p>
+<ul>
+<li><p><a class="reference internal" href="#classes" id="id14"><code class="docutils literal notranslate"><span class="pre">class</span></code>es</a></p></li>
+<li><p><a class="reference internal" href="#declarations" id="id15">Declarations</a></p></li>
+<li><p><a class="reference internal" href="#types" id="id16">Types</a></p></li>
+<li><p><a class="reference internal" href="#values" id="id17">Values</a></p></li>
+<li><p><a class="reference internal" href="#bodies" id="id18">Bodies</a></p></li>
+<li><p><a class="reference internal" href="#def" id="id19"><code class="docutils literal notranslate"><span class="pre">def</span></code></a></p></li>
+<li><p><a class="reference internal" href="#defm" id="id20"><code class="docutils literal notranslate"><span class="pre">defm</span></code></a></p></li>
+<li><p><a class="reference internal" href="#defset" id="id21"><code class="docutils literal notranslate"><span class="pre">defset</span></code></a></p></li>
+<li><p><a class="reference internal" href="#foreach" id="id22"><code class="docutils literal notranslate"><span class="pre">foreach</span></code></a></p></li>
+<li><p><a class="reference internal" href="#top-level-let" id="id23">Top-Level <code class="docutils literal notranslate"><span class="pre">let</span></code></a></p></li>
+<li><p><a class="reference internal" href="#multiclass" id="id24"><code class="docutils literal notranslate"><span class="pre">multiclass</span></code></a></p></li>
 </ul>
 </li>
+<li><p><a class="reference internal" href="#preprocessing-support" id="id25">Preprocessing Support</a></p></li>
 </ul>
 </div>
 <div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This document is extremely rough. If you find something lacking, please
+<p class="admonition-title">Warning</p>
+<p>This document is extremely rough. If you find something lacking, please
 fix it, file a documentation bug, or ask about it on llvm-dev.</p>
 </div>
 <div class="section" id="introduction">
@@ -98,320 +89,429 @@ fix it, file a documentation bug, or ask about it on llvm-dev.</p>
 in and of itself (i.e. how to understand a given construct in terms of how
 it affects the final set of records represented by the TableGen file). If
 you are unsure if this document is really what you are looking for, please
-read the <a class="reference internal" href="index.html"><em>introduction to TableGen</em></a> first.</p>
+read the <a class="reference internal" href="index.html"><span class="doc">introduction to TableGen</span></a> first.</p>
 </div>
 <div class="section" id="notation">
 <h2><a class="toc-backref" href="#id11">Notation</a><a class="headerlink" href="#notation" title="Permalink to this headline">¶</a></h2>
 <p>The lexical and syntax notation used here is intended to imitate
-<a class="reference external" href="http://docs.python.org/py3k/reference/introduction.html#notation">Python&#8217;s</a>. In particular, for lexical definitions, the productions
+<a class="reference external" href="http://docs.python.org/py3k/reference/introduction.html#notation">Python’s</a>. In particular, for lexical definitions, the productions
 operate at the character level and there is no implied whitespace between
 elements. The syntax definitions operate at the token level, so there is
 implied whitespace between tokens.</p>
 </div>
 <div class="section" id="lexical-analysis">
 <h2><a class="toc-backref" href="#id12">Lexical Analysis</a><a class="headerlink" href="#lexical-analysis" title="Permalink to this headline">¶</a></h2>
-<p>TableGen supports BCPL (<code class="docutils literal"><span class="pre">//</span> <span class="pre">...</span></code>) and nestable C-style (<code class="docutils literal"><span class="pre">/*</span> <span class="pre">...</span> <span class="pre">*/</span></code>)
-comments.</p>
+<p>TableGen supports BCPL (<code class="docutils literal notranslate"><span class="pre">//</span> <span class="pre">...</span></code>) and nestable C-style (<code class="docutils literal notranslate"><span class="pre">/*</span> <span class="pre">...</span> <span class="pre">*/</span></code>)
+comments.  TableGen also provides simple <a class="reference internal" href="#preprocessing-support">Preprocessing Support</a>.</p>
 <p>The following is a listing of the basic punctuation tokens:</p>
-<div class="highlight-python"><div class="highlight"><pre>- + [ ] { } ( ) &lt; &gt; : ; .  = ? #
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>- + [ ] { } ( ) &lt; &gt; : ; .  = ? #
 </pre></div>
 </div>
 <p>Numeric literals take one of the following forms:</p>
 <pre>
-<strong id="grammar-token-TokInteger">TokInteger    </strong> ::=  <a class="reference internal" href="#grammar-token-DecimalInteger"><code class="xref docutils literal"><span class="pre">DecimalInteger</span></code></a> | <a class="reference internal" href="#grammar-token-HexInteger"><code class="xref docutils literal"><span class="pre">HexInteger</span></code></a> | <a class="reference internal" href="#grammar-token-BinInteger"><code class="xref docutils literal"><span class="pre">BinInteger</span></code></a>
-<strong id="grammar-token-DecimalInteger">DecimalInteger</strong> ::=  [&quot;+&quot; | &quot;-&quot;] (&quot;0&quot;...&quot;9&quot;)+
-<strong id="grammar-token-HexInteger">HexInteger    </strong> ::=  &quot;0x&quot; (&quot;0&quot;...&quot;9&quot; | &quot;a&quot;...&quot;f&quot; | &quot;A&quot;...&quot;F&quot;)+
-<strong id="grammar-token-BinInteger">BinInteger    </strong> ::=  &quot;0b&quot; (&quot;0&quot; | &quot;1&quot;)+
+<strong id="grammar-token-tokinteger">TokInteger    </strong> ::=  <a class="reference internal" href="#grammar-token-decimalinteger"><code class="xref docutils literal notranslate"><span class="pre">DecimalInteger</span></code></a> | <a class="reference internal" href="#grammar-token-hexinteger"><code class="xref docutils literal notranslate"><span class="pre">HexInteger</span></code></a> | <a class="reference internal" href="#grammar-token-bininteger"><code class="xref docutils literal notranslate"><span class="pre">BinInteger</span></code></a>
+<strong id="grammar-token-decimalinteger">DecimalInteger</strong> ::=  [&quot;+&quot; | &quot;-&quot;] (&quot;0&quot;...&quot;9&quot;)+
+<strong id="grammar-token-hexinteger">HexInteger    </strong> ::=  &quot;0x&quot; (&quot;0&quot;...&quot;9&quot; | &quot;a&quot;...&quot;f&quot; | &quot;A&quot;...&quot;F&quot;)+
+<strong id="grammar-token-bininteger">BinInteger    </strong> ::=  &quot;0b&quot; (&quot;0&quot; | &quot;1&quot;)+
 </pre>
-<p>One aspect to note is that the <a class="reference internal" href="#grammar-token-DecimalInteger"><code class="xref std std-token docutils literal"><span class="pre">DecimalInteger</span></code></a> token <em>includes</em> the
-<code class="docutils literal"><span class="pre">+</span></code> or <code class="docutils literal"><span class="pre">-</span></code>, as opposed to having <code class="docutils literal"><span class="pre">+</span></code> and <code class="docutils literal"><span class="pre">-</span></code> be unary operators as
+<p>One aspect to note is that the <a class="reference internal" href="#grammar-token-decimalinteger"><code class="xref std std-token docutils literal notranslate"><span class="pre">DecimalInteger</span></code></a> token <em>includes</em> the
+<code class="docutils literal notranslate"><span class="pre">+</span></code> or <code class="docutils literal notranslate"><span class="pre">-</span></code>, as opposed to having <code class="docutils literal notranslate"><span class="pre">+</span></code> and <code class="docutils literal notranslate"><span class="pre">-</span></code> be unary operators as
 most languages do.</p>
-<p>Also note that <a class="reference internal" href="#grammar-token-BinInteger"><code class="xref std std-token docutils literal"><span class="pre">BinInteger</span></code></a> creates a value of type <code class="docutils literal"><span class="pre">bits&lt;n&gt;</span></code>
-(where <code class="docutils literal"><span class="pre">n</span></code> is the number of bits).  This will implicitly convert to
+<p>Also note that <a class="reference internal" href="#grammar-token-bininteger"><code class="xref std std-token docutils literal notranslate"><span class="pre">BinInteger</span></code></a> creates a value of type <code class="docutils literal notranslate"><span class="pre">bits&lt;n&gt;</span></code>
+(where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of bits).  This will implicitly convert to
 integers when needed.</p>
 <p>TableGen has identifier-like tokens:</p>
 <pre>
 <strong id="grammar-token-ualpha">ualpha       </strong> ::=  &quot;a&quot;...&quot;z&quot; | &quot;A&quot;...&quot;Z&quot; | &quot;_&quot;
-<strong id="grammar-token-TokIdentifier">TokIdentifier</strong> ::=  (&quot;0&quot;...&quot;9&quot;)* <a class="reference internal" href="#grammar-token-ualpha"><code class="xref docutils literal"><span class="pre">ualpha</span></code></a> (<a class="reference internal" href="#grammar-token-ualpha"><code class="xref docutils literal"><span class="pre">ualpha</span></code></a> | &quot;0&quot;...&quot;9&quot;)*
-<strong id="grammar-token-TokVarName">TokVarName   </strong> ::=  &quot;$&quot; <a class="reference internal" href="#grammar-token-ualpha"><code class="xref docutils literal"><span class="pre">ualpha</span></code></a> (<a class="reference internal" href="#grammar-token-ualpha"><code class="xref docutils literal"><span class="pre">ualpha</span></code></a> |  &quot;0&quot;...&quot;9&quot;)*
+<strong id="grammar-token-tokidentifier">TokIdentifier</strong> ::=  (&quot;0&quot;...&quot;9&quot;)* <a class="reference internal" href="#grammar-token-ualpha"><code class="xref docutils literal notranslate"><span class="pre">ualpha</span></code></a> (<a class="reference internal" href="#grammar-token-ualpha"><code class="xref docutils literal notranslate"><span class="pre">ualpha</span></code></a> | &quot;0&quot;...&quot;9&quot;)*
+<strong id="grammar-token-tokvarname">TokVarName   </strong> ::=  &quot;$&quot; <a class="reference internal" href="#grammar-token-ualpha"><code class="xref docutils literal notranslate"><span class="pre">ualpha</span></code></a> (<a class="reference internal" href="#grammar-token-ualpha"><code class="xref docutils literal notranslate"><span class="pre">ualpha</span></code></a> |  &quot;0&quot;...&quot;9&quot;)*
 </pre>
-<p>Note that unlike most languages, TableGen allows <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref std std-token docutils literal"><span class="pre">TokIdentifier</span></code></a> to
+<p>Note that unlike most languages, TableGen allows <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref std std-token docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a> to
 begin with a number. In case of ambiguity, a token will be interpreted as a
 numeric literal rather than an identifier.</p>
 <p>TableGen also has two string-like literals:</p>
 <pre>
-<strong id="grammar-token-TokString">TokString      </strong> ::=  '&quot;' &lt;non-'&quot;' characters and C-like escapes&gt; '&quot;'
-<strong id="grammar-token-TokCodeFragment">TokCodeFragment</strong> ::=  &quot;[{&quot; &lt;shortest text not containing &quot;}]&quot;&gt; &quot;}]&quot;
+<strong id="grammar-token-tokstring">TokString      </strong> ::=  '&quot;' &lt;non-'&quot;' characters and C-like escapes&gt; '&quot;'
+<strong id="grammar-token-tokcodefragment">TokCodeFragment</strong> ::=  &quot;[{&quot; &lt;shortest text not containing &quot;}]&quot;&gt; &quot;}]&quot;
 </pre>
-<p><a class="reference internal" href="#grammar-token-TokCodeFragment"><code class="xref std std-token docutils literal"><span class="pre">TokCodeFragment</span></code></a> is essentially a multiline string literal
-delimited by <code class="docutils literal"><span class="pre">[{</span></code> and <code class="docutils literal"><span class="pre">}]</span></code>.</p>
+<p><a class="reference internal" href="#grammar-token-tokcodefragment"><code class="xref std std-token docutils literal notranslate"><span class="pre">TokCodeFragment</span></code></a> is essentially a multiline string literal
+delimited by <code class="docutils literal notranslate"><span class="pre">[{</span></code> and <code class="docutils literal notranslate"><span class="pre">}]</span></code>.</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
+<p class="admonition-title">Note</p>
 <p>The current implementation accepts the following C-like escapes:</p>
-<div class="last highlight-python"><div class="highlight"><pre>\\ \&#39; \&quot; \t \n
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>\\ \<span class="s1">&#39; </span><span class="se">\&quot;</span><span class="s1"> </span><span class="se">\t</span><span class="s1"> </span><span class="se">\n</span>
 </pre></div>
 </div>
 </div>
 <p>TableGen also has the following keywords:</p>
-<div class="highlight-python"><div class="highlight"><pre>bit   bits      class   code         dag
-def   foreach   defm    field        in
-int   let       list    multiclass   string
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bit</span>   <span class="n">bits</span>      <span class="k">class</span>   <span class="nc">code</span>         <span class="n">dag</span>
+<span class="k">def</span>   <span class="nf">foreach</span>   <span class="n">defm</span>    <span class="n">field</span>        <span class="ow">in</span>
+<span class="nb">int</span>   <span class="n">let</span>       <span class="nb">list</span>    <span class="n">multiclass</span>   <span class="n">string</span>
 </pre></div>
 </div>
-<p>TableGen also has &#8220;bang operators&#8221; which have a
+<p>TableGen also has “bang operators” which have a
 wide variety of meanings:</p>
 <pre>
-<strong id="grammar-token-BangOperator">BangOperator</strong> ::=  one of
+<strong id="grammar-token-bangoperator">BangOperator</strong> ::=  one of
                  !eq     !if      !head    !tail      !con
                  !add    !shl     !sra     !srl       !and
-                 !cast   !empty   !subst   !foreach   !listconcat   !strconcat
+                 !or     !empty   !subst   !foreach   !strconcat
+                 !cast   !listconcat       !size      !foldl
+                 !isa    !dag     !le      !lt        !ge
+                 !gt     !ne      !mul     !listsplat
+</pre>
+<p>TableGen also has !cond operator that needs a slightly different
+syntax compared to other “bang operators”:</p>
+<pre>
+<strong id="grammar-token-condoperator">CondOperator</strong> ::=  !cond
 </pre>
 </div>
 <div class="section" id="syntax">
 <h2><a class="toc-backref" href="#id13">Syntax</a><a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h2>
-<p>TableGen has an <code class="docutils literal"><span class="pre">include</span></code> mechanism. It does not play a role in the
+<p>TableGen has an <code class="docutils literal notranslate"><span class="pre">include</span></code> mechanism. It does not play a role in the
 syntax per se, since it is lexically replaced with the contents of the
 included file.</p>
 <pre>
-<strong id="grammar-token-IncludeDirective">IncludeDirective</strong> ::=  &quot;include&quot; <a class="reference internal" href="#grammar-token-TokString"><code class="xref docutils literal"><span class="pre">TokString</span></code></a>
+<strong id="grammar-token-includedirective">IncludeDirective</strong> ::=  &quot;include&quot; <a class="reference internal" href="#grammar-token-tokstring"><code class="xref docutils literal notranslate"><span class="pre">TokString</span></code></a>
 </pre>
-<p>TableGen&#8217;s top-level production consists of &#8220;objects&#8221;.</p>
+<p>TableGen’s top-level production consists of “objects”.</p>
 <pre>
-<strong id="grammar-token-TableGenFile">TableGenFile</strong> ::=  <a class="reference internal" href="#grammar-token-Object"><code class="xref docutils literal"><span class="pre">Object</span></code></a>*
-<strong id="grammar-token-Object">Object      </strong> ::=  <a class="reference internal" href="#grammar-token-Class"><code class="xref docutils literal"><span class="pre">Class</span></code></a> | <a class="reference internal" href="#grammar-token-Def"><code class="xref docutils literal"><span class="pre">Def</span></code></a> | <a class="reference internal" href="#grammar-token-Defm"><code class="xref docutils literal"><span class="pre">Defm</span></code></a> | <a class="reference internal" href="#grammar-token-Let"><code class="xref docutils literal"><span class="pre">Let</span></code></a> | <a class="reference internal" href="#grammar-token-MultiClass"><code class="xref docutils literal"><span class="pre">MultiClass</span></code></a> | <a class="reference internal" href="#grammar-token-Foreach"><code class="xref docutils literal"><span class="pre">Foreach</span></code></a>
+<strong id="grammar-token-tablegenfile">TableGenFile</strong> ::=  <a class="reference internal" href="#grammar-token-object"><code class="xref docutils literal notranslate"><span class="pre">Object</span></code></a>*
+<strong id="grammar-token-object">Object      </strong> ::=  <a class="reference internal" href="#grammar-token-class"><code class="xref docutils literal notranslate"><span class="pre">Class</span></code></a> | <a class="reference internal" href="#grammar-token-def"><code class="xref docutils literal notranslate"><span class="pre">Def</span></code></a> | <a class="reference internal" href="#grammar-token-defm"><code class="xref docutils literal notranslate"><span class="pre">Defm</span></code></a> | <a class="reference internal" href="#grammar-token-defset"><code class="xref docutils literal notranslate"><span class="pre">Defset</span></code></a> | <a class="reference internal" href="#grammar-token-let"><code class="xref docutils literal notranslate"><span class="pre">Let</span></code></a> | <a class="reference internal" href="#grammar-token-multiclass"><code class="xref docutils literal notranslate"><span class="pre">MultiClass</span></code></a> |
 </pre>
 <div class="section" id="classes">
-<h3><a class="toc-backref" href="#id14"><code class="docutils literal"><span class="pre">class</span></code>es</a><a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id14"><code class="docutils literal notranslate"><span class="pre">class</span></code>es</a><a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
 <pre>
-<strong id="grammar-token-Class">Class</strong> ::=  &quot;class&quot; <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a> [<a class="reference internal" href="#grammar-token-TemplateArgList"><code class="xref docutils literal"><span class="pre">TemplateArgList</span></code></a>] <a class="reference internal" href="#grammar-token-ObjectBody"><code class="xref docutils literal"><span class="pre">ObjectBody</span></code></a>
+<strong id="grammar-token-class">Class          </strong> ::=  &quot;class&quot; <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a> [<a class="reference internal" href="#grammar-token-templatearglist"><code class="xref docutils literal notranslate"><span class="pre">TemplateArgList</span></code></a>] <a class="reference internal" href="#grammar-token-objectbody"><code class="xref docutils literal notranslate"><span class="pre">ObjectBody</span></code></a>
+<strong id="grammar-token-templatearglist">TemplateArgList</strong> ::=  &quot;&lt;&quot; <a class="reference internal" href="#grammar-token-declaration"><code class="xref docutils literal notranslate"><span class="pre">Declaration</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-declaration"><code class="xref docutils literal notranslate"><span class="pre">Declaration</span></code></a>)* &quot;&gt;&quot;
 </pre>
-<p>A <code class="docutils literal"><span class="pre">class</span></code> declaration creates a record which other records can inherit
-from. A class can be parametrized by a list of &#8220;template arguments&#8221;, whose
+<p>A <code class="docutils literal notranslate"><span class="pre">class</span></code> declaration creates a record which other records can inherit
+from. A class can be parametrized by a list of “template arguments”, whose
 values can be used in the class body.</p>
-<p>A given class can only be defined once. A <code class="docutils literal"><span class="pre">class</span></code> declaration is
+<p>A given class can only be defined once. A <code class="docutils literal notranslate"><span class="pre">class</span></code> declaration is
 considered to define the class if any of the following is true:</p>
 <ol class="arabic simple">
-<li>The <a class="reference internal" href="#grammar-token-TemplateArgList"><code class="xref std std-token docutils literal"><span class="pre">TemplateArgList</span></code></a> is present.</li>
-<li>The <a class="reference internal" href="#grammar-token-Body"><code class="xref std std-token docutils literal"><span class="pre">Body</span></code></a> in the <a class="reference internal" href="#grammar-token-ObjectBody"><code class="xref std std-token docutils literal"><span class="pre">ObjectBody</span></code></a> is present and is not empty.</li>
-<li>The <a class="reference internal" href="#grammar-token-BaseClassList"><code class="xref std std-token docutils literal"><span class="pre">BaseClassList</span></code></a> in the <a class="reference internal" href="#grammar-token-ObjectBody"><code class="xref std std-token docutils literal"><span class="pre">ObjectBody</span></code></a> is present.</li>
+<li><p>The <a class="reference internal" href="#grammar-token-templatearglist"><code class="xref std std-token docutils literal notranslate"><span class="pre">TemplateArgList</span></code></a> is present.</p></li>
+<li><p>The <a class="reference internal" href="#grammar-token-body"><code class="xref std std-token docutils literal notranslate"><span class="pre">Body</span></code></a> in the <a class="reference internal" href="#grammar-token-objectbody"><code class="xref std std-token docutils literal notranslate"><span class="pre">ObjectBody</span></code></a> is present and is not empty.</p></li>
+<li><p>The <a class="reference internal" href="#grammar-token-baseclasslist"><code class="xref std std-token docutils literal notranslate"><span class="pre">BaseClassList</span></code></a> in the <a class="reference internal" href="#grammar-token-objectbody"><code class="xref std std-token docutils literal notranslate"><span class="pre">ObjectBody</span></code></a> is present.</p></li>
 </ol>
-<p>You can declare an empty class by giving and empty <a class="reference internal" href="#grammar-token-TemplateArgList"><code class="xref std std-token docutils literal"><span class="pre">TemplateArgList</span></code></a>
-and an empty <a class="reference internal" href="#grammar-token-ObjectBody"><code class="xref std std-token docutils literal"><span class="pre">ObjectBody</span></code></a>. This can serve as a restricted form of
+<p>You can declare an empty class by giving an empty <a class="reference internal" href="#grammar-token-templatearglist"><code class="xref std std-token docutils literal notranslate"><span class="pre">TemplateArgList</span></code></a>
+and an empty <a class="reference internal" href="#grammar-token-objectbody"><code class="xref std std-token docutils literal notranslate"><span class="pre">ObjectBody</span></code></a>. This can serve as a restricted form of
 forward declaration: note that records deriving from the forward-declared
 class will inherit no fields from it since the record expansion is done
 when the record is parsed.</p>
-<pre>
-<strong id="grammar-token-TemplateArgList">TemplateArgList</strong> ::=  &quot;&lt;&quot; <a class="reference internal" href="#grammar-token-Declaration"><code class="xref docutils literal"><span class="pre">Declaration</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-Declaration"><code class="xref docutils literal"><span class="pre">Declaration</span></code></a>)* &quot;&gt;&quot;
-</pre>
+<p>Every class has an implicit template argument called <code class="docutils literal notranslate"><span class="pre">NAME</span></code>, which is set
+to the name of the instantiating <code class="docutils literal notranslate"><span class="pre">def</span></code> or <code class="docutils literal notranslate"><span class="pre">defm</span></code>. The result is undefined
+if the class is instantiated by an anonymous record.</p>
 </div>
 <div class="section" id="declarations">
 <h3><a class="toc-backref" href="#id15">Declarations</a><a class="headerlink" href="#declarations" title="Permalink to this headline">¶</a></h3>
 <p>The declaration syntax is pretty much what you would expect as a C++
 programmer.</p>
 <pre>
-<strong id="grammar-token-Declaration">Declaration</strong> ::=  <a class="reference internal" href="#grammar-token-Type"><code class="xref docutils literal"><span class="pre">Type</span></code></a> <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a> [&quot;=&quot; <a class="reference internal" href="#grammar-token-Value"><code class="xref docutils literal"><span class="pre">Value</span></code></a>]
+<strong id="grammar-token-declaration">Declaration</strong> ::=  <a class="reference internal" href="#grammar-token-type"><code class="xref docutils literal notranslate"><span class="pre">Type</span></code></a> <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a> [&quot;=&quot; <a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a>]
 </pre>
-<p>It assigns the value to the identifer.</p>
+<p>It assigns the value to the identifier.</p>
 </div>
 <div class="section" id="types">
 <h3><a class="toc-backref" href="#id16">Types</a><a class="headerlink" href="#types" title="Permalink to this headline">¶</a></h3>
 <pre>
-<strong id="grammar-token-Type">Type   </strong> ::=  &quot;string&quot; | &quot;code&quot; | &quot;bit&quot; | &quot;int&quot; | &quot;dag&quot;
-            | &quot;bits&quot; &quot;&lt;&quot; <a class="reference internal" href="#grammar-token-TokInteger"><code class="xref docutils literal"><span class="pre">TokInteger</span></code></a> &quot;&gt;&quot;
-            | &quot;list&quot; &quot;&lt;&quot; <a class="reference internal" href="#grammar-token-Type"><code class="xref docutils literal"><span class="pre">Type</span></code></a> &quot;&gt;&quot;
-            | <a class="reference internal" href="#grammar-token-ClassID"><code class="xref docutils literal"><span class="pre">ClassID</span></code></a>
-<strong id="grammar-token-ClassID">ClassID</strong> ::=  <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a>
+<strong id="grammar-token-type">Type   </strong> ::=  &quot;string&quot; | &quot;code&quot; | &quot;bit&quot; | &quot;int&quot; | &quot;dag&quot;
+            | &quot;bits&quot; &quot;&lt;&quot; <a class="reference internal" href="#grammar-token-tokinteger"><code class="xref docutils literal notranslate"><span class="pre">TokInteger</span></code></a> &quot;&gt;&quot;
+            | &quot;list&quot; &quot;&lt;&quot; <a class="reference internal" href="#grammar-token-type"><code class="xref docutils literal notranslate"><span class="pre">Type</span></code></a> &quot;&gt;&quot;
+            | <a class="reference internal" href="#grammar-token-classid"><code class="xref docutils literal notranslate"><span class="pre">ClassID</span></code></a>
+<strong id="grammar-token-classid">ClassID</strong> ::=  <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a>
 </pre>
-<p>Both <code class="docutils literal"><span class="pre">string</span></code> and <code class="docutils literal"><span class="pre">code</span></code> correspond to the string type; the difference
+<p>Both <code class="docutils literal notranslate"><span class="pre">string</span></code> and <code class="docutils literal notranslate"><span class="pre">code</span></code> correspond to the string type; the difference
 is purely to indicate programmer intention.</p>
-<p>The <a class="reference internal" href="#grammar-token-ClassID"><code class="xref std std-token docutils literal"><span class="pre">ClassID</span></code></a> must identify a class that has been previously
+<p>The <a class="reference internal" href="#grammar-token-classid"><code class="xref std std-token docutils literal notranslate"><span class="pre">ClassID</span></code></a> must identify a class that has been previously
 declared or defined.</p>
 </div>
 <div class="section" id="values">
 <h3><a class="toc-backref" href="#id17">Values</a><a class="headerlink" href="#values" title="Permalink to this headline">¶</a></h3>
 <pre>
-<strong id="grammar-token-Value">Value      </strong> ::=  <a class="reference internal" href="#grammar-token-SimpleValue"><code class="xref docutils literal"><span class="pre">SimpleValue</span></code></a> <a class="reference internal" href="#grammar-token-ValueSuffix"><code class="xref docutils literal"><span class="pre">ValueSuffix</span></code></a>*
-<strong id="grammar-token-ValueSuffix">ValueSuffix</strong> ::=  &quot;{&quot; <a class="reference internal" href="#grammar-token-RangeList"><code class="xref docutils literal"><span class="pre">RangeList</span></code></a> &quot;}&quot;
-                | &quot;[&quot; <a class="reference internal" href="#grammar-token-RangeList"><code class="xref docutils literal"><span class="pre">RangeList</span></code></a> &quot;]&quot;
-                | &quot;.&quot; <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a>
-<strong id="grammar-token-RangeList">RangeList  </strong> ::=  <a class="reference internal" href="#grammar-token-RangePiece"><code class="xref docutils literal"><span class="pre">RangePiece</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-RangePiece"><code class="xref docutils literal"><span class="pre">RangePiece</span></code></a>)*
-<strong id="grammar-token-RangePiece">RangePiece </strong> ::=  <a class="reference internal" href="#grammar-token-TokInteger"><code class="xref docutils literal"><span class="pre">TokInteger</span></code></a>
-                | <a class="reference internal" href="#grammar-token-TokInteger"><code class="xref docutils literal"><span class="pre">TokInteger</span></code></a> &quot;-&quot; <a class="reference internal" href="#grammar-token-TokInteger"><code class="xref docutils literal"><span class="pre">TokInteger</span></code></a>
-                | <a class="reference internal" href="#grammar-token-TokInteger"><code class="xref docutils literal"><span class="pre">TokInteger</span></code></a> <a class="reference internal" href="#grammar-token-TokInteger"><code class="xref docutils literal"><span class="pre">TokInteger</span></code></a>
+<strong id="grammar-token-value">Value      </strong> ::=  <a class="reference internal" href="#grammar-token-simplevalue"><code class="xref docutils literal notranslate"><span class="pre">SimpleValue</span></code></a> <a class="reference internal" href="#grammar-token-valuesuffix"><code class="xref docutils literal notranslate"><span class="pre">ValueSuffix</span></code></a>*
+<strong id="grammar-token-valuesuffix">ValueSuffix</strong> ::=  &quot;{&quot; <a class="reference internal" href="#grammar-token-rangelist"><code class="xref docutils literal notranslate"><span class="pre">RangeList</span></code></a> &quot;}&quot;
+                | &quot;[&quot; <a class="reference internal" href="#grammar-token-rangelist"><code class="xref docutils literal notranslate"><span class="pre">RangeList</span></code></a> &quot;]&quot;
+                | &quot;.&quot; <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a>
+<strong id="grammar-token-rangelist">RangeList  </strong> ::=  <a class="reference internal" href="#grammar-token-rangepiece"><code class="xref docutils literal notranslate"><span class="pre">RangePiece</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-rangepiece"><code class="xref docutils literal notranslate"><span class="pre">RangePiece</span></code></a>)*
+<strong id="grammar-token-rangepiece">RangePiece </strong> ::=  <a class="reference internal" href="#grammar-token-tokinteger"><code class="xref docutils literal notranslate"><span class="pre">TokInteger</span></code></a>
+                | <a class="reference internal" href="#grammar-token-tokinteger"><code class="xref docutils literal notranslate"><span class="pre">TokInteger</span></code></a> &quot;-&quot; <a class="reference internal" href="#grammar-token-tokinteger"><code class="xref docutils literal notranslate"><span class="pre">TokInteger</span></code></a>
+                | <a class="reference internal" href="#grammar-token-tokinteger"><code class="xref docutils literal notranslate"><span class="pre">TokInteger</span></code></a> <a class="reference internal" href="#grammar-token-tokinteger"><code class="xref docutils literal notranslate"><span class="pre">TokInteger</span></code></a>
 </pre>
-<p>The peculiar last form of <a class="reference internal" href="#grammar-token-RangePiece"><code class="xref std std-token docutils literal"><span class="pre">RangePiece</span></code></a> is due to the fact that the
-&#8220;<code class="docutils literal"><span class="pre">-</span></code>&#8221; is included in the <a class="reference internal" href="#grammar-token-TokInteger"><code class="xref std std-token docutils literal"><span class="pre">TokInteger</span></code></a>, hence <code class="docutils literal"><span class="pre">1-5</span></code> gets lexed as
-two consecutive <a class="reference internal" href="#grammar-token-TokInteger"><code class="xref std std-token docutils literal"><span class="pre">TokInteger</span></code></a>&#8216;s, with values <code class="docutils literal"><span class="pre">1</span></code> and <code class="docutils literal"><span class="pre">-5</span></code>,
-instead of &#8220;1&#8221;, &#8220;-&#8221;, and &#8220;5&#8221;.
-The <a class="reference internal" href="#grammar-token-RangeList"><code class="xref std std-token docutils literal"><span class="pre">RangeList</span></code></a> can be thought of as specifying &#8220;list slice&#8221; in some
+<p>The peculiar last form of <a class="reference internal" href="#grammar-token-rangepiece"><code class="xref std std-token docutils literal notranslate"><span class="pre">RangePiece</span></code></a> is due to the fact that the
+“<code class="docutils literal notranslate"><span class="pre">-</span></code>” is included in the <a class="reference internal" href="#grammar-token-tokinteger"><code class="xref std std-token docutils literal notranslate"><span class="pre">TokInteger</span></code></a>, hence <code class="docutils literal notranslate"><span class="pre">1-5</span></code> gets lexed as
+two consecutive <a class="reference internal" href="#grammar-token-tokinteger"><code class="xref std std-token docutils literal notranslate"><span class="pre">TokInteger</span></code></a>’s, with values <code class="docutils literal notranslate"><span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">-5</span></code>,
+instead of “1”, “-“, and “5”.
+The <a class="reference internal" href="#grammar-token-rangelist"><code class="xref std std-token docutils literal notranslate"><span class="pre">RangeList</span></code></a> can be thought of as specifying “list slice” in some
 contexts.</p>
-<p><a class="reference internal" href="#grammar-token-SimpleValue"><code class="xref std std-token docutils literal"><span class="pre">SimpleValue</span></code></a> has a number of forms:</p>
+<p><a class="reference internal" href="#grammar-token-simplevalue"><code class="xref std std-token docutils literal notranslate"><span class="pre">SimpleValue</span></code></a> has a number of forms:</p>
 <pre>
-<strong id="grammar-token-SimpleValue">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a>
+<strong id="grammar-token-simplevalue">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a>
 </pre>
 <p>The value will be the variable referenced by the identifier. It can be one
 of:</p>
 <ul>
-<li><p class="first">name of a <code class="docutils literal"><span class="pre">def</span></code>, such as the use of <code class="docutils literal"><span class="pre">Bar</span></code> in:</p>
-<div class="highlight-python"><div class="highlight"><pre>def Bar : SomeClass {
-  int X = 5;
-}
+<li><p>name of a <code class="docutils literal notranslate"><span class="pre">def</span></code>, such as the use of <code class="docutils literal notranslate"><span class="pre">Bar</span></code> in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">Bar</span> <span class="p">:</span> <span class="n">SomeClass</span> <span class="p">{</span>
+  <span class="nb">int</span> <span class="n">X</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+<span class="p">}</span>
 
-def Foo {
-  SomeClass Baz = Bar;
+<span class="k">def</span> <span class="nf">Foo</span> <span class="p">{</span>
+  <span class="n">SomeClass</span> <span class="n">Baz</span> <span class="o">=</span> <span class="n">Bar</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>value local to a <code class="docutils literal notranslate"><span class="pre">def</span></code>, such as the use of <code class="docutils literal notranslate"><span class="pre">Bar</span></code> in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">Foo</span> <span class="p">{</span>
+  <span class="nb">int</span> <span class="n">Bar</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="n">Baz</span> <span class="o">=</span> <span class="n">Bar</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Values defined in superclasses can be accessed the same way.</p>
+</li>
+<li><p>a template arg of a <code class="docutils literal notranslate"><span class="pre">class</span></code>, such as the use of <code class="docutils literal notranslate"><span class="pre">Bar</span></code> in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="o">&lt;</span><span class="nb">int</span> <span class="n">Bar</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="nb">int</span> <span class="n">Baz</span> <span class="o">=</span> <span class="n">Bar</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>value local to a <code class="docutils literal notranslate"><span class="pre">class</span></code>, such as the use of <code class="docutils literal notranslate"><span class="pre">Bar</span></code> in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span> <span class="p">{</span>
+  <span class="nb">int</span> <span class="n">Bar</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+  <span class="nb">int</span> <span class="n">Baz</span> <span class="o">=</span> <span class="n">Bar</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p>a template arg to a <code class="docutils literal notranslate"><span class="pre">multiclass</span></code>, such as the use of <code class="docutils literal notranslate"><span class="pre">Bar</span></code> in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>multiclass Foo&lt;int Bar&gt; {
+  def : SomeClass&lt;Bar&gt;;
 }
 </pre></div>
 </div>
 </li>
-<li><p class="first">value local to a <code class="docutils literal"><span class="pre">def</span></code>, such as the use of <code class="docutils literal"><span class="pre">Bar</span></code> in:</p>
-<div class="highlight-python"><div class="highlight"><pre>def Foo {
-  int Bar = 5;
-  int Baz = Bar;
-}
+<li><p>the iteration variable of a <code class="docutils literal notranslate"><span class="pre">foreach</span></code>, such as the use of <code class="docutils literal notranslate"><span class="pre">i</span></code> in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">foreach</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">-</span><span class="mi">5</span> <span class="ow">in</span>
+<span class="k">def</span> <span class="nf">Foo</span><span class="c1">#i;</span>
 </pre></div>
 </div>
 </li>
-<li><p class="first">a template arg of a <code class="docutils literal"><span class="pre">class</span></code>, such as the use of <code class="docutils literal"><span class="pre">Bar</span></code> in:</p>
-<div class="highlight-python"><div class="highlight"><pre>class Foo&lt;int Bar&gt; {
-  int Baz = Bar;
-}
-</pre></div>
-</div>
-</li>
-<li><p class="first">value local to a <code class="docutils literal"><span class="pre">multiclass</span></code>, such as the use of <code class="docutils literal"><span class="pre">Bar</span></code> in:</p>
-<div class="highlight-python"><div class="highlight"><pre>multiclass Foo {
-  int Bar = 5;
-  int Baz = Bar;
-}
-</pre></div>
-</div>
-</li>
-<li><p class="first">a template arg to a <code class="docutils literal"><span class="pre">multiclass</span></code>, such as the use of <code class="docutils literal"><span class="pre">Bar</span></code> in:</p>
-<div class="highlight-python"><div class="highlight"><pre>multiclass Foo&lt;int Bar&gt; {
-  int Baz = Bar;
-}
-</pre></div>
-</div>
-</li>
+<li><p>a variable defined by <code class="docutils literal notranslate"><span class="pre">defset</span></code></p></li>
+<li><p>the implicit template argument <code class="docutils literal notranslate"><span class="pre">NAME</span></code> in a <code class="docutils literal notranslate"><span class="pre">class</span></code> or <code class="docutils literal notranslate"><span class="pre">multiclass</span></code></p></li>
 </ul>
 <pre>
-<strong id="id1">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-TokInteger"><code class="xref docutils literal"><span class="pre">TokInteger</span></code></a>
+<strong id="id1">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-tokinteger"><code class="xref docutils literal notranslate"><span class="pre">TokInteger</span></code></a>
 </pre>
 <p>This represents the numeric value of the integer.</p>
 <pre>
-<strong id="id2">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-TokString"><code class="xref docutils literal"><span class="pre">TokString</span></code></a>+
+<strong id="id2">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-tokstring"><code class="xref docutils literal notranslate"><span class="pre">TokString</span></code></a>+
 </pre>
 <p>Multiple adjacent string literals are concatenated like in C/C++. The value
 is the concatenation of the strings.</p>
 <pre>
-<strong id="id3">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-TokCodeFragment"><code class="xref docutils literal"><span class="pre">TokCodeFragment</span></code></a>
+<strong id="id3">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-tokcodefragment"><code class="xref docutils literal notranslate"><span class="pre">TokCodeFragment</span></code></a>
 </pre>
 <p>The value is the string value of the code fragment.</p>
 <pre>
 <strong id="id4">SimpleValue</strong> ::=  &quot;?&quot;
 </pre>
-<p><code class="docutils literal"><span class="pre">?</span></code> represents an &#8220;unset&#8221; initializer.</p>
+<p><code class="docutils literal notranslate"><span class="pre">?</span></code> represents an “unset” initializer.</p>
 <pre>
-<strong id="id5">SimpleValue</strong> ::=  &quot;{&quot; <a class="reference internal" href="#grammar-token-ValueList"><code class="xref docutils literal"><span class="pre">ValueList</span></code></a> &quot;}&quot;
-<strong id="grammar-token-ValueList">ValueList  </strong> ::=  [<a class="reference internal" href="#grammar-token-ValueListNE"><code class="xref docutils literal"><span class="pre">ValueListNE</span></code></a>]
-<strong id="grammar-token-ValueListNE">ValueListNE</strong> ::=  <a class="reference internal" href="#grammar-token-Value"><code class="xref docutils literal"><span class="pre">Value</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-Value"><code class="xref docutils literal"><span class="pre">Value</span></code></a>)*
+<strong id="id5">SimpleValue</strong> ::=  &quot;{&quot; <a class="reference internal" href="#grammar-token-valuelist"><code class="xref docutils literal notranslate"><span class="pre">ValueList</span></code></a> &quot;}&quot;
+<strong id="grammar-token-valuelist">ValueList  </strong> ::=  [<a class="reference internal" href="#grammar-token-valuelistne"><code class="xref docutils literal notranslate"><span class="pre">ValueListNE</span></code></a>]
+<strong id="grammar-token-valuelistne">ValueListNE</strong> ::=  <a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a>)*
 </pre>
 <p>This represents a sequence of bits, as would be used to initialize a
-<code class="docutils literal"><span class="pre">bits&lt;n&gt;</span></code> field (where <code class="docutils literal"><span class="pre">n</span></code> is the number of bits).</p>
+<code class="docutils literal notranslate"><span class="pre">bits&lt;n&gt;</span></code> field (where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of bits).</p>
 <pre>
-<strong id="id6">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-ClassID"><code class="xref docutils literal"><span class="pre">ClassID</span></code></a> &quot;&lt;&quot; <a class="reference internal" href="#grammar-token-ValueListNE"><code class="xref docutils literal"><span class="pre">ValueListNE</span></code></a> &quot;&gt;&quot;
+<strong id="id6">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-classid"><code class="xref docutils literal notranslate"><span class="pre">ClassID</span></code></a> &quot;&lt;&quot; <a class="reference internal" href="#grammar-token-valuelistne"><code class="xref docutils literal notranslate"><span class="pre">ValueListNE</span></code></a> &quot;&gt;&quot;
 </pre>
 <p>This generates a new anonymous record definition (as would be created by an
-unnamed <code class="docutils literal"><span class="pre">def</span></code> inheriting from the given class with the given template
+unnamed <code class="docutils literal notranslate"><span class="pre">def</span></code> inheriting from the given class with the given template
 arguments) and the value is the value of that record definition.</p>
 <pre>
-<strong id="id7">SimpleValue</strong> ::=  &quot;[&quot; <a class="reference internal" href="#grammar-token-ValueList"><code class="xref docutils literal"><span class="pre">ValueList</span></code></a> &quot;]&quot; [&quot;&lt;&quot; <a class="reference internal" href="#grammar-token-Type"><code class="xref docutils literal"><span class="pre">Type</span></code></a> &quot;&gt;&quot;]
+<strong id="id7">SimpleValue</strong> ::=  &quot;[&quot; <a class="reference internal" href="#grammar-token-valuelist"><code class="xref docutils literal notranslate"><span class="pre">ValueList</span></code></a> &quot;]&quot; [&quot;&lt;&quot; <a class="reference internal" href="#grammar-token-type"><code class="xref docutils literal notranslate"><span class="pre">Type</span></code></a> &quot;&gt;&quot;]
 </pre>
-<p>A list initializer. The optional <a class="reference internal" href="#grammar-token-Type"><code class="xref std std-token docutils literal"><span class="pre">Type</span></code></a> can be used to indicate a
+<p>A list initializer. The optional <a class="reference internal" href="#grammar-token-type"><code class="xref std std-token docutils literal notranslate"><span class="pre">Type</span></code></a> can be used to indicate a
 specific element type, otherwise the element type will be deduced from the
 given values.</p>
 <pre>
-<strong id="id8">SimpleValue</strong> ::=  &quot;(&quot; <a class="reference internal" href="#grammar-token-DagArg"><code class="xref docutils literal"><span class="pre">DagArg</span></code></a> <a class="reference internal" href="#grammar-token-DagArgList"><code class="xref docutils literal"><span class="pre">DagArgList</span></code></a> &quot;)&quot;
-<strong id="grammar-token-DagArgList">DagArgList </strong> ::=  <a class="reference internal" href="#grammar-token-DagArg"><code class="xref docutils literal"><span class="pre">DagArg</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-DagArg"><code class="xref docutils literal"><span class="pre">DagArg</span></code></a>)*
-<strong id="grammar-token-DagArg">DagArg     </strong> ::=  <a class="reference internal" href="#grammar-token-Value"><code class="xref docutils literal"><span class="pre">Value</span></code></a> [&quot;:&quot; <a class="reference internal" href="#grammar-token-TokVarName"><code class="xref docutils literal"><span class="pre">TokVarName</span></code></a>] | <a class="reference internal" href="#grammar-token-TokVarName"><code class="xref docutils literal"><span class="pre">TokVarName</span></code></a>
+<strong id="id8">SimpleValue</strong> ::=  &quot;(&quot; <a class="reference internal" href="#grammar-token-dagarg"><code class="xref docutils literal notranslate"><span class="pre">DagArg</span></code></a> [<a class="reference internal" href="#grammar-token-dagarglist"><code class="xref docutils literal notranslate"><span class="pre">DagArgList</span></code></a>] &quot;)&quot;
+<strong id="grammar-token-dagarglist">DagArgList </strong> ::=  <a class="reference internal" href="#grammar-token-dagarg"><code class="xref docutils literal notranslate"><span class="pre">DagArg</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-dagarg"><code class="xref docutils literal notranslate"><span class="pre">DagArg</span></code></a>)*
+<strong id="grammar-token-dagarg">DagArg     </strong> ::=  <a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a> [&quot;:&quot; <a class="reference internal" href="#grammar-token-tokvarname"><code class="xref docutils literal notranslate"><span class="pre">TokVarName</span></code></a>] | <a class="reference internal" href="#grammar-token-tokvarname"><code class="xref docutils literal notranslate"><span class="pre">TokVarName</span></code></a>
 </pre>
-<p>The initial <a class="reference internal" href="#grammar-token-DagArg"><code class="xref std std-token docutils literal"><span class="pre">DagArg</span></code></a> is called the &#8220;operator&#8221; of the dag.</p>
+<p>The initial <a class="reference internal" href="#grammar-token-dagarg"><code class="xref std std-token docutils literal notranslate"><span class="pre">DagArg</span></code></a> is called the “operator” of the dag.</p>
 <pre>
-<strong id="id9">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-BangOperator"><code class="xref docutils literal"><span class="pre">BangOperator</span></code></a> [&quot;&lt;&quot; <a class="reference internal" href="#grammar-token-Type"><code class="xref docutils literal"><span class="pre">Type</span></code></a> &quot;&gt;&quot;] &quot;(&quot; <a class="reference internal" href="#grammar-token-ValueListNE"><code class="xref docutils literal"><span class="pre">ValueListNE</span></code></a> &quot;)&quot;
+<strong id="id9">SimpleValue</strong> ::=  <a class="reference internal" href="#grammar-token-bangoperator"><code class="xref docutils literal notranslate"><span class="pre">BangOperator</span></code></a> [&quot;&lt;&quot; <a class="reference internal" href="#grammar-token-type"><code class="xref docutils literal notranslate"><span class="pre">Type</span></code></a> &quot;&gt;&quot;] &quot;(&quot; <a class="reference internal" href="#grammar-token-valuelistne"><code class="xref docutils literal notranslate"><span class="pre">ValueListNE</span></code></a> &quot;)&quot;
+                | <a class="reference internal" href="#grammar-token-condoperator"><code class="xref docutils literal notranslate"><span class="pre">CondOperator</span></code></a> &quot;(&quot; <a class="reference internal" href="#grammar-token-condval"><code class="xref docutils literal notranslate"><span class="pre">CondVal</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-condval"><code class="xref docutils literal notranslate"><span class="pre">CondVal</span></code></a>)* &quot;)&quot;
+<strong id="grammar-token-condval">CondVal    </strong> ::=  <a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a>
 </pre>
 </div>
 <div class="section" id="bodies">
 <h3><a class="toc-backref" href="#id18">Bodies</a><a class="headerlink" href="#bodies" title="Permalink to this headline">¶</a></h3>
 <pre>
-<strong id="grammar-token-ObjectBody">ObjectBody     </strong> ::=  <a class="reference internal" href="#grammar-token-BaseClassList"><code class="xref docutils literal"><span class="pre">BaseClassList</span></code></a> <a class="reference internal" href="#grammar-token-Body"><code class="xref docutils literal"><span class="pre">Body</span></code></a>
-<strong id="grammar-token-BaseClassList">BaseClassList  </strong> ::=  [&quot;:&quot; <a class="reference internal" href="#grammar-token-BaseClassListNE"><code class="xref docutils literal"><span class="pre">BaseClassListNE</span></code></a>]
-<strong id="grammar-token-BaseClassListNE">BaseClassListNE</strong> ::=  <a class="reference internal" href="#grammar-token-SubClassRef"><code class="xref docutils literal"><span class="pre">SubClassRef</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-SubClassRef"><code class="xref docutils literal"><span class="pre">SubClassRef</span></code></a>)*
-<strong id="grammar-token-SubClassRef">SubClassRef    </strong> ::=  (<a class="reference internal" href="#grammar-token-ClassID"><code class="xref docutils literal"><span class="pre">ClassID</span></code></a> | <a class="reference internal" href="#grammar-token-MultiClassID"><code class="xref docutils literal"><span class="pre">MultiClassID</span></code></a>) [&quot;&lt;&quot; <a class="reference internal" href="#grammar-token-ValueList"><code class="xref docutils literal"><span class="pre">ValueList</span></code></a> &quot;&gt;&quot;]
-<strong id="grammar-token-DefmID">DefmID         </strong> ::=  <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a>
+<strong id="grammar-token-objectbody">ObjectBody     </strong> ::=  <a class="reference internal" href="#grammar-token-baseclasslist"><code class="xref docutils literal notranslate"><span class="pre">BaseClassList</span></code></a> <a class="reference internal" href="#grammar-token-body"><code class="xref docutils literal notranslate"><span class="pre">Body</span></code></a>
+<strong id="grammar-token-baseclasslist">BaseClassList  </strong> ::=  [&quot;:&quot; <a class="reference internal" href="#grammar-token-baseclasslistne"><code class="xref docutils literal notranslate"><span class="pre">BaseClassListNE</span></code></a>]
+<strong id="grammar-token-baseclasslistne">BaseClassListNE</strong> ::=  <a class="reference internal" href="#grammar-token-subclassref"><code class="xref docutils literal notranslate"><span class="pre">SubClassRef</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-subclassref"><code class="xref docutils literal notranslate"><span class="pre">SubClassRef</span></code></a>)*
+<strong id="grammar-token-subclassref">SubClassRef    </strong> ::=  (<a class="reference internal" href="#grammar-token-classid"><code class="xref docutils literal notranslate"><span class="pre">ClassID</span></code></a> | <a class="reference internal" href="#grammar-token-multiclassid"><code class="xref docutils literal notranslate"><span class="pre">MultiClassID</span></code></a>) [&quot;&lt;&quot; <a class="reference internal" href="#grammar-token-valuelist"><code class="xref docutils literal notranslate"><span class="pre">ValueList</span></code></a> &quot;&gt;&quot;]
+<strong id="grammar-token-defmid">DefmID         </strong> ::=  <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a>
 </pre>
-<p>The version with the <a class="reference internal" href="#grammar-token-MultiClassID"><code class="xref std std-token docutils literal"><span class="pre">MultiClassID</span></code></a> is only valid in the
-<a class="reference internal" href="#grammar-token-BaseClassList"><code class="xref std std-token docutils literal"><span class="pre">BaseClassList</span></code></a> of a <code class="docutils literal"><span class="pre">defm</span></code>.
-The <a class="reference internal" href="#grammar-token-MultiClassID"><code class="xref std std-token docutils literal"><span class="pre">MultiClassID</span></code></a> should be the name of a <code class="docutils literal"><span class="pre">multiclass</span></code>.</p>
-<p>It is after parsing the base class list that the &#8220;let stack&#8221; is applied.</p>
+<p>The version with the <a class="reference internal" href="#grammar-token-multiclassid"><code class="xref std std-token docutils literal notranslate"><span class="pre">MultiClassID</span></code></a> is only valid in the
+<a class="reference internal" href="#grammar-token-baseclasslist"><code class="xref std std-token docutils literal notranslate"><span class="pre">BaseClassList</span></code></a> of a <code class="docutils literal notranslate"><span class="pre">defm</span></code>.
+The <a class="reference internal" href="#grammar-token-multiclassid"><code class="xref std std-token docutils literal notranslate"><span class="pre">MultiClassID</span></code></a> should be the name of a <code class="docutils literal notranslate"><span class="pre">multiclass</span></code>.</p>
+<p>It is after parsing the base class list that the “let stack” is applied.</p>
 <pre>
-<strong id="grammar-token-Body">Body    </strong> ::=  &quot;;&quot; | &quot;{&quot; BodyList &quot;}&quot;
-<strong id="grammar-token-BodyList">BodyList</strong> ::=  BodyItem*
-<strong id="grammar-token-BodyItem">BodyItem</strong> ::=  <a class="reference internal" href="#grammar-token-Declaration"><code class="xref docutils literal"><span class="pre">Declaration</span></code></a> &quot;;&quot;
-             | &quot;let&quot; <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a> [<a class="reference internal" href="#grammar-token-RangeList"><code class="xref docutils literal"><span class="pre">RangeList</span></code></a>] &quot;=&quot; <a class="reference internal" href="#grammar-token-Value"><code class="xref docutils literal"><span class="pre">Value</span></code></a> &quot;;&quot;
+<strong id="grammar-token-body">Body    </strong> ::=  &quot;;&quot; | &quot;{&quot; BodyList &quot;}&quot;
+<strong id="grammar-token-bodylist">BodyList</strong> ::=  BodyItem*
+<strong id="grammar-token-bodyitem">BodyItem</strong> ::=  <a class="reference internal" href="#grammar-token-declaration"><code class="xref docutils literal notranslate"><span class="pre">Declaration</span></code></a> &quot;;&quot;
+             | &quot;let&quot; <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a> [ &quot;{&quot; <a class="reference internal" href="#grammar-token-rangelist"><code class="xref docutils literal notranslate"><span class="pre">RangeList</span></code></a> &quot;}&quot; ] &quot;=&quot; <a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a> &quot;;&quot;
 </pre>
-<p>The <code class="docutils literal"><span class="pre">let</span></code> form allows overriding the value of an inherited field.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">let</span></code> form allows overriding the value of an inherited field.</p>
 </div>
 <div class="section" id="def">
-<h3><a class="toc-backref" href="#id19"><code class="docutils literal"><span class="pre">def</span></code></a><a class="headerlink" href="#def" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id19"><code class="docutils literal notranslate"><span class="pre">def</span></code></a><a class="headerlink" href="#def" title="Permalink to this headline">¶</a></h3>
 <pre>
-<strong id="grammar-token-Def">Def</strong> ::=  &quot;def&quot; <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a> <a class="reference internal" href="#grammar-token-ObjectBody"><code class="xref docutils literal"><span class="pre">ObjectBody</span></code></a>
+<strong id="grammar-token-def">Def</strong> ::=  &quot;def&quot; [<a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a>] <a class="reference internal" href="#grammar-token-objectbody"><code class="xref docutils literal notranslate"><span class="pre">ObjectBody</span></code></a>
 </pre>
-<p>Defines a record whose name is given by the <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref std std-token docutils literal"><span class="pre">TokIdentifier</span></code></a>. The
-fields of the record are inherited from the base classes and defined in the
-body.</p>
-<p>Special handling occurs if this <code class="docutils literal"><span class="pre">def</span></code> appears inside a <code class="docutils literal"><span class="pre">multiclass</span></code> or
-a <code class="docutils literal"><span class="pre">foreach</span></code>.</p>
+<p>Defines a record whose name is given by the optional <a class="reference internal" href="#grammar-token-value"><code class="xref std std-token docutils literal notranslate"><span class="pre">Value</span></code></a>. The value
+is parsed in a special mode where global identifiers (records and variables
+defined by <code class="docutils literal notranslate"><span class="pre">defset</span></code>) are not recognized, and all unrecognized identifiers
+are interpreted as strings.</p>
+<p>If no name is given, the record is anonymous. The final name of anonymous
+records is undefined, but globally unique.</p>
+<p>Special handling occurs if this <code class="docutils literal notranslate"><span class="pre">def</span></code> appears inside a <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> or
+a <code class="docutils literal notranslate"><span class="pre">foreach</span></code>.</p>
+<p>When a non-anonymous record is defined in a multiclass and the given name
+does not contain a reference to the implicit template argument <code class="docutils literal notranslate"><span class="pre">NAME</span></code>, such
+a reference will automatically be prepended. That is, the following are
+equivalent inside a multiclass:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">Foo</span><span class="p">;</span>
+<span class="k">def</span> <span class="nf">NAME</span><span class="c1">#Foo;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="defm">
-<h3><a class="toc-backref" href="#id20"><code class="docutils literal"><span class="pre">defm</span></code></a><a class="headerlink" href="#defm" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id20"><code class="docutils literal notranslate"><span class="pre">defm</span></code></a><a class="headerlink" href="#defm" title="Permalink to this headline">¶</a></h3>
 <pre>
-<strong id="grammar-token-Defm">Defm</strong> ::=  &quot;defm&quot; <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a> &quot;:&quot; <a class="reference internal" href="#grammar-token-BaseClassListNE"><code class="xref docutils literal"><span class="pre">BaseClassListNE</span></code></a> &quot;;&quot;
+<strong id="grammar-token-defm">Defm</strong> ::=  &quot;defm&quot; [<a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a>] &quot;:&quot; <a class="reference internal" href="#grammar-token-baseclasslistne"><code class="xref docutils literal notranslate"><span class="pre">BaseClassListNE</span></code></a> &quot;;&quot;
 </pre>
-<p>Note that in the <a class="reference internal" href="#grammar-token-BaseClassList"><code class="xref std std-token docutils literal"><span class="pre">BaseClassList</span></code></a>, all of the <code class="docutils literal"><span class="pre">multiclass</span></code>&#8216;s must
-precede any <code class="docutils literal"><span class="pre">class</span></code>&#8216;s that appear.</p>
+<p>The <a class="reference internal" href="#grammar-token-baseclasslist"><code class="xref std std-token docutils literal notranslate"><span class="pre">BaseClassList</span></code></a> is a list of at least one <code class="docutils literal notranslate"><span class="pre">multiclass</span></code> and any
+number of <code class="docutils literal notranslate"><span class="pre">class</span></code>’s. The <code class="docutils literal notranslate"><span class="pre">multiclass</span></code>’s must occur before any <code class="docutils literal notranslate"><span class="pre">class</span></code>’s.</p>
+<p>Instantiates all records defined in all given <code class="docutils literal notranslate"><span class="pre">multiclass</span></code>’s and adds the
+given <code class="docutils literal notranslate"><span class="pre">class</span></code>’s as superclasses.</p>
+<p>The name is parsed in the same special mode used by <code class="docutils literal notranslate"><span class="pre">def</span></code>. If the name is
+missing, a globally unique string is used instead (but instantiated records
+are not considered to be anonymous, unless they were originally defined by an
+anonymous <code class="docutils literal notranslate"><span class="pre">def</span></code>) That is, the following have different semantics:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">defm</span> <span class="p">:</span> <span class="n">SomeMultiClass</span><span class="o">&lt;...&gt;</span><span class="p">;</span>    <span class="o">//</span> <span class="n">some</span> <span class="n">globally</span> <span class="n">unique</span> <span class="n">name</span>
+<span class="n">defm</span> <span class="s2">&quot;&quot;</span> <span class="p">:</span> <span class="n">SomeMultiClass</span><span class="o">&lt;...&gt;</span><span class="p">;</span> <span class="o">//</span> <span class="n">empty</span> <span class="n">name</span> <span class="n">string</span>
+</pre></div>
+</div>
+<p>When it occurs inside a multiclass, the second variant is equivalent to
+<code class="docutils literal notranslate"><span class="pre">defm</span> <span class="pre">NAME</span> <span class="pre">:</span> <span class="pre">...</span></code>. More generally, when <code class="docutils literal notranslate"><span class="pre">defm</span></code> occurs in a multiclass and
+its name does not contain a reference to the implicit template argument
+<code class="docutils literal notranslate"><span class="pre">NAME</span></code>, such a reference will automatically be prepended. That is, the
+following are equivalent inside a multiclass:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">defm</span> <span class="n">Foo</span> <span class="p">:</span> <span class="n">SomeMultiClass</span><span class="o">&lt;...&gt;</span><span class="p">;</span>
+<span class="n">defm</span> <span class="n">NAME</span><span class="c1">#Foo : SomeMultiClass&lt;...&gt;;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="defset">
+<h3><a class="toc-backref" href="#id21"><code class="docutils literal notranslate"><span class="pre">defset</span></code></a><a class="headerlink" href="#defset" title="Permalink to this headline">¶</a></h3>
+<pre>
+<strong id="grammar-token-defset">Defset</strong> ::=  &quot;defset&quot; <a class="reference internal" href="#grammar-token-type"><code class="xref docutils literal notranslate"><span class="pre">Type</span></code></a> <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a> &quot;=&quot; &quot;{&quot; <a class="reference internal" href="#grammar-token-object"><code class="xref docutils literal notranslate"><span class="pre">Object</span></code></a>* &quot;}&quot;
+</pre>
+<p>All records defined inside the braces via <code class="docutils literal notranslate"><span class="pre">def</span></code> and <code class="docutils literal notranslate"><span class="pre">defm</span></code> are collected
+in a globally accessible list of the given name (in addition to being added
+to the global collection of records as usual). Anonymous records created inside
+initializier expressions using the <code class="docutils literal notranslate"><span class="pre">Class&lt;args...&gt;</span></code> syntax are never collected
+in a defset.</p>
+<p>The given type must be <code class="docutils literal notranslate"><span class="pre">list&lt;A&gt;</span></code>, where <code class="docutils literal notranslate"><span class="pre">A</span></code> is some class. It is an error
+to define a record (via <code class="docutils literal notranslate"><span class="pre">def</span></code> or <code class="docutils literal notranslate"><span class="pre">defm</span></code>) inside the braces which doesn’t
+derive from <code class="docutils literal notranslate"><span class="pre">A</span></code>.</p>
 </div>
 <div class="section" id="foreach">
-<h3><a class="toc-backref" href="#id21"><code class="docutils literal"><span class="pre">foreach</span></code></a><a class="headerlink" href="#foreach" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id22"><code class="docutils literal notranslate"><span class="pre">foreach</span></code></a><a class="headerlink" href="#foreach" title="Permalink to this headline">¶</a></h3>
 <pre>
-<strong id="grammar-token-Foreach">Foreach</strong> ::=  &quot;foreach&quot; <a class="reference internal" href="#grammar-token-Declaration"><code class="xref docutils literal"><span class="pre">Declaration</span></code></a> &quot;in&quot; &quot;{&quot; <a class="reference internal" href="#grammar-token-Object"><code class="xref docutils literal"><span class="pre">Object</span></code></a>* &quot;}&quot;
-            | &quot;foreach&quot; <a class="reference internal" href="#grammar-token-Declaration"><code class="xref docutils literal"><span class="pre">Declaration</span></code></a> &quot;in&quot; <a class="reference internal" href="#grammar-token-Object"><code class="xref docutils literal"><span class="pre">Object</span></code></a>
+<strong id="grammar-token-foreach">Foreach           </strong> ::=  &quot;foreach&quot; <a class="reference internal" href="#grammar-token-foreachdeclaration"><code class="xref docutils literal notranslate"><span class="pre">ForeachDeclaration</span></code></a> &quot;in&quot; &quot;{&quot; <a class="reference internal" href="#grammar-token-object"><code class="xref docutils literal notranslate"><span class="pre">Object</span></code></a>* &quot;}&quot;
+                       | &quot;foreach&quot; <a class="reference internal" href="#grammar-token-foreachdeclaration"><code class="xref docutils literal notranslate"><span class="pre">ForeachDeclaration</span></code></a> &quot;in&quot; <a class="reference internal" href="#grammar-token-object"><code class="xref docutils literal notranslate"><span class="pre">Object</span></code></a>
+<strong id="grammar-token-foreachdeclaration">ForeachDeclaration</strong> ::=  ID &quot;=&quot; ( &quot;{&quot; <a class="reference internal" href="#grammar-token-rangelist"><code class="xref docutils literal notranslate"><span class="pre">RangeList</span></code></a> &quot;}&quot; | <a class="reference internal" href="#grammar-token-rangepiece"><code class="xref docutils literal notranslate"><span class="pre">RangePiece</span></code></a> | <a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a> )
 </pre>
 <p>The value assigned to the variable in the declaration is iterated over and
 the object or object list is reevaluated with the variable set at each
 iterated value.</p>
+<p>Note that the productions involving RangeList and RangePiece have precedence
+over the more generic value parsing based on the first token.</p>
 </div>
 <div class="section" id="top-level-let">
-<h3><a class="toc-backref" href="#id22">Top-Level <code class="docutils literal"><span class="pre">let</span></code></a><a class="headerlink" href="#top-level-let" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id23">Top-Level <code class="docutils literal notranslate"><span class="pre">let</span></code></a><a class="headerlink" href="#top-level-let" title="Permalink to this headline">¶</a></h3>
 <pre>
-<strong id="grammar-token-Let">Let    </strong> ::=   &quot;let&quot; <a class="reference internal" href="#grammar-token-LetList"><code class="xref docutils literal"><span class="pre">LetList</span></code></a> &quot;in&quot; &quot;{&quot; <a class="reference internal" href="#grammar-token-Object"><code class="xref docutils literal"><span class="pre">Object</span></code></a>* &quot;}&quot;
-            | &quot;let&quot; <a class="reference internal" href="#grammar-token-LetList"><code class="xref docutils literal"><span class="pre">LetList</span></code></a> &quot;in&quot; <a class="reference internal" href="#grammar-token-Object"><code class="xref docutils literal"><span class="pre">Object</span></code></a>
-<strong id="grammar-token-LetList">LetList</strong> ::=  <a class="reference internal" href="#grammar-token-LetItem"><code class="xref docutils literal"><span class="pre">LetItem</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-LetItem"><code class="xref docutils literal"><span class="pre">LetItem</span></code></a>)*
-<strong id="grammar-token-LetItem">LetItem</strong> ::=  <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a> [<a class="reference internal" href="#grammar-token-RangeList"><code class="xref docutils literal"><span class="pre">RangeList</span></code></a>] &quot;=&quot; <a class="reference internal" href="#grammar-token-Value"><code class="xref docutils literal"><span class="pre">Value</span></code></a>
+<strong id="grammar-token-let">Let    </strong> ::=   &quot;let&quot; <a class="reference internal" href="#grammar-token-letlist"><code class="xref docutils literal notranslate"><span class="pre">LetList</span></code></a> &quot;in&quot; &quot;{&quot; <a class="reference internal" href="#grammar-token-object"><code class="xref docutils literal notranslate"><span class="pre">Object</span></code></a>* &quot;}&quot;
+            | &quot;let&quot; <a class="reference internal" href="#grammar-token-letlist"><code class="xref docutils literal notranslate"><span class="pre">LetList</span></code></a> &quot;in&quot; <a class="reference internal" href="#grammar-token-object"><code class="xref docutils literal notranslate"><span class="pre">Object</span></code></a>
+<strong id="grammar-token-letlist">LetList</strong> ::=  <a class="reference internal" href="#grammar-token-letitem"><code class="xref docutils literal notranslate"><span class="pre">LetItem</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-letitem"><code class="xref docutils literal notranslate"><span class="pre">LetItem</span></code></a>)*
+<strong id="grammar-token-letitem">LetItem</strong> ::=  <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a> [<a class="reference internal" href="#grammar-token-rangelist"><code class="xref docutils literal notranslate"><span class="pre">RangeList</span></code></a>] &quot;=&quot; <a class="reference internal" href="#grammar-token-value"><code class="xref docutils literal notranslate"><span class="pre">Value</span></code></a>
 </pre>
-<p>This is effectively equivalent to <code class="docutils literal"><span class="pre">let</span></code> inside the body of a record
+<p>This is effectively equivalent to <code class="docutils literal notranslate"><span class="pre">let</span></code> inside the body of a record
 except that it applies to multiple records at a time. The bindings are
 applied at the end of parsing the base classes of a record.</p>
 </div>
 <div class="section" id="multiclass">
-<h3><a class="toc-backref" href="#id23"><code class="docutils literal"><span class="pre">multiclass</span></code></a><a class="headerlink" href="#multiclass" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id24"><code class="docutils literal notranslate"><span class="pre">multiclass</span></code></a><a class="headerlink" href="#multiclass" title="Permalink to this headline">¶</a></h3>
 <pre>
-<strong id="grammar-token-MultiClass">MultiClass        </strong> ::=  &quot;multiclass&quot; <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a> [<a class="reference internal" href="#grammar-token-TemplateArgList"><code class="xref docutils literal"><span class="pre">TemplateArgList</span></code></a>]
-                        [&quot;:&quot; <a class="reference internal" href="#grammar-token-BaseMultiClassList"><code class="xref docutils literal"><span class="pre">BaseMultiClassList</span></code></a>] &quot;{&quot; <a class="reference internal" href="#grammar-token-MultiClassObject"><code class="xref docutils literal"><span class="pre">MultiClassObject</span></code></a>+ &quot;}&quot;
-<strong id="grammar-token-BaseMultiClassList">BaseMultiClassList</strong> ::=  <a class="reference internal" href="#grammar-token-MultiClassID"><code class="xref docutils literal"><span class="pre">MultiClassID</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-MultiClassID"><code class="xref docutils literal"><span class="pre">MultiClassID</span></code></a>)*
-<strong id="grammar-token-MultiClassID">MultiClassID      </strong> ::=  <a class="reference internal" href="#grammar-token-TokIdentifier"><code class="xref docutils literal"><span class="pre">TokIdentifier</span></code></a>
-<strong id="grammar-token-MultiClassObject">MultiClassObject  </strong> ::=  <a class="reference internal" href="#grammar-token-Def"><code class="xref docutils literal"><span class="pre">Def</span></code></a> | <a class="reference internal" href="#grammar-token-Defm"><code class="xref docutils literal"><span class="pre">Defm</span></code></a> | <a class="reference internal" href="#grammar-token-Let"><code class="xref docutils literal"><span class="pre">Let</span></code></a> | <a class="reference internal" href="#grammar-token-Foreach"><code class="xref docutils literal"><span class="pre">Foreach</span></code></a>
+<strong id="grammar-token-multiclass">MultiClass        </strong> ::=  &quot;multiclass&quot; <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a> [<a class="reference internal" href="#grammar-token-templatearglist"><code class="xref docutils literal notranslate"><span class="pre">TemplateArgList</span></code></a>]
+                        [&quot;:&quot; <a class="reference internal" href="#grammar-token-basemulticlasslist"><code class="xref docutils literal notranslate"><span class="pre">BaseMultiClassList</span></code></a>] &quot;{&quot; <a class="reference internal" href="#grammar-token-multiclassobject"><code class="xref docutils literal notranslate"><span class="pre">MultiClassObject</span></code></a>+ &quot;}&quot;
+<strong id="grammar-token-basemulticlasslist">BaseMultiClassList</strong> ::=  <a class="reference internal" href="#grammar-token-multiclassid"><code class="xref docutils literal notranslate"><span class="pre">MultiClassID</span></code></a> (&quot;,&quot; <a class="reference internal" href="#grammar-token-multiclassid"><code class="xref docutils literal notranslate"><span class="pre">MultiClassID</span></code></a>)*
+<strong id="grammar-token-multiclassid">MultiClassID      </strong> ::=  <a class="reference internal" href="#grammar-token-tokidentifier"><code class="xref docutils literal notranslate"><span class="pre">TokIdentifier</span></code></a>
+<strong id="grammar-token-multiclassobject">MultiClassObject  </strong> ::=  <a class="reference internal" href="#grammar-token-def"><code class="xref docutils literal notranslate"><span class="pre">Def</span></code></a> | <a class="reference internal" href="#grammar-token-defm"><code class="xref docutils literal notranslate"><span class="pre">Defm</span></code></a> | <a class="reference internal" href="#grammar-token-let"><code class="xref docutils literal notranslate"><span class="pre">Let</span></code></a> | <a class="reference internal" href="#grammar-token-foreach"><code class="xref docutils literal notranslate"><span class="pre">Foreach</span></code></a>
 </pre>
 </div>
+</div>
+<div class="section" id="preprocessing-support">
+<h2><a class="toc-backref" href="#id25">Preprocessing Support</a><a class="headerlink" href="#preprocessing-support" title="Permalink to this headline">¶</a></h2>
+<p>TableGen’s embedded preprocessor is only intended for conditional compilation.
+It supports the following directives:</p>
+<pre>
+<strong id="grammar-token-linebegin">LineBegin                </strong> ::=  ^
+<strong id="grammar-token-lineend">LineEnd                  </strong> ::=  &quot;\n&quot; | &quot;\r&quot; | EOF
+<strong id="grammar-token-whitespace">WhiteSpace               </strong> ::=  &quot; &quot; | &quot;\t&quot;
+<strong id="grammar-token-cstylecomment">CStyleComment            </strong> ::=  &quot;/*&quot; (.* - &quot;*/&quot;) &quot;*/&quot;
+<strong id="grammar-token-bcplcomment">BCPLComment              </strong> ::=  &quot;//&quot; (.* - <a class="reference internal" href="#grammar-token-lineend"><code class="xref docutils literal notranslate"><span class="pre">LineEnd</span></code></a>) <a class="reference internal" href="#grammar-token-lineend"><code class="xref docutils literal notranslate"><span class="pre">LineEnd</span></code></a>
+<strong id="grammar-token-whitespaceorcstylecomment">WhiteSpaceOrCStyleComment</strong> ::=  <a class="reference internal" href="#grammar-token-whitespace"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpace</span></code></a> | <a class="reference internal" href="#grammar-token-cstylecomment"><code class="xref docutils literal notranslate"><span class="pre">CStyleComment</span></code></a>
+<strong id="grammar-token-whitespaceoranycomment">WhiteSpaceOrAnyComment   </strong> ::=  <a class="reference internal" href="#grammar-token-whitespace"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpace</span></code></a> | <a class="reference internal" href="#grammar-token-cstylecomment"><code class="xref docutils literal notranslate"><span class="pre">CStyleComment</span></code></a> | <a class="reference internal" href="#grammar-token-bcplcomment"><code class="xref docutils literal notranslate"><span class="pre">BCPLComment</span></code></a>
+<strong id="grammar-token-macroname">MacroName                </strong> ::=  <a class="reference internal" href="#grammar-token-ualpha"><code class="xref docutils literal notranslate"><span class="pre">ualpha</span></code></a> (<a class="reference internal" href="#grammar-token-ualpha"><code class="xref docutils literal notranslate"><span class="pre">ualpha</span></code></a> | &quot;0&quot;...&quot;9&quot;)*
+<strong id="grammar-token-prepdefine">PrepDefine               </strong> ::=  <a class="reference internal" href="#grammar-token-linebegin"><code class="xref docutils literal notranslate"><span class="pre">LineBegin</span></code></a> (<a class="reference internal" href="#grammar-token-whitespaceorcstylecomment"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpaceOrCStyleComment</span></code></a>)*
+                               &quot;#define&quot; (<a class="reference internal" href="#grammar-token-whitespace"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpace</span></code></a>)+ <a class="reference internal" href="#grammar-token-macroname"><code class="xref docutils literal notranslate"><span class="pre">MacroName</span></code></a>
+                               (<a class="reference internal" href="#grammar-token-whitespaceoranycomment"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpaceOrAnyComment</span></code></a>)* <a class="reference internal" href="#grammar-token-lineend"><code class="xref docutils literal notranslate"><span class="pre">LineEnd</span></code></a>
+<strong id="grammar-token-prepifdef">PrepIfdef                </strong> ::=  <a class="reference internal" href="#grammar-token-linebegin"><code class="xref docutils literal notranslate"><span class="pre">LineBegin</span></code></a> (<a class="reference internal" href="#grammar-token-whitespaceorcstylecomment"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpaceOrCStyleComment</span></code></a>)*
+                               &quot;#ifdef&quot; (<a class="reference internal" href="#grammar-token-whitespace"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpace</span></code></a>)+ <a class="reference internal" href="#grammar-token-macroname"><code class="xref docutils literal notranslate"><span class="pre">MacroName</span></code></a>
+                               (<a class="reference internal" href="#grammar-token-whitespaceoranycomment"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpaceOrAnyComment</span></code></a>)* <a class="reference internal" href="#grammar-token-lineend"><code class="xref docutils literal notranslate"><span class="pre">LineEnd</span></code></a>
+<strong id="grammar-token-prepelse">PrepElse                 </strong> ::=  <a class="reference internal" href="#grammar-token-linebegin"><code class="xref docutils literal notranslate"><span class="pre">LineBegin</span></code></a> (<a class="reference internal" href="#grammar-token-whitespaceorcstylecomment"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpaceOrCStyleComment</span></code></a>)*
+                               &quot;#else&quot; (<a class="reference internal" href="#grammar-token-whitespaceoranycomment"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpaceOrAnyComment</span></code></a>)* <a class="reference internal" href="#grammar-token-lineend"><code class="xref docutils literal notranslate"><span class="pre">LineEnd</span></code></a>
+<strong id="grammar-token-prependif">PrepEndif                </strong> ::=  <a class="reference internal" href="#grammar-token-linebegin"><code class="xref docutils literal notranslate"><span class="pre">LineBegin</span></code></a> (<a class="reference internal" href="#grammar-token-whitespaceorcstylecomment"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpaceOrCStyleComment</span></code></a>)*
+                               &quot;#endif&quot; (<a class="reference internal" href="#grammar-token-whitespaceoranycomment"><code class="xref docutils literal notranslate"><span class="pre">WhiteSpaceOrAnyComment</span></code></a>)* <a class="reference internal" href="#grammar-token-lineend"><code class="xref docutils literal notranslate"><span class="pre">LineEnd</span></code></a>
+<strong id="grammar-token-prepregcontentexception">PrepRegContentException  </strong> ::=  <a class="reference internal" href="#grammar-token-prepifdef"><code class="xref docutils literal notranslate"><span class="pre">PrepIfdef</span></code></a> | <a class="reference internal" href="#grammar-token-prepelse"><code class="xref docutils literal notranslate"><span class="pre">PrepElse</span></code></a> | <a class="reference internal" href="#grammar-token-prependif"><code class="xref docutils literal notranslate"><span class="pre">PrepEndif</span></code></a> | EOF
+<strong id="grammar-token-prepregion">PrepRegion               </strong> ::=  .* - <a class="reference internal" href="#grammar-token-prepregcontentexception"><code class="xref docutils literal notranslate"><span class="pre">PrepRegContentException</span></code></a>
+                              | <a class="reference internal" href="#grammar-token-prepifdef"><code class="xref docutils literal notranslate"><span class="pre">PrepIfdef</span></code></a>
+                                (<a class="reference internal" href="#grammar-token-prepregion"><code class="xref docutils literal notranslate"><span class="pre">PrepRegion</span></code></a>)*
+                                [<a class="reference internal" href="#grammar-token-prepelse"><code class="xref docutils literal notranslate"><span class="pre">PrepElse</span></code></a>]
+                                (<a class="reference internal" href="#grammar-token-prepregion"><code class="xref docutils literal notranslate"><span class="pre">PrepRegion</span></code></a>)*
+                                <a class="reference internal" href="#grammar-token-prependif"><code class="xref docutils literal notranslate"><span class="pre">PrepEndif</span></code></a>
+</pre>
+<p><a class="reference internal" href="#grammar-token-prepregion"><code class="xref std std-token docutils literal notranslate"><span class="pre">PrepRegion</span></code></a> may occur anywhere in a TD file, as long as it matches
+the grammar specification.</p>
+<p><a class="reference internal" href="#grammar-token-prepdefine"><code class="xref std std-token docutils literal notranslate"><span class="pre">PrepDefine</span></code></a> allows defining a <a class="reference internal" href="#grammar-token-macroname"><code class="xref std std-token docutils literal notranslate"><span class="pre">MacroName</span></code></a> so that any following
+<a class="reference internal" href="#grammar-token-prepifdef"><code class="xref std std-token docutils literal notranslate"><span class="pre">PrepIfdef</span></code></a> - <a class="reference internal" href="#grammar-token-prepelse"><code class="xref std std-token docutils literal notranslate"><span class="pre">PrepElse</span></code></a> preprocessing region part and
+<a class="reference internal" href="#grammar-token-prepifdef"><code class="xref std std-token docutils literal notranslate"><span class="pre">PrepIfdef</span></code></a> - <a class="reference internal" href="#grammar-token-prependif"><code class="xref std std-token docutils literal notranslate"><span class="pre">PrepEndif</span></code></a> preprocessing region
+are enabled for TableGen tokens parsing.</p>
+<p>A preprocessing region, starting (i.e. having its <a class="reference internal" href="#grammar-token-prepifdef"><code class="xref std std-token docutils literal notranslate"><span class="pre">PrepIfdef</span></code></a>) in a file,
+must end (i.e. have its <a class="reference internal" href="#grammar-token-prependif"><code class="xref std std-token docutils literal notranslate"><span class="pre">PrepEndif</span></code></a>) in the same file.</p>
+<p>A <a class="reference internal" href="#grammar-token-macroname"><code class="xref std std-token docutils literal notranslate"><span class="pre">MacroName</span></code></a> may be defined externally by using <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">-D&lt;NAME&gt;</span> <span class="pre">}</span></code>
+option of TableGen.</p>
 </div>
 </div>
 
@@ -435,13 +535,13 @@ applied at the end of parsing the base classes of a record.</p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >TableGen</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >TableGen</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

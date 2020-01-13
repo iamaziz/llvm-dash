@@ -1,38 +1,27 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Overview &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>Overview &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="#" />
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="LLVM Language Reference Manual" href="LangRef.html" />
 <style type="text/css">
   table.right { float: right; margin-left: 20px; }
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="#">
     <img src="_static/logo.png"
@@ -72,83 +61,91 @@ targeted at different audiences:</p>
 <p>Several introductory papers and presentations.</p>
 <div class="toctree-wrapper compound">
 </div>
-<dl class="docutils">
-<dt><a class="reference internal" href="LangRef.html"><em>LLVM Language Reference Manual</em></a></dt>
-<dd>Defines the LLVM intermediate representation.</dd>
-<dt><a class="reference external" href="http://llvm.org/pubs/2008-10-04-ACAT-LLVM-Intro.html">Introduction to the LLVM Compiler</a></dt>
-<dd>Presentation providing a users introduction to LLVM.</dd>
-<dt><a class="reference external" href="http://www.aosabook.org/en/llvm.html">Intro to LLVM</a></dt>
-<dd>Book chapter providing a compiler hacker&#8217;s introduction to LLVM.</dd>
-<dt><a class="reference external" href="http://llvm.org/pubs/2004-01-30-CGO-LLVM.html">LLVM: A Compilation Framework for Lifelong Program Analysis &amp; Transformation</a></dt>
-<dd>Design overview.</dd>
-<dt><a class="reference external" href="http://llvm.org/pubs/2002-12-LattnerMSThesis.html">LLVM: An Infrastructure for Multi-Stage Optimization</a></dt>
-<dd>More details (quite old now).</dd>
-<dt><a class="reference external" href="http://llvm.org/pubs">Publications mentioning LLVM</a></dt>
-<dd></dd>
+<dl class="simple">
+<dt><a class="reference internal" href="LangRef.html"><span class="doc">LLVM Language Reference Manual</span></a></dt><dd><p>Defines the LLVM intermediate representation.</p>
+</dd>
+<dt><a class="reference external" href="http://llvm.org/pubs/2008-10-04-ACAT-LLVM-Intro.html">Introduction to the LLVM Compiler</a></dt><dd><p>Presentation providing a users introduction to LLVM.</p>
+</dd>
+<dt><a class="reference external" href="http://www.aosabook.org/en/llvm.html">Intro to LLVM</a></dt><dd><p>Book chapter providing a compiler hacker’s introduction to LLVM.</p>
+</dd>
+<dt><a class="reference external" href="http://llvm.org/pubs/2004-01-30-CGO-LLVM.html">LLVM: A Compilation Framework for Lifelong Program Analysis &amp; Transformation</a></dt><dd><p>Design overview.</p>
+</dd>
+<dt><a class="reference external" href="http://llvm.org/pubs/2002-12-LattnerMSThesis.html">LLVM: An Infrastructure for Multi-Stage Optimization</a></dt><dd><p>More details (quite old now).</p>
+</dd>
+<dt><a class="reference external" href="http://llvm.org/pubs">Publications mentioning LLVM</a></dt><dd></dd>
 </dl>
 </div>
 <div class="section" id="user-guides">
 <h1>User Guides<a class="headerlink" href="#user-guides" title="Permalink to this headline">¶</a></h1>
 <p>For those new to the LLVM system.</p>
-<p>NOTE: If you are a user who is only interested in using LLVM-based
-compilers, you should look into <a class="reference external" href="http://clang.llvm.org">Clang</a> or
-<a class="reference external" href="http://dragonegg.llvm.org">DragonEgg</a> instead. The documentation here is
-intended for users who have a need to work with the intermediate LLVM
-representation.</p>
+<p>NOTE: If you are a user who is only interested in using an LLVM-based compiler,
+you should look into <a class="reference external" href="http://clang.llvm.org">Clang</a> instead. The
+documentation here is intended for users who have a need to work with the
+intermediate LLVM representation.</p>
 <div class="toctree-wrapper compound">
 </div>
-<dl class="docutils">
-<dt><a class="reference internal" href="GettingStarted.html"><em>Getting Started with the LLVM System</em></a></dt>
-<dd>Discusses how to get up and running quickly with the LLVM infrastructure.
+<dl class="simple">
+<dt><a class="reference internal" href="GettingStarted.html"><span class="doc">Getting Started with the LLVM System</span></a></dt><dd><p>Discusses how to get up and running quickly with the LLVM infrastructure.
 Everything from unpacking and compilation of the distribution to execution
-of some tools.</dd>
-<dt><a class="reference internal" href="CMake.html"><em>Building LLVM with CMake</em></a></dt>
-<dd>An addendum to the main Getting Started guide for those using the <a class="reference external" href="http://www.cmake.org">CMake
-build system</a>.</dd>
-<dt><a class="reference internal" href="HowToBuildOnARM.html"><em>How To Build On ARM</em></a></dt>
-<dd>Notes on building and testing LLVM/Clang on ARM.</dd>
-<dt><a class="reference internal" href="HowToCrossCompileLLVM.html"><em>How To Cross-Compile Clang/LLVM using Clang/LLVM</em></a></dt>
-<dd>Notes on cross-building and testing LLVM/Clang.</dd>
-<dt><a class="reference internal" href="GettingStartedVS.html"><em>Getting Started with the LLVM System using Microsoft Visual Studio</em></a></dt>
-<dd>An addendum to the main Getting Started guide for those using Visual Studio
-on Windows.</dd>
-<dt><a class="reference internal" href="BuildingLLVMWithAutotools.html"><em>Building LLVM With Autotools</em></a></dt>
-<dd>An addendum to the Getting Started guide with instructions for building LLVM
-with the Autotools build system.</dd>
-<dt><a class="reference internal" href="tutorial/index.html"><em>LLVM Tutorial: Table of Contents</em></a></dt>
-<dd>Tutorials about using LLVM. Includes a tutorial about making a custom
-language with LLVM.</dd>
-<dt><a class="reference internal" href="CommandGuide/index.html"><em>LLVM Command Guide</em></a></dt>
-<dd>A reference manual for the LLVM command line utilities (&#8220;man&#8221; pages for LLVM
-tools).</dd>
-<dt><a class="reference internal" href="Passes.html"><em>LLVM&#8217;s Analysis and Transform Passes</em></a></dt>
-<dd>A list of optimizations and analyses implemented in LLVM.</dd>
-<dt><a class="reference internal" href="FAQ.html"><em>Frequently Asked Questions (FAQ)</em></a></dt>
-<dd>A list of common questions and problems and their solutions.</dd>
-<dt><a class="reference internal" href="ReleaseNotes.html"><em>Release notes for the current release</em></a></dt>
-<dd>This describes new features, known bugs, and other limitations.</dd>
-<dt><a class="reference internal" href="HowToSubmitABug.html"><em>How to submit an LLVM bug report</em></a></dt>
-<dd>Instructions for properly submitting information about any bugs you run into
-in the LLVM system.</dd>
-<dt><a class="reference internal" href="SphinxQuickstartTemplate.html"><em>Sphinx Quickstart Template</em></a></dt>
-<dd>A template + tutorial for writing new Sphinx documentation. It is meant
-to be read in source form.</dd>
-<dt><a class="reference internal" href="TestingGuide.html"><em>LLVM Testing Infrastructure Guide</em></a></dt>
-<dd>A reference manual for using the LLVM testing infrastructure.</dd>
-<dt><a class="reference external" href="http://clang.llvm.org/get_started.html">How to build the C, C++, ObjC, and ObjC++ front end</a></dt>
-<dd>Instructions for building the clang front-end from source.</dd>
-<dt><a class="reference internal" href="Lexicon.html"><em>The LLVM Lexicon</em></a></dt>
-<dd>Definition of acronyms, terms and concepts used in LLVM.</dd>
-<dt><a class="reference internal" href="HowToAddABuilder.html"><em>How To Add Your Build Configuration To LLVM Buildbot Infrastructure</em></a></dt>
-<dd>Instructions for adding new builder to LLVM buildbot master.</dd>
-<dt><a class="reference internal" href="YamlIO.html"><em>YAML I/O</em></a></dt>
-<dd>A reference guide for using LLVM&#8217;s YAML I/O library.</dd>
-<dt><a class="reference internal" href="GetElementPtr.html"><em>The Often Misunderstood GEP Instruction</em></a></dt>
-<dd>Answers to some very frequent questions about LLVM&#8217;s most frequently
-misunderstood instruction.</dd>
-<dt><a class="reference internal" href="Frontend/PerformanceTips.html"><em>Performance Tips for Frontend Authors</em></a></dt>
-<dd>A collection of tips for frontend authors on how to generate IR
-which LLVM is able to effectively optimize.</dd>
+of some tools.</p>
+</dd>
+<dt><a class="reference internal" href="CMake.html"><span class="doc">Building LLVM with CMake</span></a></dt><dd><p>An addendum to the main Getting Started guide for those using the <a class="reference external" href="http://www.cmake.org">CMake
+build system</a>.</p>
+</dd>
+<dt><a class="reference internal" href="HowToBuildOnARM.html"><span class="doc">How To Build On ARM</span></a></dt><dd><p>Notes on building and testing LLVM/Clang on ARM.</p>
+</dd>
+<dt><a class="reference internal" href="HowToBuildWithPGO.html"><span class="doc">How To Build Clang and LLVM with Profile-Guided Optimizations</span></a></dt><dd><p>Notes on building LLVM/Clang with PGO.</p>
+</dd>
+<dt><a class="reference internal" href="HowToCrossCompileBuiltinsOnArm.html"><span class="doc">How to Cross Compile Compiler-rt Builtins For Arm</span></a></dt><dd><p>Notes on cross-building and testing the compiler-rt builtins for Arm.</p>
+</dd>
+<dt><a class="reference internal" href="HowToCrossCompileLLVM.html"><span class="doc">How To Cross-Compile Clang/LLVM using Clang/LLVM</span></a></dt><dd><p>Notes on cross-building and testing LLVM/Clang.</p>
+</dd>
+<dt><a class="reference internal" href="GettingStartedVS.html"><span class="doc">Getting Started with the LLVM System using Microsoft Visual Studio</span></a></dt><dd><p>An addendum to the main Getting Started guide for those using Visual Studio
+on Windows.</p>
+</dd>
+<dt><a class="reference internal" href="tutorial/index.html"><span class="doc">LLVM Tutorial: Table of Contents</span></a></dt><dd><p>Tutorials about using LLVM. Includes a tutorial about making a custom
+language with LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="CommandGuide/index.html"><span class="doc">LLVM Command Guide</span></a></dt><dd><p>A reference manual for the LLVM command line utilities (“man” pages for LLVM
+tools).</p>
+</dd>
+<dt><a class="reference internal" href="Passes.html"><span class="doc">LLVM’s Analysis and Transform Passes</span></a></dt><dd><p>A list of optimizations and analyses implemented in LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="FAQ.html"><span class="doc">Frequently Asked Questions (FAQ)</span></a></dt><dd><p>A list of common questions and problems and their solutions.</p>
+</dd>
+<dt><a class="reference internal" href="ReleaseNotes.html"><span class="doc">Release notes for the current release</span></a></dt><dd><p>This describes new features, known bugs, and other limitations.</p>
+</dd>
+<dt><a class="reference internal" href="HowToSubmitABug.html"><span class="doc">How to submit an LLVM bug report</span></a></dt><dd><p>Instructions for properly submitting information about any bugs you run into
+in the LLVM system.</p>
+</dd>
+<dt><a class="reference internal" href="SphinxQuickstartTemplate.html"><span class="doc">Sphinx Quickstart Template</span></a></dt><dd><p>A template + tutorial for writing new Sphinx documentation. It is meant
+to be read in source form.</p>
+</dd>
+<dt><a class="reference internal" href="TestingGuide.html"><span class="doc">LLVM Testing Infrastructure Guide</span></a></dt><dd><p>A reference manual for using the LLVM testing infrastructure.</p>
+</dd>
+<dt><a class="reference internal" href="TestSuiteGuide.html"><span class="doc">test-suite Guide</span></a></dt><dd><p>Describes how to compile and run the test-suite benchmarks.</p>
+</dd>
+<dt><a class="reference external" href="http://clang.llvm.org/get_started.html">How to build the C, C++, ObjC, and ObjC++ front end</a></dt><dd><p>Instructions for building the clang front-end from source.</p>
+</dd>
+<dt><a class="reference internal" href="Lexicon.html"><span class="doc">The LLVM Lexicon</span></a></dt><dd><p>Definition of acronyms, terms and concepts used in LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="HowToAddABuilder.html"><span class="doc">How To Add Your Build Configuration To LLVM Buildbot Infrastructure</span></a></dt><dd><p>Instructions for adding new builder to LLVM buildbot master.</p>
+</dd>
+<dt><a class="reference internal" href="YamlIO.html"><span class="doc">YAML I/O</span></a></dt><dd><p>A reference guide for using LLVM’s YAML I/O library.</p>
+</dd>
+<dt><a class="reference internal" href="GetElementPtr.html"><span class="doc">The Often Misunderstood GEP Instruction</span></a></dt><dd><p>Answers to some very frequent questions about LLVM’s most frequently
+misunderstood instruction.</p>
+</dd>
+<dt><a class="reference internal" href="Frontend/PerformanceTips.html"><span class="doc">Performance Tips for Frontend Authors</span></a></dt><dd><p>A collection of tips for frontend authors on how to generate IR
+which LLVM is able to effectively optimize.</p>
+</dd>
+<dt><a class="reference internal" href="Docker.html"><span class="doc">A guide to Dockerfiles for building LLVM</span></a></dt><dd><p>A reference for using Dockerfiles provided with LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="BuildingADistribution.html"><span class="doc">Building a Distribution of LLVM</span></a></dt><dd><p>A best-practices guide for using LLVM’s CMake build system to package and
+distribute LLVM-based tools.</p>
+</dd>
+<dt><a class="reference internal" href="Remarks.html"><span class="doc">Remarks</span></a></dt><dd><p>A reference on the implementation of remarks in LLVM.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="programming-documentation">
@@ -156,150 +153,186 @@ which LLVM is able to effectively optimize.</dd>
 <p>For developers of applications which use LLVM as a library.</p>
 <div class="toctree-wrapper compound">
 </div>
-<dl class="docutils">
-<dt><a class="reference internal" href="LangRef.html"><em>LLVM Language Reference Manual</em></a></dt>
-<dd>Defines the LLVM intermediate representation and the assembly form of the
-different nodes.</dd>
-<dt><a class="reference internal" href="Atomics.html"><em>LLVM Atomic Instructions and Concurrency Guide</em></a></dt>
-<dd>Information about LLVM&#8217;s concurrency model.</dd>
-<dt><a class="reference internal" href="ProgrammersManual.html"><em>LLVM Programmer&#8217;s Manual</em></a></dt>
-<dd>Introduction to the general layout of the LLVM sourcebase, important classes
-and APIs, and some tips &amp; tricks.</dd>
-<dt><a class="reference internal" href="Extensions.html"><em>LLVM Extensions</em></a></dt>
-<dd>LLVM-specific extensions to tools and formats LLVM seeks compatibility with.</dd>
-<dt><a class="reference internal" href="CommandLine.html"><em>CommandLine 2.0 Library Manual</em></a></dt>
-<dd>Provides information on using the command line parsing library.</dd>
-<dt><a class="reference internal" href="CodingStandards.html"><em>LLVM Coding Standards</em></a></dt>
-<dd>Details the LLVM coding standards and provides useful information on writing
-efficient C++ code.</dd>
-<dt><a class="reference internal" href="HowToSetUpLLVMStyleRTTI.html"><em>How to set up LLVM-style RTTI for your class hierarchy</em></a></dt>
-<dd>How to make <code class="docutils literal"><span class="pre">isa&lt;&gt;</span></code>, <code class="docutils literal"><span class="pre">dyn_cast&lt;&gt;</span></code>, etc. available for clients of your
-class hierarchy.</dd>
-<dt><a class="reference internal" href="ExtendingLLVM.html"><em>Extending LLVM: Adding instructions, intrinsics, types, etc.</em></a></dt>
-<dd>Look here to see how to add instructions and intrinsics to LLVM.</dd>
-<dt><a class="reference external" href="http://llvm.org/doxygen/">Doxygen generated documentation</a></dt>
-<dd>(<a class="reference external" href="http://llvm.org/doxygen/inherits.html">classes</a>)
-(<a class="reference external" href="http://llvm.org/doxygen/doxygen.tar.gz">tarball</a>)</dd>
+<dl class="simple">
+<dt><a class="reference internal" href="LangRef.html"><span class="doc">LLVM Language Reference Manual</span></a></dt><dd><p>Defines the LLVM intermediate representation and the assembly form of the
+different nodes.</p>
+</dd>
+<dt><a class="reference internal" href="Atomics.html"><span class="doc">LLVM Atomic Instructions and Concurrency Guide</span></a></dt><dd><p>Information about LLVM’s concurrency model.</p>
+</dd>
+<dt><a class="reference internal" href="ProgrammersManual.html"><span class="doc">LLVM Programmer’s Manual</span></a></dt><dd><p>Introduction to the general layout of the LLVM sourcebase, important classes
+and APIs, and some tips &amp; tricks.</p>
+</dd>
+<dt><a class="reference internal" href="Extensions.html"><span class="doc">LLVM Extensions</span></a></dt><dd><p>LLVM-specific extensions to tools and formats LLVM seeks compatibility with.</p>
+</dd>
+<dt><a class="reference internal" href="CommandLine.html"><span class="doc">CommandLine 2.0 Library Manual</span></a></dt><dd><p>Provides information on using the command line parsing library.</p>
+</dd>
+<dt><a class="reference internal" href="CodingStandards.html"><span class="doc">LLVM Coding Standards</span></a></dt><dd><p>Details the LLVM coding standards and provides useful information on writing
+efficient C++ code.</p>
+</dd>
+<dt><a class="reference internal" href="HowToSetUpLLVMStyleRTTI.html"><span class="doc">How to set up LLVM-style RTTI for your class hierarchy</span></a></dt><dd><p>How to make <code class="docutils literal notranslate"><span class="pre">isa&lt;&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">dyn_cast&lt;&gt;</span></code>, etc. available for clients of your
+class hierarchy.</p>
+</dd>
+<dt><a class="reference internal" href="ExtendingLLVM.html"><span class="doc">Extending LLVM: Adding instructions, intrinsics, types, etc.</span></a></dt><dd><p>Look here to see how to add instructions and intrinsics to LLVM.</p>
+</dd>
+<dt><a class="reference external" href="http://llvm.org/doxygen/">Doxygen generated documentation</a></dt><dd><p>(<a class="reference external" href="http://llvm.org/doxygen/inherits.html">classes</a>)</p>
+</dd>
 </dl>
 <p><a class="reference external" href="http://godoc.org/llvm.org/llvm/bindings/go/llvm">Documentation for Go bindings</a></p>
-<dl class="docutils">
-<dt><a class="reference external" href="http://llvm.org/viewvc/">ViewVC Repository Browser</a></dt>
-<dd></dd>
-<dt><a class="reference internal" href="CompilerWriterInfo.html"><em>Architecture &amp; Platform Information for Compiler Writers</em></a></dt>
-<dd>A list of helpful links for compiler writers.</dd>
-<dt><a class="reference internal" href="LibFuzzer.html"><em>LibFuzzer &#8211; a library for coverage-guided fuzz testing.</em></a></dt>
-<dd>A library for writing in-process guided fuzzers.</dd>
+<dl class="simple">
+<dt><a class="reference external" href="http://github.com/llvm/llvm-project//">Github Source Repository Browser</a></dt><dd></dd>
+<dt><a class="reference internal" href="CompilerWriterInfo.html"><span class="doc">Architecture &amp; Platform Information for Compiler Writers</span></a></dt><dd><p>A list of helpful links for compiler writers.</p>
+</dd>
+<dt><a class="reference internal" href="LibFuzzer.html"><span class="doc">libFuzzer – a library for coverage-guided fuzz testing.</span></a></dt><dd><p>A library for writing in-process guided fuzzers.</p>
+</dd>
+<dt><a class="reference internal" href="FuzzingLLVM.html"><span class="doc">Fuzzing LLVM libraries and tools</span></a></dt><dd><p>Information on writing and using Fuzzers to find bugs in LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="ScudoHardenedAllocator.html"><span class="doc">Scudo Hardened Allocator</span></a></dt><dd><p>A library that implements a security-hardened <cite>malloc()</cite>.</p>
+</dd>
+<dt><a class="reference internal" href="OptBisect.html"><span class="doc">Using -opt-bisect-limit to debug optimization errors</span></a></dt><dd><p>A command line option for debugging optimization-induced failures.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="subsystem-documentation">
-<h1>Subsystem Documentation<a class="headerlink" href="#subsystem-documentation" title="Permalink to this headline">¶</a></h1>
+<span id="index-subsystem-docs"></span><h1>Subsystem Documentation<a class="headerlink" href="#subsystem-documentation" title="Permalink to this headline">¶</a></h1>
 <p>For API clients and LLVM developers.</p>
 <div class="toctree-wrapper compound">
 </div>
-<dl class="docutils">
-<dt><a class="reference internal" href="WritingAnLLVMPass.html"><em>Writing an LLVM Pass</em></a></dt>
-<dd>Information on how to write LLVM transformations and analyses.</dd>
-<dt><a class="reference internal" href="WritingAnLLVMBackend.html"><em>Writing an LLVM Backend</em></a></dt>
-<dd>Information on how to write LLVM backends for machine targets.</dd>
-<dt><a class="reference internal" href="CodeGenerator.html"><em>The LLVM Target-Independent Code Generator</em></a></dt>
-<dd>The design and implementation of the LLVM code generator.  Useful if you are
+<dl class="simple">
+<dt><a class="reference internal" href="WritingAnLLVMPass.html"><span class="doc">Writing an LLVM Pass</span></a></dt><dd><p>Information on how to write LLVM transformations and analyses.</p>
+</dd>
+<dt><a class="reference internal" href="WritingAnLLVMBackend.html"><span class="doc">Writing an LLVM Backend</span></a></dt><dd><p>Information on how to write LLVM backends for machine targets.</p>
+</dd>
+<dt><a class="reference internal" href="CodeGenerator.html"><span class="doc">The LLVM Target-Independent Code Generator</span></a></dt><dd><p>The design and implementation of the LLVM code generator.  Useful if you are
 working on retargetting LLVM to a new architecture, designing a new codegen
-pass, or enhancing existing components.</dd>
-<dt><a class="reference internal" href="TableGen/index.html"><em>TableGen</em></a></dt>
-<dd>Describes the TableGen tool, which is used heavily by the LLVM code
-generator.</dd>
-<dt><a class="reference internal" href="AliasAnalysis.html"><em>LLVM Alias Analysis Infrastructure</em></a></dt>
-<dd>Information on how to write a new alias analysis implementation or how to
-use existing analyses.</dd>
-<dt><a class="reference internal" href="GarbageCollection.html"><em>Garbage Collection with LLVM</em></a></dt>
-<dd>The interfaces source-language compilers should use for compiling GC&#8217;d
-programs.</dd>
-<dt><a class="reference internal" href="SourceLevelDebugging.html"><em>Source Level Debugging with LLVM</em></a></dt>
-<dd>This document describes the design and philosophy behind the LLVM
-source-level debugger.</dd>
-<dt><a class="reference internal" href="Vectorizers.html"><em>Auto-Vectorization in LLVM</em></a></dt>
-<dd>This document describes the current status of vectorization in LLVM.</dd>
-<dt><a class="reference internal" href="ExceptionHandling.html"><em>Exception Handling in LLVM</em></a></dt>
-<dd>This document describes the design and implementation of exception handling
-in LLVM.</dd>
-<dt><a class="reference internal" href="Bugpoint.html"><em>LLVM bugpoint tool: design and usage</em></a></dt>
-<dd>Automatic bug finder and test-case reducer description and usage
-information.</dd>
-<dt><a class="reference internal" href="BitCodeFormat.html"><em>LLVM Bitcode File Format</em></a></dt>
-<dd>This describes the file format and encoding used for LLVM &#8220;bc&#8221; files.</dd>
-<dt><a class="reference internal" href="SystemLibrary.html"><em>System Library</em></a></dt>
-<dd>This document describes the LLVM System Library (<code class="docutils literal"><span class="pre">lib/System</span></code>) and
-how to keep LLVM source code portable</dd>
-<dt><a class="reference internal" href="LinkTimeOptimization.html"><em>LLVM Link Time Optimization: Design and Implementation</em></a></dt>
-<dd>This document describes the interface between LLVM intermodular optimizer
-and the linker and its design</dd>
-<dt><a class="reference internal" href="GoldPlugin.html"><em>The LLVM gold plugin</em></a></dt>
-<dd>How to build your programs with link-time optimization on Linux.</dd>
-<dt><a class="reference internal" href="DebuggingJITedCode.html"><em>Debugging JIT-ed Code With GDB</em></a></dt>
-<dd>How to debug JITed code with GDB.</dd>
-<dt><a class="reference internal" href="MCJITDesignAndImplementation.html"><em>MCJIT Design and Implementation</em></a></dt>
-<dd>Describes the inner workings of MCJIT execution engine.</dd>
-<dt><a class="reference internal" href="BranchWeightMetadata.html"><em>LLVM Branch Weight Metadata</em></a></dt>
-<dd>Provides information about Branch Prediction Information.</dd>
-<dt><a class="reference internal" href="BlockFrequencyTerminology.html"><em>LLVM Block Frequency Terminology</em></a></dt>
-<dd>Provides information about terminology used in the <code class="docutils literal"><span class="pre">BlockFrequencyInfo</span></code>
-analysis pass.</dd>
-<dt><a class="reference internal" href="SegmentedStacks.html"><em>Segmented Stacks in LLVM</em></a></dt>
-<dd>This document describes segmented stacks and how they are used in LLVM.</dd>
-<dt><a class="reference internal" href="MarkedUpDisassembly.html"><em>LLVM&#8217;s Optional Rich Disassembly Output</em></a></dt>
-<dd>This document describes the optional rich disassembly output syntax.</dd>
-<dt><a class="reference internal" href="HowToUseAttributes.html"><em>How To Use Attributes</em></a></dt>
-<dd>Answers some questions about the new Attributes infrastructure.</dd>
-<dt><a class="reference internal" href="NVPTXUsage.html"><em>User Guide for NVPTX Back-end</em></a></dt>
-<dd>This document describes using the NVPTX back-end to compile GPU kernels.</dd>
-<dt><a class="reference internal" href="AMDGPUUsage.html"><em>User Guide for AMDGPU Back-end</em></a></dt>
-<dd>This document describes how to use the AMDGPU back-end.</dd>
-<dt><a class="reference internal" href="StackMaps.html"><em>Stack maps and patch points in LLVM</em></a></dt>
-<dd>LLVM support for mapping instruction addresses to the location of
-values and allowing code to be patched.</dd>
-<dt><a class="reference internal" href="BigEndianNEON.html"><em>Using ARM NEON instructions in big endian mode</em></a></dt>
-<dd>LLVM&#8217;s support for generating NEON instructions on big endian ARM targets is
-somewhat nonintuitive. This document explains the implementation and rationale.</dd>
-<dt><a class="reference internal" href="CoverageMappingFormat.html"><em>LLVM Code Coverage Mapping Format</em></a></dt>
-<dd>This describes the format and encoding used for LLVM’s code coverage mapping.</dd>
-<dt><a class="reference internal" href="Statepoints.html"><em>Garbage Collection Safepoints in LLVM</em></a></dt>
-<dd>This describes a set of experimental extensions for garbage
-collection support.</dd>
-<dt><a class="reference internal" href="MergeFunctions.html"><em>MergeFunctions pass, how it works</em></a></dt>
-<dd>Describes functions merging optimization.</dd>
-<dt><a class="reference internal" href="InAlloca.html"><em>Design and Usage of the InAlloca Attribute</em></a></dt>
-<dd>Description of the <code class="docutils literal"><span class="pre">inalloca</span></code> argument attribute.</dd>
-<dt><a class="reference internal" href="FaultMaps.html"><em>FaultMaps and implicit checks</em></a></dt>
-<dd>LLVM support for folding control flow into faulting machine instructions.</dd>
+pass, or enhancing existing components.</p>
+</dd>
+<dt><a class="reference internal" href="MIRLangRef.html"><span class="doc">Machine IR (MIR) Format Reference Manual</span></a></dt><dd><p>A reference manual for the MIR serialization format, which is used to test
+LLVM’s code generation passes.</p>
+</dd>
+<dt><a class="reference internal" href="TableGen/index.html"><span class="doc">TableGen</span></a></dt><dd><p>Describes the TableGen tool, which is used heavily by the LLVM code
+generator.</p>
+</dd>
+<dt><a class="reference internal" href="AliasAnalysis.html"><span class="doc">LLVM Alias Analysis Infrastructure</span></a></dt><dd><p>Information on how to write a new alias analysis implementation or how to
+use existing analyses.</p>
+</dd>
+<dt><a class="reference internal" href="MemorySSA.html"><span class="doc">MemorySSA</span></a></dt><dd><p>Information about the MemorySSA utility in LLVM, as well as how to use it.</p>
+</dd>
+<dt><a class="reference internal" href="GarbageCollection.html"><span class="doc">Garbage Collection with LLVM</span></a></dt><dd><p>The interfaces source-language compilers should use for compiling GC’d
+programs.</p>
+</dd>
+<dt><a class="reference internal" href="SourceLevelDebugging.html"><span class="doc">Source Level Debugging with LLVM</span></a></dt><dd><p>This document describes the design and philosophy behind the LLVM
+source-level debugger.</p>
+</dd>
+<dt><a class="reference internal" href="Vectorizers.html"><span class="doc">Auto-Vectorization in LLVM</span></a></dt><dd><p>This document describes the current status of vectorization in LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="ExceptionHandling.html"><span class="doc">Exception Handling in LLVM</span></a></dt><dd><p>This document describes the design and implementation of exception handling
+in LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="AddingConstrainedIntrinsics.html"><span class="doc">How To Add A Constrained Floating-Point Intrinsic</span></a></dt><dd><p>Gives the steps necessary when adding a new constrained math intrinsic
+to LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="Bugpoint.html"><span class="doc">LLVM bugpoint tool: design and usage</span></a></dt><dd><p>Automatic bug finder and test-case reducer description and usage
+information.</p>
+</dd>
+<dt><a class="reference internal" href="BitCodeFormat.html"><span class="doc">LLVM Bitcode File Format</span></a></dt><dd><p>This describes the file format and encoding used for LLVM “bc” files.</p>
+</dd>
+<dt><a class="reference internal" href="SupportLibrary.html"><span class="doc">Support Library</span></a></dt><dd><p>This document describes the LLVM Support Library (<code class="docutils literal notranslate"><span class="pre">lib/Support</span></code>) and
+how to keep LLVM source code portable</p>
+</dd>
+<dt><a class="reference internal" href="LinkTimeOptimization.html"><span class="doc">LLVM Link Time Optimization: Design and Implementation</span></a></dt><dd><p>This document describes the interface between LLVM intermodular optimizer
+and the linker and its design</p>
+</dd>
+<dt><a class="reference internal" href="GoldPlugin.html"><span class="doc">The LLVM gold plugin</span></a></dt><dd><p>How to build your programs with link-time optimization on Linux.</p>
+</dd>
+<dt><a class="reference internal" href="DebuggingJITedCode.html"><span class="doc">Debugging JIT-ed Code With GDB</span></a></dt><dd><p>How to debug JITed code with GDB.</p>
+</dd>
+<dt><a class="reference internal" href="MCJITDesignAndImplementation.html"><span class="doc">MCJIT Design and Implementation</span></a></dt><dd><p>Describes the inner workings of MCJIT execution engine.</p>
+</dd>
+<dt><a class="reference internal" href="ORCv2.html"><span class="doc">ORC Design and Implementation</span></a></dt><dd><p>Describes the design and implementation of the ORC APIs, including some
+usage examples, and a guide for users transitioning from ORCv1 to ORCv2.</p>
+</dd>
+<dt><a class="reference internal" href="BranchWeightMetadata.html"><span class="doc">LLVM Branch Weight Metadata</span></a></dt><dd><p>Provides information about Branch Prediction Information.</p>
+</dd>
+<dt><a class="reference internal" href="BlockFrequencyTerminology.html"><span class="doc">LLVM Block Frequency Terminology</span></a></dt><dd><p>Provides information about terminology used in the <code class="docutils literal notranslate"><span class="pre">BlockFrequencyInfo</span></code>
+analysis pass.</p>
+</dd>
+<dt><a class="reference internal" href="SegmentedStacks.html"><span class="doc">Segmented Stacks in LLVM</span></a></dt><dd><p>This document describes segmented stacks and how they are used in LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="MarkedUpDisassembly.html"><span class="doc">LLVM’s Optional Rich Disassembly Output</span></a></dt><dd><p>This document describes the optional rich disassembly output syntax.</p>
+</dd>
+<dt><a class="reference internal" href="HowToUseAttributes.html"><span class="doc">How To Use Attributes</span></a></dt><dd><p>Answers some questions about the new Attributes infrastructure.</p>
+</dd>
+<dt><a class="reference internal" href="NVPTXUsage.html"><span class="doc">User Guide for NVPTX Back-end</span></a></dt><dd><p>This document describes using the NVPTX backend to compile GPU kernels.</p>
+</dd>
+<dt><a class="reference internal" href="AMDGPUUsage.html"><span class="doc">User Guide for AMDGPU Backend</span></a></dt><dd><p>This document describes using the AMDGPU backend to compile GPU kernels.</p>
+</dd>
+<dt><a class="reference internal" href="StackMaps.html"><span class="doc">Stack maps and patch points in LLVM</span></a></dt><dd><p>LLVM support for mapping instruction addresses to the location of
+values and allowing code to be patched.</p>
+</dd>
+<dt><a class="reference internal" href="BigEndianNEON.html"><span class="doc">Using ARM NEON instructions in big endian mode</span></a></dt><dd><p>LLVM’s support for generating NEON instructions on big endian ARM targets is
+somewhat nonintuitive. This document explains the implementation and rationale.</p>
+</dd>
+<dt><a class="reference internal" href="CoverageMappingFormat.html"><span class="doc">LLVM Code Coverage Mapping Format</span></a></dt><dd><p>This describes the format and encoding used for LLVM’s code coverage mapping.</p>
+</dd>
+<dt><a class="reference internal" href="Statepoints.html"><span class="doc">Garbage Collection Safepoints in LLVM</span></a></dt><dd><p>This describes a set of experimental extensions for garbage
+collection support.</p>
+</dd>
+<dt><a class="reference internal" href="MergeFunctions.html"><span class="doc">MergeFunctions pass, how it works</span></a></dt><dd><p>Describes functions merging optimization.</p>
+</dd>
+<dt><a class="reference internal" href="InAlloca.html"><span class="doc">Design and Usage of the InAlloca Attribute</span></a></dt><dd><p>Description of the <code class="docutils literal notranslate"><span class="pre">inalloca</span></code> argument attribute.</p>
+</dd>
+<dt><a class="reference internal" href="FaultMaps.html"><span class="doc">FaultMaps and implicit checks</span></a></dt><dd><p>LLVM support for folding control flow into faulting machine instructions.</p>
+</dd>
+<dt><a class="reference internal" href="CompileCudaWithLLVM.html"><span class="doc">Compiling CUDA with clang</span></a></dt><dd><p>LLVM support for CUDA.</p>
+</dd>
+<dt><a class="reference internal" href="Coroutines.html"><span class="doc">Coroutines in LLVM</span></a></dt><dd><p>LLVM support for coroutines.</p>
+</dd>
+<dt><a class="reference internal" href="GlobalISel.html"><span class="doc">Global Instruction Selection</span></a></dt><dd><p>This describes the prototype instruction selection replacement, GlobalISel.</p>
+</dd>
+<dt><a class="reference internal" href="XRay.html"><span class="doc">XRay Instrumentation</span></a></dt><dd><p>High-level documentation of how to use XRay in LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="XRayExample.html"><span class="doc">Debugging with XRay</span></a></dt><dd><p>An example of how to debug an application with XRay.</p>
+</dd>
+<dt><a class="reference internal" href="PDB/index.html"><span class="doc">The Microsoft PDB File Format</span></a></dt><dd><p>A detailed description of the Microsoft PDB (Program Database) file format.</p>
+</dd>
+<dt><a class="reference internal" href="CFIVerify.html"><span class="doc">Control Flow Verification Tool Design Document</span></a></dt><dd><p>A description of the verification tool for Control Flow Integrity.</p>
+</dd>
+<dt><a class="reference internal" href="SpeculativeLoadHardening.html"><span class="doc">Speculative Load Hardening</span></a></dt><dd><p>A description of the Speculative Load Hardening mitigation for Spectre v1.</p>
+</dd>
+<dt><a class="reference internal" href="StackSafetyAnalysis.html"><span class="doc">Stack Safety Analysis</span></a></dt><dd><p>This document describes the design of the stack safety analysis of local
+variables.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="development-process-documentation">
 <h1>Development Process Documentation<a class="headerlink" href="#development-process-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Information about LLVM&#8217;s development process.</p>
+<p>Information about LLVM’s development process.</p>
 <div class="toctree-wrapper compound">
 </div>
-<dl class="docutils">
-<dt><a class="reference internal" href="DeveloperPolicy.html"><em>LLVM Developer Policy</em></a></dt>
-<dd>The LLVM project&#8217;s policy towards developers and their contributions.</dd>
-<dt><a class="reference internal" href="Projects.html"><em>Creating an LLVM Project</em></a></dt>
-<dd>How-to guide and templates for new projects that <em>use</em> the LLVM
+<dl class="simple">
+<dt><a class="reference internal" href="Contributing.html"><span class="doc">Contributing to LLVM</span></a></dt><dd><p>An overview on how to contribute to LLVM.</p>
+</dd>
+<dt><a class="reference internal" href="DeveloperPolicy.html"><span class="doc">LLVM Developer Policy</span></a></dt><dd><p>The LLVM project’s policy towards developers and their contributions.</p>
+</dd>
+<dt><a class="reference internal" href="Projects.html"><span class="doc">Creating an LLVM Project</span></a></dt><dd><p>How-to guide and templates for new projects that <em>use</em> the LLVM
 infrastructure.  The templates (directory organization, Makefiles, and test
-tree) allow the project code to be located outside (or inside) the <code class="docutils literal"><span class="pre">llvm/</span></code>
-tree, while using LLVM header files and libraries.</dd>
-<dt><a class="reference internal" href="LLVMBuild.html"><em>LLVMBuild Guide</em></a></dt>
-<dd>Describes the LLVMBuild organization and files used by LLVM to specify
-component descriptions.</dd>
-<dt><a class="reference internal" href="MakefileGuide.html"><em>LLVM Makefile Guide</em></a></dt>
-<dd>Describes how the LLVM makefiles work and how to use them.</dd>
-<dt><a class="reference internal" href="HowToReleaseLLVM.html"><em>How To Release LLVM To The Public</em></a></dt>
-<dd>This is a guide to preparing LLVM releases. Most developers can ignore it.</dd>
-<dt><a class="reference internal" href="ReleaseProcess.html"><em>How To Validate a New Release</em></a></dt>
-<dd>This is a guide to validate a new release, during the release process. Most developers can ignore it.</dd>
-<dt><a class="reference internal" href="Packaging.html"><em>Advice on Packaging LLVM</em></a></dt>
-<dd>Advice on packaging LLVM into a distribution.</dd>
-<dt><a class="reference internal" href="Phabricator.html"><em>Code Reviews with Phabricator</em></a></dt>
-<dd>Describes how to use the Phabricator code review tool hosted on
-<a class="reference external" href="http://reviews.llvm.org/">http://reviews.llvm.org/</a> and its command line interface, Arcanist.</dd>
+tree) allow the project code to be located outside (or inside) the <code class="docutils literal notranslate"><span class="pre">llvm/</span></code>
+tree, while using LLVM header files and libraries.</p>
+</dd>
+<dt><a class="reference internal" href="LLVMBuild.html"><span class="doc">LLVMBuild Guide</span></a></dt><dd><p>Describes the LLVMBuild organization and files used by LLVM to specify
+component descriptions.</p>
+</dd>
+<dt><a class="reference internal" href="HowToReleaseLLVM.html"><span class="doc">How To Release LLVM To The Public</span></a></dt><dd><p>This is a guide to preparing LLVM releases. Most developers can ignore it.</p>
+</dd>
+<dt><a class="reference internal" href="ReleaseProcess.html"><span class="doc">How To Validate a New Release</span></a></dt><dd><p>This is a guide to validate a new release, during the release process. Most developers can ignore it.</p>
+</dd>
+<dt><a class="reference internal" href="Packaging.html"><span class="doc">Advice on Packaging LLVM</span></a></dt><dd><p>Advice on packaging LLVM into a distribution.</p>
+</dd>
+<dt><a class="reference internal" href="Phabricator.html"><span class="doc">Code Reviews with Phabricator</span></a></dt><dd><p>Describes how to use the Phabricator code review tool hosted on
+<a class="reference external" href="http://reviews.llvm.org/">http://reviews.llvm.org/</a> and its command line interface, Arcanist.</p>
+</dd>
+<dt><a class="reference internal" href="BugLifeCycle.html"><span class="doc">LLVM Bug Life Cycle</span></a></dt><dd><p>Describes how bugs are reported, triaged and closed.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="community">
@@ -309,29 +342,29 @@ The two primary communication mechanisms in the LLVM community are mailing
 lists and IRC.</p>
 <div class="section" id="mailing-lists">
 <h2>Mailing Lists<a class="headerlink" href="#mailing-lists" title="Permalink to this headline">¶</a></h2>
-<p>If you can&#8217;t find what you need in these docs, try consulting the mailing
+<p>If you can’t find what you need in these docs, try consulting the mailing
 lists.</p>
-<dl class="docutils">
-<dt><a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">Developer&#8217;s List (llvm-dev)</a></dt>
-<dd>This list is for people who want to be included in technical discussions of
+<dl class="simple">
+<dt><a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-dev">Developer’s List (llvm-dev)</a></dt><dd><p>This list is for people who want to be included in technical discussions of
 LLVM. People post to this list when they have questions about writing code
-for or using the LLVM tools. It is relatively low volume.</dd>
-<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/">Commits Archive (llvm-commits)</a></dt>
-<dd>This list contains all commit messages that are made when LLVM developers
+for or using the LLVM tools. It is relatively low volume.</p>
+</dd>
+<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-commits/">Commits Archive (llvm-commits)</a></dt><dd><p>This list contains all commit messages that are made when LLVM developers
 commit code changes to the repository. It also serves as a forum for
 patch review (i.e. send patches here). It is useful for those who want to
 stay on the bleeding edge of LLVM development. This list is very high
-volume.</dd>
-<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-bugs/">Bugs &amp; Patches Archive (llvm-bugs)</a></dt>
-<dd>This list gets emailed every time a bug is opened and closed. It is
-higher volume than the LLVM-dev list.</dd>
-<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-testresults/">Test Results Archive (llvm-testresults)</a></dt>
-<dd>A message is automatically sent to this list by every active nightly tester
+volume.</p>
+</dd>
+<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-bugs/">Bugs &amp; Patches Archive (llvm-bugs)</a></dt><dd><p>This list gets emailed every time a bug is opened and closed. It is
+higher volume than the LLVM-dev list.</p>
+</dd>
+<dt><a class="reference external" href="http://lists.llvm.org/pipermail/llvm-testresults/">Test Results Archive (llvm-testresults)</a></dt><dd><p>A message is automatically sent to this list by every active nightly tester
 when it completes.  As such, this list gets email several times each day,
-making it a high volume list.</dd>
-<dt><a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-announce">LLVM Announcements List (llvm-announce)</a></dt>
-<dd>This is a low volume list that provides important announcements regarding
-LLVM.  It gets email about once a month.</dd>
+making it a high volume list.</p>
+</dd>
+<dt><a class="reference external" href="http://lists.llvm.org/mailman/listinfo/llvm-announce">LLVM Announcements List (llvm-announce)</a></dt><dd><p>This is a low volume list that provides important announcements regarding
+LLVM.  It gets email about once a month.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="irc">
@@ -340,24 +373,54 @@ LLVM.  It gets email about once a month.</dd>
 can be found in #llvm on <a class="reference external" href="irc://irc.oftc.net/llvm">irc.oftc.net</a>.</p>
 <p>This channel has several bots.</p>
 <ul class="simple">
-<li>Buildbot reporters<ul>
-<li>llvmbb - Bot for the main LLVM buildbot master.
-<a class="reference external" href="http://lab.llvm.org:8011/console">http://lab.llvm.org:8011/console</a></li>
-<li>bb-chapuni - An individually run buildbot master. <a class="reference external" href="http://bb.pgr.jp/console">http://bb.pgr.jp/console</a></li>
-<li>smooshlab - Apple&#8217;s internal buildbot master.</li>
+<li><p>Buildbot reporters</p>
+<ul>
+<li><p>llvmbb - Bot for the main LLVM buildbot master.
+<a class="reference external" href="http://lab.llvm.org:8011/console">http://lab.llvm.org:8011/console</a></p></li>
+<li><p>smooshlab - Apple’s internal buildbot master.</p></li>
 </ul>
 </li>
-<li>robot - Bugzilla linker. %bug &lt;number&gt;</li>
-<li>clang-bot - A <a class="reference external" href="http://www.eelis.net/geordi/">geordi</a> instance running
-near-trunk clang instead of gcc.</li>
+<li><p>robot - Bugzilla linker. %bug &lt;number&gt;</p></li>
+<li><p>clang-bot - A <a class="reference external" href="http://www.eelis.net/geordi/">geordi</a> instance running
+near-trunk clang instead of gcc.</p></li>
 </ul>
+</div>
+<div class="section" id="meetups-and-social-events">
+<h2>Meetups and social events<a class="headerlink" href="#meetups-and-social-events" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+</div>
+<p>Besides developer <a class="reference external" href="https://llvm.org/devmtg/">meetings and conferences</a>,
+there are several user groups called
+<a class="reference external" href="https://www.meetup.com/pro/llvm/">LLVM Socials</a>. We greatly encourage you to
+join one in your city. Or start a new one if there is none:</p>
+<p><a class="reference internal" href="MeetupGuidelines.html"><span class="doc">How to start LLVM Social in your town</span></a></p>
+</div>
+<div class="section" id="community-wide-proposals">
+<h2>Community wide proposals<a class="headerlink" href="#community-wide-proposals" title="Permalink to this headline">¶</a></h2>
+<p>Proposals for massive changes in how the community behaves and how the work flow
+can be better.</p>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="simple">
+<dt><a class="reference internal" href="CodeOfConduct.html"><span class="doc">LLVM Community Code of Conduct</span></a></dt><dd><p>Proposal to adopt a code of conduct on the LLVM social spaces (lists, events,
+IRC, etc).</p>
+</dd>
+<dt><a class="reference internal" href="Proposals/GitHubMove.html"><span class="doc">Moving LLVM Projects to GitHub</span></a></dt><dd><p>Proposal to move from SVN/Git to GitHub.</p>
+</dd>
+<dt><a class="reference internal" href="Proposals/TestSuite.html"><span class="doc">Test-Suite Extentions</span></a></dt><dd><p>Proposals for additional benchmarks/programs for llvm’s test-suite.</p>
+</dd>
+<dt><a class="reference internal" href="Proposals/VariableNames.html"><span class="doc">Variable Names Plan</span></a></dt><dd><p>Proposal to change the variable names coding standard.</p>
+</dd>
+<dt><a class="reference internal" href="Proposals/VectorizationPlan.html"><span class="doc">Vectorization Plan</span></a></dt><dd><p>Proposal to model the process and upgrade the infrastructure of LLVM’s Loop Vectorizer.</p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span>Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span>Search Page</span></a></li>
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </div>
 
@@ -381,9 +444,9 @@ near-trunk clang instead of gcc.</li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

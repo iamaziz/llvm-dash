@@ -1,0 +1,113 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>llvm-addr2line - a drop-in replacement for addr2line &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="llvm-ar - LLVM archiver" href="llvm-ar.html" />
+    <link rel="prev" title="llvm-readobj - LLVM Object Reader" href="llvm-readobj.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="llvm-ar.html" title="llvm-ar - LLVM archiver"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="llvm-readobj.html" title="llvm-readobj - LLVM Object Reader"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="llvm-addr2line-a-drop-in-replacement-for-addr2line">
+<h1>llvm-addr2line - a drop-in replacement for addr2line<a class="headerlink" href="#llvm-addr2line-a-drop-in-replacement-for-addr2line" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<p><strong>llvm-addr2line</strong> [<em>options</em>]</p>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><strong>llvm-addr2line</strong> is an alias for the <a class="reference internal" href="llvm-symbolizer.html"><span class="doc">llvm-symbolizer</span></a> tool
+with different defaults. The goal is to make it a drop-in replacement for
+GNU’s <strong>addr2line</strong>.</p>
+<p>Here are some of those differences:</p>
+<ul class="simple">
+<li><p>Defaults not to print function names. Use <a class="reference internal" href="llvm-symbolizer.html#llvm-symbolizer-opt-f"><span class="std std-ref">-f</span></a>
+to enable that.</p></li>
+<li><p>Defaults not to demangle function names. Use <a class="reference internal" href="llvm-symbolizer.html#llvm-symbolizer-opt-c"><span class="std std-ref">-C</span></a>
+to switch the demangling on.</p></li>
+<li><p>Defaults not to print inlined frames. Use <a class="reference internal" href="llvm-symbolizer.html#llvm-symbolizer-opt-i"><span class="std std-ref">-i</span></a>
+to show inlined frames for a source code location in an inlined function.</p></li>
+<li><p>Uses <a class="reference internal" href="llvm-symbolizer.html#llvm-symbolizer-opt-output-style"><span class="std std-ref">–output-style=GNU</span></a> by default.</p></li>
+</ul>
+</div>
+<div class="section" id="see-also">
+<h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<p>Refer to <a class="reference internal" href="llvm-symbolizer.html"><span class="doc">llvm-symbolizer</span></a> for additional information.</p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="llvm-ar.html" title="llvm-ar - LLVM archiver"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="llvm-readobj.html" title="llvm-readobj - LLVM Object Reader"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

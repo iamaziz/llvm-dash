@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>msg &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="param" href="gfx9_param.html" />
+    <link rel="prev" title="label" href="gfx9_label.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="gfx9_param.html" title="param"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="gfx9_label.html" title="label"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="../AMDGPUUsage.html" >User Guide for AMDGPU Backend</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="AMDGPUAsmGFX9.html" accesskey="U">Syntax of GFX9 Instructions</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="msg">
+<span id="amdgpu-synid9-msg"></span><h1>msg<a class="headerlink" href="#msg" title="Permalink to this headline">¶</a></h1>
+<p>A 16-bit message code. The bits of this operand have the following meaning:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Bits</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>3:0</p></td>
+<td><p>Message <em>type</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>6:4</p></td>
+<td><p>Optional <em>operation</em>.</p></td>
+</tr>
+<tr class="row-even"><td><p>9:7</p></td>
+<td><p>Optional <em>parameters</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>15:10</p></td>
+<td><p>Unused.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>This operand may be specified as a positive 16-bit <a class="reference internal" href="../AMDGPUOperandSyntax.html#amdgpu-synid-integer-number"><span class="std std-ref">integer_number</span></a> or using the syntax described below:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 64%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>sendmsg(&lt;<em>type</em>&gt;)</p></td>
+<td><p>A message identified by its <em>type</em>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>sendmsg(&lt;<em>type</em>&gt;, &lt;<em>op</em>&gt;)</p></td>
+<td><p>A message identified by its <em>type</em> and <em>operation</em>.</p></td>
+</tr>
+<tr class="row-even"><td><p>sendmsg(&lt;<em>type</em>&gt;, &lt;<em>op</em>&gt;, &lt;<em>stream</em>&gt;)</p></td>
+<td><p>A message identified by its <em>type</em> and <em>operation</em> with a stream <em>id</em>.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><em>Type</em> may be specified using message <em>name</em> or message <em>id</em>.</p>
+<p><em>Op</em> may be specified using operation <em>name</em> or operation <em>id</em>.</p>
+<p>Stream <em>id</em> is an integer in the range 0..3.</p>
+<p>Message <em>id</em>, operation <em>id</em> and stream <em>id</em> must be specified as positive <a class="reference internal" href="../AMDGPUOperandSyntax.html#amdgpu-synid-integer-number"><span class="std std-ref">integer numbers</span></a>.</p>
+<p>Each message type supports specific operations:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 13%" />
+<col style="width: 38%" />
+<col style="width: 15%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Message name</p></th>
+<th class="head"><p>Message Id</p></th>
+<th class="head"><p>Supported Operations</p></th>
+<th class="head"><p>Operation Id</p></th>
+<th class="head"><p>Stream Id</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>MSG_INTERRUPT</p></td>
+<td><p>1</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p>MSG_GS</p></td>
+<td><p>2</p></td>
+<td><p>GS_OP_CUT</p></td>
+<td><p>1</p></td>
+<td><p>Optional</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td></td>
+<td><p>GS_OP_EMIT</p></td>
+<td><p>2</p></td>
+<td><p>Optional</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td></td>
+<td><p>GS_OP_EMIT_CUT</p></td>
+<td><p>3</p></td>
+<td><p>Optional</p></td>
+</tr>
+<tr class="row-even"><td><p>MSG_GS_DONE</p></td>
+<td><p>3</p></td>
+<td><p>GS_OP_NOP</p></td>
+<td><p>0</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td></td>
+<td><p>GS_OP_CUT</p></td>
+<td><p>1</p></td>
+<td><p>Optional</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td></td>
+<td><p>GS_OP_EMIT</p></td>
+<td><p>2</p></td>
+<td><p>Optional</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td></td>
+<td><p>GS_OP_EMIT_CUT</p></td>
+<td><p>3</p></td>
+<td><p>Optional</p></td>
+</tr>
+<tr class="row-even"><td><p>MSG_GS_ALLOC_REQ</p></td>
+<td><p>9</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p>MSG_GET_DOORBELL</p></td>
+<td><p>10</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-even"><td><p>MSG_SYSMSG</p></td>
+<td><p>15</p></td>
+<td><p>SYSMSG_OP_ECC_ERR_INTERRUPT</p></td>
+<td><p>1</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td></td>
+<td><p>SYSMSG_OP_REG_RD</p></td>
+<td><p>2</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td></td>
+<td><p>SYSMSG_OP_HOST_TRAP_ACK</p></td>
+<td><p>3</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td></td>
+<td><p>SYSMSG_OP_TTRACE_PC</p></td>
+<td><p>4</p></td>
+<td><p>-</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s_sendmsg</span> <span class="mh">0x12</span>
+<span class="n">s_sendmsg</span> <span class="n">sendmsg</span><span class="p">(</span><span class="n">MSG_INTERRUPT</span><span class="p">)</span>
+<span class="n">s_sendmsg</span> <span class="n">sendmsg</span><span class="p">(</span><span class="n">MSG_GET_DOORBELL</span><span class="p">)</span>
+<span class="n">s_sendmsg</span> <span class="n">sendmsg</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">GS_OP_CUT</span><span class="p">)</span>
+<span class="n">s_sendmsg</span> <span class="n">sendmsg</span><span class="p">(</span><span class="n">MSG_GS</span><span class="p">,</span> <span class="n">GS_OP_EMIT</span><span class="p">)</span>
+<span class="n">s_sendmsg</span> <span class="n">sendmsg</span><span class="p">(</span><span class="n">MSG_GS</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">s_sendmsg</span> <span class="n">sendmsg</span><span class="p">(</span><span class="n">MSG_GS_DONE</span><span class="p">,</span> <span class="n">GS_OP_EMIT_CUT</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">s_sendmsg</span> <span class="n">sendmsg</span><span class="p">(</span><span class="n">MSG_SYSMSG</span><span class="p">,</span> <span class="n">SYSMSG_OP_TTRACE_PC</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="gfx9_param.html" title="param"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="gfx9_label.html" title="label"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="../AMDGPUUsage.html" >User Guide for AMDGPU Backend</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="AMDGPUAsmGFX9.html" >Syntax of GFX9 Instructions</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

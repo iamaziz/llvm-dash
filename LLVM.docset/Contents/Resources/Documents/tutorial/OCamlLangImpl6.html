@@ -1,31 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>6. Kaleidoscope: Extending the Language: User-defined Operators &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>6. Kaleidoscope: Extending the Language: User-defined Operators &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
-    <link rel="up" title="LLVM Tutorial: Table of Contents" href="index.html" />
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="7. Kaleidoscope: Extending the Language: Mutable Variables" href="OCamlLangImpl7.html" />
     <link rel="prev" title="5. Kaleidoscope: Extending the Language: Control Flow" href="OCamlLangImpl5.html" />
 <style type="text/css">
@@ -33,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -56,7 +44,7 @@
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
 
@@ -66,41 +54,41 @@
           <div class="body" role="main">
             
   <div class="section" id="kaleidoscope-extending-the-language-user-defined-operators">
-<h1>6. Kaleidoscope: Extending the Language: User-defined Operators<a class="headerlink" href="#kaleidoscope-extending-the-language-user-defined-operators" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">6. </span>Kaleidoscope: Extending the Language: User-defined Operators<a class="headerlink" href="#kaleidoscope-extending-the-language-user-defined-operators" title="Permalink to this headline">¶</a></h1>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><a class="reference internal" href="#chapter-6-introduction" id="id1">Chapter 6 Introduction</a></li>
-<li><a class="reference internal" href="#user-defined-operators-the-idea" id="id2">User-defined Operators: the Idea</a></li>
-<li><a class="reference internal" href="#user-defined-binary-operators" id="id3">User-defined Binary Operators</a></li>
-<li><a class="reference internal" href="#user-defined-unary-operators" id="id4">User-defined Unary Operators</a></li>
-<li><a class="reference internal" href="#kicking-the-tires" id="id5">Kicking the Tires</a></li>
-<li><a class="reference internal" href="#full-code-listing" id="id6">Full Code Listing</a></li>
+<li><p><a class="reference internal" href="#chapter-6-introduction" id="id1">Chapter 6 Introduction</a></p></li>
+<li><p><a class="reference internal" href="#user-defined-operators-the-idea" id="id2">User-defined Operators: the Idea</a></p></li>
+<li><p><a class="reference internal" href="#user-defined-binary-operators" id="id3">User-defined Binary Operators</a></p></li>
+<li><p><a class="reference internal" href="#user-defined-unary-operators" id="id4">User-defined Unary Operators</a></p></li>
+<li><p><a class="reference internal" href="#kicking-the-tires" id="id5">Kicking the Tires</a></p></li>
+<li><p><a class="reference internal" href="#full-code-listing" id="id6">Full Code Listing</a></p></li>
 </ul>
 </div>
 <div class="section" id="chapter-6-introduction">
-<h2><a class="toc-backref" href="#id1">6.1. Chapter 6 Introduction</a><a class="headerlink" href="#chapter-6-introduction" title="Permalink to this headline">¶</a></h2>
-<p>Welcome to Chapter 6 of the &#8220;<a class="reference external" href="index.html">Implementing a language with
-LLVM</a>&#8221; tutorial. At this point in our tutorial, we now
+<h2><a class="toc-backref" href="#id1"><span class="section-number">6.1. </span>Chapter 6 Introduction</a><a class="headerlink" href="#chapter-6-introduction" title="Permalink to this headline">¶</a></h2>
+<p>Welcome to Chapter 6 of the “<a class="reference external" href="index.html">Implementing a language with
+LLVM</a>” tutorial. At this point in our tutorial, we now
 have a fully functional language that is fairly minimal, but also
 useful. There is still one big problem with it, however. Our language
-doesn&#8217;t have many useful operators (like division, logical negation, or
+doesn’t have many useful operators (like division, logical negation, or
 even any comparisons besides less-than).</p>
 <p>This chapter of the tutorial takes a wild digression into adding
 user-defined operators to the simple and beautiful Kaleidoscope
 language. This digression now gives us a simple and ugly language in
 some ways, but also a powerful one at the same time. One of the great
 things about creating your own language is that you get to decide what
-is good or bad. In this tutorial we&#8217;ll assume that it is okay to use
+is good or bad. In this tutorial we’ll assume that it is okay to use
 this as a way to show some interesting parsing techniques.</p>
-<p>At the end of this tutorial, we&#8217;ll run through an example Kaleidoscope
-application that <a class="reference external" href="#example">renders the Mandelbrot set</a>. This gives an
+<p>At the end of this tutorial, we’ll run through an example Kaleidoscope
+application that <a class="reference external" href="#kicking-the-tires">renders the Mandelbrot set</a>. This gives an
 example of what you can build with Kaleidoscope and its feature set.</p>
 </div>
 <div class="section" id="user-defined-operators-the-idea">
-<h2><a class="toc-backref" href="#id2">6.2. User-defined Operators: the Idea</a><a class="headerlink" href="#user-defined-operators-the-idea" title="Permalink to this headline">¶</a></h2>
-<p>The &#8220;operator overloading&#8221; that we will add to Kaleidoscope is more
+<h2><a class="toc-backref" href="#id2"><span class="section-number">6.2. </span>User-defined Operators: the Idea</a><a class="headerlink" href="#user-defined-operators-the-idea" title="Permalink to this headline">¶</a></h2>
+<p>The “operator overloading” that we will add to Kaleidoscope is more
 general than languages like C++. In C++, you are only allowed to
-redefine existing operators: you can&#8217;t programatically change the
+redefine existing operators: you can’t programmatically change the
 grammar, introduce new operators, change precedence levels, etc. In this
 chapter, we will add this capability to Kaleidoscope, which will let the
 user round out the set of operators that are supported.</p>
@@ -112,10 +100,10 @@ expressions. See <a class="reference external" href="OCamlLangImpl2.html">Chapte
 using operator precedence parsing, it would be very difficult to allow
 the programmer to introduce new operators into the grammar: the grammar
 is dynamically extensible as the JIT runs.</p>
-<p>The two specific features we&#8217;ll add are programmable unary operators
+<p>The two specific features we’ll add are programmable unary operators
 (right now, Kaleidoscope has no unary operators at all) as well as
 binary operators. An example of this is:</p>
-<div class="highlight-python"><div class="highlight"><pre># Logical unary not.
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Logical unary not.
 def unary!(v)
   if v then
     0
@@ -148,11 +136,11 @@ implementing support for user-defined binary operators and adding unary
 operators.</p>
 </div>
 <div class="section" id="user-defined-binary-operators">
-<h2><a class="toc-backref" href="#id3">6.3. User-defined Binary Operators</a><a class="headerlink" href="#user-defined-binary-operators" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id3"><span class="section-number">6.3. </span>User-defined Binary Operators</a><a class="headerlink" href="#user-defined-binary-operators" title="Permalink to this headline">¶</a></h2>
 <p>Adding support for user-defined binary operators is pretty simple with
-our current framework. We&#8217;ll first add support for the unary/binary
+our current framework. We’ll first add support for the unary/binary
 keywords:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">type</span> <span class="n">token</span> <span class="o">=</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">token</span> <span class="o">=</span>
   <span class="o">...</span>
   <span class="c">(* operators *)</span>
   <span class="o">|</span> <span class="nc">Binary</span> <span class="o">|</span> <span class="nn">Unary</span>
@@ -168,19 +156,19 @@ keywords:</p>
 </pre></div>
 </div>
 <p>This just adds lexer support for the unary and binary keywords, like we
-did in <a class="reference external" href="OCamlLangImpl5.html#iflexer">previous chapters</a>. One nice
+did in <a class="reference external" href="OCamlLangImpl5.html#lexer-extensions-for-if-then-else">previous chapters</a>. One nice
 thing about our current AST, is that we represent binary operators with
 full generalisation by using their ASCII code as the opcode. For our
-extended operators, we&#8217;ll use this same representation, so we don&#8217;t need
+extended operators, we’ll use this same representation, so we don’t need
 any new AST or parser support.</p>
 <p>On the other hand, we have to be able to represent the definitions of
-these new operators, in the &#8220;def binary| 5&#8221; part of the function
-definition. In our grammar so far, the &#8220;name&#8221; for the function
-definition is parsed as the &#8220;prototype&#8221; production and into the
-<code class="docutils literal"><span class="pre">Ast.Prototype</span></code> AST node. To represent our new user-defined operators
-as prototypes, we have to extend the <code class="docutils literal"><span class="pre">Ast.Prototype</span></code> AST node like
+these new operators, in the “def binary| 5” part of the function
+definition. In our grammar so far, the “name” for the function
+definition is parsed as the “prototype” production and into the
+<code class="docutils literal notranslate"><span class="pre">Ast.Prototype</span></code> AST node. To represent our new user-defined operators
+as prototypes, we have to extend the <code class="docutils literal notranslate"><span class="pre">Ast.Prototype</span></code> AST node like
 this:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* proto - This type represents the &quot;prototype&quot; for a function, which captures</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* proto - This type represents the &quot;prototype&quot; for a function, which captures</span>
 <span class="c"> * its name, and its argument names (thus implicitly the number of arguments the</span>
 <span class="c"> * function takes). *)</span>
 <span class="k">type</span> <span class="n">proto</span> <span class="o">=</span>
@@ -191,10 +179,10 @@ this:</p>
 <p>Basically, in addition to knowing a name for the prototype, we now keep
 track of whether it was an operator, and if it was, what precedence
 level the operator is at. The precedence is only used for binary
-operators (as you&#8217;ll see below, it just doesn&#8217;t apply for unary
+operators (as you’ll see below, it just doesn’t apply for unary
 operators). Now that we have a way to represent the prototype for a
 user-defined operator, we need to parse it:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* prototype</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* prototype</span>
 <span class="c"> *   ::= id &#39;(&#39; id* &#39;)&#39;</span>
 <span class="c"> *   ::= binary LETTER number? (id, id)</span>
 <span class="c"> *   ::= unary LETTER number? (id) *)</span>
@@ -242,15 +230,15 @@ user-defined operator, we need to parse it:</p>
 </div>
 <p>This is all fairly straightforward parsing code, and we have already
 seen a lot of similar code in the past. One interesting part about the
-code above is the couple lines that set up <code class="docutils literal"><span class="pre">name</span></code> for binary
-operators. This builds names like &#8220;binary&#64;&#8221; for a newly defined &#8220;&#64;&#8221;
+code above is the couple lines that set up <code class="docutils literal notranslate"><span class="pre">name</span></code> for binary
+operators. This builds names like “binary&#64;” for a newly defined “&#64;”
 operator. This then takes advantage of the fact that symbol names in the
 LLVM symbol table are allowed to have any character in them, including
 embedded nul characters.</p>
 <p>The next interesting thing to add, is codegen support for these binary
 operators. Given our current structure, this is a simple addition of a
 default case for our existing binary operator node:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
   <span class="o">...</span>
   <span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Binary</span> <span class="o">(</span><span class="n">op</span><span class="o">,</span> <span class="n">lhs</span><span class="o">,</span> <span class="n">rhs</span><span class="o">)</span> <span class="o">-&gt;</span>
       <span class="k">let</span> <span class="n">lhs_val</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">lhs</span> <span class="k">in</span>
@@ -280,10 +268,10 @@ default case for our existing binary operator node:</p>
 <p>As you can see above, the new code is actually really simple. It just
 does a lookup for the appropriate operator in the symbol table and
 generates a function call to it. Since user-defined operators are just
-built as normal functions (because the &#8220;prototype&#8221; boils down to a
+built as normal functions (because the “prototype” boils down to a
 function with the right name) everything falls into place.</p>
 <p>The final piece of code we are missing, is a bit of top level magic:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="n">codegen_func</span> <span class="n">the_fpm</span> <span class="o">=</span> <span class="k">function</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">codegen_func</span> <span class="n">the_fpm</span> <span class="o">=</span> <span class="k">function</span>
   <span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Function</span> <span class="o">(</span><span class="n">proto</span><span class="o">,</span> <span class="n">body</span><span class="o">)</span> <span class="o">-&gt;</span>
       <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">clear</span> <span class="n">named_values</span><span class="o">;</span>
       <span class="k">let</span> <span class="n">the_function</span> <span class="o">=</span> <span class="n">codegen_proto</span> <span class="n">proto</span> <span class="k">in</span>
@@ -306,19 +294,19 @@ function with the right name) everything falls into place.</p>
 operator, we register it in the precedence table. This allows the binary
 operator parsing logic we already have in place to handle it. Since we
 are working on a fully-general operator precedence parser, this is all
-we need to do to &#8220;extend the grammar&#8221;.</p>
+we need to do to “extend the grammar”.</p>
 <p>Now we have useful user-defined binary operators. This builds a lot on
 the previous framework we built for other operators. Adding unary
-operators is a bit more challenging, because we don&#8217;t have any framework
+operators is a bit more challenging, because we don’t have any framework
 for it yet - lets see what it takes.</p>
 </div>
 <div class="section" id="user-defined-unary-operators">
-<h2><a class="toc-backref" href="#id4">6.4. User-defined Unary Operators</a><a class="headerlink" href="#user-defined-unary-operators" title="Permalink to this headline">¶</a></h2>
-<p>Since we don&#8217;t currently support unary operators in the Kaleidoscope
-language, we&#8217;ll need to add everything to support them. Above, we added
-simple support for the &#8216;unary&#8217; keyword to the lexer. In addition to
+<h2><a class="toc-backref" href="#id4"><span class="section-number">6.4. </span>User-defined Unary Operators</a><a class="headerlink" href="#user-defined-unary-operators" title="Permalink to this headline">¶</a></h2>
+<p>Since we don’t currently support unary operators in the Kaleidoscope
+language, we’ll need to add everything to support them. Above, we added
+simple support for the ‘unary’ keyword to the lexer. In addition to
 that, we need an AST node:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">type</span> <span class="n">expr</span> <span class="o">=</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">expr</span> <span class="o">=</span>
   <span class="o">...</span>
   <span class="c">(* variant for a unary operator. *)</span>
   <span class="o">|</span> <span class="nc">Unary</span> <span class="k">of</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">expr</span>
@@ -328,8 +316,8 @@ that, we need an AST node:</p>
 <p>This AST node is very simple and obvious by now. It directly mirrors the
 binary operator AST node, except that it only has one child. With this,
 we need to add the parsing logic. Parsing a unary operator is pretty
-simple: we&#8217;ll add a new function to do it:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* unary</span>
+simple: we’ll add a new function to do it:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* unary</span>
 <span class="c"> *   ::= primary</span>
 <span class="c"> *   ::= &#39;!&#39; unary *)</span>
 <span class="ow">and</span> <span class="n">parse_unary</span> <span class="o">=</span> <span class="n">parser</span>
@@ -344,13 +332,13 @@ simple: we&#8217;ll add a new function to do it:</p>
 <p>The grammar we add is pretty straightforward here. If we see a unary
 operator when parsing a primary operator, we eat the operator as a
 prefix and parse the remaining piece as another unary operator. This
-allows us to handle multiple unary operators (e.g. &#8221;!!x&#8221;). Note that
-unary operators can&#8217;t have ambiguous parses like binary operators can,
+allows us to handle multiple unary operators (e.g. “!!x”). Note that
+unary operators can’t have ambiguous parses like binary operators can,
 so there is no need for precedence information.</p>
 <p>The problem with this function, is that we need to call ParseUnary from
 somewhere. To do this, we change previous callers of ParsePrimary to
-call <code class="docutils literal"><span class="pre">parse_unary</span></code> instead:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* binoprhs</span>
+call <code class="docutils literal notranslate"><span class="pre">parse_unary</span></code> instead:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* binoprhs</span>
 <span class="c"> *   ::= (&#39;+&#39; primary)* *)</span>
 <span class="ow">and</span> <span class="n">parse_bin_rhs</span> <span class="n">expr_prec</span> <span class="n">lhs</span> <span class="n">stream</span> <span class="o">=</span>
         <span class="o">...</span>
@@ -370,7 +358,7 @@ call <code class="docutils literal"><span class="pre">parse_unary</span></code> 
 and build the AST for them. Next up, we need to add parser support for
 prototypes, to parse the unary operator prototype. We extend the binary
 operator code above with:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="c">(* prototype</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(* prototype</span>
 <span class="c"> *   ::= id &#39;(&#39; id* &#39;)&#39;</span>
 <span class="c"> *   ::= binary LETTER number? (id, id)</span>
 <span class="c"> *   ::= unary LETTER number? (id) *)</span>
@@ -420,7 +408,7 @@ operator code above with:</p>
 includes the operator character. This assists us at code generation
 time. Speaking of, the final piece we need to add is codegen support for
 unary operators. It looks like this:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="k">rec</span> <span class="n">codegen_expr</span> <span class="o">=</span> <span class="k">function</span>
   <span class="o">...</span>
   <span class="o">|</span> <span class="nn">Ast</span><span class="p">.</span><span class="nc">Unary</span> <span class="o">(</span><span class="n">op</span><span class="o">,</span> <span class="n">operand</span><span class="o">)</span> <span class="o">-&gt;</span>
       <span class="k">let</span> <span class="n">operand</span> <span class="o">=</span> <span class="n">codegen_expr</span> <span class="n">operand</span> <span class="k">in</span>
@@ -434,30 +422,30 @@ unary operators. It looks like this:</p>
 </pre></div>
 </div>
 <p>This code is similar to, but simpler than, the code for binary
-operators. It is simpler primarily because it doesn&#8217;t need to handle any
+operators. It is simpler primarily because it doesn’t need to handle any
 predefined operators.</p>
 </div>
 <div class="section" id="kicking-the-tires">
-<h2><a class="toc-backref" href="#id5">6.5. Kicking the Tires</a><a class="headerlink" href="#kicking-the-tires" title="Permalink to this headline">¶</a></h2>
-<p>It is somewhat hard to believe, but with a few simple extensions we&#8217;ve
+<h2><a class="toc-backref" href="#id5"><span class="section-number">6.5. </span>Kicking the Tires</a><a class="headerlink" href="#kicking-the-tires" title="Permalink to this headline">¶</a></h2>
+<p>It is somewhat hard to believe, but with a few simple extensions we’ve
 covered in the last chapters, we have grown a real-ish language. With
 this, we can do a lot of interesting things, including I/O, math, and a
 bunch of other things. For example, we can now add a nice sequencing
 operator (printd is defined to print out the specified value and a
 newline):</p>
-<div class="highlight-python"><div class="highlight"><pre>ready&gt; extern printd(x);
-Read extern: declare double @printd(double)
-ready&gt; def binary : 1 (x y) 0;  # Low-precedence operator that ignores operands.
-..
-ready&gt; printd(123) : printd(456) : printd(789);
-123.000000
-456.000000
-789.000000
-Evaluated to 0.000000
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="n">extern</span> <span class="n">printd</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="n">Read</span> <span class="n">extern</span><span class="p">:</span> <span class="n">declare</span> <span class="n">double</span> <span class="nd">@printd</span><span class="p">(</span><span class="n">double</span><span class="p">)</span>
+<span class="n">ready</span><span class="o">&gt;</span> <span class="k">def</span> <span class="nf">binary</span> <span class="p">:</span> <span class="mi">1</span> <span class="p">(</span><span class="n">x</span> <span class="n">y</span><span class="p">)</span> <span class="mi">0</span><span class="p">;</span>  <span class="c1"># Low-precedence operator that ignores operands.</span>
+<span class="o">..</span>
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">printd</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span> <span class="p">:</span> <span class="n">printd</span><span class="p">(</span><span class="mi">456</span><span class="p">)</span> <span class="p">:</span> <span class="n">printd</span><span class="p">(</span><span class="mi">789</span><span class="p">);</span>
+<span class="mf">123.000000</span>
+<span class="mf">456.000000</span>
+<span class="mf">789.000000</span>
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">0.000000</span>
 </pre></div>
 </div>
-<p>We can also define a bunch of other &#8220;primitive&#8221; operations, such as:</p>
-<div class="highlight-python"><div class="highlight"><pre># Logical unary not.
+<p>We can also define a bunch of other “primitive” operations, such as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Logical unary not.
 def unary!(v)
   if v then
     0
@@ -495,243 +483,241 @@ def binary = 9 (LHS RHS)
 </div>
 <p>Given the previous if/then/else support, we can also define interesting
 functions for I/O. For example, the following prints out a character
-whose &#8220;density&#8221; reflects the value passed in: the lower the value, the
+whose “density” reflects the value passed in: the lower the value, the
 denser the character:</p>
-<div class="highlight-python"><div class="highlight"><pre>ready&gt;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span>
 
-extern putchard(char)
-def printdensity(d)
-  if d &gt; 8 then
-    putchard(32)  # &#39; &#39;
-  else if d &gt; 4 then
-    putchard(46)  # &#39;.&#39;
-  else if d &gt; 2 then
-    putchard(43)  # &#39;+&#39;
-  else
-    putchard(42); # &#39;*&#39;
-...
-ready&gt; printdensity(1): printdensity(2): printdensity(3) :
-          printdensity(4): printdensity(5): printdensity(9): putchard(10);
-*++..
-Evaluated to 0.000000
+<span class="n">extern</span> <span class="n">putchard</span><span class="p">(</span><span class="n">char</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">printdensity</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="mi">8</span> <span class="n">then</span>
+    <span class="n">putchard</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>  <span class="c1"># &#39; &#39;</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="mi">4</span> <span class="n">then</span>
+    <span class="n">putchard</span><span class="p">(</span><span class="mi">46</span><span class="p">)</span>  <span class="c1"># &#39;.&#39;</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="n">d</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="n">then</span>
+    <span class="n">putchard</span><span class="p">(</span><span class="mi">43</span><span class="p">)</span>  <span class="c1"># &#39;+&#39;</span>
+  <span class="k">else</span>
+    <span class="n">putchard</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span> <span class="c1"># &#39;*&#39;</span>
+<span class="o">...</span>
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">printdensity</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="n">printdensity</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span> <span class="n">printdensity</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="p">:</span>
+          <span class="n">printdensity</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span> <span class="n">printdensity</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span> <span class="n">printdensity</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span> <span class="n">putchard</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+<span class="o">*++..</span>
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">0.000000</span>
 </pre></div>
 </div>
 <p>Based on these simple primitive operations, we can start to define more
-interesting things. For example, here&#8217;s a little function that solves
+interesting things. For example, here’s a little function that solves
 for the number of iterations it takes a function in the complex plane to
 converge:</p>
-<div class="highlight-python"><div class="highlight"><pre># determine whether the specific location diverges.
-# Solve for z = z^2 + c in the complex plane.
-def mandleconverger(real imag iters creal cimag)
-  if iters &gt; 255 | (real*real + imag*imag &gt; 4) then
-    iters
-  else
-    mandleconverger(real*real - imag*imag + creal,
-                    2*real*imag + cimag,
-                    iters+1, creal, cimag);
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># determine whether the specific location diverges.</span>
+<span class="c1"># Solve for z = z^2 + c in the complex plane.</span>
+<span class="k">def</span> <span class="nf">mandelconverger</span><span class="p">(</span><span class="n">real</span> <span class="n">imag</span> <span class="n">iters</span> <span class="n">creal</span> <span class="n">cimag</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">iters</span> <span class="o">&gt;</span> <span class="mi">255</span> <span class="o">|</span> <span class="p">(</span><span class="n">real</span><span class="o">*</span><span class="n">real</span> <span class="o">+</span> <span class="n">imag</span><span class="o">*</span><span class="n">imag</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">)</span> <span class="n">then</span>
+    <span class="n">iters</span>
+  <span class="k">else</span>
+    <span class="n">mandelconverger</span><span class="p">(</span><span class="n">real</span><span class="o">*</span><span class="n">real</span> <span class="o">-</span> <span class="n">imag</span><span class="o">*</span><span class="n">imag</span> <span class="o">+</span> <span class="n">creal</span><span class="p">,</span>
+                    <span class="mi">2</span><span class="o">*</span><span class="n">real</span><span class="o">*</span><span class="n">imag</span> <span class="o">+</span> <span class="n">cimag</span><span class="p">,</span>
+                    <span class="n">iters</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">creal</span><span class="p">,</span> <span class="n">cimag</span><span class="p">);</span>
 
-# return the number of iterations required for the iteration to escape
-def mandleconverge(real imag)
-  mandleconverger(real, imag, 0, real, imag);
+<span class="c1"># return the number of iterations required for the iteration to escape</span>
+<span class="k">def</span> <span class="nf">mandelconverge</span><span class="p">(</span><span class="n">real</span> <span class="n">imag</span><span class="p">)</span>
+  <span class="n">mandelconverger</span><span class="p">(</span><span class="n">real</span><span class="p">,</span> <span class="n">imag</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">imag</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>This &#8220;z = z<sup>2</sup> + c&#8221; function is a beautiful little creature
+<p>This “z = z<sup>2</sup> + c” function is a beautiful little creature
 that is the basis for computation of the <a class="reference external" href="http://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot
 Set</a>. Our
-<code class="docutils literal"><span class="pre">mandelconverge</span></code> function returns the number of iterations that it
+<code class="docutils literal notranslate"><span class="pre">mandelconverge</span></code> function returns the number of iterations that it
 takes for a complex orbit to escape, saturating to 255. This is not a
 very useful function by itself, but if you plot its value over a
 two-dimensional plane, you can see the Mandelbrot set. Given that we are
 limited to using putchard here, our amazing graphical output is limited,
 but we can whip together something using the density plotter above:</p>
-<div class="highlight-python"><div class="highlight"><pre># compute and plot the mandlebrot set with the specified 2 dimensional range
-# info.
-def mandelhelp(xmin xmax xstep   ymin ymax ystep)
-  for y = ymin, y &lt; ymax, ystep in (
-    (for x = xmin, x &lt; xmax, xstep in
-       printdensity(mandleconverge(x,y)))
-    : putchard(10)
-  )
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># compute and plot the mandelbrot set with the specified 2 dimensional range</span>
+<span class="c1"># info.</span>
+<span class="k">def</span> <span class="nf">mandelhelp</span><span class="p">(</span><span class="n">xmin</span> <span class="n">xmax</span> <span class="n">xstep</span>   <span class="n">ymin</span> <span class="n">ymax</span> <span class="n">ystep</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">ymax</span><span class="p">,</span> <span class="n">ystep</span> <span class="ow">in</span> <span class="p">(</span>
+    <span class="p">(</span><span class="k">for</span> <span class="n">x</span> <span class="o">=</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">xstep</span> <span class="ow">in</span>
+       <span class="n">printdensity</span><span class="p">(</span><span class="n">mandelconverge</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)))</span>
+    <span class="p">:</span> <span class="n">putchard</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+  <span class="p">)</span>
 
-# mandel - This is a convenient helper function for plotting the mandelbrot set
-# from the specified position with the specified Magnification.
-def mandel(realstart imagstart realmag imagmag)
-  mandelhelp(realstart, realstart+realmag*78, realmag,
-             imagstart, imagstart+imagmag*40, imagmag);
+<span class="c1"># mandel - This is a convenient helper function for plotting the mandelbrot set</span>
+<span class="c1"># from the specified position with the specified Magnification.</span>
+<span class="k">def</span> <span class="nf">mandel</span><span class="p">(</span><span class="n">realstart</span> <span class="n">imagstart</span> <span class="n">realmag</span> <span class="n">imagmag</span><span class="p">)</span>
+  <span class="n">mandelhelp</span><span class="p">(</span><span class="n">realstart</span><span class="p">,</span> <span class="n">realstart</span><span class="o">+</span><span class="n">realmag</span><span class="o">*</span><span class="mi">78</span><span class="p">,</span> <span class="n">realmag</span><span class="p">,</span>
+             <span class="n">imagstart</span><span class="p">,</span> <span class="n">imagstart</span><span class="o">+</span><span class="n">imagmag</span><span class="o">*</span><span class="mi">40</span><span class="p">,</span> <span class="n">imagmag</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Given this, we can try plotting out the mandlebrot set! Lets try it out:</p>
-<div class="highlight-python"><div class="highlight"><pre>ready&gt; mandel(-2.3, -1.3, 0.05, 0.07);
-*******************************+++++++++++*************************************
-*************************+++++++++++++++++++++++*******************************
-**********************+++++++++++++++++++++++++++++****************************
-*******************+++++++++++++++++++++.. ...++++++++*************************
-*****************++++++++++++++++++++++.... ...+++++++++***********************
-***************+++++++++++++++++++++++.....   ...+++++++++*********************
-**************+++++++++++++++++++++++....     ....+++++++++********************
-*************++++++++++++++++++++++......      .....++++++++*******************
-************+++++++++++++++++++++.......       .......+++++++******************
-***********+++++++++++++++++++....                ... .+++++++*****************
-**********+++++++++++++++++.......                     .+++++++****************
-*********++++++++++++++...........                    ...+++++++***************
-********++++++++++++............                      ...++++++++**************
-********++++++++++... ..........                        .++++++++**************
-*******+++++++++.....                                   .+++++++++*************
-*******++++++++......                                  ..+++++++++*************
-*******++++++.......                                   ..+++++++++*************
-*******+++++......                                     ..+++++++++*************
-*******.... ....                                      ...+++++++++*************
-*******.... .                                         ...+++++++++*************
-*******+++++......                                    ...+++++++++*************
-*******++++++.......                                   ..+++++++++*************
-*******++++++++......                                   .+++++++++*************
-*******+++++++++.....                                  ..+++++++++*************
-********++++++++++... ..........                        .++++++++**************
-********++++++++++++............                      ...++++++++**************
-*********++++++++++++++..........                     ...+++++++***************
-**********++++++++++++++++........                     .+++++++****************
-**********++++++++++++++++++++....                ... ..+++++++****************
-***********++++++++++++++++++++++.......       .......++++++++*****************
-************+++++++++++++++++++++++......      ......++++++++******************
-**************+++++++++++++++++++++++....      ....++++++++********************
-***************+++++++++++++++++++++++.....   ...+++++++++*********************
-*****************++++++++++++++++++++++....  ...++++++++***********************
-*******************+++++++++++++++++++++......++++++++*************************
-*********************++++++++++++++++++++++.++++++++***************************
-*************************+++++++++++++++++++++++*******************************
-******************************+++++++++++++************************************
-*******************************************************************************
-*******************************************************************************
-*******************************************************************************
-Evaluated to 0.000000
-ready&gt; mandel(-2, -1, 0.02, 0.04);
-**************************+++++++++++++++++++++++++++++++++++++++++++++++++++++
-***********************++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-*********************+++++++++++++++++++++++++++++++++++++++++++++++++++++++++.
-*******************+++++++++++++++++++++++++++++++++++++++++++++++++++++++++...
-*****************+++++++++++++++++++++++++++++++++++++++++++++++++++++++++.....
-***************++++++++++++++++++++++++++++++++++++++++++++++++++++++++........
-**************++++++++++++++++++++++++++++++++++++++++++++++++++++++...........
-************+++++++++++++++++++++++++++++++++++++++++++++++++++++..............
-***********++++++++++++++++++++++++++++++++++++++++++++++++++........        .
-**********++++++++++++++++++++++++++++++++++++++++++++++.............
-********+++++++++++++++++++++++++++++++++++++++++++..................
-*******+++++++++++++++++++++++++++++++++++++++.......................
-******+++++++++++++++++++++++++++++++++++...........................
-*****++++++++++++++++++++++++++++++++............................
-*****++++++++++++++++++++++++++++...............................
-****++++++++++++++++++++++++++......   .........................
-***++++++++++++++++++++++++.........     ......    ...........
-***++++++++++++++++++++++............
-**+++++++++++++++++++++..............
-**+++++++++++++++++++................
-*++++++++++++++++++.................
-*++++++++++++++++............ ...
-*++++++++++++++..............
-*+++....++++................
-*..........  ...........
-*
-*..........  ...........
-*+++....++++................
-*++++++++++++++..............
-*++++++++++++++++............ ...
-*++++++++++++++++++.................
-**+++++++++++++++++++................
-**+++++++++++++++++++++..............
-***++++++++++++++++++++++............
-***++++++++++++++++++++++++.........     ......    ...........
-****++++++++++++++++++++++++++......   .........................
-*****++++++++++++++++++++++++++++...............................
-*****++++++++++++++++++++++++++++++++............................
-******+++++++++++++++++++++++++++++++++++...........................
-*******+++++++++++++++++++++++++++++++++++++++.......................
-********+++++++++++++++++++++++++++++++++++++++++++..................
-Evaluated to 0.000000
-ready&gt; mandel(-0.9, -1.4, 0.02, 0.03);
-*******************************************************************************
-*******************************************************************************
-*******************************************************************************
-**********+++++++++++++++++++++************************************************
-*+++++++++++++++++++++++++++++++++++++++***************************************
-+++++++++++++++++++++++++++++++++++++++++++++**********************************
-++++++++++++++++++++++++++++++++++++++++++++++++++*****************************
-++++++++++++++++++++++++++++++++++++++++++++++++++++++*************************
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++**********************
-+++++++++++++++++++++++++++++++++.........++++++++++++++++++*******************
-+++++++++++++++++++++++++++++++....   ......+++++++++++++++++++****************
-+++++++++++++++++++++++++++++.......  ........+++++++++++++++++++**************
-++++++++++++++++++++++++++++........   ........++++++++++++++++++++************
-+++++++++++++++++++++++++++.........     ..  ...+++++++++++++++++++++**********
-++++++++++++++++++++++++++...........        ....++++++++++++++++++++++********
-++++++++++++++++++++++++.............       .......++++++++++++++++++++++******
-+++++++++++++++++++++++.............        ........+++++++++++++++++++++++****
-++++++++++++++++++++++...........           ..........++++++++++++++++++++++***
-++++++++++++++++++++...........                .........++++++++++++++++++++++*
-++++++++++++++++++............                  ...........++++++++++++++++++++
-++++++++++++++++...............                 .............++++++++++++++++++
-++++++++++++++.................                 ...............++++++++++++++++
-++++++++++++..................                  .................++++++++++++++
-+++++++++..................                      .................+++++++++++++
-++++++........        .                               .........  ..++++++++++++
-++............                                         ......    ....++++++++++
-..............                                                    ...++++++++++
-..............                                                    ....+++++++++
-..............                                                    .....++++++++
-.............                                                    ......++++++++
-...........                                                     .......++++++++
-.........                                                       ........+++++++
-.........                                                       ........+++++++
-.........                                                           ....+++++++
-........                                                             ...+++++++
-.......                                                              ...+++++++
-                                                                    ....+++++++
-                                                                   .....+++++++
-                                                                    ....+++++++
-                                                                    ....+++++++
-                                                                    ....+++++++
-Evaluated to 0.000000
-ready&gt; ^D
+<p>Given this, we can try plotting out the mandelbrot set! Lets try it out:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ready</span><span class="o">&gt;</span> <span class="n">mandel</span><span class="p">(</span><span class="o">-</span><span class="mf">2.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.3</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.07</span><span class="p">);</span>
+<span class="o">*******************************+++++++++++*************************************</span>
+<span class="o">*************************+++++++++++++++++++++++*******************************</span>
+<span class="o">**********************+++++++++++++++++++++++++++++****************************</span>
+<span class="o">*******************+++++++++++++++++++++..</span> <span class="o">...++++++++*************************</span>
+<span class="o">*****************++++++++++++++++++++++....</span> <span class="o">...+++++++++***********************</span>
+<span class="o">***************+++++++++++++++++++++++.....</span>   <span class="o">...+++++++++*********************</span>
+<span class="o">**************+++++++++++++++++++++++....</span>     <span class="o">....+++++++++********************</span>
+<span class="o">*************++++++++++++++++++++++......</span>      <span class="o">.....++++++++*******************</span>
+<span class="o">************+++++++++++++++++++++.......</span>       <span class="o">.......+++++++******************</span>
+<span class="o">***********+++++++++++++++++++....</span>                <span class="o">...</span> <span class="o">.+++++++*****************</span>
+<span class="o">**********+++++++++++++++++.......</span>                     <span class="o">.+++++++****************</span>
+<span class="o">*********++++++++++++++...........</span>                    <span class="o">...+++++++***************</span>
+<span class="o">********++++++++++++............</span>                      <span class="o">...++++++++**************</span>
+<span class="o">********++++++++++...</span> <span class="o">..........</span>                        <span class="o">.++++++++**************</span>
+<span class="o">*******+++++++++.....</span>                                   <span class="o">.+++++++++*************</span>
+<span class="o">*******++++++++......</span>                                  <span class="o">..+++++++++*************</span>
+<span class="o">*******++++++.......</span>                                   <span class="o">..+++++++++*************</span>
+<span class="o">*******+++++......</span>                                     <span class="o">..+++++++++*************</span>
+<span class="o">*******....</span> <span class="o">....</span>                                      <span class="o">...+++++++++*************</span>
+<span class="o">*******....</span> <span class="o">.</span>                                         <span class="o">...+++++++++*************</span>
+<span class="o">*******+++++......</span>                                    <span class="o">...+++++++++*************</span>
+<span class="o">*******++++++.......</span>                                   <span class="o">..+++++++++*************</span>
+<span class="o">*******++++++++......</span>                                   <span class="o">.+++++++++*************</span>
+<span class="o">*******+++++++++.....</span>                                  <span class="o">..+++++++++*************</span>
+<span class="o">********++++++++++...</span> <span class="o">..........</span>                        <span class="o">.++++++++**************</span>
+<span class="o">********++++++++++++............</span>                      <span class="o">...++++++++**************</span>
+<span class="o">*********++++++++++++++..........</span>                     <span class="o">...+++++++***************</span>
+<span class="o">**********++++++++++++++++........</span>                     <span class="o">.+++++++****************</span>
+<span class="o">**********++++++++++++++++++++....</span>                <span class="o">...</span> <span class="o">..+++++++****************</span>
+<span class="o">***********++++++++++++++++++++++.......</span>       <span class="o">.......++++++++*****************</span>
+<span class="o">************+++++++++++++++++++++++......</span>      <span class="o">......++++++++******************</span>
+<span class="o">**************+++++++++++++++++++++++....</span>      <span class="o">....++++++++********************</span>
+<span class="o">***************+++++++++++++++++++++++.....</span>   <span class="o">...+++++++++*********************</span>
+<span class="o">*****************++++++++++++++++++++++....</span>  <span class="o">...++++++++***********************</span>
+<span class="o">*******************+++++++++++++++++++++......++++++++*************************</span>
+<span class="o">*********************++++++++++++++++++++++.++++++++***************************</span>
+<span class="o">*************************+++++++++++++++++++++++*******************************</span>
+<span class="o">******************************+++++++++++++************************************</span>
+<span class="o">*******************************************************************************</span>
+<span class="o">*******************************************************************************</span>
+<span class="o">*******************************************************************************</span>
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">0.000000</span>
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">mandel</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">);</span>
+<span class="o">**************************+++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+<span class="o">***********************++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+<span class="o">*********************+++++++++++++++++++++++++++++++++++++++++++++++++++++++++.</span>
+<span class="o">*******************+++++++++++++++++++++++++++++++++++++++++++++++++++++++++...</span>
+<span class="o">*****************+++++++++++++++++++++++++++++++++++++++++++++++++++++++++.....</span>
+<span class="o">***************++++++++++++++++++++++++++++++++++++++++++++++++++++++++........</span>
+<span class="o">**************++++++++++++++++++++++++++++++++++++++++++++++++++++++...........</span>
+<span class="o">************+++++++++++++++++++++++++++++++++++++++++++++++++++++..............</span>
+<span class="o">***********++++++++++++++++++++++++++++++++++++++++++++++++++........</span>        <span class="o">.</span>
+<span class="o">**********++++++++++++++++++++++++++++++++++++++++++++++.............</span>
+<span class="o">********+++++++++++++++++++++++++++++++++++++++++++..................</span>
+<span class="o">*******+++++++++++++++++++++++++++++++++++++++.......................</span>
+<span class="o">******+++++++++++++++++++++++++++++++++++...........................</span>
+<span class="o">*****++++++++++++++++++++++++++++++++............................</span>
+<span class="o">*****++++++++++++++++++++++++++++...............................</span>
+<span class="o">****++++++++++++++++++++++++++......</span>   <span class="o">.........................</span>
+<span class="o">***++++++++++++++++++++++++.........</span>     <span class="o">......</span>    <span class="o">...........</span>
+<span class="o">***++++++++++++++++++++++............</span>
+<span class="o">**+++++++++++++++++++++..............</span>
+<span class="o">**+++++++++++++++++++................</span>
+<span class="o">*++++++++++++++++++.................</span>
+<span class="o">*++++++++++++++++............</span> <span class="o">...</span>
+<span class="o">*++++++++++++++..............</span>
+<span class="o">*+++....++++................</span>
+<span class="o">*..........</span>  <span class="o">...........</span>
+<span class="o">*</span>
+<span class="o">*..........</span>  <span class="o">...........</span>
+<span class="o">*+++....++++................</span>
+<span class="o">*++++++++++++++..............</span>
+<span class="o">*++++++++++++++++............</span> <span class="o">...</span>
+<span class="o">*++++++++++++++++++.................</span>
+<span class="o">**+++++++++++++++++++................</span>
+<span class="o">**+++++++++++++++++++++..............</span>
+<span class="o">***++++++++++++++++++++++............</span>
+<span class="o">***++++++++++++++++++++++++.........</span>     <span class="o">......</span>    <span class="o">...........</span>
+<span class="o">****++++++++++++++++++++++++++......</span>   <span class="o">.........................</span>
+<span class="o">*****++++++++++++++++++++++++++++...............................</span>
+<span class="o">*****++++++++++++++++++++++++++++++++............................</span>
+<span class="o">******+++++++++++++++++++++++++++++++++++...........................</span>
+<span class="o">*******+++++++++++++++++++++++++++++++++++++++.......................</span>
+<span class="o">********+++++++++++++++++++++++++++++++++++++++++++..................</span>
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">0.000000</span>
+<span class="n">ready</span><span class="o">&gt;</span> <span class="n">mandel</span><span class="p">(</span><span class="o">-</span><span class="mf">0.9</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">);</span>
+<span class="o">*******************************************************************************</span>
+<span class="o">*******************************************************************************</span>
+<span class="o">*******************************************************************************</span>
+<span class="o">**********+++++++++++++++++++++************************************************</span>
+<span class="o">*+++++++++++++++++++++++++++++++++++++++***************************************</span>
+<span class="o">+++++++++++++++++++++++++++++++++++++++++++++**********************************</span>
+<span class="o">++++++++++++++++++++++++++++++++++++++++++++++++++*****************************</span>
+<span class="o">++++++++++++++++++++++++++++++++++++++++++++++++++++++*************************</span>
+<span class="o">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++**********************</span>
+<span class="o">+++++++++++++++++++++++++++++++++.........++++++++++++++++++*******************</span>
+<span class="o">+++++++++++++++++++++++++++++++....</span>   <span class="o">......+++++++++++++++++++****************</span>
+<span class="o">+++++++++++++++++++++++++++++.......</span>  <span class="o">........+++++++++++++++++++**************</span>
+<span class="o">++++++++++++++++++++++++++++........</span>   <span class="o">........++++++++++++++++++++************</span>
+<span class="o">+++++++++++++++++++++++++++.........</span>     <span class="o">..</span>  <span class="o">...+++++++++++++++++++++**********</span>
+<span class="o">++++++++++++++++++++++++++...........</span>        <span class="o">....++++++++++++++++++++++********</span>
+<span class="o">++++++++++++++++++++++++.............</span>       <span class="o">.......++++++++++++++++++++++******</span>
+<span class="o">+++++++++++++++++++++++.............</span>        <span class="o">........+++++++++++++++++++++++****</span>
+<span class="o">++++++++++++++++++++++...........</span>           <span class="o">..........++++++++++++++++++++++***</span>
+<span class="o">++++++++++++++++++++...........</span>                <span class="o">.........++++++++++++++++++++++*</span>
+<span class="o">++++++++++++++++++............</span>                  <span class="o">...........++++++++++++++++++++</span>
+<span class="o">++++++++++++++++...............</span>                 <span class="o">.............++++++++++++++++++</span>
+<span class="o">++++++++++++++.................</span>                 <span class="o">...............++++++++++++++++</span>
+<span class="o">++++++++++++..................</span>                  <span class="o">.................++++++++++++++</span>
+<span class="o">+++++++++..................</span>                      <span class="o">.................+++++++++++++</span>
+<span class="o">++++++........</span>        <span class="o">.</span>                               <span class="o">.........</span>  <span class="o">..++++++++++++</span>
+<span class="o">++............</span>                                         <span class="o">......</span>    <span class="o">....++++++++++</span>
+<span class="o">..............</span>                                                    <span class="o">...++++++++++</span>
+<span class="o">..............</span>                                                    <span class="o">....+++++++++</span>
+<span class="o">..............</span>                                                    <span class="o">.....++++++++</span>
+<span class="o">.............</span>                                                    <span class="o">......++++++++</span>
+<span class="o">...........</span>                                                     <span class="o">.......++++++++</span>
+<span class="o">.........</span>                                                       <span class="o">........+++++++</span>
+<span class="o">.........</span>                                                       <span class="o">........+++++++</span>
+<span class="o">.........</span>                                                           <span class="o">....+++++++</span>
+<span class="o">........</span>                                                             <span class="o">...+++++++</span>
+<span class="o">.......</span>                                                              <span class="o">...+++++++</span>
+                                                                    <span class="o">....+++++++</span>
+                                                                   <span class="o">.....+++++++</span>
+                                                                    <span class="o">....+++++++</span>
+                                                                    <span class="o">....+++++++</span>
+                                                                    <span class="o">....+++++++</span>
+<span class="n">Evaluated</span> <span class="n">to</span> <span class="mf">0.000000</span>
+<span class="n">ready</span><span class="o">&gt;</span> <span class="o">^</span><span class="n">D</span>
 </pre></div>
 </div>
 <p>At this point, you may be starting to realize that Kaleidoscope is a
 real and powerful language. It may not be self-similar :), but it can be
 used to plot things that are!</p>
-<p>With this, we conclude the &#8220;adding user-defined operators&#8221; chapter of
+<p>With this, we conclude the “adding user-defined operators” chapter of
 the tutorial. We have successfully augmented our language, adding the
 ability to extend the language in the library, and we have shown how
 this can be used to build a simple but interesting end-user application
 in Kaleidoscope. At this point, Kaleidoscope can build a variety of
 applications that are functional and can call functions with
-side-effects, but it can&#8217;t actually define and mutate a variable itself.</p>
+side-effects, but it can’t actually define and mutate a variable itself.</p>
 <p>Strikingly, variable mutation is an important feature of some languages,
 and it is not at all obvious how to <a class="reference external" href="OCamlLangImpl7.html">add support for mutable
-variables</a> without having to add an &#8220;SSA
-construction&#8221; phase to your front-end. In the next chapter, we will
+variables</a> without having to add an “SSA
+construction” phase to your front-end. In the next chapter, we will
 describe how you can add variable mutation without building SSA in your
 front-end.</p>
 </div>
 <div class="section" id="full-code-listing">
-<h2><a class="toc-backref" href="#id6">6.6. Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6"><span class="section-number">6.6. </span>Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
 <p>Here is the complete code listing for our running example, enhanced with
 the if/then/else and for expressions.. To build this example, use:</p>
-<div class="highlight-bash"><div class="highlight"><pre><span class="c"># Compile</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
 ocamlbuild toy.byte
-<span class="c"># Run</span>
+<span class="c1"># Run</span>
 ./toy.byte
 </pre></div>
 </div>
 <p>Here is the code:</p>
-<dl class="docutils">
-<dt>_tags:</dt>
-<dd><div class="first last highlight-python"><div class="highlight"><pre>&lt;{lexer,parser}.ml&gt;: use_camlp4, pp(camlp4of)
-&lt;*.{byte,native}&gt;: g++, use_llvm, use_llvm_analysis
-&lt;*.{byte,native}&gt;: use_llvm_executionengine, use_llvm_target
-&lt;*.{byte,native}&gt;: use_llvm_scalar_opts, use_bindings
+<dl>
+<dt>_tags:</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="p">{</span><span class="n">lexer</span><span class="p">,</span><span class="n">parser</span><span class="p">}</span><span class="o">.</span><span class="n">ml</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">use_camlp4</span><span class="p">,</span> <span class="n">pp</span><span class="p">(</span><span class="n">camlp4of</span><span class="p">)</span>
+<span class="o">&lt;*.</span><span class="p">{</span><span class="n">byte</span><span class="p">,</span><span class="n">native</span><span class="p">}</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">g</span><span class="o">++</span><span class="p">,</span> <span class="n">use_llvm</span><span class="p">,</span> <span class="n">use_llvm_analysis</span>
+<span class="o">&lt;*.</span><span class="p">{</span><span class="n">byte</span><span class="p">,</span><span class="n">native</span><span class="p">}</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">use_llvm_executionengine</span><span class="p">,</span> <span class="n">use_llvm_target</span>
+<span class="o">&lt;*.</span><span class="p">{</span><span class="n">byte</span><span class="p">,</span><span class="n">native</span><span class="p">}</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">use_llvm_scalar_opts</span><span class="p">,</span> <span class="n">use_bindings</span>
 </pre></div>
 </div>
 </dd>
-<dt>myocamlbuild.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="k">open</span> <span class="nc">Ocamlbuild_plugin</span><span class="o">;;</span>
+<dt>myocamlbuild.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="k">open</span> <span class="nc">Ocamlbuild_plugin</span><span class="o">;;</span>
 
 <span class="n">ocaml_lib</span> <span class="o">~</span><span class="n">extern</span><span class="o">:</span><span class="bp">true</span> <span class="s2">&quot;llvm&quot;</span><span class="o">;;</span>
 <span class="n">ocaml_lib</span> <span class="o">~</span><span class="n">extern</span><span class="o">:</span><span class="bp">true</span> <span class="s2">&quot;llvm_analysis&quot;</span><span class="o">;;</span>
@@ -744,8 +730,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>token.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>token.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Lexer Tokens</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -770,8 +755,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>lexer.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>lexer.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Lexer</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -833,8 +817,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>ast.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>ast.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Abstract Syntax Tree (aka Parse Tree)</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -873,8 +856,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>parser.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===---------------------------------------------------------------------===</span>
+<dt>parser.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===---------------------------------------------------------------------===</span>
 <span class="c"> * Parser</span>
 <span class="c"> *===---------------------------------------------------------------------===*)</span>
 
@@ -1072,8 +1054,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>codegen.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>codegen.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Code Generation</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -1327,8 +1308,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>toplevel.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>toplevel.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Top-Level parsing and JIT Driver</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -1380,8 +1360,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>toy.ml:</dt>
-<dd><div class="first last highlight-ocaml"><div class="highlight"><pre><span class="c">(*===----------------------------------------------------------------------===</span>
+<dt>toy.ml:</dt><dd><div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="c">(*===----------------------------------------------------------------------===</span>
 <span class="c"> * Main driver code.</span>
 <span class="c"> *===----------------------------------------------------------------------===*)</span>
 
@@ -1437,8 +1416,7 @@ ocamlbuild toy.byte
 </pre></div>
 </div>
 </dd>
-<dt>bindings.c</dt>
-<dd><div class="first last highlight-c"><div class="highlight"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
+<dt>bindings.c</dt><dd><div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
 
 <span class="cm">/* putchard - putchar that takes a double and returns 0. */</span>
 <span class="k">extern</span> <span class="kt">double</span> <span class="nf">putchard</span><span class="p">(</span><span class="kt">double</span> <span class="n">X</span><span class="p">)</span> <span class="p">{</span>
@@ -1480,13 +1458,13 @@ construction</a></p>
   <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
   <li><a href="../index.html">Documentation</a>&raquo;</li>
 
-          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

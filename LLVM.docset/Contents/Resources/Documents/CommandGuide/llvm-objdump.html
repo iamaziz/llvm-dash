@@ -1,0 +1,538 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>llvm-objdump - LLVM’s object file dumper &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="llvm-ranlib - generates an archive index" href="llvm-ranlib.html" />
+    <link rel="prev" title="llvm-objcopy - object copying and editing tool" href="llvm-objcopy.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="llvm-ranlib.html" title="llvm-ranlib - generates an archive index"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="llvm-objcopy.html" title="llvm-objcopy - object copying and editing tool"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Command Guide</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="llvm-objdump-llvm-s-object-file-dumper">
+<h1>llvm-objdump - LLVM’s object file dumper<a class="headerlink" href="#llvm-objdump-llvm-s-object-file-dumper" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>SYNOPSIS<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">llvm-objdump</strong> [<em>commands</em>] [<em>options</em>] [<em>filenames…</em>]</p>
+</div>
+<div class="section" id="description">
+<h2>DESCRIPTION<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p>The <strong class="program">llvm-objdump</strong> utility prints the contents of object files and
+final linked images named on the command line. If no file name is specified,
+<strong class="program">llvm-objdump</strong> will attempt to read from <em>a.out</em>. If <em>-</em> is used as a
+file name, <strong class="program">llvm-objdump</strong> will process a file on its standard input
+stream.</p>
+</div>
+<div class="section" id="commands">
+<h2>COMMANDS<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<p>At least one of the following commands are required, and some commands can be
+combined with other commands:</p>
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-a">
+<code class="sig-name descname">-a</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--archive-headers</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-a" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the information contained within an archive’s headers.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-d">
+<code class="sig-name descname">-d</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--disassemble</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disassemble all text sections found in the input files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-disassemble-all">
+<code class="sig-name descname">-D</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--disassemble-all</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-disassemble-all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disassemble all sections found in the input files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-disassemble-functions">
+<code class="sig-name descname">--disassemble-functions</code><code class="sig-prename descclassname">=&lt;symbol1[,symbol2,...]&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-disassemble-functions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disassemble only the specified symbols. Takes demangled symbol names when
+<a class="reference internal" href="#cmdoption-llvm-objdump-c"><code class="xref std std-option docutils literal notranslate"><span class="pre">--demangle</span></code></a> is specified, otherwise takes mangled symbol names.
+Implies <a class="reference internal" href="#cmdoption-llvm-objdump-d"><code class="xref std std-option docutils literal notranslate"><span class="pre">--disassemble</span></code></a>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-dwarf">
+<code class="sig-name descname">--dwarf</code><code class="sig-prename descclassname">=&lt;value&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-dwarf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump the specified DWARF debug sections. The supported values are:</p>
+<p><cite>frames</cite> - .debug_frame</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-f">
+<code class="sig-name descname">-f</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--file-headers</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the contents of the overall file header.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-fault-map-section">
+<code class="sig-name descname">--fault-map-section</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-fault-map-section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the content of the fault map section.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-h">
+<code class="sig-name descname">-h</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--headers</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--section-headers</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-h" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display summaries of the headers for each section.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-help">
+<code class="sig-name descname">--help</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display usage information and exit. Does not stack with other commands.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-p">
+<code class="sig-name descname">-p</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--private-headers</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display format-specific file headers.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-r">
+<code class="sig-name descname">-r</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--reloc</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the relocation entries in the file.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-dynamic-reloc">
+<code class="sig-name descname">-R</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--dynamic-reloc</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-dynamic-reloc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the dynamic relocation entries in the file.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-raw-clang-ast">
+<code class="sig-name descname">--raw-clang-ast</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-raw-clang-ast" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump the raw binary contents of the clang AST section.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-s">
+<code class="sig-name descname">-s</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--full-contents</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the contents of each section.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-t">
+<code class="sig-name descname">-t</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--syms</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the symbol table.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-u">
+<code class="sig-name descname">-u</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--unwind-info</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the unwind info of the input(s).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-version">
+<code class="sig-name descname">--version</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the version of this program. Does not stack with other commands.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-x">
+<code class="sig-name descname">-x</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--all-headers</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display all available header information. Equivalent to specifying
+<a class="reference internal" href="#cmdoption-llvm-objdump-a"><code class="xref std std-option docutils literal notranslate"><span class="pre">--archive-headers</span></code></a>, <a class="reference internal" href="#cmdoption-llvm-objdump-f"><code class="xref std std-option docutils literal notranslate"><span class="pre">--file-headers</span></code></a>,
+<a class="reference internal" href="#cmdoption-llvm-objdump-p"><code class="xref std std-option docutils literal notranslate"><span class="pre">--private-headers</span></code></a>, <a class="reference internal" href="#cmdoption-llvm-objdump-r"><code class="xref std std-option docutils literal notranslate"><span class="pre">--reloc</span></code></a>, <a class="reference internal" href="#cmdoption-llvm-objdump-h"><code class="xref std std-option docutils literal notranslate"><span class="pre">--section-headers</span></code></a>,
+and <a class="reference internal" href="#cmdoption-llvm-objdump-t"><code class="xref std std-option docutils literal notranslate"><span class="pre">--syms</span></code></a>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="options">
+<h2>OPTIONS<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<p><strong class="program">llvm-objdump</strong> supports the following options:</p>
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-adjust-vma">
+<code class="sig-name descname">--adjust-vma</code><code class="sig-prename descclassname">=&lt;offset&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-adjust-vma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increase the displayed address in disassembly or section header printing by
+the specified offset.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-arch-name">
+<code class="sig-name descname">--arch-name</code><code class="sig-prename descclassname">=&lt;string&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-arch-name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify the target architecture when disassembling. Use <a class="reference internal" href="#cmdoption-llvm-objdump-version"><code class="xref std std-option docutils literal notranslate"><span class="pre">--version</span></code></a>
+for a list of available targets.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-c">
+<code class="sig-name descname">-C</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--demangle</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-c" title="Permalink to this definition">¶</a></dt>
+<dd><p>Demangle symbol names in the output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-j">
+<code class="sig-name descname">-j</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--section</code><code class="sig-prename descclassname">=&lt;section1[,section2,...]&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform commands on the specified sections only. For Mach-O use
+<cite>segment,section</cite> to specify the section name.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-l">
+<code class="sig-name descname">-l</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--line-numbers</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>When disassembling, display source line numbers. Implies
+<a class="reference internal" href="#cmdoption-llvm-objdump-d"><code class="xref std std-option docutils literal notranslate"><span class="pre">--disassemble</span></code></a>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-m">
+<code class="sig-name descname">-M</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--disassembler-options</code><code class="sig-prename descclassname">=&lt;opt1[,opt2,...]&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-m" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass target-specific disassembler options. Currently supported for ARM targets
+only. Available options are <code class="docutils literal notranslate"><span class="pre">reg-names-std</span></code> and <code class="docutils literal notranslate"><span class="pre">reg-names-raw</span></code>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-mcpu">
+<code class="sig-name descname">--mcpu</code><code class="sig-prename descclassname">=&lt;cpu-name&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-mcpu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Target a specific CPU type for disassembly. Specify <code class="docutils literal notranslate"><span class="pre">--mcpu=help</span></code> to display
+available CPUs.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-mattr">
+<code class="sig-name descname">--mattr</code><code class="sig-prename descclassname">=&lt;a1,+a2,-a3,...&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-mattr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable/disable target-specific attributes. Specify <code class="docutils literal notranslate"><span class="pre">--mcpu=help</span></code> to display
+the available attributes.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-no-leading-addr">
+<code class="sig-name descname">--no-leading-addr</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-no-leading-addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>When disassembling, do not print leading addresses.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-no-show-raw-insn">
+<code class="sig-name descname">--no-show-raw-insn</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-no-show-raw-insn" title="Permalink to this definition">¶</a></dt>
+<dd><p>When disassembling, do not print the raw bytes of each instruction.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-print-imm-hex">
+<code class="sig-name descname">--print-imm-hex</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-print-imm-hex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use hex format when printing immediate values in disassembly output.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-source">
+<code class="sig-name descname">-S</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--source</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-source" title="Permalink to this definition">¶</a></dt>
+<dd><p>When disassembling, display source interleaved with the disassembly. Implies
+<a class="reference internal" href="#cmdoption-llvm-objdump-d"><code class="xref std std-option docutils literal notranslate"><span class="pre">--disassemble</span></code></a>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-show-lma">
+<code class="sig-name descname">--show-lma</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-show-lma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the LMA column when dumping ELF section headers. Defaults to off
+unless any section has different VMA and LMAs.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-start-address">
+<code class="sig-name descname">--start-address</code><code class="sig-prename descclassname">=&lt;address&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-start-address" title="Permalink to this definition">¶</a></dt>
+<dd><p>When disassembling, only disassemble from the specified address.</p>
+<p>When printing relocations, only print the relocations patching offsets from at least <code class="docutils literal notranslate"><span class="pre">address</span></code>.</p>
+<p>When printing symbols, only print symbols with a value of at least <code class="docutils literal notranslate"><span class="pre">address</span></code>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-stop-address">
+<code class="sig-name descname">--stop-address</code><code class="sig-prename descclassname">=&lt;address&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-stop-address" title="Permalink to this definition">¶</a></dt>
+<dd><p>When disassembling, only disassemble up to, but not including the specified address.</p>
+<p>When printing relocations, only print the relocations patching offsets up to <code class="docutils literal notranslate"><span class="pre">address</span></code>.</p>
+<p>When printing symbols, only print symbols with a value up to <code class="docutils literal notranslate"><span class="pre">address</span></code>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-triple">
+<code class="sig-name descname">--triple</code><code class="sig-prename descclassname">=&lt;string&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-triple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Target triple to disassemble for, see <code class="docutils literal notranslate"><span class="pre">--version</span></code> for available targets.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-w">
+<code class="sig-name descname">-w</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--wide</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-w" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignored for compatibility with GNU objdump.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-x86-asm-syntax">
+<code class="sig-name descname">--x86-asm-syntax</code><code class="sig-prename descclassname">=&lt;style&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-x86-asm-syntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>When used with <a class="reference internal" href="#cmdoption-llvm-objdump-d"><code class="xref std std-option docutils literal notranslate"><span class="pre">--disassemble</span></code></a>, choose style of code to emit from
+X86 backend. Supported values are:</p>
+<blockquote>
+<div><dl class="option">
+<dt id="cmdoption-llvm-objdump-arg-att">
+<code class="sig-name descname">att</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-arg-att" title="Permalink to this definition">¶</a></dt>
+<dd><p>AT&amp;T-style assembly</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-arg-intel">
+<code class="sig-name descname">intel</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-arg-intel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intel-style assembly</p>
+</dd></dl>
+
+</div></blockquote>
+<p>The default disassembly style is <strong>att</strong>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-z">
+<code class="sig-name descname">-z</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--disassemble-zeroes</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not skip blocks of zeroes when disassembling.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-arg-file">
+<code class="sig-name descname">&#64;&lt;FILE&gt;</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-arg-file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read command-line options and commands from response file <cite>&lt;FILE&gt;</cite>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="mach-o-only-options-and-commands">
+<h2>MACH-O ONLY OPTIONS AND COMMANDS<a class="headerlink" href="#mach-o-only-options-and-commands" title="Permalink to this headline">¶</a></h2>
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-arch">
+<code class="sig-name descname">--arch</code><code class="sig-prename descclassname">=&lt;architecture&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-arch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify the architecture to disassemble. see <code class="docutils literal notranslate"><span class="pre">--version</span></code> for available
+architectures.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-archive-member-offsets">
+<code class="sig-name descname">--archive-member-offsets</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-archive-member-offsets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the offset to each archive member for Mach-O archives (requires
+<a class="reference internal" href="#cmdoption-llvm-objdump-a"><code class="xref std std-option docutils literal notranslate"><span class="pre">--archive-headers</span></code></a>).</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-bind">
+<code class="sig-name descname">--bind</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display binding info</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-cfg">
+<code class="sig-name descname">--cfg</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-cfg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a CFG for every symbol in the object file and write it to a graphviz
+file.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-data-in-code">
+<code class="sig-name descname">--data-in-code</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-data-in-code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the data in code table.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-dis-symname">
+<code class="sig-name descname">--dis-symname</code><code class="sig-prename descclassname">=&lt;name&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-dis-symname" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disassemble just the specified symbol’s instructions.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-dylibs-used">
+<code class="sig-name descname">--dylibs-used</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-dylibs-used" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the shared libraries used for linked files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-dsym">
+<code class="sig-name descname">--dsym</code><code class="sig-prename descclassname">=&lt;string&gt;</code><a class="headerlink" href="#cmdoption-llvm-objdump-dsym" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use .dSYM file for debug info.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-dylib-id">
+<code class="sig-name descname">--dylib-id</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-dylib-id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the shared library’s ID for dylib files.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-exports-trie">
+<code class="sig-name descname">--exports-trie</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-exports-trie" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display exported symbols.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-g">
+<code class="sig-name descname">-g</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print line information from debug info if available.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-full-leading-addr">
+<code class="sig-name descname">--full-leading-addr</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-full-leading-addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the full leading address when disassembling.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-indirect-symbols">
+<code class="sig-name descname">--indirect-symbols</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-indirect-symbols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the indirect symbol table.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-info-plist">
+<code class="sig-name descname">--info-plist</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-info-plist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the info plist section as strings.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-lazy-bind">
+<code class="sig-name descname">--lazy-bind</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-lazy-bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display lazy binding info.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-link-opt-hints">
+<code class="sig-name descname">--link-opt-hints</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-link-opt-hints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the linker optimization hints.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-macho">
+<code class="sig-name descname">-m</code><code class="sig-prename descclassname"></code><code class="sig-prename descclassname">, </code><code class="sig-name descname">--macho</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-macho" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use Mach-O specific object file parser. Commands and other options may behave
+differently when used with <code class="docutils literal notranslate"><span class="pre">--macho</span></code>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-no-leading-headers">
+<code class="sig-name descname">--no-leading-headers</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-no-leading-headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not print any leading headers.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-no-symbolic-operands">
+<code class="sig-name descname">--no-symbolic-operands</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-no-symbolic-operands" title="Permalink to this definition">¶</a></dt>
+<dd><p>Do not print symbolic operands when disassembling.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-non-verbose">
+<code class="sig-name descname">--non-verbose</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-non-verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the information for Mach-O objects in non-verbose or numeric form.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-objc-meta-data">
+<code class="sig-name descname">--objc-meta-data</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-objc-meta-data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the Objective-C runtime meta data.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-private-header">
+<code class="sig-name descname">--private-header</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-private-header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display only the first format specific file header.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-rebase">
+<code class="sig-name descname">--rebase</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-rebase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display rebasing information.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-universal-headers">
+<code class="sig-name descname">--universal-headers</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-universal-headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display universal headers.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-llvm-objdump-weak-bind">
+<code class="sig-name descname">--weak-bind</code><code class="sig-prename descclassname"></code><a class="headerlink" href="#cmdoption-llvm-objdump-weak-bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display weak binding information.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="bugs">
+<h2>BUGS<a class="headerlink" href="#bugs" title="Permalink to this headline">¶</a></h2>
+<p>To report bugs, please visit &lt;<a class="reference external" href="http://llvm.org/bugs/">http://llvm.org/bugs/</a>&gt;.</p>
+</div>
+<div class="section" id="see-also">
+<h2>SEE ALSO<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<p><em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-nm.html">llvm-nm(1)</a></em>, <em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-readelf.html">llvm-readelf(1)</a></em>, <em class="manpage"><a class="manpage reference external" href="https://llvm.org/docs/CommandGuide/llvm-readobj.html">llvm-readobj(1)</a></em></p>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="llvm-ranlib.html" title="llvm-ranlib - generates an archive index"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="llvm-objcopy.html" title="llvm-objcopy - object copying and editing tool"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Command Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

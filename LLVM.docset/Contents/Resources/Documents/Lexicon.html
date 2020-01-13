@@ -1,30 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>The LLVM Lexicon &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>The LLVM Lexicon &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="index.html" />
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="How To Add Your Build Configuration To LLVM Buildbot Infrastructure" href="HowToAddABuilder.html" />
     <link rel="prev" title="Frequently Asked Questions (FAQ)" href="FAQ.html" />
 <style type="text/css">
@@ -32,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="index.html">
     <img src="_static/logo.png"
@@ -66,232 +55,261 @@
   <div class="section" id="the-llvm-lexicon">
 <h1>The LLVM Lexicon<a class="headerlink" href="#the-llvm-lexicon" title="Permalink to this headline">¶</a></h1>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This document is a work in progress!</p>
+<p class="admonition-title">Note</p>
+<p>This document is a work in progress!</p>
 </div>
 <div class="section" id="definitions">
 <h2>Definitions<a class="headerlink" href="#definitions" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="a">
 <h3>A<a class="headerlink" href="#a" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>ADCE</strong></dt>
-<dd>Aggressive Dead Code Elimination</dd>
-<dt><strong>AST</strong></dt>
-<dd><p class="first">Abstract Syntax Tree.</p>
-<p>Due to Clang&#8217;s influence (mostly the fact that parsing and semantic
+<dl>
+<dt><strong>ADCE</strong></dt><dd><p>Aggressive Dead Code Elimination</p>
+</dd>
+<dt><strong>AST</strong></dt><dd><p>Abstract Syntax Tree.</p>
+<p>Due to Clang’s influence (mostly the fact that parsing and semantic
 analysis are so intertwined for C and especially C++), the typical
-working definition of AST in the LLVM community is roughly &#8220;the
-compiler&#8217;s first complete symbolic (as opposed to textual)
-representation of an input program&#8221;.
-As such, an &#8220;AST&#8221; might be a more general graph instead of a &#8220;tree&#8221;
-(consider the symbolic representation for the type of a typical &#8220;linked
-list node&#8221;). This working definition is closer to what some authors
-call an &#8220;annotated abstract syntax tree&#8221;.</p>
-<p class="last">Consult your favorite compiler book or search engine for more details.</p>
+working definition of AST in the LLVM community is roughly “the
+compiler’s first complete symbolic (as opposed to textual)
+representation of an input program”.
+As such, an “AST” might be a more general graph instead of a “tree”
+(consider the symbolic representation for the type of a typical “linked
+list node”). This working definition is closer to what some authors
+call an “annotated abstract syntax tree”.</p>
+<p>Consult your favorite compiler book or search engine for more details.</p>
 </dd>
 </dl>
 </div>
 <div class="section" id="b">
 <h3>B<a class="headerlink" href="#b" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils" id="lexicon-bb-vectorization">
-<dt><strong>BB Vectorization</strong></dt>
-<dd>Basic-Block Vectorization</dd>
-<dt><strong>BURS</strong></dt>
-<dd>Bottom Up Rewriting System &#8212; A method of instruction selection for code
-generation.  An example is the <a class="reference external" href="http://www.program-transformation.org/Transform/BURG">BURG</a> tool.</dd>
+<dl class="simple" id="lexicon-bb-vectorization">
+<dt><strong>BB Vectorization</strong></dt><dd><p>Basic-Block Vectorization</p>
+</dd>
+<dt><strong>BDCE</strong></dt><dd><p>Bit-tracking dead code elimination. Some bit-wise instructions (shifts,
+ands, ors, etc.) “kill” some of their input bits – that is, they make it
+such that those bits can be either zero or one without affecting control or
+data flow of a program. The BDCE pass removes instructions that only
+compute these dead bits.</p>
+</dd>
+<dt><strong>BURS</strong></dt><dd><p>Bottom Up Rewriting System — A method of instruction selection for code
+generation.  An example is the <a class="reference external" href="http://www.program-transformation.org/Transform/BURG">BURG</a> tool.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="c">
 <h3>C<a class="headerlink" href="#c" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>CFI</strong></dt>
-<dd>Call Frame Information. Used in DWARF debug info and in C++ unwind info
-to show how the function prolog lays out the stack frame.</dd>
-<dt><strong>CIE</strong></dt>
-<dd>Common Information Entry.  A kind of CFI used to reduce the size of FDEs.
+<dl class="simple">
+<dt><strong>CFI</strong></dt><dd><p>Call Frame Information. Used in DWARF debug info and in C++ unwind info
+to show how the function prolog lays out the stack frame.</p>
+</dd>
+<dt><strong>CIE</strong></dt><dd><p>Common Information Entry.  A kind of CFI used to reduce the size of FDEs.
 The compiler creates a CIE which contains the information common across all
-the FDEs.  Each FDE then points to its CIE.</dd>
-<dt><strong>CSE</strong></dt>
-<dd>Common Subexpression Elimination. An optimization that removes common
-subexpression compuation. For example <code class="docutils literal"><span class="pre">(a+b)*(a+b)</span></code> has two subexpressions
-that are the same: <code class="docutils literal"><span class="pre">(a+b)</span></code>. This optimization would perform the addition
-only once and then perform the multiply (but only if it&#8217;s computationally
-correct/safe).</dd>
+the FDEs.  Each FDE then points to its CIE.</p>
+</dd>
+<dt><strong>CSE</strong></dt><dd><p>Common Subexpression Elimination. An optimization that removes common
+subexpression compuation. For example <code class="docutils literal notranslate"><span class="pre">(a+b)*(a+b)</span></code> has two subexpressions
+that are the same: <code class="docutils literal notranslate"><span class="pre">(a+b)</span></code>. This optimization would perform the addition
+only once and then perform the multiply (but only if it’s computationally
+correct/safe).</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="d">
 <h3>D<a class="headerlink" href="#d" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>DAG</strong></dt>
-<dd>Directed Acyclic Graph</dd>
+<dl class="simple">
+<dt><strong>DAG</strong></dt><dd><p>Directed Acyclic Graph</p>
+</dd>
 </dl>
-<dl class="docutils" id="derived-pointers">
-<span id="derived-pointer"></span><dt><strong>Derived Pointer</strong></dt>
-<dd>A pointer to the interior of an object, such that a garbage collector is
+<span id="derived-pointer"></span><dl class="simple" id="derived-pointers">
+<dt><strong>Derived Pointer</strong></dt><dd><p>A pointer to the interior of an object, such that a garbage collector is
 unable to use the pointer for reachability analysis. While a derived pointer
 is live, the corresponding object pointer must be kept in a root, otherwise
 the collector might free the referenced object. With copying collectors,
 derived pointers pose an additional hazard that they may be invalidated at
-any <a class="reference internal" href="#safe-point">safe point</a>. This term is used in opposition to <a class="reference internal" href="#object-pointer">object pointer</a>.</dd>
-<dt><strong>DSA</strong></dt>
-<dd>Data Structure Analysis</dd>
-<dt><strong>DSE</strong></dt>
-<dd>Dead Store Elimination</dd>
+any <a class="reference internal" href="#safe-point">safe point</a>. This term is used in opposition to <a class="reference internal" href="#object-pointer">object pointer</a>.</p>
+</dd>
+<dt><strong>DSA</strong></dt><dd><p>Data Structure Analysis</p>
+</dd>
+<dt><strong>DSE</strong></dt><dd><p>Dead Store Elimination</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="f">
 <h3>F<a class="headerlink" href="#f" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>FCA</strong></dt>
-<dd>First Class Aggregate</dd>
-<dt><strong>FDE</strong></dt>
-<dd>Frame Description Entry. A kind of CFI used to describe the stack frame of
-one function.</dd>
+<dl class="simple">
+<dt><strong>FCA</strong></dt><dd><p>First Class Aggregate</p>
+</dd>
+<dt><strong>FDE</strong></dt><dd><p>Frame Description Entry. A kind of CFI used to describe the stack frame of
+one function.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="g">
 <h3>G<a class="headerlink" href="#g" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>GC</strong></dt>
-<dd>Garbage Collection. The practice of using reachability analysis instead of
-explicit memory management to reclaim unused memory.</dd>
+<dl class="simple">
+<dt><strong>GC</strong></dt><dd><p>Garbage Collection. The practice of using reachability analysis instead of
+explicit memory management to reclaim unused memory.</p>
+</dd>
+<dt><strong>GEP</strong></dt><dd><p><code class="docutils literal notranslate"><span class="pre">GetElementPtr</span></code>. An LLVM IR instruction that is used to get the address
+of a subelement of an aggregate data structure. It is documented in detail
+<a class="reference external" href="http://llvm.org/docs/GetElementPtr.html">here</a>.</p>
+</dd>
+<dt><strong>GVN</strong></dt><dd><p>Global Value Numbering. GVN is a pass that partitions values computed by a
+function into congruence classes. Values ending up in the same congruence
+class are guaranteed to be the same for every execution of the program.
+In that respect, congruency is a compile-time approximation of equivalence
+of values at runtime.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="h">
 <h3>H<a class="headerlink" href="#h" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils" id="heap">
-<dt><strong>Heap</strong></dt>
-<dd>In garbage collection, the region of memory which is managed using
-reachability analysis.</dd>
+<dl class="simple" id="heap">
+<dt><strong>Heap</strong></dt><dd><p>In garbage collection, the region of memory which is managed using
+reachability analysis.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="i">
 <h3>I<a class="headerlink" href="#i" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>IPA</strong></dt>
-<dd>Inter-Procedural Analysis. Refers to any variety of code analysis that
-occurs between procedures, functions or compilation units (modules).</dd>
-<dt><strong>IPO</strong></dt>
-<dd>Inter-Procedural Optimization. Refers to any variety of code optimization
-that occurs between procedures, functions or compilation units (modules).</dd>
-<dt><strong>ISel</strong></dt>
-<dd>Instruction Selection</dd>
+<dl class="simple">
+<dt><strong>ICE</strong></dt><dd><p>Internal Compiler Error. This abbreviation is used to describe errors
+that occur in LLVM or Clang as they are compiling source code. For example,
+if a valid C++ source program were to trigger an assert in Clang when
+compiled, that could be referred to as an “ICE”.</p>
+</dd>
+<dt><strong>IPA</strong></dt><dd><p>Inter-Procedural Analysis. Refers to any variety of code analysis that
+occurs between procedures, functions or compilation units (modules).</p>
+</dd>
+<dt><strong>IPO</strong></dt><dd><p>Inter-Procedural Optimization. Refers to any variety of code optimization
+that occurs between procedures, functions or compilation units (modules).</p>
+</dd>
+<dt><strong>ISel</strong></dt><dd><p>Instruction Selection</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="l">
 <h3>L<a class="headerlink" href="#l" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>LCSSA</strong></dt>
-<dd>Loop-Closed Static Single Assignment Form</dd>
-<dt><strong>LGTM</strong></dt>
-<dd>&#8220;Looks Good To Me&#8221;. In a review thread, this indicates that the
-reviewer thinks that the patch is okay to commit.</dd>
-<dt><strong>LICM</strong></dt>
-<dd>Loop Invariant Code Motion</dd>
-<dt><strong>LSDA</strong></dt>
-<dd>Language Specific Data Area.  C++ &#8220;zero cost&#8221; unwinding is built on top a
+<dl class="simple">
+<dt><strong>LCSSA</strong></dt><dd><p>Loop-Closed Static Single Assignment Form</p>
+</dd>
+<dt><strong>LGTM</strong></dt><dd><p>“Looks Good To Me”. In a review thread, this indicates that the
+reviewer thinks that the patch is okay to commit.</p>
+</dd>
+<dt><strong>LICM</strong></dt><dd><p>Loop Invariant Code Motion</p>
+</dd>
+<dt><strong>LSDA</strong></dt><dd><p>Language Specific Data Area.  C++ “zero cost” unwinding is built on top a
 generic unwinding mechanism.  As the unwinder walks each frame, it calls
-a &#8220;personality&#8221; function to do language specific analysis.  Each function&#8217;s
+a “personality” function to do language specific analysis.  Each function’s
 FDE points to an optional LSDA which is passed to the personality function.
 For C++, the LSDA contain info about the type and location of catch
-statements in that function.</dd>
-<dt><strong>Load-VN</strong></dt>
-<dd>Load Value Numbering</dd>
-<dt><strong>LTO</strong></dt>
-<dd>Link-Time Optimization</dd>
+statements in that function.</p>
+</dd>
+<dt><strong>Load-VN</strong></dt><dd><p>Load Value Numbering</p>
+</dd>
+<dt><strong>LTO</strong></dt><dd><p>Link-Time Optimization</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="m">
 <h3>M<a class="headerlink" href="#m" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>MC</strong></dt>
-<dd>Machine Code</dd>
+<dl class="simple">
+<dt><strong>MC</strong></dt><dd><p>Machine Code</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="n">
 <h3>N<a class="headerlink" href="#n" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>NFC</strong></dt>
-<dd>&#8220;No functional change&#8221;. Used in a commit message to indicate that a patch
+<dl class="simple" id="nfc">
+<dt><strong>NFC</strong></dt><dd><p>“No functional change”. Used in a commit message to indicate that a patch
 is a pure refactoring/cleanup.
 Usually used in the first line, so it is visible without opening the
-actual commit email.</dd>
+actual commit email.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="o">
 <h3>O<a class="headerlink" href="#o" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils" id="object-pointers">
-<span id="object-pointer"></span><dt><strong>Object Pointer</strong></dt>
-<dd>A pointer to an object such that the garbage collector is able to trace
+<span id="object-pointer"></span><dl class="simple" id="object-pointers">
+<dt><strong>Object Pointer</strong></dt><dd><p>A pointer to an object such that the garbage collector is able to trace
 references contained within the object. This term is used in opposition to
-<a class="reference internal" href="#derived-pointer">derived pointer</a>.</dd>
+<a class="reference internal" href="#derived-pointer">derived pointer</a>.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="p">
 <h3>P<a class="headerlink" href="#p" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>PRE</strong></dt>
-<dd>Partial Redundancy Elimination</dd>
+<dl class="simple">
+<dt><strong>PR</strong></dt><dd><p>Problem report. A bug filed on <a class="reference external" href="https://bugs.llvm.org/enter_bug.cgi">the LLVM Bug Tracking System</a>.</p>
+</dd>
+<dt><strong>PRE</strong></dt><dd><p>Partial Redundancy Elimination</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="r">
 <h3>R<a class="headerlink" href="#r" title="Permalink to this headline">¶</a></h3>
 <p><strong>RAUW</strong></p>
 <blockquote>
-<div>Replace All Uses With. The functions <code class="docutils literal"><span class="pre">User::replaceUsesOfWith()</span></code>,
-<code class="docutils literal"><span class="pre">Value::replaceAllUsesWith()</span></code>, and
-<code class="docutils literal"><span class="pre">Constant::replaceUsesOfWithOnConstant()</span></code> implement the replacement of one
+<div><p>Replace All Uses With. The functions <code class="docutils literal notranslate"><span class="pre">User::replaceUsesOfWith()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Value::replaceAllUsesWith()</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">Constant::replaceUsesOfWithOnConstant()</span></code> implement the replacement of one
 Value with another by iterating over its def/use chain and fixing up all of
 the pointers to point to the new value.  See
-also <a class="reference external" href="ProgrammersManual.html#iterating-over-def-use-use-def-chains">def/use chains</a>.</div></blockquote>
-<dl class="docutils">
-<dt><strong>Reassociation</strong></dt>
-<dd>Rearranging associative expressions to promote better redundancy elimination
-and other optimization.  For example, changing <code class="docutils literal"><span class="pre">(A+B-A)</span></code> into <code class="docutils literal"><span class="pre">(B+A-A)</span></code>,
-permitting it to be optimized into <code class="docutils literal"><span class="pre">(B+0)</span></code> then <code class="docutils literal"><span class="pre">(B)</span></code>.</dd>
+also <a class="reference external" href="ProgrammersManual.html#iterating-over-def-use-use-def-chains">def/use chains</a>.</p>
+</div></blockquote>
+<dl class="simple">
+<dt><strong>Reassociation</strong></dt><dd><p>Rearranging associative expressions to promote better redundancy elimination
+and other optimization.  For example, changing <code class="docutils literal notranslate"><span class="pre">(A+B-A)</span></code> into <code class="docutils literal notranslate"><span class="pre">(B+A-A)</span></code>,
+permitting it to be optimized into <code class="docutils literal notranslate"><span class="pre">(B+0)</span></code> then <code class="docutils literal notranslate"><span class="pre">(B)</span></code>.</p>
+</dd>
 </dl>
-<dl class="docutils" id="stack-roots">
-<span id="roots"></span><dt><strong>Root</strong></dt>
-<dd>In garbage collection, a pointer variable lying outside of the <a class="reference internal" href="#heap">heap</a> from
+<span id="roots"></span><dl class="simple" id="stack-roots">
+<dt><strong>Root</strong></dt><dd><p>In garbage collection, a pointer variable lying outside of the <a class="reference internal" href="#heap">heap</a> from
 which the collector begins its reachability analysis. In the context of code
-generation, &#8220;root&#8221; almost always refers to a &#8220;stack root&#8221; &#8212; a local or
-temporary variable within an executing function.</dd>
-<dt><strong>RPO</strong></dt>
-<dd>Reverse postorder</dd>
+generation, “root” almost always refers to a “stack root” — a local or
+temporary variable within an executing function.</p>
+</dd>
+<dt><strong>RPO</strong></dt><dd><p>Reverse postorder</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="s">
 <h3>S<a class="headerlink" href="#s" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils" id="safe-point">
-<dt><strong>Safe Point</strong></dt>
-<dd>In garbage collection, it is necessary to identify <a class="reference internal" href="#stack-roots">stack roots</a> so that
+<dl id="safe-point">
+<dt><strong>Safe Point</strong></dt><dd><p>In garbage collection, it is necessary to identify <a class="reference internal" href="#stack-roots">stack roots</a> so that
 reachability analysis may proceed. It may be infeasible to provide this
 information for every instruction, so instead the information may is
 calculated only at designated safe points. With a copying collector,
 <a class="reference internal" href="#derived-pointers">derived pointers</a> must not be retained across safe points and <a class="reference internal" href="#object-pointers">object
-pointers</a> must be reloaded from stack roots.</dd>
-<dt><strong>SDISel</strong></dt>
-<dd>Selection DAG Instruction Selection.</dd>
-<dt><strong>SCC</strong></dt>
-<dd>Strongly Connected Component</dd>
-<dt><strong>SCCP</strong></dt>
-<dd>Sparse Conditional Constant Propagation</dd>
-<dt><strong>SLP</strong></dt>
-<dd>Superword-Level Parallelism, same as <a class="reference internal" href="#lexicon-bb-vectorization"><span>Basic-Block Vectorization</span></a>.</dd>
-<dt><strong>SRoA</strong></dt>
-<dd>Scalar Replacement of Aggregates</dd>
-<dt><strong>SSA</strong></dt>
-<dd>Static Single Assignment</dd>
-<dt><strong>Stack Map</strong></dt>
-<dd>In garbage collection, metadata emitted by the code generator which
-identifies <a class="reference internal" href="#roots">roots</a> within the stack frame of an executing function.</dd>
+pointers</a> must be reloaded from stack roots.</p>
+</dd>
+<dt><strong>SDISel</strong></dt><dd><p>Selection DAG Instruction Selection.</p>
+</dd>
+<dt><strong>SCC</strong></dt><dd><p>Strongly Connected Component</p>
+</dd>
+<dt><strong>SCCP</strong></dt><dd><p>Sparse Conditional Constant Propagation</p>
+</dd>
+<dt><strong>SLP</strong></dt><dd><p>Superword-Level Parallelism, same as <a class="reference internal" href="#lexicon-bb-vectorization"><span class="std std-ref">Basic-Block Vectorization</span></a>.</p>
+</dd>
+<dt><strong>Splat</strong></dt><dd><p>Splat refers to a vector of identical scalar elements.</p>
+<p>The term is based on the PowerPC Altivec instructions that provided
+this functionality in hardware. For example, “vsplth” and the corresponding
+software intrinsic “vec_splat()”. Examples of other hardware names for this
+action include “duplicate” (ARM) and “broadcast” (x86).</p>
+</dd>
+<dt><strong>SRoA</strong></dt><dd><p>Scalar Replacement of Aggregates</p>
+</dd>
+<dt><strong>SSA</strong></dt><dd><p>Static Single Assignment</p>
+</dd>
+<dt><strong>Stack Map</strong></dt><dd><p>In garbage collection, metadata emitted by the code generator which
+identifies <a class="reference internal" href="#roots">roots</a> within the stack frame of an executing function.</p>
+</dd>
 </dl>
 </div>
 <div class="section" id="t">
 <h3>T<a class="headerlink" href="#t" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt><strong>TBAA</strong></dt>
-<dd>Type-Based Alias Analysis</dd>
+<dl class="simple">
+<dt><strong>TBAA</strong></dt><dd><p>Type-Based Alias Analysis</p>
+</dd>
 </dl>
 </div>
 </div>
@@ -320,9 +338,9 @@ identifies <a class="reference internal" href="#roots">roots</a> within the stac
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

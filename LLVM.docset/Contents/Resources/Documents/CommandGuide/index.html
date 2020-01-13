@@ -1,30 +1,20 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>LLVM Command Guide &mdash; LLVM 3.7 documentation</title>
-    
+    <meta charset="utf-8" />
+    <title>LLVM Command Guide &#8212; LLVM 9 documentation</title>
     <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.7',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="LLVM 3.7 documentation" href="../index.html" />
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="llvm-as - LLVM assembler" href="llvm-as.html" />
     <link rel="prev" title="How To Cross-Compile Clang/LLVM using Clang/LLVM" href="../HowToCrossCompileLLVM.html" />
 <style type="text/css">
@@ -32,8 +22,7 @@
   table.right td { border: 1px solid #ccc; }
 </style>
 
-  </head>
-  <body role="document">
+  </head><body>
 <div class="logo">
   <a href="../index.html">
     <img src="../_static/logo.png"
@@ -68,8 +57,8 @@
 <p>The following documents are command descriptions for all of the LLVM tools.
 These pages describe how to use the LLVM commands and what their options are.
 Note that these pages do not describe all of the options available for all
-tools. To get a complete listing, pass the <code class="docutils literal"><span class="pre">--help</span></code> (general options) or
-<code class="docutils literal"><span class="pre">--help-hidden</span></code> (general and debugging options) arguments to the tool you are
+tools. To get a complete listing, pass the <code class="docutils literal notranslate"><span class="pre">--help</span></code> (general options) or
+<code class="docutils literal notranslate"><span class="pre">--help-hidden</span></code> (general and debugging options) arguments to the tool you are
 interested in.</p>
 <div class="section" id="basic-commands">
 <h2>Basic Commands<a class="headerlink" href="#basic-commands" title="Permalink to this headline">¶</a></h2>
@@ -81,15 +70,37 @@ interested in.</p>
 <li class="toctree-l1"><a class="reference internal" href="llc.html">llc - LLVM static compiler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lli.html">lli - directly execute programs from LLVM bitcode</a></li>
 <li class="toctree-l1"><a class="reference internal" href="llvm-link.html">llvm-link - LLVM bitcode linker</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llvm-ar.html">llvm-ar - LLVM archiver</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llvm-nm.html">llvm-nm - list LLVM bitcode and object file&#8217;s symbol table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-lib.html">llvm-lib - LLVM lib.exe compatible library tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-lipo.html">llvm-lipo - LLVM tool for manipulating universal binaries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="llvm-config.html">llvm-config - Print LLVM compilation options</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llvm-diff.html">llvm-diff - LLVM structural &#8216;diff&#8217;</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-cxxmap.html">llvm-cxxmap - Mangled name remapping tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-diff.html">llvm-diff - LLVM structural ‘diff’</a></li>
 <li class="toctree-l1"><a class="reference internal" href="llvm-cov.html">llvm-cov - emit coverage information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="llvm-profdata.html">llvm-profdata - Profile data tool</a></li>
 <li class="toctree-l1"><a class="reference internal" href="llvm-stress.html">llvm-stress - generate random .ll files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="llvm-symbolizer.html">llvm-symbolizer - convert addresses into source code locations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llvm-dwarfdump.html">llvm-dwarfdump - print contents of DWARF sections</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-dwarfdump.html">llvm-dwarfdump - dump and verify DWARF debug information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dsymutil.html">dsymutil - manipulate archived DWARF debug symbol files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-mca.html">llvm-mca - LLVM Machine Code Analyzer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-readobj.html">llvm-readobj - LLVM Object Reader</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="gnu-binutils-replacements">
+<h2>GNU binutils replacements<a class="headerlink" href="#gnu-binutils-replacements" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="llvm-addr2line.html">llvm-addr2line - a drop-in replacement for addr2line</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-ar.html">llvm-ar - LLVM archiver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-cxxfilt.html">llvm-cxxfilt - LLVM symbol name demangler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-nm.html">llvm-nm - list LLVM bitcode and object file’s symbol table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-objcopy.html">llvm-objcopy - object copying and editing tool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-objdump.html">llvm-objdump - LLVM’s object file dumper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-ranlib.html">llvm-ranlib - generates an archive index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-readelf.html">llvm-readelf - GNU-style LLVM Object Reader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-size.html">llvm-size - print segment sizes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-strings.html">llvm-strings - print strings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-strip.html">llvm-strip - object stripping tool</a></li>
 </ul>
 </div>
 </div>
@@ -111,7 +122,8 @@ interested in.</p>
 <li class="toctree-l1"><a class="reference internal" href="tblgen.html">tblgen - Target Description To C++ Code Generator</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lit.html">lit - LLVM Integrated Tester</a></li>
 <li class="toctree-l1"><a class="reference internal" href="llvm-build.html">llvm-build - LLVM Project Build Utility</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llvm-readobj.html">llvm-readobj - LLVM Object Reader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-exegesis.html">llvm-exegesis - LLVM Machine Instruction Benchmark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llvm-pdbutil.html">llvm-pdbutil - PDB File forensics and diagnostics</a></li>
 </ul>
 </div>
 </div>
@@ -140,9 +152,9 @@ interested in.</p>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2003-2015, LLVM Project.
-      Last updated on 2015-09-08.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
     </div>
   </body>
 </html>

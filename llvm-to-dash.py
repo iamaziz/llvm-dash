@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup as bs
 from shutil import rmtree
 
 # CONFIGURATION
-llvm_version = '7.0.1'
-llvm_tarball_md5sum = '79f1256f97d52a054da8660706deb5f6'
+llvm_version = '9.0.0'
+llvm_tarball_md5sum = '0fd4283ff485dffb71a4f1cc8fd3fc72'
 tarball_name = 'llvm-%s.src.tar.xz' % llvm_version
 docset_name = 'LLVM.docset'
 output = docset_name + '/Contents/Resources/Documents/'
@@ -74,12 +74,12 @@ def update_db(db, cur, name, typ, path):
 def add_urls(db, cur):
   # index pages
   pages = {
-          'Instruction'	: 'ProgrammersManual.html',
-          'Category'	: 'LangRef.html',
-          'Command'	: 'CommandGuide/index.html',
-          'Guide'	: 'GettingStarted.html',
-          'Sample'	: 'tutorial/index.html',
-          'Service'	: 'Passes.html'
+          'Instruction'  : 'ProgrammersManual.html',
+          'Category'  : 'LangRef.html',
+          'Command'  : 'CommandGuide/index.html',
+          'Guide'  : 'GettingStarted.html',
+          'Sample'  : 'tutorial/index.html',
+          'Service'  : 'Passes.html'
           }
 
   base_path = './'
@@ -130,7 +130,7 @@ def add_infoplist():
           '    <key>DashDocSetFallbackURL</key>' \
           '    <string>{4}</string>' \
           '</dict>' \
-          '</plist>'.format(name, name, name, 'index.html', 'http://llvm.org/releases/7.0.1/docs/')
+          '</plist>'.format(name, name, name, 'index.html', 'http://llvm.org/releases/9.0.0/docs/')
   open(docset_name + '/Contents/Info.plist', 'w').write(info)
 
 if __name__ == '__main__':

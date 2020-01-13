@@ -1,0 +1,1741 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Syntax of AMDGPU Instruction Operands &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="AMDGPU Instruction Syntax" href="AMDGPUInstructionSyntax.html" />
+    <link rel="prev" title="Syntax of AMDGPU Instruction Modifiers" href="AMDGPUModifierSyntax.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="index.html">
+    <img src="_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="AMDGPUInstructionSyntax.html" title="AMDGPU Instruction Syntax"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="AMDGPUModifierSyntax.html" title="Syntax of AMDGPU Instruction Modifiers"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="AMDGPUUsage.html" accesskey="U">User Guide for AMDGPU Backend</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="syntax-of-amdgpu-instruction-operands">
+<h1>Syntax of AMDGPU Instruction Operands<a class="headerlink" href="#syntax-of-amdgpu-instruction-operands" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#conventions" id="id2">Conventions</a></p></li>
+<li><p><a class="reference internal" href="#operands" id="id3">Operands</a></p>
+<ul>
+<li><p><a class="reference internal" href="#v" id="id4">v</a></p></li>
+<li><p><a class="reference internal" href="#s" id="id5">s</a></p></li>
+<li><p><a class="reference internal" href="#trap" id="id6">trap</a></p></li>
+<li><p><a class="reference internal" href="#ttmp" id="id7">ttmp</a></p></li>
+<li><p><a class="reference internal" href="#tba" id="id8">tba</a></p></li>
+<li><p><a class="reference internal" href="#tma" id="id9">tma</a></p></li>
+<li><p><a class="reference internal" href="#flat-scratch" id="id10">flat_scratch</a></p></li>
+<li><p><a class="reference internal" href="#xnack" id="id11">xnack</a></p></li>
+<li><p><a class="reference internal" href="#vcc" id="id12">vcc</a></p></li>
+<li><p><a class="reference internal" href="#m0" id="id13">m0</a></p></li>
+<li><p><a class="reference internal" href="#exec" id="id14">exec</a></p></li>
+<li><p><a class="reference internal" href="#vccz" id="id15">vccz</a></p></li>
+<li><p><a class="reference internal" href="#execz" id="id16">execz</a></p></li>
+<li><p><a class="reference internal" href="#scc" id="id17">scc</a></p></li>
+<li><p><a class="reference internal" href="#lds-direct" id="id18">lds_direct</a></p></li>
+<li><p><a class="reference internal" href="#null" id="id19">null</a></p></li>
+<li><p><a class="reference internal" href="#constant" id="id20">constant</a></p>
+<ul>
+<li><p><a class="reference internal" href="#iconst" id="id21">iconst</a></p></li>
+<li><p><a class="reference internal" href="#fconst" id="id22">fconst</a></p></li>
+<li><p><a class="reference internal" href="#ival" id="id23">ival</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#literal" id="id24">literal</a></p></li>
+<li><p><a class="reference internal" href="#uimm8" id="id25">uimm8</a></p></li>
+<li><p><a class="reference internal" href="#uimm32" id="id26">uimm32</a></p></li>
+<li><p><a class="reference internal" href="#uimm20" id="id27">uimm20</a></p></li>
+<li><p><a class="reference internal" href="#uimm21" id="id28">uimm21</a></p></li>
+<li><p><a class="reference internal" href="#simm21" id="id29">simm21</a></p></li>
+<li><p><a class="reference internal" href="#off" id="id30">off</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#numbers" id="id31">Numbers</a></p>
+<ul>
+<li><p><a class="reference internal" href="#integer-numbers" id="id32">Integer Numbers</a></p></li>
+<li><p><a class="reference internal" href="#floating-point-numbers" id="id33">Floating-Point Numbers</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#expressions" id="id34">Expressions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#absolute-expressions" id="id35">Absolute Expressions</a></p></li>
+<li><p><a class="reference internal" href="#relocatable-expressions" id="id36">Relocatable Expressions</a></p></li>
+<li><p><a class="reference internal" href="#expression-data-type" id="id37">Expression Data Type</a></p></li>
+<li><p><a class="reference internal" href="#syntax" id="id38">Syntax</a></p></li>
+<li><p><a class="reference internal" href="#binary-operators" id="id39">Binary Operators</a></p></li>
+<li><p><a class="reference internal" href="#unary-operators" id="id40">Unary Operators</a></p></li>
+<li><p><a class="reference internal" href="#symbols" id="id41">Symbols</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#conversions" id="id42">Conversions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#inline-constants" id="id43">Inline Constants</a></p>
+<ul>
+<li><p><a class="reference internal" href="#integer-inline-constants" id="id44">Integer Inline Constants</a></p></li>
+<li><p><a class="reference internal" href="#floating-point-inline-constants" id="id45">Floating-Point Inline Constants</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#literals" id="id46">Literals</a></p>
+<ul>
+<li><p><a class="reference internal" href="#integer-literals" id="id47">Integer Literals</a></p></li>
+<li><p><a class="reference internal" href="#floating-point-literals" id="id48">Floating-Point Literals</a></p></li>
+<li><p><a class="reference internal" href="#amdgpu-synid-exp-conv" id="id49">Expressions</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="conventions">
+<h2><a class="toc-backref" href="#id2">Conventions</a><a class="headerlink" href="#conventions" title="Permalink to this headline">¶</a></h2>
+<p>The following notation is used throughout this document:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Notation</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>{0..N}</p></td>
+<td><p>Any integer value in the range from 0 to N (inclusive).</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;x&gt;</p></td>
+<td><p>Syntax and meaning of <em>x</em> is explained elsewhere.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="operands">
+<span id="amdgpu-syn-operands"></span><h2><a class="toc-backref" href="#id3">Operands</a><a class="headerlink" href="#operands" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="v">
+<span id="amdgpu-synid-v"></span><h3><a class="toc-backref" href="#id4">v</a><a class="headerlink" href="#v" title="Permalink to this headline">¶</a></h3>
+<p>Vector registers. There are 256 32-bit vector registers.</p>
+<p>A sequence of <em>vector</em> registers may be used to operate with more than 32 bits of data.</p>
+<p>Assembler currently supports sequences of 1, 2, 3, 4, 8 and 16 <em>vector</em> registers.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>v</strong>&lt;N&gt;</p></td>
+<td><p>A single 32-bit <em>vector</em> register.</p>
+<p><em>N</em> must be a decimal integer number.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><strong>v[</strong>&lt;N&gt;<strong>]</strong></p></td>
+<td><p>A single 32-bit <em>vector</em> register.</p>
+<p><em>N</em> may be specified as an
+<a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer number</span></a>
+or an <a class="reference internal" href="#amdgpu-synid-absolute-expression"><span class="std std-ref">absolute expression</span></a>.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p><strong>v[</strong>&lt;N&gt;:&lt;K&gt;<strong>]</strong></p></td>
+<td><p>A sequence of (<em>K-N+1</em>) <em>vector</em> registers.</p>
+<p><em>N</em> and <em>K</em> may be specified as
+<a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer numbers</span></a>
+or <a class="reference internal" href="#amdgpu-synid-absolute-expression"><span class="std std-ref">absolute expressions</span></a>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><strong>[v</strong>&lt;N&gt;, <strong>v</strong>&lt;N+1&gt;, … <strong>v</strong>&lt;K&gt;<strong>]</strong></p></td>
+<td><p>A sequence of (<em>K-N+1</em>) <em>vector</em> registers.</p>
+<p>Register indices must be specified as decimal integer numbers.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Note. <em>N</em> and <em>K</em> must satisfy the following conditions:</p>
+<ul class="simple">
+<li><p><em>N</em> &lt;= <em>K</em>.</p></li>
+<li><p>0 &lt;= <em>N</em> &lt;= 255.</p></li>
+<li><p>0 &lt;= <em>K</em> &lt;= 255.</p></li>
+<li><p><em>K-N+1</em> must be equal to 1, 2, 3, 4, 8 or 16.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v255</span>
+<span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="n">v252</span><span class="p">]</span>
+<span class="p">[</span><span class="n">v252</span><span class="p">,</span><span class="n">v253</span><span class="p">,</span><span class="n">v254</span><span class="p">,</span><span class="n">v255</span><span class="p">]</span>
+</pre></div>
+</div>
+<p id="amdgpu-synid-nsa"><em>Image</em> instructions may use special <em>NSA</em> (Non-Sequential Address) syntax for <em>image addresses</em>:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>[v</strong>&lt;A&gt;, <strong>v</strong>&lt;B&gt;, … <strong>v</strong>&lt;X&gt;<strong>]</strong></p></td>
+<td><p>A sequence of <em>vector</em> registers. At least one register
+must be specified.</p>
+<p>In contrast with standard syntax described above, registers in
+this sequence are not required to have consecutive indices.
+Moreover, the same register may appear in the list more than once.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Note. Reqister indices must be in the range 0..255. They must be specified as decimal integer numbers.</p>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">v32</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">]</span>
+<span class="p">[</span><span class="n">v4</span><span class="p">,</span><span class="n">v4</span><span class="p">,</span><span class="n">v4</span><span class="p">,</span><span class="n">v4</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="s">
+<span id="amdgpu-synid-s"></span><h3><a class="toc-backref" href="#id5">s</a><a class="headerlink" href="#s" title="Permalink to this headline">¶</a></h3>
+<p>Scalar 32-bit registers. The number of available <em>scalar</em> registers depends on GPU:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 80%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>GPU</p></th>
+<th class="head"><p>Number of <em>scalar</em> registers</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GFX7</p></td>
+<td><p>104</p></td>
+</tr>
+<tr class="row-odd"><td><p>GFX8</p></td>
+<td><p>102</p></td>
+</tr>
+<tr class="row-even"><td><p>GFX9</p></td>
+<td><p>102</p></td>
+</tr>
+<tr class="row-odd"><td><p>GFX10</p></td>
+<td><p>106</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>A sequence of <em>scalar</em> registers may be used to operate with more than 32 bits of data.
+Assembler currently supports sequences of 1, 2, 4, 8 and 16 <em>scalar</em> registers.</p>
+<p>Pairs of <em>scalar</em> registers must be even-aligned (the first register must be even).
+Sequences of 4 and more <em>scalar</em> registers must be quad-aligned.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>s</strong>&lt;N&gt;</p></td>
+<td><p>A single 32-bit <em>scalar</em> register.</p>
+<p><em>N</em> must be a decimal integer number.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><strong>s[</strong>&lt;N&gt;<strong>]</strong></p></td>
+<td><p>A single 32-bit <em>scalar</em> register.</p>
+<p><em>N</em> may be specified as an
+<a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer number</span></a>
+or an <a class="reference internal" href="#amdgpu-synid-absolute-expression"><span class="std std-ref">absolute expression</span></a>.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p><strong>s[</strong>&lt;N&gt;:&lt;K&gt;<strong>]</strong></p></td>
+<td><p>A sequence of (<em>K-N+1</em>) <em>scalar</em> registers.</p>
+<p><em>N</em> and <em>K</em> may be specified as
+<a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer numbers</span></a>
+or <a class="reference internal" href="#amdgpu-synid-absolute-expression"><span class="std std-ref">absolute expressions</span></a>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><strong>[s</strong>&lt;N&gt;, <strong>s</strong>&lt;N+1&gt;, … <strong>s</strong>&lt;K&gt;<strong>]</strong></p></td>
+<td><p>A sequence of (<em>K-N+1</em>) <em>scalar</em> registers.</p>
+<p>Register indices must be specified as decimal integer numbers.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Note. <em>N</em> and <em>K</em> must satisfy the following conditions:</p>
+<ul class="simple">
+<li><p><em>N</em> must be properly aligned based on sequence size.</p></li>
+<li><p><em>N</em> &lt;= <em>K</em>.</p></li>
+<li><p>0 &lt;= <em>N</em> &lt; <em>SMAX</em>, where <em>SMAX</em> is the number of available <em>scalar</em> registers.</p></li>
+<li><p>0 &lt;= <em>K</em> &lt; <em>SMAX</em>, where <em>SMAX</em> is the number of available <em>scalar</em> registers.</p></li>
+<li><p><em>K-N+1</em> must be equal to 1, 2, 4, 8 or 16.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s0</span>
+<span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="n">s4</span><span class="p">]</span>
+<span class="p">[</span><span class="n">s4</span><span class="p">,</span><span class="n">s5</span><span class="p">,</span><span class="n">s6</span><span class="p">,</span><span class="n">s7</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Examples of <em>scalar</em> registers with an invalid alignment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="trap">
+<span id="amdgpu-synid-trap"></span><h3><a class="toc-backref" href="#id6">trap</a><a class="headerlink" href="#trap" title="Permalink to this headline">¶</a></h3>
+<p>A set of trap handler registers:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#amdgpu-synid-ttmp"><span class="std std-ref">ttmp</span></a></p></li>
+<li><p><a class="reference internal" href="#amdgpu-synid-tba"><span class="std std-ref">tba</span></a></p></li>
+<li><p><a class="reference internal" href="#amdgpu-synid-tma"><span class="std std-ref">tma</span></a></p></li>
+</ul>
+</div>
+<div class="section" id="ttmp">
+<span id="amdgpu-synid-ttmp"></span><h3><a class="toc-backref" href="#id7">ttmp</a><a class="headerlink" href="#ttmp" title="Permalink to this headline">¶</a></h3>
+<p>Trap handler temporary scalar registers, 32-bits wide.
+The number of available <em>ttmp</em> registers depends on GPU:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 79%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>GPU</p></th>
+<th class="head"><p>Number of <em>ttmp</em> registers</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GFX7</p></td>
+<td><p>12</p></td>
+</tr>
+<tr class="row-odd"><td><p>GFX8</p></td>
+<td><p>12</p></td>
+</tr>
+<tr class="row-even"><td><p>GFX9</p></td>
+<td><p>16</p></td>
+</tr>
+<tr class="row-odd"><td><p>GFX10</p></td>
+<td><p>16</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>A sequence of <em>ttmp</em> registers may be used to operate with more than 32 bits of data.
+Assembler currently supports sequences of 1, 2, 4, 8 and 16 <em>ttmp</em> registers.</p>
+<p>Pairs of <em>ttmp</em> registers must be even-aligned (the first register must be even).
+Sequences of 4 and more <em>ttmp</em> registers must be quad-aligned.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>ttmp</strong>&lt;N&gt;</p></td>
+<td><p>A single 32-bit <em>ttmp</em> register.</p>
+<p><em>N</em> must be a decimal integer number.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><strong>ttmp[</strong>&lt;N&gt;<strong>]</strong></p></td>
+<td><p>A single 32-bit <em>ttmp</em> register.</p>
+<p><em>N</em> may be specified as an
+<a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer number</span></a>
+or an <a class="reference internal" href="#amdgpu-synid-absolute-expression"><span class="std std-ref">absolute expression</span></a>.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p><strong>ttmp[</strong>&lt;N&gt;:&lt;K&gt;<strong>]</strong></p></td>
+<td><p>A sequence of (<em>K-N+1</em>) <em>ttmp</em> registers.</p>
+<p><em>N</em> and <em>K</em> may be specified as
+<a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer numbers</span></a>
+or <a class="reference internal" href="#amdgpu-synid-absolute-expression"><span class="std std-ref">absolute expressions</span></a>.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p><strong>[ttmp</strong>&lt;N&gt;, <strong>ttmp</strong>&lt;N+1&gt;, … <strong>ttmp</strong>&lt;K&gt;<strong>]</strong></p></td>
+<td><p>A sequence of (<em>K-N+1</em>) <em>ttmp</em> registers.</p>
+<p>Register indices must be specified as decimal integer numbers.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Note. <em>N</em> and <em>K</em> must satisfy the following conditions:</p>
+<ul class="simple">
+<li><p><em>N</em> must be properly aligned based on sequence size.</p></li>
+<li><p><em>N</em> &lt;= <em>K</em>.</p></li>
+<li><p>0 &lt;= <em>N</em> &lt; <em>TMAX</em>, where <em>TMAX</em> is the number of available <em>ttmp</em> registers.</p></li>
+<li><p>0 &lt;= <em>K</em> &lt; <em>TMAX</em>, where <em>TMAX</em> is the number of available <em>ttmp</em> registers.</p></li>
+<li><p><em>K-N+1</em> must be equal to 1, 2, 4, 8 or 16.</p></li>
+</ul>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ttmp0</span>
+<span class="n">ttmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">ttmp</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ttmp</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ttmp</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">ttmp</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">ttmp</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="n">ttmp4</span><span class="p">]</span>
+<span class="p">[</span><span class="n">ttmp4</span><span class="p">,</span><span class="n">ttmp5</span><span class="p">,</span><span class="n">ttmp6</span><span class="p">,</span><span class="n">ttmp7</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Examples of <em>ttmp</em> registers with an invalid alignment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ttmp</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">ttmp</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tba">
+<span id="amdgpu-synid-tba"></span><h3><a class="toc-backref" href="#id8">tba</a><a class="headerlink" href="#tba" title="Permalink to this headline">¶</a></h3>
+<p>Trap base address, 64-bits wide. Holds the pointer to the current trap handler program.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 70%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Availability</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tba</p></td>
+<td><p>64-bit <em>trap base address</em> register.</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+<tr class="row-odd"><td><p>[tba]</p></td>
+<td><p>64-bit <em>trap base address</em> register (an alternative syntax).</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+<tr class="row-even"><td><p>[tba_lo,tba_hi]</p></td>
+<td><p>64-bit <em>trap base address</em> register (an alternative syntax).</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>High and low 32 bits of <em>trap base address</em> may be accessed as separate registers:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 70%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Availability</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tba_lo</p></td>
+<td><p>Low 32 bits of <em>trap base address</em> register.</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+<tr class="row-odd"><td><p>tba_hi</p></td>
+<td><p>High 32 bits of <em>trap base address</em> register.</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+<tr class="row-even"><td><p>[tba_lo]</p></td>
+<td><p>Low 32 bits of <em>trap base address</em> register (an alternative syntax).</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+<tr class="row-odd"><td><p>[tba_hi]</p></td>
+<td><p>High 32 bits of <em>trap base address</em> register (an alternative syntax).</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Note that <em>tba</em>, <em>tba_lo</em> and <em>tba_hi</em> are not accessible as assembler registers in GFX9 and GFX10,
+but <em>tba</em> is readable/writable with the help of <em>s_get_reg</em> and <em>s_set_reg</em> instructions.</p>
+</div>
+<div class="section" id="tma">
+<span id="amdgpu-synid-tma"></span><h3><a class="toc-backref" href="#id9">tma</a><a class="headerlink" href="#tma" title="Permalink to this headline">¶</a></h3>
+<p>Trap memory address, 64-bits wide.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 67%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Availability</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tma</p></td>
+<td><p>64-bit <em>trap memory address</em> register.</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+<tr class="row-odd"><td><p>[tma]</p></td>
+<td><p>64-bit <em>trap memory address</em> register (an alternative syntax).</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+<tr class="row-even"><td><p>[tma_lo,tma_hi]</p></td>
+<td><p>64-bit <em>trap memory address</em> register (an alternative syntax).</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>High and low 32 bits of <em>trap memory address</em> may be accessed as separate registers:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 67%" />
+<col style="width: 17%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Availability</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tma_lo</p></td>
+<td><p>Low 32 bits of <em>trap memory address</em> register.</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+<tr class="row-odd"><td><p>tma_hi</p></td>
+<td><p>High 32 bits of <em>trap memory address</em> register.</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+<tr class="row-even"><td><p>[tma_lo]</p></td>
+<td><p>Low 32 bits of <em>trap memory address</em> register (an alternative syntax).</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+<tr class="row-odd"><td><p>[tma_hi]</p></td>
+<td><p>High 32 bits of <em>trap memory address</em> register (an alternative syntax).</p></td>
+<td><p>GFX7, GFX8</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Note that <em>tma</em>, <em>tma_lo</em> and <em>tma_hi</em> are not accessible as assembler registers in GFX9 and GFX10,
+but <em>tma</em> is readable/writable with the help of <em>s_get_reg</em> and <em>s_set_reg</em> instructions.</p>
+</div>
+<div class="section" id="flat-scratch">
+<span id="amdgpu-synid-flat-scratch"></span><h3><a class="toc-backref" href="#id10">flat_scratch</a><a class="headerlink" href="#flat-scratch" title="Permalink to this headline">¶</a></h3>
+<p>Flat scratch address, 64-bits wide. Holds the base address of scratch memory.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 65%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>flat_scratch</p></td>
+<td><p>64-bit <em>flat scratch</em> address register.</p></td>
+</tr>
+<tr class="row-odd"><td><p>[flat_scratch]</p></td>
+<td><p>64-bit <em>flat scratch</em> address register (an alternative syntax).</p></td>
+</tr>
+<tr class="row-even"><td><p>[flat_scratch_lo,flat_scratch_hi]</p></td>
+<td><p>64-bit <em>flat scratch</em> address register (an alternative syntax).</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>High and low 32 bits of <em>flat scratch</em> address may be accessed as separate registers:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 74%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>flat_scratch_lo</p></td>
+<td><p>Low 32 bits of <em>flat scratch</em> address register.</p></td>
+</tr>
+<tr class="row-odd"><td><p>flat_scratch_hi</p></td>
+<td><p>High 32 bits of <em>flat scratch</em> address register.</p></td>
+</tr>
+<tr class="row-even"><td><p>[flat_scratch_lo]</p></td>
+<td><p>Low 32 bits of <em>flat scratch</em> address register (an alternative syntax).</p></td>
+</tr>
+<tr class="row-odd"><td><p>[flat_scratch_hi]</p></td>
+<td><p>High 32 bits of <em>flat scratch</em> address register (an alternative syntax).</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="xnack">
+<span id="amdgpu-synid-xnack"></span><h3><a class="toc-backref" href="#id11">xnack</a><a class="headerlink" href="#xnack" title="Permalink to this headline">¶</a></h3>
+<p>Xnack mask, 64-bits wide. Holds a 64-bit mask of which threads
+received an <em>XNACK</em> due to a vector memory operation.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>GFX7 does not support <em>xnack</em> feature. For availability of this feature in other GPUs, refer <a class="reference internal" href="AMDGPUUsage.html#amdgpu-processors"><span class="std std-ref">this table</span></a>.</p>
+</div>
+<p></p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 64%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>xnack_mask</p></td>
+<td><p>64-bit <em>xnack mask</em> register.</p></td>
+</tr>
+<tr class="row-odd"><td><p>[xnack_mask]</p></td>
+<td><p>64-bit <em>xnack mask</em> register (an alternative syntax).</p></td>
+</tr>
+<tr class="row-even"><td><p>[xnack_mask_lo,xnack_mask_hi]</p></td>
+<td><p>64-bit <em>xnack mask</em> register (an alternative syntax).</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>High and low 32 bits of <em>xnack mask</em> may be accessed as separate registers:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>xnack_mask_lo</p></td>
+<td><p>Low 32 bits of <em>xnack mask</em> register.</p></td>
+</tr>
+<tr class="row-odd"><td><p>xnack_mask_hi</p></td>
+<td><p>High 32 bits of <em>xnack mask</em> register.</p></td>
+</tr>
+<tr class="row-even"><td><p>[xnack_mask_lo]</p></td>
+<td><p>Low 32 bits of <em>xnack mask</em> register (an alternative syntax).</p></td>
+</tr>
+<tr class="row-odd"><td><p>[xnack_mask_hi]</p></td>
+<td><p>High 32 bits of <em>xnack mask</em> register (an alternative syntax).</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="vcc">
+<span id="amdgpu-synid-vcc-lo"></span><span id="amdgpu-synid-vcc"></span><h3><a class="toc-backref" href="#id12">vcc</a><a class="headerlink" href="#vcc" title="Permalink to this headline">¶</a></h3>
+<p>Vector condition code, 64-bits wide. A bit mask with one bit per thread;
+it holds the result of a vector compare operation.</p>
+<p>Note that GFX10 H/W does not use high 32 bits of <em>vcc</em> in <em>wave32</em> mode.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>vcc</p></td>
+<td><p>64-bit <em>vector condition code</em> register.</p></td>
+</tr>
+<tr class="row-odd"><td><p>[vcc]</p></td>
+<td><p>64-bit <em>vector condition code</em> register (an alternative syntax).</p></td>
+</tr>
+<tr class="row-even"><td><p>[vcc_lo,vcc_hi]</p></td>
+<td><p>64-bit <em>vector condition code</em> register (an alternative syntax).</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>High and low 32 bits of <em>vector condition code</em> may be accessed as separate registers:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>vcc_lo</p></td>
+<td><p>Low 32 bits of <em>vector condition code</em> register.</p></td>
+</tr>
+<tr class="row-odd"><td><p>vcc_hi</p></td>
+<td><p>High 32 bits of <em>vector condition code</em> register.</p></td>
+</tr>
+<tr class="row-even"><td><p>[vcc_lo]</p></td>
+<td><p>Low 32 bits of <em>vector condition code</em> register (an alternative syntax).</p></td>
+</tr>
+<tr class="row-odd"><td><p>[vcc_hi]</p></td>
+<td><p>High 32 bits of <em>vector condition code</em> register (an alternative syntax).</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="m0">
+<span id="amdgpu-synid-m0"></span><h3><a class="toc-backref" href="#id13">m0</a><a class="headerlink" href="#m0" title="Permalink to this headline">¶</a></h3>
+<p>A 32-bit memory register. It has various uses,
+including register indexing and bounds checking.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>m0</p></td>
+<td><p>A 32-bit <em>memory</em> register.</p></td>
+</tr>
+<tr class="row-odd"><td><p>[m0]</p></td>
+<td><p>A 32-bit <em>memory</em> register (an alternative syntax).</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="exec">
+<span id="amdgpu-synid-exec"></span><h3><a class="toc-backref" href="#id14">exec</a><a class="headerlink" href="#exec" title="Permalink to this headline">¶</a></h3>
+<p>Execute mask, 64-bits wide. A bit mask with one bit per thread,
+which is applied to vector instructions and controls which threads execute
+and which ignore the instruction.</p>
+<p>Note that GFX10 H/W does not use high 32 bits of <em>exec</em> in <em>wave32</em> mode.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>exec</p></td>
+<td><p>64-bit <em>execute mask</em> register.</p></td>
+</tr>
+<tr class="row-odd"><td><p>[exec]</p></td>
+<td><p>64-bit <em>execute mask</em> register (an alternative syntax).</p></td>
+</tr>
+<tr class="row-even"><td><p>[exec_lo,exec_hi]</p></td>
+<td><p>64-bit <em>execute mask</em> register (an alternative syntax).</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>High and low 32 bits of <em>execute mask</em> may be accessed as separate registers:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>exec_lo</p></td>
+<td><p>Low 32 bits of <em>execute mask</em> register.</p></td>
+</tr>
+<tr class="row-odd"><td><p>exec_hi</p></td>
+<td><p>High 32 bits of <em>execute mask</em> register.</p></td>
+</tr>
+<tr class="row-even"><td><p>[exec_lo]</p></td>
+<td><p>Low 32 bits of <em>execute mask</em> register (an alternative syntax).</p></td>
+</tr>
+<tr class="row-odd"><td><p>[exec_hi]</p></td>
+<td><p>High 32 bits of <em>execute mask</em> register (an alternative syntax).</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="vccz">
+<span id="amdgpu-synid-vccz"></span><h3><a class="toc-backref" href="#id15">vccz</a><a class="headerlink" href="#vccz" title="Permalink to this headline">¶</a></h3>
+<p>A single bit flag indicating that the <a class="reference internal" href="#amdgpu-synid-vcc"><span class="std std-ref">vcc</span></a> is all zeros.</p>
+<p>Note. When GFX10 operates in <em>wave32</em> mode, this register reflects state of <a class="reference internal" href="#amdgpu-synid-vcc-lo"><span class="std std-ref">vcc_lo</span></a>.</p>
+</div>
+<div class="section" id="execz">
+<span id="amdgpu-synid-execz"></span><h3><a class="toc-backref" href="#id16">execz</a><a class="headerlink" href="#execz" title="Permalink to this headline">¶</a></h3>
+<p>A single bit flag indicating that the <a class="reference internal" href="#amdgpu-synid-exec"><span class="std std-ref">exec</span></a> is all zeros.</p>
+<p>Note. When GFX10 operates in <em>wave32</em> mode, this register reflects state of <a class="reference internal" href="#amdgpu-synid-exec"><span class="std std-ref">exec_lo</span></a>.</p>
+</div>
+<div class="section" id="scc">
+<span id="amdgpu-synid-scc"></span><h3><a class="toc-backref" href="#id17">scc</a><a class="headerlink" href="#scc" title="Permalink to this headline">¶</a></h3>
+<p>A single bit flag indicating the result of a scalar compare operation.</p>
+</div>
+<div class="section" id="lds-direct">
+<span id="amdgpu-synid-lds-direct"></span><h3><a class="toc-backref" href="#id18">lds_direct</a><a class="headerlink" href="#lds-direct" title="Permalink to this headline">¶</a></h3>
+<p>A special operand which supplies a 32-bit value
+fetched from <em>LDS</em> memory using <a class="reference internal" href="#amdgpu-synid-m0"><span class="std std-ref">m0</span></a> as an address.</p>
+</div>
+<div class="section" id="null">
+<span id="amdgpu-synid-null"></span><h3><a class="toc-backref" href="#id19">null</a><a class="headerlink" href="#null" title="Permalink to this headline">¶</a></h3>
+<p>This is a special operand which may be used as a source or a destination.</p>
+<p>When used as a destination, the result of the operation is discarded.</p>
+<p>When used as a source, it supplies zero value.</p>
+<p>GFX10 only.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Due to a H/W bug, this operand cannot be used with VALU instructions in first generation of GFX10.</p>
+</div>
+</div>
+<div class="section" id="constant">
+<span id="amdgpu-synid-constant"></span><h3><a class="toc-backref" href="#id20">constant</a><a class="headerlink" href="#constant" title="Permalink to this headline">¶</a></h3>
+<p>A set of integer and floating-point <em>inline</em> constants and values:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#amdgpu-synid-iconst"><span class="std std-ref">iconst</span></a></p></li>
+<li><p><a class="reference internal" href="#amdgpu-synid-fconst"><span class="std std-ref">fconst</span></a></p></li>
+<li><p><a class="reference internal" href="#amdgpu-synid-ival"><span class="std std-ref">ival</span></a></p></li>
+</ul>
+<p>In contrast with <a class="reference internal" href="#amdgpu-synid-literal"><span class="std std-ref">literals</span></a>, these operands are encoded as a part of instruction.</p>
+<p>If a number may be encoded as either
+a <a class="reference internal" href="#amdgpu-synid-literal"><span class="std std-ref">literal</span></a> or
+a <a class="reference internal" href="#amdgpu-synid-constant"><span class="std std-ref">constant</span></a>,
+assembler selects the latter encoding as more efficient.</p>
+<div class="section" id="iconst">
+<span id="amdgpu-synid-iconst"></span><h4><a class="toc-backref" href="#id21">iconst</a><a class="headerlink" href="#iconst" title="Permalink to this headline">¶</a></h4>
+<p>An <a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer number</span></a>
+encoded as an <em>inline constant</em>.</p>
+<p>Only a small fraction of integer numbers may be encoded as <em>inline constants</em>.
+They are enumerated in the table below.
+Other integer numbers have to be encoded as <a class="reference internal" href="#amdgpu-synid-literal"><span class="std std-ref">literals</span></a>.</p>
+<p>Integer <em>inline constants</em> are converted to
+<a class="reference internal" href="AMDGPUInstructionSyntax.html#amdgpu-syn-instruction-type"><span class="std std-ref">expected operand type</span></a>
+as described <a class="reference internal" href="#amdgpu-synid-int-const-conv"><span class="std std-ref">here</span></a>.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 49%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Note</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>{0..64}</p></td>
+<td><p>Positive integer inline constants.</p></td>
+</tr>
+<tr class="row-odd"><td><p>{-16..-1}</p></td>
+<td><p>Negative integer inline constants.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>GFX7 does not support inline constants for <em>f16</em> operands.</p>
+</div>
+</div>
+<div class="section" id="fconst">
+<span id="amdgpu-synid-fconst"></span><h4><a class="toc-backref" href="#id22">fconst</a><a class="headerlink" href="#fconst" title="Permalink to this headline">¶</a></h4>
+<p>A <a class="reference internal" href="#amdgpu-synid-floating-point-number"><span class="std std-ref">floating-point number</span></a>
+encoded as an <em>inline constant</em>.</p>
+<p>Only a small fraction of floating-point numbers may be encoded as <em>inline constants</em>.
+They are enumerated in the table below.
+Other floating-point numbers have to be encoded as <a class="reference internal" href="#amdgpu-synid-literal"><span class="std std-ref">literals</span></a>.</p>
+<p>Floating-point <em>inline constants</em> are converted to
+<a class="reference internal" href="AMDGPUInstructionSyntax.html#amdgpu-syn-instruction-type"><span class="std std-ref">expected operand type</span></a>
+as described <a class="reference internal" href="#amdgpu-synid-fp-const-conv"><span class="std std-ref">here</span></a>.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 58%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>Note</p></th>
+<th class="head"><p>Availability</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.0</p></td>
+<td><p>The same as integer constant 0.</p></td>
+<td><p>All GPUs</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.5</p></td>
+<td><p>Floating-point constant 0.5</p></td>
+<td><p>All GPUs</p></td>
+</tr>
+<tr class="row-even"><td><p>1.0</p></td>
+<td><p>Floating-point constant 1.0</p></td>
+<td><p>All GPUs</p></td>
+</tr>
+<tr class="row-odd"><td><p>2.0</p></td>
+<td><p>Floating-point constant 2.0</p></td>
+<td><p>All GPUs</p></td>
+</tr>
+<tr class="row-even"><td><p>4.0</p></td>
+<td><p>Floating-point constant 4.0</p></td>
+<td><p>All GPUs</p></td>
+</tr>
+<tr class="row-odd"><td><p>-0.5</p></td>
+<td><p>Floating-point constant -0.5</p></td>
+<td><p>All GPUs</p></td>
+</tr>
+<tr class="row-even"><td><p>-1.0</p></td>
+<td><p>Floating-point constant -1.0</p></td>
+<td><p>All GPUs</p></td>
+</tr>
+<tr class="row-odd"><td><p>-2.0</p></td>
+<td><p>Floating-point constant -2.0</p></td>
+<td><p>All GPUs</p></td>
+</tr>
+<tr class="row-even"><td><p>-4.0</p></td>
+<td><p>Floating-point constant -4.0</p></td>
+<td><p>All GPUs</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.1592</p></td>
+<td><p>1.0/(2.0*pi). Use only for 16-bit operands.</p></td>
+<td><p>GFX8, GFX9, GFX10</p></td>
+</tr>
+<tr class="row-even"><td><p>0.15915494</p></td>
+<td><p>1.0/(2.0*pi). Use only for 16- and 32-bit operands.</p></td>
+<td><p>GFX8, GFX9, GFX10</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.15915494309189532</p></td>
+<td><p>1.0/(2.0*pi).</p></td>
+<td><p>GFX8, GFX9, GFX10</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>GFX7 does not support inline constants for <em>f16</em> operands.</p>
+</div>
+</div>
+<div class="section" id="ival">
+<span id="amdgpu-synid-ival"></span><h4><a class="toc-backref" href="#id23">ival</a><a class="headerlink" href="#ival" title="Permalink to this headline">¶</a></h4>
+<p>A symbolic operand encoded as an <em>inline constant</em>.
+These operands provide read-only access to H/W registers.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 56%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Note</p></th>
+<th class="head"><p>Availability</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>shared_base</p></td>
+<td><p>Base address of shared memory region.</p></td>
+<td><p>GFX9, GFX10</p></td>
+</tr>
+<tr class="row-odd"><td><p>shared_limit</p></td>
+<td><p>Address of the end of shared memory region.</p></td>
+<td><p>GFX9, GFX10</p></td>
+</tr>
+<tr class="row-even"><td><p>private_base</p></td>
+<td><p>Base address of private memory region.</p></td>
+<td><p>GFX9, GFX10</p></td>
+</tr>
+<tr class="row-odd"><td><p>private_limit</p></td>
+<td><p>Address of the end of private memory region.</p></td>
+<td><p>GFX9, GFX10</p></td>
+</tr>
+<tr class="row-even"><td><p>pops_exiting_wave_id</p></td>
+<td><p>A dedicated counter for POPS.</p></td>
+<td><p>GFX9, GFX10</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="literal">
+<span id="amdgpu-synid-literal"></span><h3><a class="toc-backref" href="#id24">literal</a><a class="headerlink" href="#literal" title="Permalink to this headline">¶</a></h3>
+<p>A literal is a 64-bit value which is encoded as a separate 32-bit dword in the instruction stream.</p>
+<p>If a number may be encoded as either
+a <a class="reference internal" href="#amdgpu-synid-literal"><span class="std std-ref">literal</span></a> or
+an <a class="reference internal" href="#amdgpu-synid-constant"><span class="std std-ref">inline constant</span></a>,
+assembler selects the latter encoding as more efficient.</p>
+<p>Literals may be specified as <a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer numbers</span></a>,
+<a class="reference internal" href="#amdgpu-synid-floating-point-number"><span class="std std-ref">floating-point numbers</span></a> or
+<a class="reference internal" href="#amdgpu-synid-expression"><span class="std std-ref">expressions</span></a>
+(expressions are currently supported for 32-bit operands only).</p>
+<p>A 64-bit literal value is converted by assembler
+to an <a class="reference internal" href="AMDGPUInstructionSyntax.html#amdgpu-syn-instruction-type"><span class="std std-ref">expected operand type</span></a>
+as described <a class="reference internal" href="#amdgpu-synid-lit-conv"><span class="std std-ref">here</span></a>.</p>
+<p>An instruction may use only one literal but several operands may refer the same literal.</p>
+</div>
+<div class="section" id="uimm8">
+<span id="amdgpu-synid-uimm8"></span><h3><a class="toc-backref" href="#id25">uimm8</a><a class="headerlink" href="#uimm8" title="Permalink to this headline">¶</a></h3>
+<p>A 8-bit positive <a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer number</span></a>.
+The value is encoded as part of the opcode so it is free to use.</p>
+</div>
+<div class="section" id="uimm32">
+<span id="amdgpu-synid-uimm32"></span><h3><a class="toc-backref" href="#id26">uimm32</a><a class="headerlink" href="#uimm32" title="Permalink to this headline">¶</a></h3>
+<p>A 32-bit positive <a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer number</span></a>.
+The value is stored as a separate 32-bit dword in the instruction stream.</p>
+</div>
+<div class="section" id="uimm20">
+<span id="amdgpu-synid-uimm20"></span><h3><a class="toc-backref" href="#id27">uimm20</a><a class="headerlink" href="#uimm20" title="Permalink to this headline">¶</a></h3>
+<p>A 20-bit positive <a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer number</span></a>.</p>
+</div>
+<div class="section" id="uimm21">
+<span id="amdgpu-synid-uimm21"></span><h3><a class="toc-backref" href="#id28">uimm21</a><a class="headerlink" href="#uimm21" title="Permalink to this headline">¶</a></h3>
+<p>A 21-bit positive <a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer number</span></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Assembler currently supports 20-bit offsets only. Use <a class="reference internal" href="#amdgpu-synid-uimm20"><span class="std std-ref">uimm20</span></a> as a replacement.</p>
+</div>
+</div>
+<div class="section" id="simm21">
+<span id="amdgpu-synid-simm21"></span><h3><a class="toc-backref" href="#id29">simm21</a><a class="headerlink" href="#simm21" title="Permalink to this headline">¶</a></h3>
+<p>A 21-bit <a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer number</span></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Assembler currently supports 20-bit unsigned offsets only. Use <a class="reference internal" href="#amdgpu-synid-uimm20"><span class="std std-ref">uimm20</span></a> as a replacement.</p>
+</div>
+</div>
+<div class="section" id="off">
+<span id="amdgpu-synid-off"></span><h3><a class="toc-backref" href="#id30">off</a><a class="headerlink" href="#off" title="Permalink to this headline">¶</a></h3>
+<p>A special entity which indicates that the value of this operand is not used.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>off</p></td>
+<td><p>Indicates an unused operand.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="numbers">
+<span id="amdgpu-synid-number"></span><h2><a class="toc-backref" href="#id31">Numbers</a><a class="headerlink" href="#numbers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="integer-numbers">
+<span id="amdgpu-synid-integer-number"></span><h3><a class="toc-backref" href="#id32">Integer Numbers</a><a class="headerlink" href="#integer-numbers" title="Permalink to this headline">¶</a></h3>
+<p>Integer numbers are 64 bits wide.
+They may be specified in binary, octal, hexadecimal and decimal formats:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Format</p></th>
+<th class="head"><p>Syntax</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Decimal</p></td>
+<td><p>[-]?[1-9][0-9]*</p></td>
+</tr>
+<tr class="row-odd"><td><p>Binary</p></td>
+<td><p>[-]?0b[01]+</p></td>
+</tr>
+<tr class="row-even"><td><p>Octal</p></td>
+<td><p>[-]?0[0-7]+</p></td>
+</tr>
+<tr class="row-odd"><td><p>Hexadecimal</p></td>
+<td><p>[-]?0x[0-9a-fA-F]+</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p>[-]?[0x]?[0-9][0-9a-fA-F]*[hH]</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mi">1234</span>
+<span class="mb">0b1010</span>
+<span class="mi">010</span>
+<span class="mh">0xff</span>
+<span class="mi">0</span><span class="n">ffh</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="floating-point-numbers">
+<span id="amdgpu-synid-floating-point-number"></span><h3><a class="toc-backref" href="#id33">Floating-Point Numbers</a><a class="headerlink" href="#floating-point-numbers" title="Permalink to this headline">¶</a></h3>
+<p>All floating-point numbers are handled as double (64 bits wide).</p>
+<p>Floating-point numbers may be specified in hexadecimal and decimal formats:</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 44%" />
+<col style="width: 44%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Format</p></th>
+<th class="head"><p>Syntax</p></th>
+<th class="head"><p>Note</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Decimal</p></td>
+<td><p>[-]?[0-9]*[.][0-9]*([eE][+-]?[0-9]*)?</p></td>
+<td><p>Must include either a decimal separator or an exponent.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Hexadecimal</p></td>
+<td><p>[-]0x[0-9a-fA-F]*(.[0-9a-fA-F]*)?[pP][+-]?[0-9a-fA-F]+</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">1.234</span>
+<span class="mf">234e2</span>
+<span class="o">-</span><span class="mh">0x1af</span><span class="n">p</span><span class="o">-</span><span class="mi">10</span>
+<span class="mi">0</span><span class="n">x</span><span class="o">.</span><span class="mi">1</span><span class="n">afp10</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="expressions">
+<span id="amdgpu-synid-expression"></span><h2><a class="toc-backref" href="#id34">Expressions</a><a class="headerlink" href="#expressions" title="Permalink to this headline">¶</a></h2>
+<p>An expression specifies an address or a numeric value.
+There are two kinds of expressions:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#amdgpu-synid-absolute-expression"><span class="std std-ref">Absolute</span></a>.</p></li>
+<li><p><a class="reference internal" href="#amdgpu-synid-relocatable-expression"><span class="std std-ref">Relocatable</span></a>.</p></li>
+</ul>
+<div class="section" id="absolute-expressions">
+<span id="amdgpu-synid-absolute-expression"></span><h3><a class="toc-backref" href="#id35">Absolute Expressions</a><a class="headerlink" href="#absolute-expressions" title="Permalink to this headline">¶</a></h3>
+<p>The value of an absolute expression remains the same after program relocation.
+Absolute expressions must not include unassigned and relocatable values
+such as labels.</p>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">10</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="relocatable-expressions">
+<span id="amdgpu-synid-relocatable-expression"></span><h3><a class="toc-backref" href="#id36">Relocatable Expressions</a><a class="headerlink" href="#relocatable-expressions" title="Permalink to this headline">¶</a></h3>
+<p>The value of a relocatable expression depends on program relocation.</p>
+<p>Note that use of relocatable expressions is limited with branch targets
+and 32-bit <a class="reference internal" href="#amdgpu-synid-literal"><span class="std std-ref">literals</span></a>.</p>
+<p>Addition information about relocation may be found <a class="reference internal" href="AMDGPUUsage.html#amdgpu-relocation-records"><span class="std std-ref">here</span></a>.</p>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">//</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">yet</span> <span class="n">defined</span><span class="o">.</span> <span class="n">Undefined</span> <span class="n">symbols</span> <span class="n">are</span> <span class="n">assumed</span> <span class="n">to</span> <span class="n">be</span> <span class="n">PC</span><span class="o">-</span><span class="n">relative</span><span class="o">.</span>
+<span class="n">z</span> <span class="o">=</span> <span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="expression-data-type">
+<h3><a class="toc-backref" href="#id37">Expression Data Type</a><a class="headerlink" href="#expression-data-type" title="Permalink to this headline">¶</a></h3>
+<p>Expressions and operands of expressions are interpreted as 64-bit integers.</p>
+<p>Expressions may include 64-bit <a class="reference internal" href="#amdgpu-synid-floating-point-number"><span class="std std-ref">floating-point numbers</span></a> (double).
+However these operands are also handled as 64-bit integers
+using binary representation of specified floating-point numbers.
+No conversion from floating-point to integer is performed.</p>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>x = 0.1    // x is assigned an integer 4591870180066957722 which is a binary representation of 0.1.
+y = x + x  // y is a sum of two integer values; it is not equal to 0.2!
+</pre></div>
+</div>
+</div>
+<div class="section" id="syntax">
+<h3><a class="toc-backref" href="#id38">Syntax</a><a class="headerlink" href="#syntax" title="Permalink to this headline">¶</a></h3>
+<p>Expressions are composed of
+<a class="reference internal" href="#amdgpu-synid-symbol"><span class="std std-ref">symbols</span></a>,
+<a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer numbers</span></a>,
+<a class="reference internal" href="#amdgpu-synid-floating-point-number"><span class="std std-ref">floating-point numbers</span></a>,
+<a class="reference internal" href="#amdgpu-synid-expression-bin-op"><span class="std std-ref">binary operators</span></a>,
+<a class="reference internal" href="#amdgpu-synid-expression-un-op"><span class="std std-ref">unary operators</span></a> and subexpressions.</p>
+<p>Expressions may also use “.” which is a reference to the current PC (program counter).</p>
+<p>The syntax of expressions is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">expr</span> <span class="p">::</span><span class="o">=</span> <span class="n">expr</span> <span class="n">binop</span> <span class="n">expr</span> <span class="o">|</span> <span class="n">primaryexpr</span> <span class="p">;</span>
+
+<span class="n">primaryexpr</span> <span class="p">::</span><span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="n">expr</span> <span class="s1">&#39;)&#39;</span> <span class="o">|</span> <span class="n">symbol</span> <span class="o">|</span> <span class="n">number</span> <span class="o">|</span> <span class="s1">&#39;.&#39;</span> <span class="o">|</span> <span class="n">unop</span> <span class="n">primaryexpr</span> <span class="p">;</span>
+
+<span class="n">binop</span> <span class="p">::</span><span class="o">=</span> <span class="s1">&#39;&amp;&amp;&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;||&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;|&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;^&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;&amp;&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;!&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;==&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;!=&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;&lt;&gt;&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;&lt;&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;&lt;=&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;&gt;&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;&gt;=&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;&lt;&lt;&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;&gt;&gt;&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;+&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;-&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;*&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;/&#39;</span>
+        <span class="o">|</span> <span class="s1">&#39;%&#39;</span> <span class="p">;</span>
+
+<span class="n">unop</span> <span class="p">::</span><span class="o">=</span> <span class="s1">&#39;~&#39;</span>
+       <span class="o">|</span> <span class="s1">&#39;+&#39;</span>
+       <span class="o">|</span> <span class="s1">&#39;-&#39;</span>
+       <span class="o">|</span> <span class="s1">&#39;!&#39;</span> <span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="binary-operators">
+<span id="amdgpu-synid-expression-bin-op"></span><h3><a class="toc-backref" href="#id39">Binary Operators</a><a class="headerlink" href="#binary-operators" title="Permalink to this headline">¶</a></h3>
+<p>Binary operators are described in the following table.
+They operate on and produce 64-bit integers.
+Operators with higher priority are performed first.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 14%" />
+<col style="width: 71%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Operator</p></th>
+<th class="head"><p>Priority</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>*</p></td>
+<td><p>5</p></td>
+<td><p>Integer multiplication.</p></td>
+</tr>
+<tr class="row-odd"><td><p>/</p></td>
+<td><p>5</p></td>
+<td><p>Integer division.</p></td>
+</tr>
+<tr class="row-even"><td><p>%</p></td>
+<td><p>5</p></td>
+<td><p>Integer signed remainder.</p></td>
+</tr>
+<tr class="row-odd"><td><p>+</p></td>
+<td><p>4</p></td>
+<td><p>Integer addition.</p></td>
+</tr>
+<tr class="row-even"><td><p>-</p></td>
+<td><p>4</p></td>
+<td><p>Integer subtraction.</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;&lt;</p></td>
+<td><p>3</p></td>
+<td><p>Integer shift left.</p></td>
+</tr>
+<tr class="row-even"><td><p>&gt;&gt;</p></td>
+<td><p>3</p></td>
+<td><p>Logical shift right.</p></td>
+</tr>
+<tr class="row-odd"><td><p>==</p></td>
+<td><p>2</p></td>
+<td><p>Equality comparison.</p></td>
+</tr>
+<tr class="row-even"><td><p>!=</p></td>
+<td><p>2</p></td>
+<td><p>Inequality comparison.</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;&gt;</p></td>
+<td><p>2</p></td>
+<td><p>Inequality comparison.</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;</p></td>
+<td><p>2</p></td>
+<td><p>Signed less than comparison.</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;=</p></td>
+<td><p>2</p></td>
+<td><p>Signed less than or equal comparison.</p></td>
+</tr>
+<tr class="row-even"><td><p>&gt;</p></td>
+<td><p>2</p></td>
+<td><p>Signed greater than comparison.</p></td>
+</tr>
+<tr class="row-odd"><td><p>&gt;=</p></td>
+<td><p>2</p></td>
+<td><p>Signed greater than or equal comparison.</p></td>
+</tr>
+<tr class="row-even"><td><p>|</p></td>
+<td><p>1</p></td>
+<td><p>Bitwise or.</p></td>
+</tr>
+<tr class="row-odd"><td><p>^</p></td>
+<td><p>1</p></td>
+<td><p>Bitwise xor.</p></td>
+</tr>
+<tr class="row-even"><td><p>&amp;</p></td>
+<td><p>1</p></td>
+<td><p>Bitwise and.</p></td>
+</tr>
+<tr class="row-odd"><td><p>&amp;&amp;</p></td>
+<td><p>0</p></td>
+<td><p>Logical and.</p></td>
+</tr>
+<tr class="row-even"><td><p>||</p></td>
+<td><p>0</p></td>
+<td><p>Logical or.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="unary-operators">
+<span id="amdgpu-synid-expression-un-op"></span><h3><a class="toc-backref" href="#id40">Unary Operators</a><a class="headerlink" href="#unary-operators" title="Permalink to this headline">¶</a></h3>
+<p>Unary operators are described in the following table.
+They operate on and produce 64-bit integers.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Operator</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>!</p></td>
+<td><p>Logical negation.</p></td>
+</tr>
+<tr class="row-odd"><td><p>~</p></td>
+<td><p>Bitwise negation.</p></td>
+</tr>
+<tr class="row-even"><td><p>+</p></td>
+<td><p>Integer unary plus.</p></td>
+</tr>
+<tr class="row-odd"><td><p>-</p></td>
+<td><p>Integer unary minus.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</div>
+<div class="section" id="symbols">
+<span id="amdgpu-synid-symbol"></span><h3><a class="toc-backref" href="#id41">Symbols</a><a class="headerlink" href="#symbols" title="Permalink to this headline">¶</a></h3>
+<p>A symbol is a named 64-bit value, representing a relocatable
+address or an absolute (non-relocatable) number.</p>
+<dl class="simple">
+<dt>Symbol names have the following syntax:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">[a-zA-Z_.][a-zA-Z0-9_$.&#64;]*</span></code></p>
+</dd>
+</dl>
+<p>The table below provides several examples of syntax used for symbol definition.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Syntax</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>.globl &lt;S&gt;</p></td>
+<td><p>Declares a global symbol S without assigning it a value.</p></td>
+</tr>
+<tr class="row-odd"><td><p>.set &lt;S&gt;, &lt;E&gt;</p></td>
+<td><p>Assigns the value of an expression E to a symbol S.</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;S&gt; = &lt;E&gt;</p></td>
+<td><p>Assigns the value of an expression E to a symbol S.</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;S&gt;:</p></td>
+<td><p>Declares a label S and assigns it the current PC value.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>A symbol may be used before it is declared or assigned;
+unassigned symbols are assumed to be PC-relative.</p>
+<p>Addition information about symbols may be found <a class="reference internal" href="AMDGPUUsage.html#amdgpu-symbols"><span class="std std-ref">here</span></a>.</p>
+</div>
+</div>
+<div class="section" id="conversions">
+<span id="amdgpu-synid-conv"></span><h2><a class="toc-backref" href="#id42">Conversions</a><a class="headerlink" href="#conversions" title="Permalink to this headline">¶</a></h2>
+<p>This section describes what happens when a 64-bit
+<a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer number</span></a>, a
+<a class="reference internal" href="#amdgpu-synid-floating-point-number"><span class="std std-ref">floating-point numbers</span></a> or a
+<a class="reference internal" href="#amdgpu-synid-symbol"><span class="std std-ref">symbol</span></a>
+is used for an operand which has a different type or size.</p>
+<p>Depending on operand kind, this conversion is performed by either assembler or AMDGPU H/W:</p>
+<ul class="simple">
+<li><p>Values encoded as <a class="reference internal" href="#amdgpu-synid-constant"><span class="std std-ref">inline constants</span></a> are handled by H/W.</p></li>
+<li><p>Values encoded as <a class="reference internal" href="#amdgpu-synid-literal"><span class="std std-ref">literals</span></a> are converted by assembler.</p></li>
+</ul>
+<div class="section" id="inline-constants">
+<span id="amdgpu-synid-const-conv"></span><h3><a class="toc-backref" href="#id43">Inline Constants</a><a class="headerlink" href="#inline-constants" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="integer-inline-constants">
+<span id="amdgpu-synid-int-const-conv"></span><h4><a class="toc-backref" href="#id44">Integer Inline Constants</a><a class="headerlink" href="#integer-inline-constants" title="Permalink to this headline">¶</a></h4>
+<p>Integer <a class="reference internal" href="#amdgpu-synid-constant"><span class="std std-ref">inline constants</span></a>
+may be thought of as 64-bit
+<a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer numbers</span></a>;
+when used as operands they are truncated to the size of
+<a class="reference internal" href="AMDGPUInstructionSyntax.html#amdgpu-syn-instruction-type"><span class="std std-ref">expected operand type</span></a>.
+No data type conversions are performed.</p>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">GFX9</span>
+
+<span class="n">v_add_u16</span> <span class="n">v0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>    <span class="o">//</span> <span class="n">v0</span> <span class="o">=</span> <span class="mh">0xFFFF</span>
+<span class="n">v_add_f16</span> <span class="n">v0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>    <span class="o">//</span> <span class="n">v0</span> <span class="o">=</span> <span class="mh">0xFFFF</span> <span class="p">(</span><span class="n">NaN</span><span class="p">)</span>
+
+<span class="n">v_add_u32</span> <span class="n">v0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>    <span class="o">//</span> <span class="n">v0</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span>
+<span class="n">v_add_f32</span> <span class="n">v0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span>    <span class="o">//</span> <span class="n">v0</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span> <span class="p">(</span><span class="n">NaN</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="floating-point-inline-constants">
+<span id="amdgpu-synid-fp-const-conv"></span><h4><a class="toc-backref" href="#id45">Floating-Point Inline Constants</a><a class="headerlink" href="#floating-point-inline-constants" title="Permalink to this headline">¶</a></h4>
+<p>Floating-point <a class="reference internal" href="#amdgpu-synid-constant"><span class="std std-ref">inline constants</span></a>
+may be thought of as 64-bit
+<a class="reference internal" href="#amdgpu-synid-floating-point-number"><span class="std std-ref">floating-point numbers</span></a>;
+when used as operands they are converted to a floating-point number of
+<a class="reference internal" href="AMDGPUInstructionSyntax.html#amdgpu-syn-instruction-type"><span class="std std-ref">expected operand size</span></a>.</p>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">GFX9</span>
+
+<span class="n">v_add_f16</span> <span class="n">v0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span>    <span class="o">//</span> <span class="n">v0</span> <span class="o">=</span> <span class="mh">0x3C00</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">v_add_u16</span> <span class="n">v0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span>    <span class="o">//</span> <span class="n">v0</span> <span class="o">=</span> <span class="mh">0x3C00</span>
+
+<span class="n">v_add_f32</span> <span class="n">v0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span>    <span class="o">//</span> <span class="n">v0</span> <span class="o">=</span> <span class="mh">0x3F800000</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">v_add_u32</span> <span class="n">v0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span>    <span class="o">//</span> <span class="n">v0</span> <span class="o">=</span> <span class="mh">0x3F800000</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="literals">
+<span id="amdgpu-synid-lit-conv"></span><h3><a class="toc-backref" href="#id46">Literals</a><a class="headerlink" href="#literals" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="integer-literals">
+<span id="amdgpu-synid-int-lit-conv"></span><h4><a class="toc-backref" href="#id47">Integer Literals</a><a class="headerlink" href="#integer-literals" title="Permalink to this headline">¶</a></h4>
+<p>Integer <a class="reference internal" href="#amdgpu-synid-literal"><span class="std std-ref">literals</span></a>
+are specified as 64-bit <a class="reference internal" href="#amdgpu-synid-integer-number"><span class="std std-ref">integer numbers</span></a>.</p>
+<p>When used as operands they are converted to
+<a class="reference internal" href="AMDGPUInstructionSyntax.html#amdgpu-syn-instruction-type"><span class="std std-ref">expected operand type</span></a> as described below.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 14%" />
+<col style="width: 61%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Expected type</p></th>
+<th class="head"><p>Condition</p></th>
+<th class="head"><p>Result</p></th>
+<th class="head"><p>Note</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>i16, u16, b16</p></td>
+<td><p>cond(num,16)</p></td>
+<td><p>num.u16</p></td>
+<td><p>Truncate to 16 bits.</p></td>
+</tr>
+<tr class="row-odd"><td><p>i32, u32, b32</p></td>
+<td><p>cond(num,32)</p></td>
+<td><p>num.u32</p></td>
+<td><p>Truncate to 32 bits.</p></td>
+</tr>
+<tr class="row-even"><td><p>i64</p></td>
+<td><p>cond(num,32)</p></td>
+<td><p>{-1,num.i32}</p></td>
+<td><p>Truncate to 32 bits and then sign-extend the result to 64 bits.</p></td>
+</tr>
+<tr class="row-odd"><td><p>u64, b64</p></td>
+<td><p>cond(num,32)</p></td>
+<td><p>{ 0,num.u32}</p></td>
+<td><p>Truncate to 32 bits and then zero-extend the result to 64 bits.</p></td>
+</tr>
+<tr class="row-even"><td><p>f16</p></td>
+<td><p>cond(num,16)</p></td>
+<td><p>num.u16</p></td>
+<td><p>Use low 16 bits as an f16 value.</p></td>
+</tr>
+<tr class="row-odd"><td><p>f32</p></td>
+<td><p>cond(num,32)</p></td>
+<td><p>num.u32</p></td>
+<td><p>Use low 32 bits as an f32 value.</p></td>
+</tr>
+<tr class="row-even"><td><p>f64</p></td>
+<td><p>cond(num,32)</p></td>
+<td><p>{num.u32,0}</p></td>
+<td><p>Use low 32 bits of the number as high 32 bits
+of the result; low 32 bits of the result are zeroed.</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>The condition <em>cond(X,S)</em> indicates if a 64-bit number <em>X</em>
+can be converted to a smaller size <em>S</em> by truncation of upper bits.
+There are two cases when the conversion is possible:</p>
+<ul class="simple">
+<li><p>The truncated bits are all 0.</p></li>
+<li><p>The truncated bits are all 1 and the value after truncation has its MSB bit set.</p></li>
+</ul>
+<p>Examples of valid literals:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">GFX9</span>
+                                         <span class="o">//</span> <span class="n">Literal</span> <span class="n">value</span> <span class="n">after</span> <span class="n">conversion</span><span class="p">:</span>
+<span class="n">v_add_u16</span> <span class="n">v0</span><span class="p">,</span> <span class="mh">0xff00</span><span class="p">,</span> <span class="n">v0</span>                 <span class="o">//</span>   <span class="mh">0xff00</span>
+<span class="n">v_add_u16</span> <span class="n">v0</span><span class="p">,</span> <span class="mh">0xffffffffffffff00</span><span class="p">,</span> <span class="n">v0</span>     <span class="o">//</span>   <span class="mh">0xff00</span>
+<span class="n">v_add_u16</span> <span class="n">v0</span><span class="p">,</span> <span class="o">-</span><span class="mi">256</span><span class="p">,</span> <span class="n">v0</span>                   <span class="o">//</span>   <span class="mh">0xff00</span>
+                                         <span class="o">//</span> <span class="n">Literal</span> <span class="n">value</span> <span class="n">after</span> <span class="n">conversion</span><span class="p">:</span>
+<span class="n">s_bfe_i64</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="mh">0xffefffff</span><span class="p">,</span> <span class="n">s3</span>         <span class="o">//</span>   <span class="mh">0xffffffffffefffff</span>
+<span class="n">s_bfe_u64</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="mh">0xffefffff</span><span class="p">,</span> <span class="n">s3</span>         <span class="o">//</span>   <span class="mh">0x00000000ffefffff</span>
+<span class="n">v_ceil_f64_e32</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="mh">0xffefffff</span>        <span class="o">//</span>   <span class="mh">0xffefffff00000000</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.7976922776554302e308</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Examples of invalid literals:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">GFX9</span>
+
+<span class="n">v_add_u16</span> <span class="n">v0</span><span class="p">,</span> <span class="mh">0x1ff00</span><span class="p">,</span> <span class="n">v0</span>               <span class="o">//</span> <span class="n">truncated</span> <span class="n">bits</span> <span class="n">are</span> <span class="ow">not</span> <span class="nb">all</span> <span class="mi">0</span> <span class="ow">or</span> <span class="mi">1</span>
+<span class="n">v_add_u16</span> <span class="n">v0</span><span class="p">,</span> <span class="mh">0xffffffffffff00ff</span><span class="p">,</span> <span class="n">v0</span>    <span class="o">//</span> <span class="n">truncated</span> <span class="n">bits</span> <span class="n">do</span> <span class="ow">not</span> <span class="n">match</span> <span class="n">MSB</span> <span class="n">of</span> <span class="n">the</span> <span class="n">result</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="floating-point-literals">
+<span id="amdgpu-synid-fp-lit-conv"></span><h4><a class="toc-backref" href="#id48">Floating-Point Literals</a><a class="headerlink" href="#floating-point-literals" title="Permalink to this headline">¶</a></h4>
+<p>Floating-point <a class="reference internal" href="#amdgpu-synid-literal"><span class="std std-ref">literals</span></a> are specified as 64-bit
+<a class="reference internal" href="#amdgpu-synid-floating-point-number"><span class="std std-ref">floating-point numbers</span></a>.</p>
+<p>When used as operands they are converted to
+<a class="reference internal" href="AMDGPUInstructionSyntax.html#amdgpu-syn-instruction-type"><span class="std std-ref">expected operand type</span></a> as described below.</p>
+<blockquote>
+<div><table class="docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 15%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Expected type</p></th>
+<th class="head"><p>Condition</p></th>
+<th class="head"><p>Result</p></th>
+<th class="head"><p>Note</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>i16, u16, b16</p></td>
+<td><p>cond(num,16)</p></td>
+<td><p>f16(num)</p></td>
+<td><p>Convert to f16 and use bits of the result as an integer value.</p></td>
+</tr>
+<tr class="row-odd"><td><p>i32, u32, b32</p></td>
+<td><p>cond(num,32)</p></td>
+<td><p>f32(num)</p></td>
+<td><p>Convert to f32 and use bits of the result as an integer value.</p></td>
+</tr>
+<tr class="row-even"><td><p>i64, u64, b64</p></td>
+<td><p>false</p></td>
+<td><p>-</p></td>
+<td><p>Conversion disabled because of an unclear semantics.</p></td>
+</tr>
+<tr class="row-odd"><td><p>f16</p></td>
+<td><p>cond(num,16)</p></td>
+<td><p>f16(num)</p></td>
+<td><p>Convert to f16.</p></td>
+</tr>
+<tr class="row-even"><td><p>f32</p></td>
+<td><p>cond(num,32)</p></td>
+<td><p>f32(num)</p></td>
+<td><p>Convert to f32.</p></td>
+</tr>
+<tr class="row-odd"><td><p>f64</p></td>
+<td><p>true</p></td>
+<td><p>{num.u32.hi,0}</p></td>
+<td><p>Use high 32 bits of the number as high 32 bits of the result;
+zero-fill low 32 bits of the result.</p>
+<p>Note that the result may differ from the original number.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>The condition <em>cond(X,S)</em> indicates if an f64 number <em>X</em> can be converted
+to a smaller <em>S</em>-bit floating-point type without overflow or underflow.
+Precision lost is allowed.</p>
+<p>Examples of valid literals:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">GFX9</span>
+
+<span class="n">v_add_f16</span> <span class="n">v1</span><span class="p">,</span> <span class="mf">65500.0</span><span class="p">,</span> <span class="n">v2</span>
+<span class="n">v_add_f32</span> <span class="n">v1</span><span class="p">,</span> <span class="mf">65600.0</span><span class="p">,</span> <span class="n">v2</span>
+
+<span class="o">//</span> <span class="n">Literal</span> <span class="n">value</span> <span class="n">before</span> <span class="n">conversion</span><span class="p">:</span> <span class="mf">1.7976931348623157e308</span> <span class="p">(</span><span class="mh">0x7fefffffffffffff</span><span class="p">)</span>
+<span class="o">//</span> <span class="n">Literal</span> <span class="n">value</span> <span class="n">after</span> <span class="n">conversion</span><span class="p">:</span>  <span class="mf">1.7976922776554302e308</span> <span class="p">(</span><span class="mh">0x7fefffff00000000</span><span class="p">)</span>
+<span class="n">v_ceil_f64</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="mf">1.7976931348623157e308</span>
+</pre></div>
+</div>
+<p>Examples of invalid literals:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">GFX9</span>
+
+<span class="n">v_add_f16</span> <span class="n">v1</span><span class="p">,</span> <span class="mf">65600.0</span><span class="p">,</span> <span class="n">v2</span>    <span class="o">//</span> <span class="n">overflow</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="amdgpu-synid-exp-conv">
+<span id="id1"></span><h4><a class="toc-backref" href="#id49">Expressions</a><a class="headerlink" href="#amdgpu-synid-exp-conv" title="Permalink to this headline">¶</a></h4>
+<p>Expressions operate with and result in 64-bit integers.</p>
+<p>When used as operands they are truncated to
+<a class="reference internal" href="AMDGPUInstructionSyntax.html#amdgpu-syn-instruction-type"><span class="std std-ref">expected operand size</span></a>.
+No data type conversions are performed.</p>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">GFX9</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">v_sqrt_f32</span> <span class="n">v0</span><span class="p">,</span> <span class="n">x</span>           <span class="o">//</span> <span class="n">v0</span> <span class="o">=</span> <span class="p">[</span><span class="n">low</span> <span class="mi">32</span> <span class="n">bits</span> <span class="n">of</span> <span class="mf">0.1</span> <span class="p">(</span><span class="n">double</span><span class="p">)]</span>
+<span class="n">v_sqrt_f32</span> <span class="n">v0</span><span class="p">,</span> <span class="p">(</span><span class="mf">0.1</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)</span>   <span class="o">//</span> <span class="n">the</span> <span class="n">same</span> <span class="k">as</span> <span class="n">above</span>
+<span class="n">v_sqrt_f32</span> <span class="n">v0</span><span class="p">,</span> <span class="mf">0.1</span>         <span class="o">//</span> <span class="n">v0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span> <span class="p">(</span><span class="n">double</span><span class="p">)</span> <span class="n">converted</span> <span class="n">to</span> <span class="nb">float</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="AMDGPUInstructionSyntax.html" title="AMDGPU Instruction Syntax"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="AMDGPUModifierSyntax.html" title="Syntax of AMDGPU Instruction Modifiers"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="AMDGPUUsage.html" >User Guide for AMDGPU Backend</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>

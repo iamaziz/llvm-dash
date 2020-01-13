@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>1. Building a JIT: Starting out with KaleidoscopeJIT &#8212; LLVM 9 documentation</title>
+    <link rel="stylesheet" href="../_static/llvm-theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2. Building a JIT: Adding Optimizations – An introduction to ORC Layers" href="BuildingAJIT2.html" />
+    <link rel="prev" title="8. Kaleidoscope: Conclusion and other useful LLVM tidbits" href="OCamlLangImpl8.html" />
+<style type="text/css">
+  table.right { float: right; margin-left: 20px; }
+  table.right td { border: 1px solid #ccc; }
+</style>
+
+  </head><body>
+<div class="logo">
+  <a href="../index.html">
+    <img src="../_static/logo.png"
+         alt="LLVM Logo" width="250" height="88"/></a>
+</div>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="BuildingAJIT2.html" title="2. Building a JIT: Adding Optimizations – An introduction to ORC Layers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="OCamlLangImpl8.html" title="8. Kaleidoscope: Conclusion and other useful LLVM tidbits"
+             accesskey="P">previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">LLVM Tutorial: Table of Contents</a> &#187;</li> 
+      </ul>
+    </div>
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="building-a-jit-starting-out-with-kaleidoscopejit">
+<h1><span class="section-number">1. </span>Building a JIT: Starting out with KaleidoscopeJIT<a class="headerlink" href="#building-a-jit-starting-out-with-kaleidoscopejit" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#chapter-1-introduction" id="id9">Chapter 1 Introduction</a></p></li>
+<li><p><a class="reference internal" href="#jit-api-basics" id="id10">JIT API Basics</a></p></li>
+<li><p><a class="reference internal" href="#kaleidoscopejit" id="id11">KaleidoscopeJIT</a></p></li>
+<li><p><a class="reference internal" href="#full-code-listing" id="id12">Full Code Listing</a></p></li>
+</ul>
+</div>
+<div class="section" id="chapter-1-introduction">
+<h2><a class="toc-backref" href="#id9"><span class="section-number">1.1. </span>Chapter 1 Introduction</a><a class="headerlink" href="#chapter-1-introduction" title="Permalink to this headline">¶</a></h2>
+<p><strong>Warning: This tutorial is currently being updated to account for ORC API
+changes. Only Chapters 1 and 2 are up-to-date.</strong></p>
+<p><strong>Example code from Chapters 3 to 5 will compile and run, but has not been
+updated</strong></p>
+<p>Welcome to Chapter 1 of the “Building an ORC-based JIT in LLVM” tutorial. This
+tutorial runs through the implementation of a JIT compiler using LLVM’s
+On-Request-Compilation (ORC) APIs. It begins with a simplified version of the
+KaleidoscopeJIT class used in the
+<a class="reference external" href="LangImpl01.html">Implementing a language with LLVM</a> tutorials and then
+introduces new features like concurrent compilation, optimization, lazy
+compilation and remote execution.</p>
+<p>The goal of this tutorial is to introduce you to LLVM’s ORC JIT APIs, show how
+these APIs interact with other parts of LLVM, and to teach you how to recombine
+them to build a custom JIT that is suited to your use-case.</p>
+<p>The structure of the tutorial is:</p>
+<ul class="simple">
+<li><p>Chapter #1: Investigate the simple KaleidoscopeJIT class. This will
+introduce some of the basic concepts of the ORC JIT APIs, including the
+idea of an ORC <em>Layer</em>.</p></li>
+<li><p><a class="reference external" href="BuildingAJIT2.html">Chapter #2</a>: Extend the basic KaleidoscopeJIT by adding
+a new layer that will optimize IR and generated code.</p></li>
+<li><p><a class="reference external" href="BuildingAJIT3.html">Chapter #3</a>: Further extend the JIT by adding a
+Compile-On-Demand layer to lazily compile IR.</p></li>
+<li><p><a class="reference external" href="BuildingAJIT4.html">Chapter #4</a>: Improve the laziness of our JIT by
+replacing the Compile-On-Demand layer with a custom layer that uses the ORC
+Compile Callbacks API directly to defer IR-generation until functions are
+called.</p></li>
+<li><p><a class="reference external" href="BuildingAJIT5.html">Chapter #5</a>: Add process isolation by JITing code into
+a remote process with reduced privileges using the JIT Remote APIs.</p></li>
+</ul>
+<p>To provide input for our JIT we will use a lightly modified version of the
+Kaleidoscope REPL from <a class="reference external" href="LangImpl07.html">Chapter 7</a> of the “Implementing a
+language in LLVM tutorial”.</p>
+<p>Finally, a word on API generations: ORC is the 3rd generation of LLVM JIT API.
+It was preceded by MCJIT, and before that by the (now deleted) legacy JIT.
+These tutorials don’t assume any experience with these earlier APIs, but
+readers acquainted with them will see many familiar elements. Where appropriate
+we will make this connection with the earlier APIs explicit to help people who
+are transitioning from them to ORC.</p>
+</div>
+<div class="section" id="jit-api-basics">
+<h2><a class="toc-backref" href="#id10"><span class="section-number">1.2. </span>JIT API Basics</a><a class="headerlink" href="#jit-api-basics" title="Permalink to this headline">¶</a></h2>
+<p>The purpose of a JIT compiler is to compile code “on-the-fly” as it is needed,
+rather than compiling whole programs to disk ahead of time as a traditional
+compiler does. To support that aim our initial, bare-bones JIT API will have
+just two functions:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Error</span> <span class="pre">addModule(std::unique_ptr&lt;Module&gt;</span> <span class="pre">M)</span></code>: Make the given IR module
+available for execution.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Expected&lt;JITEvaluatedSymbol&gt;</span> <span class="pre">lookup()</span></code>: Search for pointers to
+symbols (functions or variables) that have been added to the JIT.</p></li>
+</ol>
+<p>A basic use-case for this API, executing the ‘main’ function from a module,
+will look like:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">JIT</span> <span class="n">J</span><span class="p">;</span>
+<span class="n">J</span><span class="p">.</span><span class="n">addModule</span><span class="p">(</span><span class="n">buildModule</span><span class="p">());</span>
+<span class="k">auto</span> <span class="o">*</span><span class="n">Main</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span><span class="p">[]))</span><span class="n">J</span><span class="p">.</span><span class="n">lookup</span><span class="p">(</span><span class="s">&quot;main&quot;</span><span class="p">).</span><span class="n">getAddress</span><span class="p">();</span>
+<span class="kt">int</span> <span class="n">Result</span> <span class="o">=</span> <span class="n">Main</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>The APIs that we build in these tutorials will all be variations on this simple
+theme. Behind this API we will refine the implementation of the JIT to add
+support for concurrent compilation, optimization and lazy compilation.
+Eventually we will extend the API itself to allow higher-level program
+representations (e.g. ASTs) to be added to the JIT.</p>
+</div>
+<div class="section" id="kaleidoscopejit">
+<h2><a class="toc-backref" href="#id11"><span class="section-number">1.3. </span>KaleidoscopeJIT</a><a class="headerlink" href="#kaleidoscopejit" title="Permalink to this headline">¶</a></h2>
+<p>In the previous section we described our API, now we examine a simple
+implementation of it: The KaleidoscopeJIT class <a class="footnote-reference brackets" href="#id6" id="id1">1</a> that was used in the
+<a class="reference external" href="LangImpl01.html">Implementing a language with LLVM</a> tutorials. We will use
+the REPL code from <a class="reference external" href="LangImpl07.html">Chapter 7</a> of that tutorial to supply the
+input for our JIT: Each time the user enters an expression the REPL will add a
+new IR module containing the code for that expression to the JIT. If the
+expression is a top-level expression like ‘1+1’ or ‘sin(x)’, the REPL will also
+use the lookup method of our JIT class find and execute the code for the
+expression. In later chapters of this tutorial we will modify the REPL to enable
+new interactions with our JIT class, but for now we will take this setup for
+granted and focus our attention on the implementation of our JIT itself.</p>
+<p>Our KaleidoscopeJIT class is defined in the KaleidoscopeJIT.h header. After the
+usual include guards and #includes <a class="footnote-reference brackets" href="#id7" id="id4">2</a>, we get to the definition of our class:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#ifndef LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H</span>
+<span class="cp">#define LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H</span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ADT/StringRef.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/JITSymbol.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/CompileUtils.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/Core.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/ExecutionUtils.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/IRCompileLayer.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/JITTargetMachineBuilder.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/SectionMemoryManager.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/DataLayout.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/LLVMContext.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
+
+<span class="k">namespace</span> <span class="n">llvm</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">orc</span> <span class="p">{</span>
+
+<span class="k">class</span> <span class="nc">KaleidoscopeJIT</span> <span class="p">{</span>
+<span class="k">private</span><span class="o">:</span>
+  <span class="n">ExecutionSession</span> <span class="n">ES</span><span class="p">;</span>
+  <span class="n">RTDyldObjectLinkingLayer</span> <span class="n">ObjectLayer</span><span class="p">;</span>
+  <span class="n">IRCompileLayer</span> <span class="n">CompileLayer</span><span class="p">;</span>
+
+  <span class="n">DataLayout</span> <span class="n">DL</span><span class="p">;</span>
+  <span class="n">MangleAndInterner</span> <span class="n">Mangle</span><span class="p">;</span>
+  <span class="n">ThreadSafeContext</span> <span class="n">Ctx</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+  <span class="n">KaleidoscopeJIT</span><span class="p">(</span><span class="n">JITTargetMachineBuilder</span> <span class="n">JTMB</span><span class="p">,</span> <span class="n">DataLayout</span> <span class="n">DL</span><span class="p">)</span>
+      <span class="o">:</span> <span class="n">ObjectLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span>
+                    <span class="p">[]()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">SectionMemoryManager</span><span class="o">&gt;</span><span class="p">();</span> <span class="p">}),</span>
+        <span class="n">CompileLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span> <span class="n">ObjectLayer</span><span class="p">,</span> <span class="n">ConcurrentIRCompiler</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">JTMB</span><span class="p">))),</span>
+        <span class="n">DL</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">DL</span><span class="p">)),</span> <span class="n">Mangle</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">DL</span><span class="p">),</span>
+        <span class="n">Ctx</span><span class="p">(</span><span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">LLVMContext</span><span class="o">&gt;</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">ES</span><span class="p">.</span><span class="n">getMainJITDylib</span><span class="p">().</span><span class="n">setGenerator</span><span class="p">(</span>
+        <span class="n">cantFail</span><span class="p">(</span><span class="n">DynamicLibrarySearchGenerator</span><span class="o">::</span><span class="n">GetForCurrentProcess</span><span class="p">(</span><span class="n">DL</span><span class="p">)));</span>
+  <span class="p">}</span>
+</pre></div>
+</div>
+<p>Our class begins with six member variables: An ExecutionSession member, <code class="docutils literal notranslate"><span class="pre">ES</span></code>,
+which provides context for our running JIT’d code (including the string pool,
+global mutex, and error reporting facilities); An RTDyldObjectLinkingLayer,
+<code class="docutils literal notranslate"><span class="pre">ObjectLayer</span></code>, that can be used to add object files to our JIT (though we will
+not use it directly); An IRCompileLayer, <code class="docutils literal notranslate"><span class="pre">CompileLayer</span></code>, that can be used to
+add LLVM Modules to our JIT (and which builds on the ObjectLayer), A DataLayout
+and MangleAndInterner, <code class="docutils literal notranslate"><span class="pre">DL</span></code> and <code class="docutils literal notranslate"><span class="pre">Mangle</span></code>, that will be used for symbol mangling
+(more on that later); and finally an LLVMContext that clients will use when
+building IR files for the JIT.</p>
+<p>Next up we have our class constructor, which takes a <cite>JITTargetMachineBuilder`</cite>
+that will be used by our IRCompiler, and a <code class="docutils literal notranslate"><span class="pre">DataLayout</span></code> that we will use to
+initialize our DL member. The constructor begins by initializing our
+ObjectLayer.  The ObjectLayer requires a reference to the ExecutionSession, and
+a function object that will build a JIT memory manager for each module that is
+added (a JIT memory manager manages memory allocations, memory permissions, and
+registration of exception handlers for JIT’d code). For this we use a lambda
+that returns a SectionMemoryManager, an off-the-shelf utility that provides all
+the basic memory management functionality required for this chapter. Next we
+initialize our CompileLayer. The CompileLayer needs three things: (1) A
+reference to the ExecutionSession, (2) A reference to our object layer, and (3)
+a compiler instance to use to perform the actual compilation from IR to object
+files. We use the off-the-shelf ConcurrentIRCompiler utility as our compiler,
+which we construct using this constructor’s JITTargetMachineBuilder argument.
+The ConcurrentIRCompiler utility will use the JITTargetMachineBuilder to build
+llvm TargetMachines (which are not thread safe) as needed for compiles. After
+this, we initialize our supporting members: <code class="docutils literal notranslate"><span class="pre">DL</span></code>, <code class="docutils literal notranslate"><span class="pre">Mangler</span></code> and <code class="docutils literal notranslate"><span class="pre">Ctx</span></code> with
+the input DataLayout, the ExecutionSession and DL member, and a new default
+constucted LLVMContext respectively. Now that our members have been initialized,
+so the one thing that remains to do is to tweak the configuration of the
+<em>JITDylib</em> that we will store our code in. We want to modify this dylib to
+contain not only the symbols that we add to it, but also the symbols from our
+REPL process as well. We do this by attaching a
+<code class="docutils literal notranslate"><span class="pre">DynamicLibrarySearchGenerator</span></code> instance using the
+<code class="docutils literal notranslate"><span class="pre">DynamicLibrarySearchGenerator::GetForCurrentProcess</span></code> method.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="n">Expected</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">KaleidoscopeJIT</span><span class="o">&gt;&gt;</span> <span class="n">Create</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">JTMB</span> <span class="o">=</span> <span class="n">JITTargetMachineBuilder</span><span class="o">::</span><span class="n">detectHost</span><span class="p">();</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">JTMB</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">JTMB</span><span class="p">.</span><span class="n">takeError</span><span class="p">();</span>
+
+  <span class="k">auto</span> <span class="n">DL</span> <span class="o">=</span> <span class="n">JTMB</span><span class="o">-&gt;</span><span class="n">getDefaultDataLayoutForTarget</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">DL</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DL</span><span class="p">.</span><span class="n">takeError</span><span class="p">();</span>
+
+  <span class="k">return</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">KaleidoscopeJIT</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="n">JTMB</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="n">DL</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">const</span> <span class="n">DataLayout</span> <span class="o">&amp;</span><span class="n">getDataLayout</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">DL</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="n">LLVMContext</span> <span class="o">&amp;</span><span class="n">getContext</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="n">Ctx</span><span class="p">.</span><span class="n">getContext</span><span class="p">();</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>Next we have a named constructor, <code class="docutils literal notranslate"><span class="pre">Create</span></code>, which will build a KaleidoscopeJIT
+instance that is configured to generate code for our host process. It does this
+by first generating a JITTargetMachineBuilder instance using that clases’s
+detectHost method and then using that instance to generate a datalayout for
+the target process. Each of these operations can fail, so each returns its
+result wrapped in an Expected value <a class="footnote-reference brackets" href="#id8" id="id5">3</a> that we must check for error before
+continuing. If both operations succeed we can unwrap their results (using the
+dereference operator) and pass them into KaleidoscopeJIT’s constructor on the
+last line of the function.</p>
+<p>Following the named constructor we have the <code class="docutils literal notranslate"><span class="pre">getDataLayout()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">getContext()</span></code> methods. These are used to make data structures created and
+managed by the JIT (especially the LLVMContext) available to the REPL code that
+will build our IR modules.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">addModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">cantFail</span><span class="p">(</span><span class="n">CompileLayer</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">ES</span><span class="p">.</span><span class="n">getMainJITDylib</span><span class="p">(),</span>
+                            <span class="n">ThreadSafeModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">M</span><span class="p">),</span> <span class="n">Ctx</span><span class="p">)));</span>
+<span class="p">}</span>
+
+<span class="n">Expected</span><span class="o">&lt;</span><span class="n">JITEvaluatedSymbol</span><span class="o">&gt;</span> <span class="n">lookup</span><span class="p">(</span><span class="n">StringRef</span> <span class="n">Name</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">ES</span><span class="p">.</span><span class="n">lookup</span><span class="p">({</span><span class="o">&amp;</span><span class="n">ES</span><span class="p">.</span><span class="n">getMainJITDylib</span><span class="p">()},</span> <span class="n">Mangle</span><span class="p">(</span><span class="n">Name</span><span class="p">.</span><span class="n">str</span><span class="p">()));</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Now we come to the first of our JIT API methods: addModule. This method is
+responsible for adding IR to the JIT and making it available for execution. In
+this initial implementation of our JIT we will make our modules “available for
+execution” by adding them to the CompileLayer, which will it turn store the
+Module in the main JITDylib. This process will create new symbol table entries
+in the JITDylib for each definition in the module, and will defer compilation of
+the module until any of its definitions is looked up. Note that this is not lazy
+compilation: just referencing a definition, even if it is never used, will be
+enough to trigger compilation. In later chapters we will teach our JIT to defer
+compilation of functions until they’re actually called.  To add our Module we
+must first wrap it in a ThreadSafeModule instance, which manages the lifetime of
+the Module’s LLVMContext (our Ctx member) in a thread-friendly way. In our
+example, all modules will share the Ctx member, which will exist for the
+duration of the JIT. Once we switch to concurrent compilation in later chapters
+we will use a new context per module.</p>
+<p>Our last method is <code class="docutils literal notranslate"><span class="pre">lookup</span></code>, which allows us to look up addresses for
+function and variable definitions added to the JIT based on their symbol names.
+As noted above, lookup will implicitly trigger compilation for any symbol
+that has not already been compiled. Our lookup method calls through to
+<cite>ExecutionSession::lookup</cite>, passing in a list of dylibs to search (in our case
+just the main dylib), and the symbol name to search for, with a twist: We have
+to <em>mangle</em> the name of the symbol we’re searching for first. The ORC JIT
+components use mangled symbols internally the same way a static compiler and
+linker would, rather than using plain IR symbol names. This allows JIT’d code
+to interoperate easily with precompiled code in the application or shared
+libraries. The kind of mangling will depend on the DataLayout, which in turn
+depends on the target platform. To allow us to remain portable and search based
+on the un-mangled name, we just re-produce this mangling ourselves using our
+<code class="docutils literal notranslate"><span class="pre">Mangle</span></code> member function object.</p>
+<p>This brings us to the end of Chapter 1 of Building a JIT. You now have a basic
+but fully functioning JIT stack that you can use to take LLVM IR and make it
+executable within the context of your JIT process. In the next chapter we’ll
+look at how to extend this JIT to produce better quality code, and in the
+process take a deeper look at the ORC layer concept.</p>
+<p><a class="reference external" href="BuildingAJIT2.html">Next: Extending the KaleidoscopeJIT</a></p>
+</div>
+<div class="section" id="full-code-listing">
+<h2><a class="toc-backref" href="#id12"><span class="section-number">1.4. </span>Full Code Listing</a><a class="headerlink" href="#full-code-listing" title="Permalink to this headline">¶</a></h2>
+<p>Here is the complete code listing for our running example. To build this
+example, use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compile</span>
+clang++ -g toy.cpp <span class="sb">`</span>llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native<span class="sb">`</span> -O3 -o toy
+<span class="c1"># Run</span>
+./toy
+</pre></div>
+</div>
+<p>Here is the code:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">//===- KaleidoscopeJIT.h - A simple JIT for Kaleidoscope --------*- C++ -*-===//</span>
+<span class="c1">//</span>
+<span class="c1">// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.</span>
+<span class="c1">// See https://llvm.org/LICENSE.txt for license information.</span>
+<span class="c1">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception</span>
+<span class="c1">//</span>
+<span class="c1">//===----------------------------------------------------------------------===//</span>
+<span class="c1">//</span>
+<span class="c1">// Contains a simple JIT definition for use in the kaleidoscope tutorials.</span>
+<span class="c1">//</span>
+<span class="c1">//===----------------------------------------------------------------------===//</span>
+
+<span class="cp">#ifndef LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H</span>
+<span class="cp">#define LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H</span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ADT/StringRef.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/JITSymbol.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/CompileUtils.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/Core.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/ExecutionUtils.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/IRCompileLayer.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/JITTargetMachineBuilder.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/ExecutionEngine/SectionMemoryManager.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/DataLayout.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;llvm/IR/LLVMContext.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
+
+<span class="k">namespace</span> <span class="n">llvm</span> <span class="p">{</span>
+<span class="k">namespace</span> <span class="n">orc</span> <span class="p">{</span>
+
+<span class="k">class</span> <span class="nc">KaleidoscopeJIT</span> <span class="p">{</span>
+<span class="k">private</span><span class="o">:</span>
+  <span class="n">ExecutionSession</span> <span class="n">ES</span><span class="p">;</span>
+  <span class="n">RTDyldObjectLinkingLayer</span> <span class="n">ObjectLayer</span><span class="p">;</span>
+  <span class="n">IRCompileLayer</span> <span class="n">CompileLayer</span><span class="p">;</span>
+
+  <span class="n">DataLayout</span> <span class="n">DL</span><span class="p">;</span>
+  <span class="n">MangleAndInterner</span> <span class="n">Mangle</span><span class="p">;</span>
+  <span class="n">ThreadSafeContext</span> <span class="n">Ctx</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+  <span class="n">KaleidoscopeJIT</span><span class="p">(</span><span class="n">JITTargetMachineBuilder</span> <span class="n">JTMB</span><span class="p">,</span> <span class="n">DataLayout</span> <span class="n">DL</span><span class="p">)</span>
+      <span class="o">:</span> <span class="n">ObjectLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span>
+                    <span class="p">[]()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">SectionMemoryManager</span><span class="o">&gt;</span><span class="p">();</span> <span class="p">}),</span>
+        <span class="n">CompileLayer</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span> <span class="n">ObjectLayer</span><span class="p">,</span> <span class="n">ConcurrentIRCompiler</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">JTMB</span><span class="p">))),</span>
+        <span class="n">DL</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">DL</span><span class="p">)),</span> <span class="n">Mangle</span><span class="p">(</span><span class="n">ES</span><span class="p">,</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">DL</span><span class="p">),</span>
+        <span class="n">Ctx</span><span class="p">(</span><span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">LLVMContext</span><span class="o">&gt;</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">ES</span><span class="p">.</span><span class="n">getMainJITDylib</span><span class="p">().</span><span class="n">setGenerator</span><span class="p">(</span>
+        <span class="n">cantFail</span><span class="p">(</span><span class="n">DynamicLibrarySearchGenerator</span><span class="o">::</span><span class="n">GetForCurrentProcess</span><span class="p">(</span>
+            <span class="n">DL</span><span class="p">.</span><span class="n">getGlobalPrefix</span><span class="p">())));</span>
+  <span class="p">}</span>
+
+  <span class="k">static</span> <span class="n">Expected</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">KaleidoscopeJIT</span><span class="o">&gt;&gt;</span> <span class="n">Create</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">JTMB</span> <span class="o">=</span> <span class="n">JITTargetMachineBuilder</span><span class="o">::</span><span class="n">detectHost</span><span class="p">();</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">JTMB</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">JTMB</span><span class="p">.</span><span class="n">takeError</span><span class="p">();</span>
+
+    <span class="k">auto</span> <span class="n">DL</span> <span class="o">=</span> <span class="n">JTMB</span><span class="o">-&gt;</span><span class="n">getDefaultDataLayoutForTarget</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">DL</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">DL</span><span class="p">.</span><span class="n">takeError</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="n">llvm</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">KaleidoscopeJIT</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="n">JTMB</span><span class="p">),</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="n">DL</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="k">const</span> <span class="n">DataLayout</span> <span class="o">&amp;</span><span class="n">getDataLayout</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">DL</span><span class="p">;</span> <span class="p">}</span>
+
+  <span class="n">LLVMContext</span> <span class="o">&amp;</span><span class="n">getContext</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="o">*</span><span class="n">Ctx</span><span class="p">.</span><span class="n">getContext</span><span class="p">();</span> <span class="p">}</span>
+
+  <span class="n">Error</span> <span class="n">addModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Module</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">CompileLayer</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">ES</span><span class="p">.</span><span class="n">getMainJITDylib</span><span class="p">(),</span>
+                            <span class="n">ThreadSafeModule</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">M</span><span class="p">),</span> <span class="n">Ctx</span><span class="p">));</span>
+  <span class="p">}</span>
+
+  <span class="n">Expected</span><span class="o">&lt;</span><span class="n">JITEvaluatedSymbol</span><span class="o">&gt;</span> <span class="n">lookup</span><span class="p">(</span><span class="n">StringRef</span> <span class="n">Name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">ES</span><span class="p">.</span><span class="n">lookup</span><span class="p">({</span><span class="o">&amp;</span><span class="n">ES</span><span class="p">.</span><span class="n">getMainJITDylib</span><span class="p">()},</span> <span class="n">Mangle</span><span class="p">(</span><span class="n">Name</span><span class="p">.</span><span class="n">str</span><span class="p">()));</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="p">}</span> <span class="c1">// end namespace orc</span>
+<span class="p">}</span> <span class="c1">// end namespace llvm</span>
+
+<span class="cp">#endif </span><span class="c1">// LLVM_EXECUTIONENGINE_ORC_KALEIDOSCOPEJIT_H</span>
+</pre></div>
+</div>
+<dl class="footnote brackets">
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Actually we use a cut-down version of KaleidoscopeJIT that makes a
+simplifying assumption: symbols cannot be re-defined. This will make it
+impossible to re-define symbols in the REPL, but will make our symbol
+lookup logic simpler. Re-introducing support for symbol redefinition is
+left as an exercise for the reader. (The KaleidoscopeJIT.h used in the
+original tutorials will be a helpful reference).</p>
+</dd>
+<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
+<dd><table class="docutils align-default">
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 62%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Reason for inclusion</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>JITSymbol.h</p></td>
+<td><p>Defines the lookup result type
+JITEvaluatedSymbol</p></td>
+</tr>
+<tr class="row-odd"><td><p>CompileUtils.h</p></td>
+<td><p>Provides the SimpleCompiler class.</p></td>
+</tr>
+<tr class="row-even"><td><p>Core.h</p></td>
+<td><p>Core utilities such as ExecutionSession and
+JITDylib.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ExecutionUtils.h</p></td>
+<td><p>Provides the DynamicLibrarySearchGenerator
+class.</p></td>
+</tr>
+<tr class="row-even"><td><p>IRCompileLayer.h</p></td>
+<td><p>Provides the IRCompileLayer class.</p></td>
+</tr>
+<tr class="row-odd"><td><p>JITTargetMachineBuilder.h</p></td>
+<td><p>Provides the JITTargetMachineBuilder class.</p></td>
+</tr>
+<tr class="row-even"><td><p>RTDyldObjectLinkingLayer.h</p></td>
+<td><p>Provides the RTDyldObjectLinkingLayer class.</p></td>
+</tr>
+<tr class="row-odd"><td><p>SectionMemoryManager.h</p></td>
+<td><p>Provides the SectionMemoryManager class.</p></td>
+</tr>
+<tr class="row-even"><td><p>DataLayout.h</p></td>
+<td><p>Provides the DataLayout class.</p></td>
+</tr>
+<tr class="row-odd"><td><p>LLVMContext.h</p></td>
+<td><p>Provides the LLVMContext class.</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id5">3</a></span></dt>
+<dd><p>See the ErrorHandling section in the LLVM Programmer’s Manual
+(<a class="reference external" href="http://llvm.org/docs/ProgrammersManual.html#error-handling">http://llvm.org/docs/ProgrammersManual.html#error-handling</a>)</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="BuildingAJIT2.html" title="2. Building a JIT: Adding Optimizations – An introduction to ORC Layers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="OCamlLangImpl8.html" title="8. Kaleidoscope: Conclusion and other useful LLVM tidbits"
+             >previous</a> |</li>
+  <li><a href="http://llvm.org/">LLVM Home</a>&nbsp;|&nbsp;</li>
+  <li><a href="../index.html">Documentation</a>&raquo;</li>
+
+          <li class="nav-item nav-item-1"><a href="index.html" >LLVM Tutorial: Table of Contents</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2003-2020, LLVM Project.
+      Last updated on 2020-01-13.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.3.1.
+    </div>
+  </body>
+</html>
